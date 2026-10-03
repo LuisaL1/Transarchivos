@@ -1,344 +1,26 @@
 import { useState, useEffect, useLayoutEffect, useRef, useMemo } from "react";
 import { Routes, Route, Link, useParams, useLocation } from "react-router-dom";
 import avatarImg from "@/imports/iconojoel.png";
-import imagenBlog1Img from "@/imports/imagenblog1.png";
-import imagenBlog2Img from "@/imports/imagenblog2.png";
-import imagenBlog3Img from "@/imports/imagenblog3.png";
-import graficoCotizadorImg from "@/imports/graficocotizador-transparente.png";
-import graficoCotizador2Img from "@/imports/graficocotizador2.png";
-import lapizImg from "@/imports/lapiz-transparente.png";
-import escudoImg from "@/imports/escudo-transparente.png";
-import personajeCardImg from "@/imports/personaje-card2.png";
-import personajeCard2Img from "@/imports/personaje-card3.png";
 import logoImg from "@/imports/logo.png";
 import { blogPosts, readMinutes, type Item } from "@/blogData";
-import monoClasificacion from "@/imports/mono/clasificacion.png";
-import monoArchivoLupa from "@/imports/mono/archivolupa.png";
-import egProducto1Img from "@/imports/eg-producto-1.png";
-import egProducto2Img from "@/imports/eg-producto-2.png";
-import elementogSocio1Img from "@/imports/elementogsocio1.png";
-import elementogSocio2Img from "@/imports/elementogsocio2.png";
-import diagnosticoLupaImg from "@/imports/diagnostico-lupa.png";
-import monoDigitalizacion from "@/imports/mono/digitalizacion.png";
-import monoCarpeta from "@/imports/mono/carpeta.png";
-import monoCandado from "@/imports/mono/candado.png";
-import monoEscudo from "@/imports/mono/escudo.png";
-import monoDestruccion from "@/imports/mono/destruccion.png";
-import monoRayo from "@/imports/mono/rayo.png";
-import monoInhouse from "@/imports/mono/inhouse.png";
-import monoVolumen from "@/imports/mono/volumen.png";
-import monoEspacio from "@/imports/mono/espacio.png";
-import monoInventario from "@/imports/mono/inventario.png";
-import monoDisposicionFinal from "@/imports/mono/disposicionfinal.png";
-import bancaIcon from "@/imports/banca.png";
-import saludIcon from "@/imports/salud.png";
-import industriaIcon from "@/imports/industria.png";
-import iconoClasificacion from "@/imports/clasificacion.png";
-import iconoCandado from "@/imports/candado.png";
-import iconoDestruccion from "@/imports/destruccion.png";
-import iconoDigitalizacion from "@/imports/digitalizacion.png";
-import iconoEscudo from "@/imports/escudo.png";
-import iconoCarpeta from "@/imports/carpeta.png";
-import iconoMicrofilmacion from "@/imports/microfilmacion.png";
-import iconoInhouse from "@/imports/inhouse.png";
-import iconoRayo from "@/imports/rayo.png";
-import iconoQuienesSomos from "@/imports/quienessomos.png";
-import iconoHistoria from "@/imports/historia.png";
-import iconoEquipo from "@/imports/equipo.png";
-import iconoCultura from "@/imports/cultura.png";
-import iconoClientes from "@/imports/clientes.png";
-import iconoMisionVision from "@/imports/misionyvision.png";
-import iconoAliados from "@/imports/aliados.png";
-import iconoCertificados from "@/imports/certificados.png";
-import iconoLupa from "@/imports/iconoarchivolupa.png";
-import iconoProteccion from "@/imports/proteccion.png";
-import iconoLegal from "@/imports/legal-document_2912872.png";
-import gifBuscar from "@/imports/buscar.gif";
-import gifJuicio from "@/imports/juicio.gif";
-import gifCandado from "@/imports/candado-abierto.gif";
-import staticBuscar from "@/imports/image-9.png";
-import staticCandado from "@/imports/image-10.png";
-import staticJuicio from "@/imports/image-11.png";
-import colombiaDeptImg from "@/imports/colombia-departamentos.svg";
 
 
-// ─── Cycling word (Notion-style) ─────────────────────────────────────────────
-
-const cyclingWords = [
-  { word: "control",    bg: "#EEF0FB", dot: "#272B7C", text: "#272B7C" },
-  { word: "custodia",   bg: "#272B7C", dot: "#FFDE59", text: "#ffffff" },
-  { word: "orden",      bg: "#EEF0FB", dot: "#1800AD", text: "#1800AD" },
-  { word: "legalidad",  bg: "#1800AD", dot: "#FFDE59", text: "#ffffff" },
-  { word: "resguardo",  bg: "#FFDE59", dot: "#272B7C", text: "#272B7C" },
-  { word: "protección", bg: "#EEF0FB", dot: "#272B7C", text: "#272B7C" },
-];
-
-function CyclingWord() {
-  const [index, setIndex] = useState(0);
-  const [animState, setAnimState] = useState<"idle" | "out" | "in">("idle");
-  const [displayed, setDisplayed] = useState(0);
-  const ghostRef = useRef<HTMLSpanElement>(null);
-  const [slotWidth, setSlotWidth] = useState<number | null>(null);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setAnimState("out");
-      setTimeout(() => {
-        setIndex(i => {
-          const next = (i + 1) % cyclingWords.length;
-          setDisplayed(next);
-          return next;
-        });
-        setAnimState("in");
-        setTimeout(() => setAnimState("idle"), 350);
-      }, 300);
-    }, 2200);
-    return () => clearInterval(interval);
-  }, []);
-
-  // CSS no puede animar "width: auto" (el ancho intrínseco del texto) — por eso
-  // el cuadro saltaba de golpe al cambiar a una palabra más corta/larga. Acá
-  // medimos el ancho real del ghost en píxeles cada vez que cambia (palabra nueva
-  // o breakpoint que cambia el tamaño de letra) y se lo damos como número exacto
-  // al contenedor, que sí puede transicionar entre dos valores concretos.
-  useLayoutEffect(() => {
-    const el = ghostRef.current;
-    if (!el) return;
-    const measure = () => setSlotWidth(el.getBoundingClientRect().width);
-    measure();
-    const ro = new ResizeObserver(measure);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
-
-  const current = cyclingWords[displayed];
-
-  // Mismo tamaño y line-height que el resto del título ("Sus archivos,").
-  const wordTextStyle: React.CSSProperties = {
-    fontFamily: "Poppins, sans-serif",
-    fontWeight: 700,
-    lineHeight: 1.1,
-    whiteSpace: "nowrap",
-  };
-
-  return (
-    <span
-      className="inline-flex items-center rounded-xl md:rounded-2xl align-middle px-3 py-0.5 md:px-4 md:py-1"
-      style={{
-        background: current.bg,
-        transition: "background 0.5s ease",
-        verticalAlign: "middle",
-      }}
-    >
-      {/* Slot de ancho variable: el ghost mide la palabra ACTUAL, así la píldora se
-          ajusta exacto a cada palabra (sin sobrar espacio en las cortas). El ancho
-          en px medido (slotWidth) es lo que realmente transiciona suave entre una
-          palabra y otra, en vez de saltar de golpe (ver useLayoutEffect arriba).
-          El alto lo define el propio texto (misma clase y line-height que el h1).
-          padding-bottom: a diferencia del h1, esta caja recorta (overflow:hidden,
-          necesario para la animación de deslizamiento) y con el line-height del h1
-          la "g" de "legalidad"/"resguardo" quedaba recortada abajo — el line-height
-          del h1 nunca recorta nada ahí porque no tiene máscara. Este aire extra solo
-          abajo (no arriba, para no desalinear con "bajo") le da lugar al descendente
-          sin tocar el tamaño de letra. */}
-      <span
-        className="text-5xl md:text-6xl"
-        style={{
-          display: "inline-block",
-          position: "relative",
-          overflow: "hidden",
-          paddingBottom: "0.22em",
-          width: slotWidth ?? "auto",
-          transition: "width 0.32s cubic-bezier(0.4,0,0.2,1)",
-        }}
-      >
-        {/* Ghost — invisible, reserva y mide el ancho de la palabra actual */}
-        {/* inline-block (no "block"): así siempre se encoge a su propio texto, aunque
-            el padre ya tenga un ancho explícito en px — si fuera "block" se estiraría
-            al 100% del padre y el ResizeObserver dejaría de detectar cambios reales. */}
-        <span ref={ghostRef} style={{ ...wordTextStyle, display: "inline-block", opacity: 0, userSelect: "none", pointerEvents: "none" }}>
-          {current.word}
-        </span>
-        {/* Animated word */}
-        <span
-          key={displayed}
-          className="text-5xl md:text-6xl"
-          style={{
-            ...wordTextStyle,
-            color: current.text,
-            position: "absolute",
-            top: 0,
-            left: 0,
-            transition: "color 0.3s ease",
-            animation: animState === "out"
-              ? "wordOut 0.28s cubic-bezier(0.4,0,0.6,1) forwards"
-              : animState === "in"
-              ? "wordIn 0.32s cubic-bezier(0.0,0,0.2,1) forwards"
-              : "none",
-          }}
-        >
-          {current.word}
-        </span>
-      </span>
-    </span>
-  );
-}
-
-// ─── World coverage map (network of hotspots on a real world map) ──────────
-
-type ColombiaHotspot = { id: string; title: string; sub: string; desc: string; left: number; top: number; hq?: boolean };
-
-// Datos reales confirmados por el cliente (no simulados): sede y bodegas de
-// custodia en Bogotá; recolección con logística propia en Barranquilla, Cali
-// y Medellín. Fuera de estas 4 ciudades también recogen en el resto del país
-// (salvo zonas de alto riesgo), pero solo se marcan las 4 confirmadas.
-const COLOMBIA_HOTSPOTS: ColombiaHotspot[] = [
-  { id: "bog", title: "Bogotá",       sub: "Sede principal · Bodegas de custodia", desc: "Centro de operaciones: aquí están nuestras bodegas certificadas y todo el equipo administrativo.", left: 48.6, top: 49.5, hq: true },
-  { id: "med", title: "Medellín",     sub: "Cobertura de recolección",             desc: "Recolección y logística propia de archivos físicos en Medellín y su área metropolitana.", left: 38.6, top: 41.1 },
-  { id: "cal", title: "Cali",         sub: "Cobertura de recolección",             desc: "Recolección y logística propia de archivos físicos en Cali y el suroccidente del país.", left: 32.8, top: 56.8 },
-  { id: "baq", title: "Barranquilla", sub: "Cobertura de recolección",             desc: "Recolección y logística propia de archivos físicos en Barranquilla y la costa Caribe.", left: 52.5, top: 20.5 },
-];
-
-// Mapa real de Colombia CON fronteras de departamentos (basado en un mapa
-// administrativo público), recoloreado al mismo estilo sutil navy/blanco.
-// Países vecinos, océano y la leyenda del archivo original quedaron ocultos
-// al procesar el SVG — solo se ve Colombia y sus divisiones internas.
-// El viewBox del propio archivo ya está recortado ("zoom") sobre la región
-// donde están las 4 ciudades (centro-occidente + costa Caribe), conservando
-// el contorno completo (Guajira, costa Caribe y Pacífica) para que siga
-// leyéndose claramente como Colombia — no un recorte tan cerrado que pierda
-// la silueta. El mapa ahora vive en su propia columna junto al avatar (no
-// centrado detrás de él), así que puede ser mucho más grande.
-const COLOMBIA_BOX_STYLE: React.CSSProperties = {
-  top: "50%", right: -170, transform: "translateY(-50%)",
-  height: "min(96vw, 1000px)", aspectRatio: "1006 / 1370",
-};
-
-function ColombiaMap() {
-  return (
-    <>
-      {/* Capa 1: el mapa, detrás de los pines (pero ambos delante del avatar) */}
-      <div className="absolute" style={{ ...COLOMBIA_BOX_STYLE, zIndex: 1, pointerEvents: "none" }}>
-        <img
-          src={colombiaDeptImg}
-          alt="Mapa de cobertura de Transarchivos en Colombia"
-          draggable={false}
-          className="w-full h-full select-none"
-          style={{ objectFit: "contain", filter: "drop-shadow(0 12px 28px rgba(0,0,0,0.35))" }}
-        />
-      </div>
-
-      {/* Capa 2: los pines, siempre por encima del avatar (mismo sistema de coordenadas que la capa 1) */}
-      <div className="absolute" style={{ ...COLOMBIA_BOX_STYLE, zIndex: 30, pointerEvents: "none" }}>
-        {COLOMBIA_HOTSPOTS.map(h => <ColombiaPin key={h.id} {...h} />)}
-      </div>
-    </>
-  );
-}
-
-function ColombiaPin({ title, sub, desc, left, top, hq }: ColombiaHotspot) {
-  const [hovered, setHovered] = useState(false);
-  const isTop = top < 50;
-  const isLeftHalf = left < 50;
-
-  return (
-    <div
-      className="absolute"
-      style={{ left: `${left}%`, top: `${top}%`, transform: "translate(-50%, -50%)", zIndex: hovered ? 2 : 1, pointerEvents: "auto" }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
-      <div style={{ position: "relative", width: hq ? 16 : 12, height: hq ? 16 : 12, cursor: "pointer" }}>
-        <span style={{
-          position: "absolute", inset: 0, borderRadius: "50%",
-          background: "#FFDE59", opacity: 0.85,
-          animation: `mapPing ${hq ? 1.4 : 1.7}s cubic-bezier(0,0,0.2,1) infinite`,
-        }} />
-        <span style={{
-          position: "absolute", inset: hq ? -2 : -1, borderRadius: "50%",
-          background: hq ? "#FFDE59" : "#ffffff",
-          border: `2px solid ${hq ? "#ffffff" : "#FFDE59"}`,
-          boxShadow: hovered
-            ? "0 0 0 6px rgba(255,222,89,0.35), 0 0 14px 4px rgba(255,222,89,0.85)"
-            : "0 0 10px 3px rgba(255,222,89,0.75), 0 2px 6px rgba(0,0,0,0.4)",
-          transform: hovered ? "scale(1.3)" : "scale(1)",
-          transition: "transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s ease",
-        }} />
-      </div>
-
-      <div style={{
-        position: "absolute",
-        ...(isTop ? { top: "calc(100% + 10px)" } : { bottom: "calc(100% + 10px)" }),
-        ...(isLeftHalf ? { left: 0 } : { right: 0 }),
-        width: 200,
-        opacity: hovered ? 1 : 0,
-        pointerEvents: hovered ? "auto" : "none",
-        transition: "opacity 0.2s ease",
-      }}>
-        <div className="rounded-xl p-3 shadow-2xl" style={{ background: "#ffffff", border: "1px solid #E9E9E7" }}>
-          <div className="flex items-center gap-1.5 mb-1">
-            <p className="font-bold text-sm" style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif" }}>{title}</p>
-            {hq && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: "#FFDE5933", color: "#8a6d00" }}>HQ</span>}
-          </div>
-          <p className="text-[11px] font-semibold mb-1" style={{ color: "#9B9B9B" }}>{sub}</p>
-          <p className="text-xs leading-relaxed" style={{ color: "#6B7280" }}>{desc}</p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── Animated avatar ─────────────────────────────────────────────────────────
-
-// Antes seguía el cursor con un tilt 3D (rotateX/rotateY vía requestAnimationFrame)
-// — se quitó ese movimiento a pedido; solo queda la flotación suave por CSS
-// (animation: avatarFloat en el div exterior).
-function AnimatedAvatar({ src, alt }: { src: string; alt: string }) {
-  return (
-    <div className="relative z-10 flex flex-col items-center" style={{ animation: "avatarFloat 4s ease-in-out infinite" }}>
-      <div>
-        <img
-          src={src}
-          alt={alt}
-          draggable={false}
-          className="select-none relative z-10"
-          style={{
-            height: "min(32vw, 460px)",
-            width: "auto",
-            objectFit: "contain",
-            objectPosition: "bottom",
-            filter: "drop-shadow(0 32px 48px rgba(39,43,124,0.22)) drop-shadow(0 8px 16px rgba(39,43,124,0.12))",
-          }}
-        />
-      </div>
-      {/* Ground shadow */}
-      <div
-        style={{
-          width: 180,
-          height: 24,
-          borderRadius: "50%",
-          background: "radial-gradient(ellipse, rgba(39,43,124,0.22) 0%, transparent 70%)",
-          marginTop: -16,
-        }}
-      />
-    </div>
-  );
-}
+// ─── Avatar de Joel ─────────────────────────────────────────────────────────
 
 // Recorte de solo la cara/busto del avatar de cuerpo completo (iconojoel.png,
 // 1012×1555px) para el widget de chat — mostrar el cuerpo entero encogido a
 // 36-40px se veía como una figurita diminuta y rara. El recorte usa % fijos
 // calibrados sobre la región cara+hombros (x:150-780, y:0-630 del original)
 // para que funcione a cualquier tamaño de contenedor cuadrado.
-function ChatAvatarFace({ size, ring }: { size: number; ring?: "light" | "navy" }) {
+function ChatAvatarFace({ size, ring, round = false }: { size: number; ring?: "light" | "navy"; round?: boolean }) {
   // Squircle (esquinas suaves) en vez de círculo perfecto + sombra propia
   // para dar algo de relieve — marco más "moderno" que el círculo plano
   // original, sin cambiar el personaje.
   return (
     <div style={{
-      width: size, height: size, borderRadius: Math.round(size * 0.3), overflow: "hidden",
+      width: size, height: size, borderRadius: round ? "50%" : Math.round(size * 0.3), overflow: "hidden",
       position: "relative", flexShrink: 0,
-      background: "#EEF0FB",
+      background: round ? "linear-gradient(135deg, #FFF6D6 0%, #FFE39A 100%)" : "#EEF0FB",
       boxShadow: [
         ring === "light" ? "0 0 0 2px rgba(255,255,255,0.85)" : ring === "navy" ? "0 0 0 2px rgba(39,43,124,0.15)" : "",
         "0 4px 10px -3px rgba(10,13,61,0.35)",
@@ -346,6 +28,86 @@ function ChatAvatarFace({ size, ring }: { size: number; ring?: "light" | "navy" 
     }}>
       <img src={avatarImg} alt="" draggable={false}
         style={{ position: "absolute", left: "-23.8%", top: "0%", width: "160.6%", maxWidth: "none", height: "auto" }} />
+    </div>
+  );
+}
+
+// ─── Videos de fondo del hero ───────────────────────────────────────────────
+// Los 2 videos (public/videos, comprimidos a 960×540) rotan en bucle con un
+// fundido; solo se precargan el actual y el siguiente. Encima, un velo navy
+// suave para que el texto blanco se lea. Cubre toda la sección, así que
+// también se ve alrededor de la carpeta azul de abajo. En pantallas
+// pequeñas o con "reducir movimiento" queda solo el fondo navy.
+
+const HERO_VIDEOS = ["/videos/archivosvi2.mp4", "/videos/archivosvi4.mp4"];
+
+function HeroVideoBackground() {
+  const [idx, setIdx] = useState(0);
+  const refs = useRef<(HTMLVideoElement | null)[]>([]);
+  const [reduced] = useState(() => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+
+  useEffect(() => {
+    const v = refs.current[idx];
+    if (!v) return;
+    v.currentTime = 0;
+    v.play().catch(() => {});
+  }, [idx]);
+
+  const next = (idx + 1) % HERO_VIDEOS.length;
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true"
+      style={{ background: "radial-gradient(ellipse at 50% 30%, #272B7C 0%, #0a0d3d 75%)" }}>
+      {!reduced && (
+        <div className="hidden md:block absolute inset-0">
+          {HERO_VIDEOS.map((src, i) => (
+            <video key={src} ref={el => { refs.current[i] = el; }} src={src}
+              muted playsInline autoPlay={i === 0} preload={i === idx || i === next ? "auto" : "none"}
+              onEnded={() => { if (i === idx) setIdx(next); }}
+              className="absolute inset-0 w-full h-full"
+              style={{ objectFit: "cover", opacity: i === idx ? 1 : 0, transition: "opacity 1.2s ease" }} />
+          ))}
+        </div>
+      )}
+      <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(10,13,61,0.55) 0%, rgba(10,13,61,0.35) 45%, rgba(10,13,61,0.6) 100%)" }} />
+    </div>
+  );
+}
+
+// ─── Caja del hero para escribirle a Joel ────────────────────────────────────
+// Al enviar (o al elegir una sugerencia) abre el chat con la pregunta ya escrita.
+
+const HERO_SUGGESTIONS = ["Digitalizar mi archivo", "Custodia de documentos", "Destrucción certificada"];
+
+function HeroAskJoel({ onAsk }: { onAsk: (text: string) => void }) {
+  const [text, setText] = useState("");
+  const send = (t: string) => { const v = t.trim(); if (!v) return; onAsk(v); setText(""); };
+
+  return (
+    <div className="text-left">
+      <form onSubmit={e => { e.preventDefault(); send(text); }}
+        className="flex items-center gap-3 rounded-2xl py-2 pl-5 pr-2"
+        style={{ background: "#fff", border: "1px solid #E4E6F7", boxShadow: "0 24px 50px -30px rgba(39,43,124,0.35)" }}>
+        <input type="text" value={text} onChange={e => setText(e.target.value)}
+          placeholder="Ej.: tengo 800 cajas de archivo y necesito organizarlas"
+          aria-label="Escríbale a Joel"
+          className="flex-1 min-w-0 bg-transparent outline-none text-sm"
+          style={{ color: "#272B7C" }} />
+        <button type="submit" aria-label="Enviar a Joel"
+          className="flex items-center justify-center rounded-full shrink-0 transition-all hover:scale-105 active:scale-95"
+          style={{ width: 38, height: 38, background: text.trim() ? "#272B7C" : "#EEF0FB" }}>
+          <Bi n="send" size={14} color={text.trim() ? "#fff" : "#272B7C"} />
+        </button>
+      </form>
+      <div className="flex flex-wrap justify-center gap-2 mt-3">
+        {HERO_SUGGESTIONS.map(t => (
+          <button key={t} type="button" onClick={() => send(t)}
+            className="text-xs px-3 py-1.5 rounded-full transition-colors hover:bg-white/25"
+            style={{ background: "rgba(255,255,255,0.14)", border: "1px solid rgba(255,255,255,0.3)", color: "#fff", backdropFilter: "blur(6px)" }}>
+            {t}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
@@ -452,16 +214,17 @@ function Divider() {
 // "keywords": 2 términos de búsqueda reales (del listado de palabras clave por
 // servicio) para que alguien que no conoce el nombre formal del servicio pero
 // sí un término técnico (OCR, TRD, backup...) lo reconozca igual.
+// "icon": nombre del ícono de Bootstrap Icons (bi-<nombre>).
 const serviceItems: { icon: string; title: string; slug: string; desc: string; keywords: string[] }[] = [
-  { icon: iconoClasificacion, title: "Levantamiento de Inventario", slug: "levantamiento-de-inventario", desc: "Diagnóstico y organización según norma AGN", keywords: ["Inventario documental", "Diagnóstico"] },
-  { icon: iconoCarpeta, title: "Programa de Gestión Documental", slug: "programa-de-gestion-documental", desc: "PGD · Cumplimiento Ley 594", keywords: ["TRD", "Tablas de retención"] },
-  { icon: iconoEscudo, title: "Custodia de Medios Magnéticos", slug: "custodia-de-medios-magneticos", desc: "Cintas, discos y medios con control ambiental", keywords: ["Copia air gap", "Cintas LTO"] },
-  { icon: iconoCandado, title: "Custodia de Archivos", slug: "custodia-de-archivos", desc: "Centro documental con vigilancia 24 h", keywords: ["Centro documental", "Consulta y recuperación"] },
-  { icon: iconoDigitalizacion, title: "Digitalización de Documentos", slug: "digitalizacion-de-documentos", desc: "Escaneo, OCR e indexación", keywords: ["OCR", "DMS / ECM"] },
-  { icon: iconoDestruccion, title: "Destrucción de Documentos", slug: "destruccion-de-documentos", desc: "Destrucción con certificado y trazabilidad", keywords: ["Trituración industrial", "Certificado de destrucción"] },
-  { icon: iconoMicrofilmacion, title: "Microfilmación de Archivos", slug: "microfilmacion-de-archivos", desc: "Preservación a más de 100 años", keywords: ["Microfilm", "Historias clínicas"] },
-  { icon: iconoInhouse, title: "Servicio Inhouse", slug: "servicio-inhouse", desc: "Personal de archivo en su sede", keywords: ["Outsourcing documental", "Personal en sitio"] },
-  { icon: iconoRayo, title: "Servicio Inmediato", slug: "servicio-inmediato", desc: "Entrega urgente con trazabilidad", keywords: ["Entrega urgente", "Despacho express"] },
+  { icon: "list-columns-reverse", title: "Levantamiento de Inventario", slug: "levantamiento-de-inventario", desc: "Diagnóstico y organización según norma AGN", keywords: ["Inventario documental", "Diagnóstico"] },
+  { icon: "folder2-open", title: "Programa de Gestión Documental", slug: "programa-de-gestion-documental", desc: "PGD · Cumplimiento Ley 594", keywords: ["TRD", "Tablas de retención"] },
+  { icon: "hdd-stack", title: "Custodia de Medios Magnéticos", slug: "custodia-de-medios-magneticos", desc: "Cintas, discos y medios con control ambiental", keywords: ["Copia air gap", "Cintas LTO"] },
+  { icon: "archive", title: "Custodia de Archivos", slug: "custodia-de-archivos", desc: "Centro documental con vigilancia 24 h", keywords: ["Centro documental", "Consulta y recuperación"] },
+  { icon: "upc-scan", title: "Digitalización de Documentos", slug: "digitalizacion-de-documentos", desc: "Escaneo, OCR e indexación", keywords: ["OCR", "DMS / ECM"] },
+  { icon: "file-earmark-x", title: "Destrucción de Documentos", slug: "destruccion-de-documentos", desc: "Destrucción con certificado y trazabilidad", keywords: ["Trituración industrial", "Certificado de destrucción"] },
+  { icon: "film", title: "Microfilmación de Archivos", slug: "microfilmacion-de-archivos", desc: "Preservación a más de 100 años", keywords: ["Microfilm", "Historias clínicas"] },
+  { icon: "person-badge", title: "Servicio Inhouse", slug: "servicio-inhouse", desc: "Personal de archivo en su sede", keywords: ["Outsourcing documental", "Personal en sitio"] },
+  { icon: "lightning-charge", title: "Servicio Inmediato", slug: "servicio-inmediato", desc: "Entrega urgente con trazabilidad", keywords: ["Entrega urgente", "Despacho express"] },
 ];
 
 // Solo el botón disparador. El contenido del menú ya no es un panel aparte
@@ -493,50 +256,65 @@ function NavDropdownTrigger({ label, open, setOpen }: { label: string; open: boo
   );
 }
 
-// Contenido del menú "Servicios", como segunda fila dentro del pill.
-function ServicesPanelContent({ setOpen }: { setOpen: (v: boolean) => void }) {
+// ─── Menús desplegables del navbar ──────────────────────────────────────────
+// Mismo esquema que el header de Transpack: a la izquierda una columna
+// destacada (degradado azul de marca, cuadro amarillo girado, rótulo, título,
+// texto y llamado a la acción); a la derecha las opciones, con íconos que se
+// rellenan de azul al pasar el mouse.
+
+function MenuFeature({ kicker, title, text, cta, href, onClick }: { kicker: string; title: string; text: string; cta: string; href: string; onClick: () => void }) {
   return (
-    <div className="px-4 pb-4 pt-1">
-      <div className="h-px mb-3" style={{ background: "rgba(39,43,124,0.10)" }} />
-      <div className="flex items-center justify-between mb-3 px-1">
-        <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: "rgba(39,43,124,0.55)", fontFamily: "Montserrat, sans-serif" }}>Servicios</p>
-        <a href="#servicios" onClick={() => setOpen(false)} className="text-xs font-semibold flex items-center gap-1 hover:opacity-70 transition-opacity" style={{ color: "#1800AD", fontFamily: "Montserrat, sans-serif" }}>
-          Ver todos →
-        </a>
-      </div>
-      <div className="grid grid-cols-3 gap-2">
-        {serviceItems.map(s => (
-          <Link key={s.title} to={`/servicios/${s.slug}`} onClick={() => setOpen(false)}
-            className="flex items-start gap-3 p-3 rounded-xl transition-colors hover:bg-[#272B7C]/[0.06] cursor-pointer"
-            style={{ textDecoration: "none" }}>
-            <img src={s.icon} alt="" className="w-11 h-11 mt-0.5 object-contain shrink-0" />
-            <div>
-              <p className="text-sm font-semibold" style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif" }}>{s.title}</p>
-              <p className="text-xs mt-0.5" style={{ color: "rgba(39,43,124,0.55)" }}>{s.desc}</p>
-              {/* Palabras clave de búsqueda: para quien no conoce el nombre formal
-                  del servicio pero sí un término técnico (OCR, TRD, backup...). */}
-              <div className="flex flex-wrap gap-1 mt-1.5">
-                {s.keywords.map(k => (
-                  <span key={k} className="text-[10px] font-medium px-1.5 py-0.5 rounded-full"
-                    style={{ background: "rgba(24,0,173,0.07)", color: "#1800AD" }}>
-                    {k}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </Link>
-        ))}
-        {/* CTA card — invita a chatear con "Joel" (nombre humanizado de la IA
-            de Transarchivos) en vez del genérico "diagnóstico gratuito". Solo el
-            texto por ahora: la integración real del chat es un paso aparte. */}
-        <a href="#cotizador" onClick={() => setOpen(false)}
-          className="col-span-3 flex items-center justify-between p-3 rounded-xl mt-1 transition-colors hover:bg-[#272B7C]/[0.08]"
-          style={{ background: "rgba(39,43,124,0.04)", border: "1px solid rgba(39,43,124,0.10)", textDecoration: "none" }}>
-          <p className="text-sm font-semibold" style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif" }}>
-            ¿Necesita orientación? Hable con <span style={{ color: "#1800AD" }}>Joel</span>
-          </p>
-          <span className="text-sm font-bold shrink-0 ml-3" style={{ color: "#1800AD" }}>→</span>
-        </a>
+    <div className="relative flex flex-col overflow-hidden rounded-2xl p-5" style={{ background: "linear-gradient(135deg, #272B7C 0%, #1800AD 100%)" }}>
+      <span aria-hidden="true" className="absolute pointer-events-none" style={{ right: -36, top: -36, width: 104, height: 104, transform: "rotate(45deg)", background: "rgba(255,222,89,0.25)" }} />
+      <p className="relative mb-2 text-[10.5px] font-bold uppercase" style={{ letterSpacing: "0.16em", color: "#FFDE59", fontFamily: "Montserrat, sans-serif" }}>{kicker}</p>
+      <p className="relative mb-2 text-[17px] font-bold leading-snug" style={{ color: "#fff", fontFamily: "Poppins, sans-serif" }}>{title}</p>
+      <p className="relative mb-5 text-[12.5px] leading-relaxed" style={{ color: "rgba(255,255,255,0.75)" }}>{text}</p>
+      <a href={href} onClick={onClick} className="group relative mt-auto inline-flex items-center gap-1.5 text-[13px] font-semibold" style={{ color: "#fff", textDecoration: "none", fontFamily: "Montserrat, sans-serif" }}>
+        {cta} <Bi n="arrow-right" size={13} color="#FFDE59" className="transition-transform group-hover:translate-x-1" />
+      </a>
+    </div>
+  );
+}
+
+// Ficha de ícono que se rellena al pasar el mouse sobre el enlace (group).
+function MenuIcon({ n, size = 38 }: { n: string; size?: number }) {
+  return (
+    <span className="grid place-items-center shrink-0 rounded-lg transition-colors bg-[#F2F3FA] text-[#272B7C] group-hover:bg-[#272B7C] group-hover:text-[#FFDE59]" style={{ width: size, height: size }}>
+      <i className={`bi bi-${n}`} aria-hidden="true" style={{ fontSize: Math.round(size * 0.45), lineHeight: 1 }} />
+    </span>
+  );
+}
+
+// Línea superior + aire: separa el menú de la fila del navbar (y del logo,
+// que en la barra completa queda justo encima de la columna destacada).
+const menuShell = "grid grid-cols-[220px_minmax(0,1fr)] gap-3 px-3 pb-3 pt-3 mt-2 border-t border-[#272B7C]/10";
+const menuItemCls = "group flex items-start gap-3 rounded-xl p-2.5 transition-colors hover:bg-[#F7F8FF]";
+
+function ServicesPanelContent({ setOpen }: { setOpen: (v: boolean) => void }) {
+  const close = () => setOpen(false);
+  return (
+    <div className={menuShell} style={{ animation: "fadeInUp 0.25s ease both" }}>
+      <MenuFeature kicker="Diagnóstico documental" title="¿No sabe por dónde empezar?"
+        text="Le mostramos qué está pasando hoy con su archivo antes de mover un solo papel. O pregúntele a Joel, nuestro asesor virtual."
+        cta="Solicitar diagnóstico" href="#diagnostico" onClick={close} />
+      <div className="py-1">
+        <div className="grid grid-cols-3 gap-0.5">
+          {serviceItems.map(s => (
+            <Link key={s.title} to={`/servicios/${s.slug}`} onClick={close} className={menuItemCls} style={{ textDecoration: "none" }}>
+              <MenuIcon n={s.icon} />
+              <span className="min-w-0">
+                <span className="block text-[13px] font-semibold leading-tight" style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif" }}>{s.title}</span>
+                <span className="block text-[11px] leading-snug mt-0.5" style={{ color: "#8A8A8A" }}>{s.desc}</span>
+              </span>
+            </Link>
+          ))}
+        </div>
+        <div className="flex items-center justify-between mt-1.5 pt-2.5 px-2.5" style={{ borderTop: "1px solid #ECEEF6" }}>
+          <span className="text-[11px]" style={{ color: "#9B9B9B" }}>9 servicios bajo la Ley 594 de 2000 y la normativa del AGN</span>
+          <a href="#servicios" onClick={close} className="text-xs font-semibold inline-flex items-center gap-1" style={{ color: "#1800AD", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
+            Ver todos <Bi n="arrow-right" size={12} color="#1800AD" />
+          </a>
+        </div>
       </div>
     </div>
   );
@@ -551,38 +329,37 @@ function ServicesPanelContent({ setOpen }: { setOpen: (v: boolean) => void }) {
 // honesto, aunque el ancla se conserva como "aliados" por compatibilidad.
 const nosotrosGroups: { heading: string; items: { label: string; icon: string; anchor: string }[] }[] = [
   { heading: "La empresa", items: [
-    { label: "Quiénes somos", icon: iconoQuienesSomos, anchor: "quienes-somos" },
-    { label: "Nuestra historia", icon: iconoHistoria, anchor: "historia" },
-    { label: "Misión y visión", icon: iconoMisionVision, anchor: "mision-vision" },
+    { label: "Quiénes somos", icon: "building", anchor: "quienes-somos" },
+    { label: "Nuestra historia", icon: "clock-history", anchor: "historia" },
+    { label: "Misión y visión", icon: "bullseye", anchor: "mision-vision" },
   ] },
   { heading: "Equipo y cultura", items: [
-    { label: "Nuestro equipo", icon: iconoEquipo, anchor: "equipo" },
-    { label: "Cultura organizacional", icon: iconoCultura, anchor: "cultura" },
+    { label: "Nuestro equipo", icon: "people", anchor: "equipo" },
+    { label: "Cultura", icon: "heart", anchor: "cultura" },
   ] },
-  { heading: "Resultados y alianzas", items: [
-    { label: "Nuestros principales clientes", icon: iconoClientes, anchor: "clientes" },
-    { label: "Aliados tecnológicos", icon: iconoAliados, anchor: "aliados" },
-    { label: "Certificados", icon: iconoCertificados, anchor: "certificados" },
+  { heading: "Resultados", items: [
+    { label: "Nuestros clientes", icon: "briefcase", anchor: "clientes" },
+    { label: "Tecnología", icon: "cpu", anchor: "aliados" },
+    { label: "Normativa", icon: "patch-check", anchor: "certificados" },
   ] },
 ];
 
-// Contenido del menú "Nosotros", como segunda fila dentro del pill — mismo
-// mecanismo que ServicesPanelContent (el pill se ensancha para contenerlo).
 function NosotrosPanelContent({ setOpen }: { setOpen: (v: boolean) => void }) {
+  const close = () => setOpen(false);
   return (
-    <div className="px-4 pb-4 pt-1">
-      <div className="h-px mb-3" style={{ background: "rgba(39,43,124,0.10)" }} />
-      <div className="grid grid-cols-3 gap-4 px-1">
+    <div className={menuShell} style={{ animation: "fadeInUp 0.25s ease both" }}>
+      <MenuFeature kicker="Desde 1983" title="Pioneros de la gestión documental en Colombia"
+        text="Más de 40 años ayudando a las empresas a organizar, proteger y transformar su información."
+        cta="Conozca nuestra historia" href="/nosotros#historia" onClick={close} />
+      <div className="grid grid-cols-3 gap-3 py-1">
         {nosotrosGroups.map(g => (
           <div key={g.heading}>
-            <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: "rgba(39,43,124,0.5)", fontFamily: "Montserrat, sans-serif" }}>{g.heading}</p>
-            <div className="flex flex-col gap-0.5">
+            <p className="text-[10.5px] font-bold uppercase mb-1.5 px-2 whitespace-nowrap" style={{ letterSpacing: "0.12em", color: "#9B9B9B", fontFamily: "Montserrat, sans-serif" }}>{g.heading}</p>
+            <div className="flex flex-col">
               {g.items.map(item => (
-                <Link key={item.label} to={`/nosotros#${item.anchor}`} onClick={() => setOpen(false)}
-                  className="flex items-center gap-3 text-sm p-2 rounded-xl transition-colors hover:bg-[#272B7C]/[0.06] cursor-pointer"
-                  style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
-                  <img src={item.icon} alt="" className="w-11 h-11 object-contain shrink-0" />
-                  {item.label}
+                <Link key={item.label} to={`/nosotros#${item.anchor}`} onClick={close} className="group flex items-center gap-3 rounded-xl p-2 transition-colors hover:bg-[#F7F8FF]" style={{ textDecoration: "none" }}>
+                  <MenuIcon n={item.icon} size={34} />
+                  <span className="text-[13px] font-semibold whitespace-nowrap" style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif" }}>{item.label}</span>
                 </Link>
               ))}
             </div>
@@ -593,42 +370,34 @@ function NosotrosPanelContent({ setOpen }: { setOpen: (v: boolean) => void }) {
   );
 }
 
-// Contenido del menú "Blog" — mismo mecanismo que Servicios/Nosotros (el pill
-// se ensancha para contenerlo). Muestra los 3 artículos más recientes y, como
-// pidió el cliente, un acceso directo al canal de YouTube real de la empresa.
+// Menú "Blog": los 3 artículos más recientes y acceso al canal de YouTube.
 function BlogPanelContent({ setOpen }: { setOpen: (v: boolean) => void }) {
+  const close = () => setOpen(false);
   const recent = blogPosts.slice(0, 3);
   return (
-    <div className="px-4 pb-4 pt-1">
-      <div className="h-px mb-3" style={{ background: "rgba(39,43,124,0.10)" }} />
-      <div className="flex items-center justify-between mb-3 px-1">
-        <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: "rgba(39,43,124,0.55)", fontFamily: "Montserrat, sans-serif" }}>Artículos recientes</p>
-        <a href="#blog" onClick={() => setOpen(false)} className="text-xs font-semibold flex items-center gap-1 hover:opacity-70 transition-opacity" style={{ color: "#1800AD", fontFamily: "Montserrat, sans-serif" }}>
-          Ver todos →
+    <div className={menuShell} style={{ animation: "fadeInUp 0.25s ease both" }}>
+      <MenuFeature kicker="Blog y novedades" title="Conocimiento que protege la memoria de su empresa"
+        text="Guías sobre gestión documental, normativa, tecnología y sostenibilidad."
+        cta="Ver todos los artículos" href="#blog" onClick={close} />
+      <div className="py-1">
+        <div className="grid gap-0.5">
+          {recent.map(p => (
+            <Link key={p.slug} to={`/blog/${p.slug}`} onClick={close} className={`${menuItemCls} items-center`} style={{ textDecoration: "none" }}>
+              <img src={p.cover} alt="" className="shrink-0 rounded-lg object-cover" style={{ width: 64, height: 48 }} />
+              <span className="min-w-0">
+                <span className="block text-[10.5px] font-bold uppercase" style={{ letterSpacing: "0.1em", color: "#C8960A", fontFamily: "Montserrat, sans-serif" }}>{p.cat}</span>
+                <span className="block text-[13px] font-semibold truncate" style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif" }}>{p.title}</span>
+              </span>
+            </Link>
+          ))}
+        </div>
+        <a href="https://www.youtube.com/@Transarchivosltda" target="_blank" rel="noreferrer" onClick={close}
+          className={`${menuItemCls} items-center mt-1.5`} style={{ borderTop: "1px solid #ECEEF6", borderRadius: 0, textDecoration: "none" }}>
+          <MenuIcon n="youtube" size={34} />
+          <span className="flex-1 text-[13px] font-semibold" style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif" }}>Véanos en nuestro canal de YouTube</span>
+          <Bi n="box-arrow-up-right" size={12} color="#9B9B9B" />
         </a>
       </div>
-      <div className="grid grid-cols-3 gap-3">
-        {recent.map(p => (
-          <Link key={p.slug} to={`/blog/${p.slug}`} onClick={() => setOpen(false)}
-            className="rounded-xl overflow-hidden transition-colors hover:bg-[#272B7C]/[0.06]" style={{ textDecoration: "none" }}>
-            <img src={p.cover} alt="" className="w-full object-cover" style={{ height: 80 }} />
-            <div className="p-2.5">
-              <p className="text-xs font-semibold leading-snug" style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{p.title}</p>
-              <p className="text-[11px] mt-1" style={{ color: "rgba(39,43,124,0.5)" }}>{p.date}</p>
-            </div>
-          </Link>
-        ))}
-      </div>
-      {/* Canal de YouTube real — acceso directo pedido por el cliente. */}
-      <a href="https://www.youtube.com/@Transarchivosltda" target="_blank" rel="noreferrer" onClick={() => setOpen(false)}
-        className="flex items-center justify-between p-3 rounded-xl mt-3 transition-colors hover:bg-[#272B7C]/[0.08]"
-        style={{ background: "rgba(39,43,124,0.04)", border: "1px solid rgba(39,43,124,0.10)", textDecoration: "none" }}>
-        <span className="flex items-center gap-2.5 text-sm font-semibold" style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif" }}>
-          <Bi n="youtube" size={18} color="#1800AD" />
-          Véanos en nuestro canal de YouTube
-        </span>
-        <span className="text-sm font-bold shrink-0 ml-3" style={{ color: "#1800AD" }}>→</span>
-      </a>
     </div>
   );
 }
@@ -655,11 +424,13 @@ function Logo({ size = "md" }: { size?: "xs" | "sm" | "md" | "lg" }) {
 // Logo del navbar: siempre la versión navy — el navbar (pill flotante y barra
 // al hacer scroll) es blanco en ambos estados, así que ya no hace falta el
 // crossfade a la versión blanca que se usaba sobre la barra oscura anterior.
-function HeaderLogo({ scrolled: _scrolled, size = 64 }: { scrolled: boolean; size?: number }) {
+// Sobre el hero oscuro el logo va en blanco; al hacer scroll (header blanco)
+// vuelve a su color original.
+function HeaderLogo({ scrolled, size = 64 }: { scrolled: boolean; size?: number }) {
   return (
     <img src={logoImg} alt="Transarchivos Ltda." draggable={false}
       className="select-none"
-      style={{ height: size, width: "auto", objectFit: "contain" }} />
+      style={{ height: size, width: "auto", objectFit: "contain", filter: scrolled ? "none" : "brightness(0) invert(1)", transition: "filter 0.3s ease, height 0.3s ease" }} />
   );
 }
 
@@ -671,47 +442,47 @@ function HeaderLogo({ scrolled: _scrolled, size = 64 }: { scrolled: boolean; siz
 // mañana el sitio pasa a este dominio, los enlaces externos siguen sirviendo.
 const services = [
   {
-    icon: iconoClasificacion, title: "Levantamiento de Inventario", slug: "levantamiento-de-inventario",
+    icon: "list-columns-reverse", title: "Levantamiento de Inventario", slug: "levantamiento-de-inventario",
     tag: "Norma AGN · Ley 594", accent: "#272B7C",
     desc: "Identificación, registro y clasificación de los documentos de un archivo para conocer su volumen, estado y ubicación.",
   },
   {
-    icon: iconoCarpeta, title: "Programa de Gestión Documental", slug: "programa-de-gestion-documental",
+    icon: "folder2-open", title: "Programa de Gestión Documental", slug: "programa-de-gestion-documental",
     tag: "PGD · Ley 594", accent: "#1800AD",
     desc: "Sistema para manejar los documentos durante todo su ciclo de vida: creación, uso, conservación y disposición final.",
   },
   {
-    icon: iconoEscudo, title: "Custodia de Medios Magnéticos", slug: "custodia-de-medios-magneticos",
+    icon: "hdd-stack", title: "Custodia de Medios Magnéticos", slug: "custodia-de-medios-magneticos",
     tag: "Copia air gap · DRP", accent: "#272B7C",
     desc: "Almacenamiento especializado de cintas LTO/DAT/DLT, discos duros, CDs/DVDs y otros medios.",
   },
   {
-    icon: iconoCandado, title: "Custodia de Archivos", slug: "custodia-de-archivos",
+    icon: "archive", title: "Custodia de Archivos", slug: "custodia-de-archivos",
     tag: "CCTV · vigilancia 24 h", accent: "#1800AD",
     desc: "Resguardo y gestión de documentos físicos y digitales con seguridad, integridad y disponibilidad.",
   },
   {
-    icon: iconoDigitalizacion, title: "Digitalización de Documentos", slug: "digitalizacion-de-documentos",
+    icon: "upc-scan", title: "Digitalización de Documentos", slug: "digitalizacion-de-documentos",
     tag: "Valor legal · OCR", accent: "#272B7C",
     desc: "Conversión de documentos físicos a archivos digitales con captura, indexación y OCR opcional.",
   },
   {
-    icon: iconoDestruccion, title: "Destrucción de Documentos", slug: "destruccion-de-documentos",
+    icon: "file-earmark-x", title: "Destrucción de Documentos", slug: "destruccion-de-documentos",
     tag: "Certificado de destrucción", accent: "#C8960A",
     desc: "Destrucción segura y trazable, con acta de eliminación y certificado, alineada con la Ley 594 de 2000.",
   },
   {
-    icon: iconoMicrofilmacion, title: "Microfilmación de Archivos", slug: "microfilmacion-de-archivos",
+    icon: "film", title: "Microfilmación de Archivos", slug: "microfilmacion-de-archivos",
     tag: "Microfilme 16 / 35 mm", accent: "#272B7C",
     desc: "Conversión de documentos a microfilme para su preservación segura a largo plazo.",
   },
   {
-    icon: iconoInhouse, title: "Servicio Inhouse", slug: "servicio-inhouse",
+    icon: "person-badge", title: "Servicio Inhouse", slug: "servicio-inhouse",
     tag: "En sus instalaciones", accent: "#1800AD",
     desc: "Personal técnico de archivo en su sede, capacitado y supervisado por Transarchivos.",
   },
   {
-    icon: iconoRayo, title: "Servicio Inmediato", slug: "servicio-inmediato",
+    icon: "lightning-charge", title: "Servicio Inmediato", slug: "servicio-inmediato",
     tag: "Respuesta prioritaria", accent: "#C8960A",
     desc: "Consulta, recuperación y entrega urgente de documentos, con trazabilidad en cada etapa.",
   },
@@ -726,6 +497,7 @@ type SearchResult = { kind: "Servicio" | "Artículo" | "Sección"; title: string
 const searchIndex: SearchResult[] = [
   { kind: "Sección", title: "Diagnóstico documental", desc: "Empiece por saber qué está pasando con su archivo, antes de mover un solo papel", href: "#cotizador" },
   { kind: "Sección", title: "Cómo trabajamos", desc: "Nuestro modelo de 4 pasos: diagnóstico, solución, protección y expansión", href: "#modelo" },
+  { kind: "Sección", title: "Preguntas frecuentes", desc: "Cotización, costos, cobertura, normativa, custodia y más", href: "#faq" },
   { kind: "Sección", title: "Blog", desc: "Artículos y guías sobre gestión documental, tecnología y sostenibilidad", href: "#blog" },
   { kind: "Sección", title: "Solicitar cotización", desc: "Elija su servicio y responda unas preguntas para armar su solicitud", href: "#cotizador" },
   ...services.map(s => ({ kind: "Servicio" as const, title: s.title, desc: s.desc, to: `/servicios/${s.slug}` })),
@@ -785,8 +557,7 @@ function ServiceCard({ service }: { service: typeof services[0] }) {
             transition: "background 0.25s",
           }}
         >
-          <img src={service.icon} alt="" className="select-none"
-            style={{ width: 36, height: 36, objectFit: "contain", filter: hovered ? "brightness(0) invert(1)" : "none", transition: "filter 0.2s" }} />
+          <Bi n={service.icon} size={26} color={hovered ? "#fff" : service.accent} style={{ transition: "color 0.2s" }} />
         </div>
         {/* Tag pill */}
         <span
@@ -957,9 +728,11 @@ function QuoteSimulator() {
   const svc = services.find(s => s.slug === selected);
   const title = svc ? svc.title : "Diagnóstico documental";
   const accent = svc ? svc.accent : "#C8960A";
-  const icon = svc ? svc.icon : iconoLupa;
+  const icon = svc ? svc.icon : "search";
 
-  const pick = (id: string) => { setSelected(id); setStep(0); setAnswers({}); };
+  // Pasos: 0 Servicio · 1 Detalles · 2 Contacto · 3 Resumen. Cambiar de
+  // servicio borra las respuestas (cada servicio tiene sus propias preguntas).
+  const pick = (id: string, goTo = step) => { if (id !== selected) setAnswers({}); setSelected(id); setStep(goTo); };
   const setA = (k: string, v: string) => setAnswers(a => ({ ...a, [k]: v }));
   const setC = (k: string, v: string) => setContact(c => ({ ...c, [k]: v }));
 
@@ -1001,261 +774,280 @@ function QuoteSimulator() {
     return `mailto:info@transarchivos.com?subject=${encodeURIComponent("Solicitud de cotización — " + title)}&body=${encodeURIComponent(body)}`;
   };
 
-  const inputStyle = { background: "#fff", border: "1.5px solid #D5D9F5", color: "#272B7C" } as const;
-  const labelCls = "block text-[11px] font-semibold mb-1.5";
+  const inputCls = "w-full px-3.5 py-3 rounded-xl text-sm outline-none transition-colors focus:border-[#272B7C] focus:ring-4 focus:ring-[#272B7C]/10";
+  const inputStyle = { background: "#fff", border: "1.5px solid #DDE0F2", color: "#272B7C" } as const;
+  const labelCls = "block text-xs font-semibold mb-1.5";
   const labelStyle = { color: "#272B7C", fontFamily: "Montserrat, sans-serif" } as const;
 
+  const units = [
+    { slug: "diagnostico", icon: "search", title: "Diagnóstico documental", desc: "¿No sabe qué servicio necesita? Empiece por entender qué está pasando con su archivo.", accent: "#C8960A" },
+    ...services,
+  ];
+  const STEPS = ["Servicio", "Detalles", "Contacto", "Resumen"];
+  const primaryBtn = "inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all hover:opacity-90 cursor-pointer";
+  const secondaryBtn = "inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold cursor-pointer";
+  const answeredRows = summary.filter(([, v]) => v !== "—" && v !== "Ninguno");
+
   return (
-    <section id="cotizador" className="relative max-w-6xl mx-auto px-6 py-14">
-      <img src={graficoCotizador2Img} alt="" aria-hidden="true"
-        className="hidden lg:block absolute pointer-events-none select-none"
-        style={{ width: 300, height: "auto", maxWidth: "none", bottom: 10, left: -160, opacity: 0.9, zIndex: 0 }} />
+    <section id="cotizador" className="relative max-w-6xl mx-auto px-6 py-16" style={{ scrollMarginTop: 80 }}>
+      <p className="text-xs font-bold uppercase tracking-widest text-center mb-3" style={{ color: "#9B9B9B", fontFamily: "Montserrat, sans-serif" }}>
+        Solicite su cotización
+      </p>
+      <h2 className="text-3xl font-bold text-center mb-4" style={{ fontFamily: "Poppins, sans-serif", color: "#272B7C" }}>
+        Cuéntenos qué necesita y arme su solicitud
+      </h2>
+      <p className="text-sm text-center max-w-xl mx-auto mb-10" style={{ color: "#9B9B9B" }}>
+        Cuatro pasos cortos. A la derecha verá cómo se arma su solicitud antes de enviarla a nuestro equipo comercial.
+      </p>
 
-      <div className="relative" style={{ zIndex: 1 }}>
-        <p className="text-xs font-bold uppercase tracking-widest text-center mb-3" style={{ color: "#9B9B9B", fontFamily: "Montserrat, sans-serif" }}>
-          Solicite su cotización
-        </p>
-        <h2 className="text-3xl font-bold text-center mb-4" style={{ fontFamily: "Poppins, sans-serif", color: "#272B7C" }}>
-          Cuéntenos qué necesita y arme su solicitud
-        </h2>
-        <p className="text-sm text-center max-w-xl mx-auto mb-8" style={{ color: "#9B9B9B" }}>
-          Elija el servicio y responda unas preguntas. A medida que avanza, vea el progreso de su solicitud antes de enviarla a nuestro equipo comercial.
-        </p>
-
-        <div className="grid md:grid-cols-[minmax(0,1fr)_380px] gap-8 items-center" style={{ marginBottom: 24 }}>
-          {/* Selector de servicio — las 10 unidades de negocio (diagnóstico +
-              9 servicios) comparten el mismo formato de ficha compacta
-              (ícono + título), para que ninguna se vea "secundaria" frente
-              a las demás. 2 columnas fijas (en vez de 3) para que 10 fichas
-              formen exactamente 5 filas completas, sin una fila final con
-              una sola ficha huérfana y dos huecos vacíos al lado. La
-              descripción de la unidad elegida va debajo, en una tarjeta
-              propia (no como texto suelto) que cambia según la selección. */}
-          <div>
-            <div className="grid grid-cols-2 gap-2.5 mb-2.5">
-              {[
-                { slug: "diagnostico", icon: iconoLupa, title: "Diagnóstico documental", desc: "¿No sabe qué servicio necesita? Empiece por entender qué está pasando con su archivo.", accent: "#C8960A" },
-                ...services,
-              ].map(s => {
-                const active = s.slug === selected;
-                return (
-                  <button key={s.slug} onClick={() => pick(s.slug)}
-                    className="flex items-center gap-2.5 text-left p-2.5 rounded-2xl transition-all cursor-pointer"
-                    style={{ border: `1.5px solid ${active ? s.accent : "#E9E9E7"}`, background: active ? `${s.accent}0D` : "#fff" }}>
-                    <div style={{ width: 34, height: 34, borderRadius: 10, background: active ? s.accent : `${s.accent}14`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "background 0.2s" }}>
-                      <img src={s.icon} alt="" style={{ width: 19, height: 19, objectFit: "contain", filter: active ? "brightness(0) invert(1)" : "none", transition: "filter 0.2s" }} />
-                    </div>
-                    <span className="text-xs font-semibold leading-tight" style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif" }}>{s.title}</span>
+      <div className="rounded-3xl overflow-hidden" style={{ background: "#fff", border: "1.5px solid #E4E6F7", boxShadow: "0 30px 60px -34px rgba(39,43,124,0.3)" }}>
+        {/* Pasos */}
+        <div className="px-5 md:px-8 py-5" style={{ borderBottom: "1px solid #ECEEF6", background: "#FAFBFF" }}>
+          <ol className="grid grid-cols-4 gap-2">
+            {STEPS.map((n, i) => {
+              const done = i < step, on = i === step;
+              return (
+                <li key={n}>
+                  <button type="button" disabled={i > step} onClick={() => setStep(i)}
+                    className="w-full flex flex-col sm:flex-row items-center gap-2 text-left disabled:cursor-default">
+                    <span className="flex items-center justify-center rounded-full font-bold shrink-0" style={{
+                      width: 30, height: 30, fontSize: 12, fontFamily: "Poppins, sans-serif",
+                      background: done || on ? "#272B7C" : "#fff", color: done || on ? "#fff" : "#B5B9D6",
+                      border: `2px solid ${done || on ? "#272B7C" : "#E4E6F7"}`,
+                    }}>
+                      {done ? <Bi n="check-lg" size={13} color="#fff" /> : i + 1}
+                    </span>
+                    <span className="text-[11px] sm:text-xs font-semibold" style={{ color: on ? "#272B7C" : done ? "#6B6B6B" : "#B5B9D6", fontFamily: "Montserrat, sans-serif" }}>{n}</span>
+                    {i < STEPS.length - 1 && <span className="hidden sm:block flex-1 h-0.5 rounded-full" style={{ background: done ? "#272B7C" : "#E4E6F7" }} />}
                   </button>
-                );
-              })}
-            </div>
-            <div className="flex items-start gap-2.5 rounded-xl p-3" style={{ background: "#F7F8FF", border: "1px solid #E4E6F7" }}>
-              <Bi n="info-circle-fill" size={14} color="#272B7C" style={{ marginTop: 1, flexShrink: 0 }} />
-              <p className="text-xs leading-snug" style={{ color: "#6B6B6B" }}>
-                {selected === "diagnostico" ? "¿No sabe qué servicio necesita? Empiece por entender qué está pasando con su archivo." : svc?.desc}
-              </p>
-            </div>
-          </div>
+                </li>
+              );
+            })}
+          </ol>
+        </div>
 
-          {/* Asistente de solicitud */}
-          <div className="relative">
-            <img src={graficoCotizadorImg} alt="" aria-hidden="true"
-              className="hidden lg:block absolute pointer-events-none select-none"
-              style={{ width: 410, height: "auto", top: -65, right: -170, zIndex: 10 }} />
-            <div className="relative rounded-3xl flex flex-col" style={{ background: "#fff", border: "1.5px solid #E4E6F7", boxShadow: "0 30px 60px -34px rgba(39,43,124,0.3)", height: 530 }}>
-              <div className="p-5 pb-4 rounded-t-3xl" style={{ borderBottom: "1px solid #E9E9E7", background: "linear-gradient(180deg, #F7F8FF 0%, #fff 100%)" }}>
-                <div className="flex items-center gap-3">
-                  <div style={{ width: 50, height: 50, borderRadius: 14, background: accent, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, boxShadow: `0 8px 18px -6px ${accent}80` }}>
-                    <img src={icon} alt="" style={{ width: 28, height: 28, objectFit: "contain", filter: "brightness(0) invert(1)" }} />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="font-bold text-sm" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif" }}>{title}</p>
-                    {cfg.level && <p className="text-[11px]" style={{ color: "#9B9B9B" }}>{cfg.level}</p>}
-                  </div>
+        <div className="grid lg:grid-cols-[minmax(0,1fr)_320px]">
+          {/* Contenido del paso */}
+          <div className="p-5 md:p-8" key={step} style={{ animation: "fadeInUp 0.3s ease both" }}>
+            {step === 0 && (
+              <>
+                <p className="text-lg font-bold mb-1" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif" }}>¿Qué servicio necesita?</p>
+                <p className="text-sm mb-5" style={{ color: "#8A8A8A" }}>Si no está seguro, elija el diagnóstico documental.</p>
+                <div className="grid sm:grid-cols-2 gap-3">
+                  {units.map(u => {
+                    const on = u.slug === selected;
+                    return (
+                      <button key={u.slug} type="button" onClick={() => pick(u.slug, 0)}
+                        className="relative flex items-start gap-3 text-left p-3.5 rounded-2xl transition-all cursor-pointer hover:-translate-y-0.5"
+                        style={{ border: `1.5px solid ${on ? u.accent : "#ECEEF6"}`, background: on ? `${u.accent}0D` : "#fff", boxShadow: on ? `0 10px 24px -16px ${u.accent}` : "none" }}>
+                        <span className="flex items-center justify-center rounded-xl shrink-0" style={{ width: 38, height: 38, background: on ? u.accent : `${u.accent}14`, transition: "background 0.2s" }}>
+                          <Bi n={u.icon} size={17} color={on ? "#fff" : u.accent} />
+                        </span>
+                        <span className="min-w-0 pr-5">
+                          <span className="block text-sm font-semibold leading-tight mb-0.5" style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif" }}>{u.title}</span>
+                          <span className="block text-[11px] leading-snug line-clamp-2" style={{ color: "#8A8A8A" }}>{u.desc}</span>
+                        </span>
+                        {on && <Bi n="check-circle-fill" size={16} color={u.accent} className="absolute top-3 right-3" />}
+                      </button>
+                    );
+                  })}
                 </div>
-                <div className="relative grid grid-cols-3 gap-2 mt-5">
-                  <div className="absolute" style={{ top: 13, left: "16.5%", right: "16.5%", height: 2, background: "#E4E6F7" }} />
-                  {["Detalles", "Contacto", "Resumen"].map((n, i) => (
-                    <div key={n} className="relative flex flex-col items-center text-center gap-1">
-                      <span className="flex items-center justify-center rounded-full font-bold relative" style={{
-                        width: 26, height: 26, fontSize: 11,
-                        background: i < step ? "#272B7C" : i === step ? "#fff" : "#fff",
-                        color: i < step ? "#fff" : i === step ? "#272B7C" : "#C3C7E8",
-                        border: `2px solid ${i <= step ? "#272B7C" : "#E4E6F7"}`,
-                        fontFamily: "Poppins, sans-serif",
-                      }}>
-                        {i < step ? <Bi n="check-lg" size={12} color="#fff" /> : i + 1}
-                      </span>
-                      <span className="text-[10px] font-semibold leading-tight" style={{ color: i === step ? "#272B7C" : "#9B9B9B", fontFamily: "Montserrat, sans-serif" }}>{n}</span>
+                <div className="flex justify-end mt-6">
+                  <button type="button" onClick={() => setStep(1)} className={primaryBtn} style={{ background: "#272B7C", color: "#fff", fontFamily: "Montserrat, sans-serif" }}>
+                    Continuar <Bi n="arrow-right" size={15} color="#fff" />
+                  </button>
+                </div>
+              </>
+            )}
+
+            {step === 1 && (
+              <form onSubmit={e => { e.preventDefault(); setStep(2); }}>
+                <p className="text-lg font-bold mb-1" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif" }}>Cuéntenos sobre su archivo</p>
+                <p className="text-sm mb-5" style={{ color: "#8A8A8A" }}>Si no conoce algún dato, elija "No lo sé": un asesor le ayudará a completarlo.</p>
+                <div className="grid sm:grid-cols-2 gap-x-4 gap-y-4">
+                  <div className="sm:col-span-2">
+                    <label className={labelCls} style={labelStyle}>{cfg.volumeLabel}</label>
+                    <input value={answers.volume ?? ""} onChange={e => setA("volume", e.target.value)} placeholder={cfg.volumePlaceholder} className={inputCls} style={inputStyle} />
+                  </div>
+                  {cfg.fields.map((f, i) => (
+                    <div key={f.key} className={i === cfg.fields.length - 1 && cfg.fields.length % 2 === 1 ? "sm:col-span-2" : ""}>
+                      <label className={labelCls} style={labelStyle}>{f.label}</label>
+                      <select value={answers[f.key] ?? ""} onChange={e => setA(f.key, e.target.value)} className={inputCls} style={inputStyle}>
+                        <option value="">Seleccione…</option>
+                        {f.options.map(o => <option key={o} value={o}>{o}</option>)}
+                      </select>
                     </div>
                   ))}
-                </div>
-              </div>
-
-              {/* Avance de la solicitud — visible en los 3 pasos, no solo al
-                  final. No es una simulación ni calcula un precio (el
-                  documento de lógica de cotización aclara que todavía no
-                  existen tarifas ni fórmulas); solo muestra qué tan completos
-                  están los datos que se enviarán al equipo comercial. */}
-              <div className="mx-5 mt-4 rounded-xl p-4 space-y-3" style={{ background: "#F7F8FF", borderLeft: "3px solid #272B7C", boxShadow: "0 2px 10px -4px rgba(39,43,124,0.15)" }}>
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5" style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif" }}>
-                    <Bi n="list-check" size={12} color="#272B7C" />Avance de la solicitud
-                  </span>
-                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-full" style={{ color: "#fff", background: completPct === 100 ? "#16a34a" : "#272B7C" }}>{completPct}%</span>
-                </div>
-                <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "#E4E6F7" }}>
-                  <div className="h-full rounded-full" style={{ width: `${completPct}%`, background: completPct === 100 ? "#16a34a" : "#C8960A", transition: "width 0.3s ease" }} />
-                </div>
-              </div>
-
-              {step === 0 && (
-                <form className="flex flex-col flex-1 min-h-0" onSubmit={e => { e.preventDefault(); setStep(1); }}>
-                  {/* 2 columnas en vez de una sola fila por campo: con
-                      servicios de hasta 5 campos + ubicación + urgencia, una
-                      columna única obligaba a mucho scroll dentro de la
-                      tarjeta. Cada grupo arma su propia grilla de a pares —
-                      así, si un servicio tiene un número impar de campos, el
-                      que sobra ocupa la fila completa en vez de dejar una
-                      celda vacía a su lado (ubicación/urgencia siempre van
-                      emparejadas entre sí, nunca con un campo suelto). La
-                      etiqueta tiene una altura mínima de 2 líneas para que,
-                      aunque un par tenga etiquetas de distinto largo, los
-                      campos arranquen a la misma altura. */}
-                  <div className="flex-1 overflow-y-auto p-5 space-y-4">
-                    <div>
-                      <label className={labelCls} style={labelStyle}>{cfg.volumeLabel}</label>
-                      <input value={answers.volume ?? ""} onChange={e => setA("volume", e.target.value)} placeholder={cfg.volumePlaceholder}
-                        className="w-full px-3 py-2.5 rounded-xl text-sm outline-none" style={inputStyle} />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-x-3 gap-y-4">
-                      {cfg.fields.map((f, i) => {
-                        const lastOdd = i === cfg.fields.length - 1 && cfg.fields.length % 2 === 1;
+                  <div>
+                    <label className={labelCls} style={labelStyle}>Ubicación (ciudad y sede)</label>
+                    <input value={answers.ubicacion ?? ""} onChange={e => setA("ubicacion", e.target.value)} placeholder="Ej.: Bogotá, sede principal" className={inputCls} style={inputStyle} />
+                  </div>
+                  <div>
+                    <label className={labelCls} style={labelStyle}>Nivel de urgencia</label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {QUOTE_URGENCY.map(o => {
+                        const on = answers.urgencia === o;
                         return (
-                          <div key={f.key} className={lastOdd ? "col-span-2" : ""}>
-                            <label className={labelCls} style={{ ...labelStyle, minHeight: "2.2em", display: "flex", alignItems: "flex-end" }}>{f.label}</label>
-                            <select value={answers[f.key] ?? ""} onChange={e => setA(f.key, e.target.value)}
-                              className="w-full px-3 py-2.5 rounded-xl text-sm outline-none" style={inputStyle}>
-                              <option value="">Seleccione…</option>
-                              {f.options.map(o => <option key={o} value={o}>{o}</option>)}
-                            </select>
-                          </div>
+                          <button key={o} type="button" onClick={() => setA("urgencia", o)}
+                            className="px-2 py-2.5 rounded-xl text-[11px] font-semibold leading-tight transition-colors"
+                            style={{ border: `1.5px solid ${on ? "#272B7C" : "#DDE0F2"}`, background: on ? "#272B7C" : "#fff", color: on ? "#fff" : "#272B7C", fontFamily: "Montserrat, sans-serif" }}>{o}</button>
                         );
                       })}
                     </div>
-
-                    <div className="grid grid-cols-2 gap-x-3 gap-y-4">
-                      <div>
-                        <label className={labelCls} style={{ ...labelStyle, minHeight: "2.2em", display: "flex", alignItems: "flex-end" }}>Ubicación (ciudad y sede)</label>
-                        <input value={answers.ubicacion ?? ""} onChange={e => setA("ubicacion", e.target.value)} placeholder="Ej.: Bogotá, sede principal"
-                          className="w-full px-3 py-2.5 rounded-xl text-sm outline-none" style={inputStyle} />
-                      </div>
-                      <div>
-                        <label className={labelCls} style={{ ...labelStyle, minHeight: "2.2em", display: "flex", alignItems: "flex-end" }}>Nivel de urgencia</label>
-                        <select value={answers.urgencia ?? ""} onChange={e => setA("urgencia", e.target.value)}
-                          className="w-full px-3 py-2.5 rounded-xl text-sm outline-none" style={inputStyle}>
-                          <option value="">Seleccione…</option>
-                          {QUOTE_URGENCY.map(o => <option key={o} value={o}>{o}</option>)}
-                        </select>
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className={labelCls} style={labelStyle}>Requerimientos especiales (opcional)</label>
-                      <textarea value={answers.especiales ?? ""} onChange={e => setA("especiales", e.target.value)} rows={2} placeholder="Restricciones, características del material, otra información…"
-                        className="w-full px-3 py-2.5 rounded-xl text-sm outline-none resize-none" style={inputStyle} />
-                    </div>
                   </div>
-                  <div className="p-5 pt-3" style={{ borderTop: "1px solid #E9E9E7" }}>
-                    <button type="submit" className="w-full py-3 rounded-xl text-sm font-semibold cursor-pointer transition-all hover:opacity-90"
-                      style={{ background: "#272B7C", color: "#fff", fontFamily: "Montserrat, sans-serif" }}>Continuar <Bi n="arrow-right" size={15} color="#fff" style={{ verticalAlign: "-2px", marginLeft: 4 }} /></button>
-                  </div>
-                </form>
-              )}
-
-              {step === 1 && (
-                <form className="flex flex-col flex-1 min-h-0" onSubmit={e => { e.preventDefault(); setStep(2); }}>
-                  <div className="flex-1 overflow-y-auto p-5 space-y-4">
-                    <div>
-                      <label className={labelCls} style={labelStyle}>Empresa</label>
-                      <input required value={contact.empresa ?? ""} onChange={e => setC("empresa", e.target.value)} className="w-full px-3 py-2.5 rounded-xl text-sm outline-none" style={inputStyle} />
-                    </div>
-                    <div>
-                      <label className={labelCls} style={labelStyle}>Sector económico</label>
-                      <select required value={contact.sector ?? ""} onChange={e => setC("sector", e.target.value)} className="w-full px-3 py-2.5 rounded-xl text-sm outline-none" style={inputStyle}>
-                        <option value="">Seleccione…</option>
-                        {QUOTE_SECTORS.map(o => <option key={o} value={o}>{o}</option>)}
-                      </select>
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <label className={labelCls} style={labelStyle}>Su nombre</label>
-                        <input required value={contact.nombre ?? ""} onChange={e => setC("nombre", e.target.value)} className="w-full px-3 py-2.5 rounded-xl text-sm outline-none" style={inputStyle} />
-                      </div>
-                      <div>
-                        <label className={labelCls} style={labelStyle}>Cargo</label>
-                        <input required value={contact.cargo ?? ""} onChange={e => setC("cargo", e.target.value)} className="w-full px-3 py-2.5 rounded-xl text-sm outline-none" style={inputStyle} />
-                      </div>
-                    </div>
-                    <div>
-                      <label className={labelCls} style={labelStyle}>Correo electrónico</label>
-                      <input required type="email" value={contact.email ?? ""} onChange={e => setC("email", e.target.value)} className="w-full px-3 py-2.5 rounded-xl text-sm outline-none" style={inputStyle} />
-                    </div>
-                    <div>
-                      <label className={labelCls} style={labelStyle}>Teléfono</label>
-                      <input required value={contact.telefono ?? ""} onChange={e => setC("telefono", e.target.value)} className="w-full px-3 py-2.5 rounded-xl text-sm outline-none" style={inputStyle} />
-                    </div>
-                  </div>
-                  <div className="p-5 pt-3 flex gap-3" style={{ borderTop: "1px solid #E9E9E7" }}>
-                    <button type="button" onClick={() => setStep(0)} className="px-5 py-3 rounded-xl text-sm font-semibold cursor-pointer"
-                      style={{ background: "#fff", color: "#272B7C", border: "1.5px solid #D5D9F5", fontFamily: "Montserrat, sans-serif" }}>Atrás</button>
-                    <button type="submit" className="flex-1 py-3 rounded-xl text-sm font-semibold cursor-pointer transition-all hover:opacity-90"
-                      style={{ background: "#272B7C", color: "#fff", fontFamily: "Montserrat, sans-serif" }}>Ver resumen <Bi n="arrow-right" size={15} color="#fff" style={{ verticalAlign: "-2px", marginLeft: 4 }} /></button>
-                  </div>
-                </form>
-              )}
-
-              {step === 2 && (
-                <div className="flex flex-col flex-1 min-h-0">
-                  <div className="flex-1 overflow-y-auto p-5 space-y-4">
-                    {/* La completitud ya se muestra arriba en el panel
-                        "Avance de la solicitud", igual en los 3 pasos — aquí
-                        solo el detalle de lo capturado. */}
-                    <div className="rounded-xl p-4 space-y-1.5" style={{ background: "#fff", border: "1px solid #E9E9E7" }}>
-                      <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: "#9B9B9B", fontFamily: "Montserrat, sans-serif" }}>Su solicitud</p>
-                      {[...summary, ...contactRows].map(([k, v]) => (
-                        <div key={k} className="flex justify-between gap-3 text-xs">
-                          <span style={{ color: "#9B9B9B" }}>{k}</span>
-                          <span className="text-right font-semibold" style={{ color: "#272B7C" }}>{v}</span>
-                        </div>
-                      ))}
-                    </div>
-                    {cfg.next.length > 0 && (
-                      <div>
-                        <p className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: "#9B9B9B", fontFamily: "Montserrat, sans-serif" }}>También podría necesitar</p>
-                        <div className="flex flex-wrap gap-2">
-                          {cfg.next.map(n => {
-                            const o = services.find(x => x.slug === n);
-                            return o ? (
-                              <button key={n} onClick={() => pick(n)} className="text-[11px] font-semibold px-3 py-1.5 rounded-full cursor-pointer"
-                                style={{ background: "#fff", color: "#272B7C", border: "1px solid #D5D9F5", fontFamily: "Montserrat, sans-serif" }}>{o.title}</button>
-                            ) : null;
-                          })}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-5 pt-3 space-y-2" style={{ borderTop: "1px solid #E9E9E7" }}>
-                    <a href={mailto()} className="flex items-center justify-center w-full py-3 rounded-xl text-sm font-semibold transition-all hover:opacity-90"
-                      style={{ background: "#272B7C", color: "#fff", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}><Bi n="envelope-arrow-up-fill" size={16} color="#fff" className="mr-2" />Enviar solicitud por correo</a>
-                    <button onClick={() => setStep(1)} className="w-full text-xs font-semibold cursor-pointer" style={{ color: "#1800AD", fontFamily: "Montserrat, sans-serif" }}><Bi n="arrow-left" size={12} color="#1800AD" className="mr-1.5" />Modificar datos</button>
+                  <div className="sm:col-span-2">
+                    <label className={labelCls} style={labelStyle}>Requerimientos especiales <span style={{ color: "#9B9B9B", fontWeight: 400 }}>(opcional)</span></label>
+                    <textarea value={answers.especiales ?? ""} onChange={e => setA("especiales", e.target.value)} rows={2} placeholder="Restricciones, características del material, otra información…" className={`${inputCls} resize-none`} style={inputStyle} />
                   </div>
                 </div>
+                <div className="flex justify-between gap-3 mt-6">
+                  <button type="button" onClick={() => setStep(0)} className={secondaryBtn} style={{ background: "#fff", color: "#272B7C", border: "1.5px solid #DDE0F2", fontFamily: "Montserrat, sans-serif" }}>
+                    <Bi n="arrow-left" size={14} color="#272B7C" /> Atrás
+                  </button>
+                  <button type="submit" className={primaryBtn} style={{ background: "#272B7C", color: "#fff", fontFamily: "Montserrat, sans-serif" }}>
+                    Continuar <Bi n="arrow-right" size={15} color="#fff" />
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {step === 2 && (
+              <form onSubmit={e => { e.preventDefault(); setStep(3); }}>
+                <p className="text-lg font-bold mb-1" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif" }}>¿A quién contactamos?</p>
+                <p className="text-sm mb-5" style={{ color: "#8A8A8A" }}>Usaremos estos datos solo para responder su solicitud.</p>
+                <div className="grid sm:grid-cols-2 gap-x-4 gap-y-4">
+                  <div>
+                    <label className={labelCls} style={labelStyle}>Empresa</label>
+                    <input required value={contact.empresa ?? ""} onChange={e => setC("empresa", e.target.value)} className={inputCls} style={inputStyle} />
+                  </div>
+                  <div>
+                    <label className={labelCls} style={labelStyle}>Sector económico</label>
+                    <select required value={contact.sector ?? ""} onChange={e => setC("sector", e.target.value)} className={inputCls} style={inputStyle}>
+                      <option value="">Seleccione…</option>
+                      {QUOTE_SECTORS.map(o => <option key={o} value={o}>{o}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className={labelCls} style={labelStyle}>Su nombre</label>
+                    <input required value={contact.nombre ?? ""} onChange={e => setC("nombre", e.target.value)} className={inputCls} style={inputStyle} />
+                  </div>
+                  <div>
+                    <label className={labelCls} style={labelStyle}>Cargo</label>
+                    <input required value={contact.cargo ?? ""} onChange={e => setC("cargo", e.target.value)} className={inputCls} style={inputStyle} />
+                  </div>
+                  <div>
+                    <label className={labelCls} style={labelStyle}>Correo electrónico</label>
+                    <input required type="email" value={contact.email ?? ""} onChange={e => setC("email", e.target.value)} className={inputCls} style={inputStyle} />
+                  </div>
+                  <div>
+                    <label className={labelCls} style={labelStyle}>Teléfono</label>
+                    <input required type="tel" value={contact.telefono ?? ""} onChange={e => setC("telefono", e.target.value)} className={inputCls} style={inputStyle} />
+                  </div>
+                </div>
+                <div className="flex justify-between gap-3 mt-6">
+                  <button type="button" onClick={() => setStep(1)} className={secondaryBtn} style={{ background: "#fff", color: "#272B7C", border: "1.5px solid #DDE0F2", fontFamily: "Montserrat, sans-serif" }}>
+                    <Bi n="arrow-left" size={14} color="#272B7C" /> Atrás
+                  </button>
+                  <button type="submit" className={primaryBtn} style={{ background: "#272B7C", color: "#fff", fontFamily: "Montserrat, sans-serif" }}>
+                    Ver resumen <Bi n="arrow-right" size={15} color="#fff" />
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {step === 3 && (
+              <div>
+                <p className="text-lg font-bold mb-1" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif" }}>Revise y envíe su solicitud</p>
+                <p className="text-sm mb-5" style={{ color: "#8A8A8A" }}>Se abrirá su correo con la solicitud lista para enviar a info@transarchivos.com.</p>
+                <div className="flex items-start gap-3 rounded-2xl p-4 mb-5" style={{ background: `${nextStep.c}10`, border: `1px solid ${nextStep.c}33` }}>
+                  <Bi n={nextStep.ic} size={20} color={nextStep.c} style={{ marginTop: 2, flexShrink: 0 }} />
+                  <div>
+                    <p className="text-sm font-bold" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif" }}>Siguiente paso: {nextStep.t}</p>
+                    <p className="text-xs mt-0.5" style={{ color: "#6B6B6B", lineHeight: 1.55 }}>{nextStep.d}</p>
+                  </div>
+                </div>
+                <div className="rounded-2xl p-4 mb-5 grid sm:grid-cols-2 gap-x-6 gap-y-2" style={{ border: "1px solid #ECEEF6" }}>
+                  {contactRows.map(([k, v]) => (
+                    <div key={k} className="text-xs">
+                      <span className="block" style={{ color: "#9B9B9B" }}>{k}</span>
+                      <span className="block font-semibold" style={{ color: "#272B7C" }}>{v}</span>
+                    </div>
+                  ))}
+                </div>
+                {cfg.next.length > 0 && (
+                  <div className="mb-6">
+                    <p className="text-[11px] font-bold uppercase tracking-wider mb-2" style={{ color: "#9B9B9B", fontFamily: "Montserrat, sans-serif" }}>También podría necesitar</p>
+                    <div className="flex flex-wrap gap-2">
+                      {cfg.next.map(n => {
+                        const o = services.find(x => x.slug === n);
+                        return o ? (
+                          <button key={n} type="button" onClick={() => pick(n, 1)} className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full cursor-pointer"
+                            style={{ background: "#fff", color: "#272B7C", border: "1px solid #DDE0F2", fontFamily: "Montserrat, sans-serif" }}>
+                            <Bi n={o.icon} size={12} color={o.accent} />{o.title}
+                          </button>
+                        ) : null;
+                      })}
+                    </div>
+                  </div>
+                )}
+                <div className="flex flex-col-reverse sm:flex-row justify-between gap-3">
+                  <button type="button" onClick={() => setStep(2)} className={secondaryBtn} style={{ background: "#fff", color: "#272B7C", border: "1.5px solid #DDE0F2", fontFamily: "Montserrat, sans-serif" }}>
+                    <Bi n="arrow-left" size={14} color="#272B7C" /> Modificar datos
+                  </button>
+                  <a href={mailto()} className={primaryBtn} style={{ background: "#272B7C", color: "#fff", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
+                    <Bi n="envelope-arrow-up" size={16} color="#fff" /> Enviar solicitud por correo
+                  </a>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Resumen en vivo */}
+          <aside className="p-5 md:p-7 lg:border-l" style={{ borderColor: "#ECEEF6", background: "#FAFBFF" }}>
+            <p className="text-[11px] font-bold uppercase tracking-wider mb-3" style={{ color: "#9B9B9B", fontFamily: "Montserrat, sans-serif" }}>Su solicitud</p>
+            <div className="flex items-center gap-3 rounded-2xl p-3 mb-4" style={{ background: "#fff", border: "1px solid #ECEEF6" }}>
+              <span className="flex items-center justify-center rounded-xl shrink-0" style={{ width: 42, height: 42, background: accent }}>
+                <Bi n={icon} size={19} color="#fff" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-bold leading-tight" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif" }}>{title}</p>
+                {cfg.level && <p className="text-[11px]" style={{ color: "#9B9B9B" }}>{cfg.level}</p>}
+              </div>
+              {step > 0 && (
+                <button type="button" onClick={() => setStep(0)} className="text-[11px] font-semibold shrink-0" style={{ color: "#1800AD", fontFamily: "Montserrat, sans-serif" }}>Cambiar</button>
               )}
             </div>
-          </div>
+
+            <div className="mb-4">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-xs font-semibold" style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif" }}>Información completa</span>
+                <span className="text-xs font-bold" style={{ color: completPct === 100 ? "#16a34a" : "#272B7C" }}>{completPct}%</span>
+              </div>
+              <div className="h-2 rounded-full overflow-hidden" style={{ background: "#E4E6F7" }}>
+                <div className="h-full rounded-full" style={{ width: `${completPct}%`, background: completPct === 100 ? "#16a34a" : "#C8960A", transition: "width 0.3s ease" }} />
+              </div>
+            </div>
+
+            {answeredRows.length > 0 ? (
+              <ul className="space-y-2">
+                {answeredRows.map(([k, v]) => (
+                  <li key={k} className="flex items-start gap-2 text-xs">
+                    <Bi n="check-circle-fill" size={12} color="#16a34a" style={{ marginTop: 2, flexShrink: 0 }} />
+                    <span><span style={{ color: "#9B9B9B" }}>{k}: </span><span className="font-semibold" style={{ color: "#272B7C" }}>{v}</span></span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-xs leading-relaxed" style={{ color: "#9B9B9B" }}>
+                {selected === "diagnostico" ? units[0].desc : svc?.desc}
+              </p>
+            )}
+
+            <div className="flex items-start gap-2 mt-5 pt-4" style={{ borderTop: "1px solid #ECEEF6" }}>
+              <Bi n="shield-lock" size={13} color="#9B9B9B" style={{ marginTop: 2, flexShrink: 0 }} />
+              <p className="text-[11px] leading-snug" style={{ color: "#9B9B9B" }}>Sin compromiso. Un asesor revisa su solicitud y le responde con el alcance y las condiciones.</p>
+            </div>
+          </aside>
         </div>
       </div>
     </section>
@@ -1285,23 +1077,12 @@ function BlogSection() {
     <section id="blog" className="relative overflow-hidden" style={{ background: "#FBFBF8" }}>
       <div className="absolute pointer-events-none rounded-full" style={{ width: 420, height: 420, bottom: -160, left: -160, background: "radial-gradient(circle, rgba(24,0,173,0.08) 0%, transparent 70%)" }} />
 
-      {/* Ilustraciones del cliente (imagenblog1/2/3), como acentos
-          decorativos: la tercera en la esquina inferior, y la segunda junto
-          a la suscripción. La primera va dentro del encabezado, al lado del
-          título (más abajo). */}
-      <img src={imagenBlog3Img} alt="" aria-hidden="true"
-        className="hidden xl:block absolute pointer-events-none select-none"
-        style={{ width: 300, bottom: 0, left: -40, opacity: 0.9, zIndex: 0 }} />
       <div className="relative max-w-6xl mx-auto px-6 py-20">
-        {/* Encabezado: solo título, centrado — se quitaron las pestañas de categoría.
-            La ilustración va antes del título (a su izquierda), como parte
-            del mismo bloque centrado. */}
-        <div className="mb-12 pb-8 flex flex-col items-center justify-center gap-4 xl:flex-row xl:gap-6" style={{ borderBottom: "1.5px solid #E4E6F7" }}>
-          <img src={imagenBlog1Img} alt="" aria-hidden="true"
-            className="hidden xl:block shrink-0 pointer-events-none select-none" style={{ width: 180 }} />
-          <div className="text-center xl:text-left">
+        {/* Encabezado: solo título, centrado. */}
+        <div className="mb-12 pb-8 flex flex-col items-center justify-center" style={{ borderBottom: "1.5px solid #E4E6F7" }}>
+          <div className="text-center">
           <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#C8960A", fontFamily: "Montserrat, sans-serif" }}>Blog y novedades</p>
-          <h2 className="text-3xl md:text-[44px] font-bold max-w-2xl mx-auto xl:mx-0" style={{ fontFamily: "Poppins, sans-serif", color: "#272B7C", lineHeight: 1.15 }}>
+          <h2 className="text-3xl md:text-[44px] font-bold max-w-2xl mx-auto" style={{ fontFamily: "Poppins, sans-serif", color: "#272B7C", lineHeight: 1.15 }}>
             Conocimiento que protege<br />
             <span style={{ background: "linear-gradient(transparent 62%, #FFDE59 62%)" }}>la memoria de su empresa</span>
           </h2>
@@ -1342,7 +1123,7 @@ function BlogSection() {
                 tarjetas juntas — mismo lenguaje que los acentos cuadrados
                 amarillos de los elementos gráficos. */}
             <div className="hidden sm:block absolute pointer-events-none"
-              style={{ top: 30, bottom: 30, left: -3, right: -3, background: "#E8B023", borderRadius: 24, transform: "rotate(-2deg)", zIndex: 0 }} />
+              style={{ top: 30, bottom: 30, left: -3, right: -3, background: "#FFDE59", borderRadius: 24, transform: "rotate(-2deg)", zIndex: 0 }} />
             {rest.map(p => {
               const pc = blogCatColor(p.cat);
               return (
@@ -1364,17 +1145,12 @@ function BlogSection() {
         </div>
 
         {/* Suscripción, también como tarjeta — igual lenguaje que el resto
-            de la sección ahora que volvimos a cards. La tercera ilustración
-            se asoma por encima de la tarjeta, mismo truco que la silueta de
-            Joel en la burbuja del chat. */}
+            de la sección. */}
         <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-5 rounded-3xl p-7 md:px-9"
           style={{ background: "#fff", border: "1.5px solid #E4E6F7", boxShadow: "0 14px 34px -24px rgba(39,43,124,0.25)" }}>
-          <img src={imagenBlog2Img} alt="" aria-hidden="true"
-            className="hidden lg:block absolute pointer-events-none select-none"
-            style={{ width: 220, top: -400, right: -230, zIndex: 0, transform: "rotate(-4deg)" }} />
           <div className="flex items-center gap-4">
             <span className="flex items-center justify-center rounded-2xl shrink-0" style={{ width: 44, height: 44, background: "linear-gradient(135deg, #C8960A, #FFDE59)" }}>
-              <Bi n="envelope-paper-heart-fill" size={19} color="#fff" />
+              <Bi n="envelope-paper" size={19} color="#fff" />
             </span>
             <div>
               <p className="font-bold text-base" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif" }}>Reciba novedades y guías en su correo</p>
@@ -1400,170 +1176,399 @@ function BlogSection() {
   );
 }
 
-// ─── Chatbot ──────────────────────────────────────────────────────────────────
+// ─── Joel, asesor virtual (chat guiado) ─────────────────────────────────────
+// Mismo estilo y comportamiento que el chat de Transpack, con el avatar de
+// Transarchivos: invitación que asoma a los 7 s (una vez por sesión), botón
+// flotante, ventana con encabezado, mensajes uno a uno con "escribiendo…",
+// opciones rápidas, campo de texto libre (reconoce palabras clave) y botones
+// de acción (correo, teléfono, cotizador). No usa IA: sigue un guion.
 
-type ChatMsg = { from: "bot" | "user"; text: string };
-
-const FLOWS: Record<string, { text: string; options?: { label: string; next: string }[] }> = {
-  start: {
-    text: "Hola, soy Joel, el asistente de Transarchivos. ¿Cuál es el motivo de su visita?",
-    options: [
-      { label: "→  Necesito un servicio documental", next: "corporate" },
-      { label: "→  Soy estudiante o investigador", next: "academic" },
-      { label: "→  Busco empleo o prácticas", next: "jobs" },
-    ],
-  },
-  corporate: {
-    text: "Perfecto. Un especialista puede presentarle una propuesta a la medida de su empresa. ¿Cómo prefiere continuar?",
-    options: [
-      { label: "→  Solicitar cotización", next: "quote" },
-      { label: "→  Hablar con un asesor", next: "advisor" },
-    ],
-  },
-  academic: {
-    text: "Con gusto. Escríbanos a info@transarchivos.com y le compartiremos terminología, normativa y recursos técnicos de archivística.",
-  },
-  jobs: { text: "Puede escribirnos a info@transarchivos.com con el asunto \"Candidatura espontánea\"." },
-  quote: { text: "Complete la solicitud en la sección “Solicite su cotización” y un asesor de Transarchivos se pondrá en contacto con usted. ✓" },
-  advisor: { text: "Conectándole con un asesor. También puede escribirnos a info@transarchivos.com o llamar al (601) 316-4530." },
+type ChatData = Record<string, string>;
+type ChatAction = { label: string; icon: string; href?: string; to?: string };
+type ChatMsg = { from: "bot" | "user"; text: string; actions?: ChatAction[] };
+type ChatOption = { label: string; next: string | ((d: ChatData) => string); set?: ChatData };
+type ChatStep = {
+  say: (d: ChatData) => string[];
+  options?: ChatOption[] | ((d: ChatData) => ChatOption[]);
+  input?: { key: string; placeholder: string; next: (d: ChatData) => string };
+  actions?: (d: ChatData) => ChatAction[];
 };
 
-// "open"/"setOpen" viven en App (no local) para que el avatar del hero
-// también pueda abrir el chat, no solo el botón flotante.
-function ChatBot({ open, setOpen }: { open: boolean; setOpen: (v: boolean | ((prev: boolean) => boolean)) => void }) {
+const CHAT_UNITS = [
+  { slug: "diagnostico", title: "Diagnóstico documental", desc: "Le mostramos qué está pasando hoy con su archivo (volumen, estado, riesgos y oportunidades) antes de mover un solo papel." },
+  ...services.map(sv => ({ slug: sv.slug, title: sv.title, desc: sv.desc })),
+];
+const unitBySlug = (slug: string) => CHAT_UNITS.find(u => u.slug === slug);
+const foldChat = (t: string) => t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+
+const CHAT_VOLUMES = ["Menos de 100 cajas", "Entre 100 y 1.000 cajas", "Más de 1.000 cajas", "No lo sé"];
+const CHAT_URGENCY = ["Sin urgencia", "En las próximas semanas", "Urgente"];
+const CHAT_FAQ_COUNT = 6;
+
+const quoteMailto = (d: ChatData) => {
+  const body = `Hola, Transarchivos. Quisiera una cotización.\n\n` +
+    `- Servicio: ${unitBySlug(d.service)?.title ?? "—"}\n- Volumen aproximado: ${d.volume ?? "—"}\n- Urgencia: ${d.urgency ?? "—"}\n` +
+    `- Nombre: ${d.name ?? "—"}\n- Empresa: ${d.company ?? "—"}\n\n(Solicitud iniciada con Joel, asesor virtual)`;
+  return `mailto:info@transarchivos.com?subject=${encodeURIComponent("Solicitud de cotización — " + (unitBySlug(d.service)?.title ?? "Transarchivos"))}&body=${encodeURIComponent(body)}`;
+};
+
+const CONTACT_ACTIONS: ChatAction[] = [
+  { label: "Llamar al (601) 316-4530", icon: "telephone-fill", href: "tel:+576013164530" },
+  { label: "Escribir a info@transarchivos.com", icon: "envelope-fill", href: "mailto:info@transarchivos.com" },
+];
+
+const CHAT_STEPS: Record<string, ChatStep> = {
+  start: {
+    say: () => ["¡Hola! Soy Joel, el asesor virtual de Transarchivos. 👋", "¿En qué le puedo ayudar hoy?"],
+    options: [
+      { label: "Cotizar un servicio", next: "q_service" },
+      { label: "Conocer los servicios", next: "info_list" },
+      { label: "Preguntas frecuentes", next: "faq_list" },
+      { label: "Hablar con un asesor", next: "advisor" },
+      { label: "Soy estudiante o busco empleo", next: "other" },
+    ],
+  },
+
+  // Cotización guiada
+  q_service: {
+    say: () => ["Con gusto. ¿Qué servicio necesita?", "Si no está seguro, el diagnóstico documental es el mejor punto de partida."],
+    options: CHAT_UNITS.map(u => ({ label: u.title, next: "q_volume", set: { service: u.slug } })),
+  },
+  q_volume: {
+    say: d => [`${unitBySlug(d.service)?.title}: buena elección.`, "¿Aproximadamente qué volumen de archivo tiene?"],
+    options: CHAT_VOLUMES.map(v => ({ label: v, next: "q_urgency", set: { volume: v } })),
+  },
+  q_urgency: {
+    say: () => ["¿Qué tan pronto lo necesita?"],
+    options: CHAT_URGENCY.map(v => ({ label: v, next: "q_name", set: { urgency: v } })),
+  },
+  q_name: {
+    say: () => ["Perfecto. ¿Cuál es su nombre?"],
+    input: { key: "name", placeholder: "Escriba su nombre…", next: () => "q_company" },
+  },
+  q_company: {
+    say: d => [`Gracias, ${d.name}. ¿De qué empresa nos escribe?`],
+    input: { key: "company", placeholder: "Nombre de la empresa…", next: () => "q_done" },
+  },
+  q_done: {
+    say: d => [
+      `Listo, ${d.name}. Este es el resumen de su solicitud:`,
+      `• Servicio: ${unitBySlug(d.service)?.title}\n• Volumen: ${d.volume}\n• Urgencia: ${d.urgency}\n• Empresa: ${d.company}`,
+      d.urgency === "Urgente"
+        ? "Como es urgente, le recomiendo llamarnos directamente. También puede enviarnos el resumen por correo:"
+        : "Envíenos el resumen por correo y un asesor le responderá con el alcance y las condiciones. Si quiere dar más detalles, puede completar la cotización detallada:",
+    ],
+    actions: d => [
+      { label: "Enviar solicitud por correo", icon: "envelope-arrow-up-fill", href: quoteMailto(d) },
+      { label: "Completar cotización detallada", icon: "ui-checks", href: "#cotizador" },
+      { label: "Llamar al (601) 316-4530", icon: "telephone-fill", href: "tel:+576013164530" },
+    ],
+    options: [{ label: "Volver al inicio", next: "reset" }],
+  },
+
+  // Servicios
+  info_list: {
+    say: () => ["Estos son nuestros servicios. ¿Sobre cuál quiere saber más?"],
+    options: CHAT_UNITS.map(u => ({ label: u.title, next: "info_detail", set: { service: u.slug } })),
+  },
+  info_detail: {
+    say: d => [unitBySlug(d.service)?.desc ?? ""],
+    actions: d => d.service === "diagnostico"
+      ? [{ label: "Ver el diagnóstico documental", icon: "search", href: "#cotizador" }]
+      : [{ label: `Ver ${unitBySlug(d.service)?.title}`, icon: "box-arrow-up-right", to: `/servicios/${d.service}` }],
+    options: [
+      { label: "Cotizar este servicio", next: "q_volume" },
+      { label: "Ver otro servicio", next: "info_list" },
+      { label: "Volver al inicio", next: "reset" },
+    ],
+  },
+
+  // Preguntas frecuentes
+  faq_list: {
+    say: () => ["Estas son algunas de las preguntas que más nos hacen:"],
+    options: () => FAQS.slice(0, CHAT_FAQ_COUNT).map((f, i) => ({ label: f.q, next: "faq_answer", set: { faq: String(i) } })),
+  },
+  faq_answer: {
+    say: d => [FAQS[Number(d.faq)]?.a ?? ""],
+    actions: () => [{ label: "Ver todas las preguntas", icon: "question-circle", href: "#faq" }],
+    options: [
+      { label: "Otra pregunta", next: "faq_list" },
+      { label: "Cotizar un servicio", next: "q_service" },
+      { label: "Volver al inicio", next: "reset" },
+    ],
+  },
+
+  // Contacto y otros
+  advisor: {
+    say: () => ["Claro. Puede comunicarse con un asesor de Transarchivos por estos medios:"],
+    actions: () => CONTACT_ACTIONS,
+    options: [{ label: "Volver al inicio", next: "reset" }],
+  },
+  other: {
+    say: () => ["Con gusto le ayudamos.", "Escríbanos a info@transarchivos.com: si es estudiante o investigador, le compartimos recursos de archivística; si busca empleo, use el asunto «Candidatura espontánea»."],
+    actions: () => [{ label: "Escribir a info@transarchivos.com", icon: "envelope-fill", href: "mailto:info@transarchivos.com" }],
+    options: [{ label: "Volver al inicio", next: "reset" }],
+  },
+  fallback: {
+    say: () => ["No estoy seguro de haber entendido. 🤔", "¿Le ayudo con alguna de estas opciones?"],
+    options: [
+      { label: "Cotizar un servicio", next: "q_service" },
+      { label: "Conocer los servicios", next: "info_list" },
+      { label: "Preguntas frecuentes", next: "faq_list" },
+      { label: "Hablar con un asesor", next: "advisor" },
+    ],
+  },
+};
+
+// Texto libre → paso del guion según palabras clave.
+function routeChat(text: string): { next: string; set?: ChatData } {
+  const t = foldChat(text);
+  const svc = (slug: string) => ({ next: "info_detail", set: { service: slug } });
+  if (/cotiz|precio|cuanto cuesta|costo|valor|tarifa/.test(t)) return { next: "q_service" };
+  if (/diagnost/.test(t)) return svc("diagnostico");
+  if (/digitaliz|escane|ocr/.test(t)) return svc("digitalizacion-de-documentos");
+  if (/microfil/.test(t)) return svc("microfilmacion-de-archivos");
+  if (/destru|triturar|eliminar/.test(t)) return svc("destruccion-de-documentos");
+  if (/cinta|magnetic|disco|backup|respaldo/.test(t)) return svc("custodia-de-medios-magneticos");
+  if (/custod|bodega|guardar|almacen/.test(t)) return svc("custodia-de-archivos");
+  if (/inventario|clasific|organiz|cajas/.test(t)) return svc("levantamiento-de-inventario");
+  if (/pgd|programa de gestion|trd|retencion/.test(t)) return svc("programa-de-gestion-documental");
+  if (/inhouse|in house|sede|instalaciones/.test(t)) return svc("servicio-inhouse");
+  if (/urgente|inmediat|express|rapido/.test(t)) return svc("servicio-inmediato");
+  if (/bogota|ciudad|medellin|cali|barranquilla|pais|cobertura/.test(t)) return { next: "faq_answer", set: { faq: "3" } };
+  if (/norma|ley|agn|594|legal/.test(t)) return { next: "faq_answer", set: { faq: "4" } };
+  if (/asesor|humano|persona|llamar|telefono|correo|contacto/.test(t)) return { next: "advisor" };
+  if (/empleo|trabajo|practica|estudiante|investig/.test(t)) return { next: "other" };
+  if (/^(hola|buenas|buenos|hey)/.test(t)) return { next: "start" };
+  return { next: "fallback" };
+}
+
+function ChatBubble({ msg }: { msg: ChatMsg }) {
+  const bot = msg.from === "bot";
+  return (
+    <div className={`flex items-end gap-2 ${bot ? "justify-start" : "justify-end"}`} style={{ animation: "fadeInUp 0.3s ease both" }}>
+      {bot && <ChatAvatarFace size={24} round />}
+      <div className={`max-w-[82%] ${bot ? "" : "text-right"}`}>
+        <div className="inline-block whitespace-pre-line px-3.5 py-2.5 text-left text-[13.5px] leading-relaxed"
+          style={bot
+            ? { background: "#fff", color: "#37352F", border: "1px solid #E4E6F7", borderRadius: "4px 16px 16px 16px", boxShadow: "0 1px 2px rgba(10,13,61,0.05)" }
+            : { background: "#272B7C", color: "#fff", borderRadius: "16px 16px 4px 16px" }}>
+          {msg.text}
+        </div>
+        {msg.actions && (
+          <div className="mt-2 flex flex-col gap-1.5">
+            {msg.actions.map(a => {
+              const cls = "inline-flex items-center gap-2 rounded-xl px-3.5 py-2.5 text-[13px] font-semibold transition-colors bg-[#272B7C]/[0.07] text-[#272B7C] hover:bg-[#272B7C] hover:text-white";
+              return a.to
+                ? <Link key={a.label} to={a.to} className={cls} style={{ textDecoration: "none" }}><Bi n={a.icon} size={14} /> {a.label}</Link>
+                : <a key={a.label} href={a.href} className={cls} style={{ textDecoration: "none" }}><Bi n={a.icon} size={14} /> {a.label}</a>;
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// "open"/"setOpen" viven en LandingPage para que el menú de soporte y la caja
+// del hero también puedan abrir el chat. "seed": pregunta escrita en la caja
+// del hero (con id para que dos preguntas iguales cuenten como distintas).
+function ChatBot({ open, setOpen, seed }: { open: boolean; setOpen: (v: boolean | ((prev: boolean) => boolean)) => void; seed?: { text: string; id: number } | null }) {
   const [msgs, setMsgs] = useState<ChatMsg[]>([]);
-  const [flow, setFlow] = useState("start");
+  const [stepId, setStepId] = useState("start");
+  const [data, setData] = useState<ChatData>({});
   const [typing, setTyping] = useState(false);
+  const [text, setText] = useState("");
+  const [teaser, setTeaser] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const timers = useRef<number[]>([]);
+  const seedHandled = useRef(0);
+  const step = CHAT_STEPS[stepId];
 
-  useEffect(() => {
-    if (open && msgs.length === 0) {
-      setTyping(true);
-      setTimeout(() => { setTyping(false); setMsgs([{ from: "bot", text: FLOWS.start.text }]); }, 700);
-    }
-  }, [open]);
-
-  useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [msgs, typing]);
-
-  const pick = (label: string, next: string) => {
-    setMsgs((m) => [...m, { from: "user", text: label }]);
+  // Muestra los mensajes de un paso uno a uno, con indicador de "escribiendo".
+  const goTo = (id: string, d: ChatData) => {
+    const target = id === "reset" ? "start" : id;
+    const nextData = id === "reset" ? {} : d;
+    if (id === "reset") setMsgs([]);
+    setData(nextData);
+    setStepId(target);
+    const s = CHAT_STEPS[target];
+    const lines = s.say(nextData);
     setTyping(true);
-    setFlow(next);
-    setTimeout(() => {
-      setTyping(false);
-      setMsgs((m) => [...m, { from: "bot", text: FLOWS[next].text }]);
-    }, 800);
+    let delay = 0;
+    lines.forEach((line, i) => {
+      delay += Math.min(1100, 450 + line.length * 6);
+      const last = i === lines.length - 1;
+      timers.current.push(window.setTimeout(() => {
+        setMsgs(m => [...m, { from: "bot", text: line, actions: last ? s.actions?.(nextData) : undefined }]);
+        if (last) setTyping(false);
+      }, delay));
+    });
   };
 
-  const opts = FLOWS[flow]?.options ?? [];
+  useEffect(() => () => timers.current.forEach(clearTimeout), []);
+
+  // Al abrir: saludo la primera vez, o respuesta a la pregunta del hero.
+  useEffect(() => {
+    if (!open) return;
+    setTeaser(false);
+    if (seed && seed.id !== seedHandled.current) {
+      seedHandled.current = seed.id;
+      setMsgs(m => [...m, { from: "user", text: seed.text }]);
+      const r = routeChat(seed.text);
+      goTo(r.next, { ...data, ...r.set });
+      return;
+    }
+    if (msgs.length === 0 && !typing) goTo("start", {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, seed]);
+
+  // Invitación discreta a los 7 s, una sola vez por sesión.
+  useEffect(() => {
+    let seen = false;
+    try { seen = sessionStorage.getItem("ta-chat-teaser") === "1"; } catch { /* sin almacenamiento */ }
+    if (seen) return;
+    const id = window.setTimeout(() => {
+      setTeaser(true);
+      try { sessionStorage.setItem("ta-chat-teaser", "1"); } catch { /* sin almacenamiento */ }
+    }, 7000);
+    return () => clearTimeout(id);
+  }, []);
+
+  useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" }); }, [msgs, typing]);
+  useEffect(() => { if (open && step.input && !typing) inputRef.current?.focus(); }, [open, step, typing]);
+
+  const choose = (o: ChatOption) => {
+    const d = { ...data, ...o.set };
+    setMsgs(m => [...m, { from: "user", text: o.label }]);
+    goTo(typeof o.next === "function" ? o.next(d) : o.next, d);
+  };
+
+  const send = () => {
+    const value = text.trim();
+    if (!value || typing) return;
+    setText("");
+    setMsgs(m => [...m, { from: "user", text: value }]);
+    if (step.input) {
+      const d = { ...data, [step.input.key]: value };
+      goTo(step.input.next(d), d);
+    } else {
+      const r = routeChat(value);
+      goTo(r.next, { ...data, ...r.set });
+    }
+  };
+
+  const options = typeof step.options === "function" ? step.options(data) : (step.options ?? []);
 
   return (
     <>
-      <button
-        onClick={() => setOpen((o) => !o)}
-        className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 rounded-2xl pl-2.5 pr-4 py-2.5 transition-all hover:-translate-y-1 active:scale-95"
-        style={{
-          background: "linear-gradient(135deg, #272B7C 0%, #1800AD 100%)",
-          color: "#fff",
-          boxShadow: "0 16px 34px -10px rgba(24,0,173,0.55), 0 2px 8px rgba(10,13,61,0.2)",
-        }}
-        aria-label="Joel"
-      >
-        {open ? (
-          <>
-            <span className="flex items-center justify-center rounded-full" style={{ width: 32, height: 32, background: "rgba(255,255,255,0.15)" }}>
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><line x1="2" y1="2" x2="14" y2="14" stroke="#fff" strokeWidth="2" strokeLinecap="round"/><line x1="14" y1="2" x2="2" y2="14" stroke="#fff" strokeWidth="2" strokeLinecap="round"/></svg>
-            </span>
-            <span className="text-sm font-semibold" style={{ fontFamily: "Montserrat, sans-serif" }}>Cerrar</span>
-          </>
-        ) : (
-          <>
-            <div className="relative flex-shrink-0">
-              {/* Anillo pulsante detrás del avatar — mismo lenguaje "con vida" de
-                  los pines del mapa, para que el botón llame la atención sin
-                  perder formalidad (nada de rebote/parpadeo brusco). */}
-              <span className="absolute inset-0" style={{ borderRadius: "32%", background: "#FFDE59", opacity: 0.48, animation: "chatPing 2.4s cubic-bezier(0,0,0.2,1) infinite" }} />
-              <ChatAvatarFace size={36} ring="light" />
-              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2" style={{ background: "#22c55e", borderColor: "#272B7C" }} />
-            </div>
-            <div className="text-left">
-              <p className="text-xs font-bold leading-none mb-1 flex items-center gap-1.5" style={{ fontFamily: "Montserrat, sans-serif" }}>
-                Joel
-                <span className="text-[8px] font-bold px-1.5 py-px rounded-full" style={{ background: "#FFDE59", color: "#5c4900", letterSpacing: "0.02em" }}>IA</span>
-              </p>
-              <p className="text-xs leading-none" style={{ color: "rgba(255,255,255,0.7)" }}>En línea ahora</p>
-            </div>
-            <span className="w-2 h-2 rounded-full animate-pulse ml-1" style={{ background: "#FFDE59" }} />
-          </>
-        )}
-      </button>
-
-      {open && (
-        <div className="fixed bottom-24 right-6 z-50 rounded-[28px] overflow-hidden flex flex-col"
-          style={{ width: 440, height: 600, background: "#fff", boxShadow: "0 40px 80px -30px rgba(24,0,173,0.45), 0 4px 16px rgba(10,13,61,0.15)", border: "1px solid rgba(39,43,124,0.08)" }}>
-          {/* Header — degradado navy→indigo de marca con glow decorativo,
-              mismo lenguaje que la sección "Conozca a Joel". */}
-          <div className="relative overflow-hidden px-5 py-4 flex items-center gap-3" style={{ background: "linear-gradient(135deg, #272B7C 0%, #1800AD 100%)" }}>
-            <div className="absolute rounded-full pointer-events-none" style={{ width: 200, height: 200, top: -100, right: -60, background: "radial-gradient(circle, rgba(255,222,89,0.25) 0%, transparent 70%)" }} />
-            <div className="relative flex-shrink-0">
-              <ChatAvatarFace size={44} ring="light" />
-              <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full border-2" style={{ background: "#22c55e", borderColor: "#1800AD" }} />
-            </div>
-            <div className="relative flex-1">
-              <p className="text-sm font-bold flex items-center gap-1.5" style={{ color: "#ffffff", fontFamily: "Poppins, sans-serif" }}>
-                Joel
-                <span className="text-[8px] font-bold px-1.5 py-px rounded-full" style={{ background: "#FFDE59", color: "#5c4900" }}>IA</span>
-              </p>
-              <p className="text-xs" style={{ color: "rgba(255,255,255,0.7)" }}>Transarchivos · Respuesta inmediata</p>
-            </div>
-            <button onClick={() => setOpen(false)} className="relative flex items-center justify-center rounded-full transition-colors hover:bg-white/15" style={{ width: 28, height: 28 }} aria-label="Cerrar">
-              <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><line x1="2" y1="2" x2="14" y2="14" stroke="#fff" strokeWidth="2" strokeLinecap="round"/><line x1="14" y1="2" x2="2" y2="14" stroke="#fff" strokeWidth="2" strokeLinecap="round"/></svg>
+      {/* Invitación: Joel se asoma junto al botón */}
+      {teaser && !open && (
+        <div className="fixed bottom-[76px] right-3 md:bottom-[88px] md:right-6 z-[60] flex items-end" style={{ animation: "fadeInUp 0.5s ease both" }}>
+          <div className="relative mb-16 -mr-4 max-w-[230px] rounded-2xl rounded-br-sm bg-white px-4 py-3 text-[13.5px]"
+            style={{ color: "#37352F", boxShadow: "0 20px 40px -16px rgba(10,13,61,0.35), 0 2px 8px rgba(10,13,61,0.08)" }}>
+            <button onClick={() => setTeaser(false)} className="absolute right-2 top-1.5" aria-label="Cerrar invitación">
+              <Bi n="x-lg" size={11} color="#9B9B9B" />
+            </button>
+            <button onClick={() => setOpen(true)} className="pr-3 text-left leading-relaxed">
+              <b style={{ color: "#272B7C" }}>¡Hola! Soy Joel.</b> ¿Necesita organizar, digitalizar o custodiar su archivo? Le ayudo.
             </button>
           </div>
-          {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-3" style={{ background: "#F7F8FF" }}>
-            {msgs.map((m, i) => (
-              <div key={i} className={`flex ${m.from === "user" ? "justify-end" : "justify-start"} items-end gap-2`}>
-                {m.from === "bot" && <div className="shrink-0 mb-0.5"><ChatAvatarFace size={22} /></div>}
-                <div className="max-w-[78%] px-3.5 py-2.5 text-xs leading-relaxed"
-                  style={{
-                    background: m.from === "bot" ? "#ffffff" : "linear-gradient(135deg, #272B7C, #1800AD)",
-                    color: m.from === "bot" ? "#37352F" : "#ffffff",
-                    border: m.from === "bot" ? "1px solid #E4E6F7" : "none",
-                    borderRadius: m.from === "bot" ? "4px 16px 16px 16px" : "16px 16px 4px 16px",
-                    boxShadow: m.from === "bot" ? "0 4px 12px -6px rgba(39,43,124,0.15)" : "0 6px 16px -6px rgba(24,0,173,0.4)",
-                  }}>
-                  {m.text}
-                </div>
-              </div>
-            ))}
-            {typing && (
-              <div className="flex justify-start items-end gap-2">
-                <div className="shrink-0 mb-0.5"><ChatAvatarFace size={22} /></div>
-                <div className="bg-white flex gap-1" style={{ border: "1px solid #E4E6F7", borderRadius: "4px 16px 16px 16px", padding: "10px 14px" }}>
-                  {[0,1,2].map(i => <span key={i} className="w-1.5 h-1.5 rounded-full" style={{ background: "#1800AD", opacity: 0.6, animation: `chatBounce 1.4s ${i*0.2}s infinite` }} />)}
-                </div>
-              </div>
-            )}
-            {!typing && opts.length > 0 && (
-              <div className="flex flex-col gap-1.5 pt-1">
-                {opts.map(o => (
-                  <button key={o.next} onClick={() => pick(o.label, o.next)}
-                    className="text-left text-xs font-semibold rounded-xl px-3.5 py-2.5 border transition-all"
-                    style={{ borderColor: "#E4E6F7", color: "#272B7C", background: "#ffffff", fontFamily: "Montserrat, sans-serif" }}
-                    onMouseEnter={e => { (e.target as HTMLElement).style.borderColor = "#1800AD"; (e.target as HTMLElement).style.background = "#EEF0FB"; (e.target as HTMLElement).style.transform = "translateX(2px)"; }}
-                    onMouseLeave={e => { (e.target as HTMLElement).style.borderColor = "#E4E6F7"; (e.target as HTMLElement).style.background = "#ffffff"; (e.target as HTMLElement).style.transform = "translateX(0)"; }}>
-                    {o.label}
-                  </button>
-                ))}
-              </div>
-            )}
-            <div ref={endRef} />
-          </div>
-          <div className="px-4 py-3 text-center text-xs" style={{ borderTop: "1px solid #E4E6F7", color: "#9B9B9B", background: "#fff" }}>
-            ¿Prefiere contacto directo? <a href="#cotizador" className="font-semibold" style={{ color: "#1800AD", textDecoration: "none" }}>Ver formulario →</a>
-          </div>
+          <button onClick={() => setOpen(true)} aria-label="Hablar con Joel" className="shrink-0">
+            <img src={avatarImg} alt="" draggable={false} className="h-[150px] md:h-[170px] w-auto select-none" style={{ filter: "drop-shadow(0 12px 18px rgba(29,32,80,0.25))" }} />
+          </button>
         </div>
+      )}
+
+      {/* Botón flotante */}
+      <button onClick={() => setOpen(o => !o)} aria-expanded={open}
+        aria-label={open ? "Cerrar chat" : "Hablar con Joel, asesor virtual"}
+        className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-[60] flex items-center gap-2.5 rounded-full p-1.5 md:pr-4 text-white transition-transform hover:-translate-y-0.5"
+        style={{ background: "linear-gradient(135deg, #272B7C 0%, #1800AD 100%)", boxShadow: "0 16px 34px -10px rgba(39,43,124,0.6)" }}>
+        {open ? (
+          <span className="grid place-items-center rounded-full" style={{ width: 40, height: 40, background: "rgba(255,255,255,0.15)" }}>
+            <Bi n="x-lg" size={16} color="#fff" />
+          </span>
+        ) : (
+          <span className="relative">
+            <span className="absolute inset-0 rounded-full" style={{ background: "rgba(255,222,89,0.45)", animation: "chatPing 2.4s cubic-bezier(0,0,0.2,1) infinite" }} />
+            <ChatAvatarFace size={40} round />
+            <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full border-2" style={{ background: "#22c55e", borderColor: "#272B7C" }} />
+          </span>
+        )}
+        <span className="hidden md:block text-left">
+          <span className="flex items-center gap-1.5 text-[13px] font-semibold leading-tight" style={{ fontFamily: "Montserrat, sans-serif" }}>
+            {open ? "Cerrar" : "Joel"}
+            {!open && <span className="rounded-full px-1.5 py-px text-[9px] font-bold tracking-wide" style={{ background: "#FFDE59", color: "#272B7C" }}>IA</span>}
+          </span>
+          {!open && <span className="block text-[11.5px] leading-tight" style={{ color: "rgba(255,255,255,0.7)" }}>En línea</span>}
+        </span>
+      </button>
+
+      {/* Ventana */}
+      {open && (
+        <section aria-label="Chat con Joel"
+          className="fixed inset-x-3 bottom-[76px] top-20 sm:inset-x-auto sm:right-6 sm:top-auto sm:w-[400px] md:bottom-[92px] z-[60] flex flex-col overflow-hidden rounded-[24px] bg-white"
+          style={{ height: undefined, maxHeight: "calc(100vh - 130px)", minHeight: 0, boxShadow: "0 40px 80px -30px rgba(39,43,124,0.5)", border: "1px solid rgba(39,43,124,0.1)", animation: "fadeInUp 0.3s ease both" }}>
+          <div className="sm:h-[min(620px,calc(100vh-130px))] flex flex-col min-h-0 flex-1">
+            <header className="relative flex items-center gap-3 overflow-hidden px-5 py-4" style={{ background: "linear-gradient(135deg, #272B7C 0%, #1800AD 100%)" }}>
+              <span className="pointer-events-none absolute -right-14 -top-20 h-48 w-48 rounded-full" style={{ background: "radial-gradient(circle, rgba(255,222,89,0.3), transparent 70%)" }} />
+              <span className="relative">
+                <ChatAvatarFace size={42} round />
+                <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full border-2" style={{ background: "#22c55e", borderColor: "#272B7C" }} />
+              </span>
+              <div className="relative flex-1 min-w-0">
+                <p className="flex items-center gap-2 font-semibold" style={{ color: "#fff", fontFamily: "Poppins, sans-serif" }}>
+                  Joel
+                  <span className="rounded-full px-2 py-px text-[10px] font-semibold uppercase tracking-wider" style={{ background: "rgba(255,255,255,0.15)", color: "#FFDE59" }}>Asesor virtual</span>
+                </p>
+                <p className="text-[12px]" style={{ color: "rgba(255,255,255,0.7)" }}>Transarchivos · Responde al instante</p>
+              </div>
+              <button onClick={() => goTo("reset", {})} className="relative grid h-8 w-8 place-items-center rounded-full transition-colors hover:bg-white/15" aria-label="Reiniciar conversación" title="Reiniciar conversación">
+                <Bi n="arrow-counterclockwise" size={15} color="rgba(255,255,255,0.85)" />
+              </button>
+              <button onClick={() => setOpen(false)} className="relative grid h-8 w-8 place-items-center rounded-full transition-colors hover:bg-white/15" aria-label="Cerrar chat">
+                <Bi n="x-lg" size={14} color="rgba(255,255,255,0.85)" />
+              </button>
+            </header>
+
+            <div className="flex-1 min-h-0 space-y-3 overflow-y-auto p-4" style={{ background: "#F6F7FD" }} aria-live="polite">
+              {msgs.map((m, i) => <ChatBubble key={i} msg={m} />)}
+              {typing && (
+                <div className="flex items-end gap-2">
+                  <ChatAvatarFace size={24} round />
+                  <div className="flex gap-1 px-3.5 py-3" style={{ background: "#fff", border: "1px solid #E4E6F7", borderRadius: "4px 16px 16px 16px" }}>
+                    {[0, 1, 2].map(i => <span key={i} className="w-1.5 h-1.5 rounded-full" style={{ background: "rgba(39,43,124,0.6)", animation: `chatBounce 1.4s ${i * 0.15}s infinite` }} />)}
+                  </div>
+                </div>
+              )}
+              {!typing && options.length > 0 && (
+                <div className="flex flex-wrap justify-end gap-1.5 pt-1">
+                  {options.map(o => (
+                    <button key={o.label} onClick={() => choose(o)}
+                      className="rounded-full border px-3.5 py-2 text-left text-[13px] font-semibold transition-colors border-[#272B7C]/25 bg-white text-[#272B7C] hover:border-[#272B7C] hover:bg-[#272B7C] hover:text-white"
+                      style={{ animation: "fadeInUp 0.3s ease both", fontFamily: "Montserrat, sans-serif" }}>
+                      {o.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+              <div ref={endRef} />
+            </div>
+
+            <form onSubmit={e => { e.preventDefault(); send(); }} className="flex items-center gap-2 bg-white p-3" style={{ borderTop: "1px solid #ECEEF6" }}>
+              <input ref={inputRef} value={text} onChange={e => setText(e.target.value)}
+                placeholder={step.input?.placeholder ?? "Escriba su mensaje…"} aria-label="Mensaje"
+                className="min-w-0 flex-1 rounded-full px-4 py-2.5 text-[14px] outline-none transition focus:bg-white"
+                style={{ border: "1px solid #E4E6F7", background: "#F6F7FD", color: "#272B7C" }} />
+              <button type="submit" disabled={!text.trim() || typing} aria-label="Enviar"
+                className="grid h-10 w-10 shrink-0 place-items-center rounded-full transition-opacity disabled:opacity-40" style={{ background: "#FFDE59" }}>
+                <Bi n="send-fill" size={15} color="#272B7C" />
+              </button>
+            </form>
+          </div>
+        </section>
       )}
     </>
   );
@@ -1574,6 +1579,170 @@ function ChatBot({ open, setOpen }: { open: boolean; setOpen: (v: boolean | ((pr
 // Toda la página principal (antes era el App exportado directamente). Ahora
 // App es un enrutador liviano: esto vive en "/", y cada card de servicio
 // enlaza a su propia página en "/servicios/:slug" (ver ServiceDetailPage).
+// ─── Soporte (ícono de audífonos del header) ────────────────────────────────
+// Tarjeta flotante bajo el ícono, abierta hacia la derecha (hacia el margen,
+// para no tapar el contenido del hero; si no cabe, se corre a la izquierda):
+// chat con Joel, teléfono, correo y enlace a las preguntas frecuentes. Se dibuja con position: fixed (el pill del
+// header recorta lo que sobresale) y se cierra al hacer clic fuera o scroll.
+
+function SupportPopover({ anchor, onClose, onChat, onHoverIn, onHoverOut }: { anchor: DOMRect; onClose: () => void; onChat: () => void; onHoverIn?: () => void; onHoverOut?: () => void }) {
+  const items = [
+    { ic: "chat-dots", t: "Chatee con Joel", d: "Asesor con IA, responde al instante", onClick: () => { onChat(); onClose(); } },
+    { ic: "telephone", t: "Llámenos", d: "(601) 316-4530", href: "tel:+576013164530" },
+    { ic: "envelope", t: "Escríbanos", d: "info@transarchivos.com", href: "mailto:info@transarchivos.com" },
+  ];
+  return (
+    <div data-support-popover onMouseEnter={onHoverIn} onMouseLeave={onHoverOut} className="fixed z-[60] w-[340px] rounded-3xl overflow-hidden"
+      style={{ top: anchor.bottom + 12, left: Math.max(16, Math.min(anchor.left - 8, window.innerWidth - 340 - 16)), background: "#fff", boxShadow: "0 30px 60px -20px rgba(10,13,61,0.35), 0 4px 14px rgba(10,13,61,0.08)", animation: "fadeInUp 0.2s ease both" }}>
+      <div className="relative px-6 pt-5 pb-5 overflow-hidden" style={{ background: "linear-gradient(135deg, #14163F 0%, #272B7C 100%)" }}>
+        <span className="absolute pointer-events-none" style={{ top: -30, right: -30, width: 110, height: 110, background: "rgba(255,222,89,0.18)", transform: "rotate(45deg)", borderRadius: 18 }} />
+        <p className="relative flex items-center gap-2 text-base font-bold" style={{ color: "#fff", fontFamily: "Poppins, sans-serif" }}>
+          <Bi n="headset" size={17} color="#FFDE59" /> Soporte Transarchivos
+        </p>
+        <p className="relative text-sm mt-1" style={{ color: "rgba(255,255,255,0.7)" }}>¿Necesita ayuda con su archivo o su solicitud?</p>
+      </div>
+      <div className="py-2">
+        {items.map(it => {
+          const inner = (
+            <>
+              <span className="flex items-center justify-center rounded-xl shrink-0" style={{ width: 40, height: 40, background: "#F2F3FA" }}>
+                <Bi n={it.ic} size={17} color="#272B7C" />
+              </span>
+              <span className="min-w-0">
+                <span className="block text-sm font-bold" style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif" }}>{it.t}</span>
+                <span className="block text-xs truncate" style={{ color: "#8A8A8A" }}>{it.d}</span>
+              </span>
+            </>
+          );
+          const cls = "w-full flex items-center gap-3.5 px-6 py-3 text-left transition-colors hover:bg-[#F7F8FF]";
+          return it.href
+            ? <a key={it.t} href={it.href} className={cls} style={{ textDecoration: "none" }} onClick={onClose}>{inner}</a>
+            : <button key={it.t} type="button" className={cls} onClick={it.onClick}>{inner}</button>;
+        })}
+      </div>
+      <a href="#faq" onClick={onClose} className="flex items-center justify-between px-6 py-4 text-sm font-bold transition-colors hover:bg-[#F7F8FF]"
+        style={{ borderTop: "1px solid #ECEEF6", color: "#272B7C", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
+        Ver preguntas frecuentes <Bi n="question-circle" size={16} color="#272B7C" />
+      </a>
+    </div>
+  );
+}
+
+// ─── Preguntas frecuentes ───────────────────────────────────────────────────
+// Respuestas basadas en el contenido real del sitio (servicios, normativa,
+// cobertura). Acordeón: una abierta a la vez.
+
+const FAQS = [
+  { q: "¿Por qué empezar con un diagnóstico documental?", a: "Porque antes de mover un solo papel conviene saber qué está pasando con su archivo: volumen, estado, espacio que ocupa, organización, riesgos y oportunidades. Con esa información usted decide qué servicios necesita, en lugar de partir de suposiciones." },
+  { q: "¿Cómo solicito una cotización?", a: "En la sección «Solicite su cotización» elige el servicio, responde unas preguntas sobre su archivo y deja sus datos de contacto. Al final se genera un correo con la solicitud lista para enviar, y un asesor le responde con el alcance y las condiciones. Si no conoce algún dato, puede marcar «No lo sé»." },
+  { q: "¿Cómo se calcula el costo de los servicios?", a: "Depende del servicio, del volumen y de las condiciones de su archivo. En custodia, por ejemplo, el costo es variable y escalable: paga por el volumen que custodia, sin costos fijos de espacio o personal. Por eso cada cotización se arma con la información de su caso." },
+  { q: "¿Atienden empresas fuera de Bogotá?", a: "Operamos principalmente en Bogotá, donde están nuestra sede y nuestras bodegas de custodia. Estamos abiertos a atender empresas en otras ciudades de Colombia según el alcance del proyecto." },
+  { q: "¿Qué normativa cumplen?", a: "Trabajamos bajo la Ley General de Archivos (Ley 594 de 2000) y la normativa del Archivo General de la Nación, además de la Ley 1581 de 2012 de protección de datos personales, entre otras normas aplicables a la gestión documental." },
+  { q: "¿Cómo protegen los documentos que custodian?", a: "Nuestro centro documental cuenta con vigilancia 24 horas con CCTV, control de acceso y monitoreo ambiental permanente. Además, puede consultar y recuperar sus documentos cuando los necesite." },
+  { q: "¿La digitalización tiene validez legal?", a: "Sí. La conversión de documentos físicos a digitales se realiza con captura, indexación y OCR opcional, en el marco de la Ley 527 de 1999, que reconoce la validez de los documentos electrónicos." },
+  { q: "¿Entregan constancia cuando destruyen documentos?", a: "Sí. La destrucción es segura y trazable, y se entrega con acta de eliminación y certificado de destrucción, alineada con la Ley 594 de 2000." },
+  { q: "¿Pueden trabajar dentro de nuestras instalaciones?", a: "Sí, con el Servicio Inhouse: personal técnico de archivo trabaja en su sede, capacitado y supervisado por Transarchivos." },
+];
+
+function FaqSection({ onChat }: { onChat: () => void }) {
+  const [open, setOpen] = useState(0);
+  return (
+    <section id="faq" className="py-20" style={{ background: "#F7F8FF", scrollMarginTop: 80 }}>
+      <div className="max-w-6xl mx-auto px-6 grid lg:grid-cols-[340px_minmax(0,1fr)] gap-10 items-start">
+        <div className="lg:sticky lg:top-28">
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#C8960A", fontFamily: "Montserrat, sans-serif" }}>Preguntas frecuentes</p>
+          <h2 className="text-3xl font-bold mb-3" style={{ fontFamily: "Poppins, sans-serif", color: "#272B7C", lineHeight: 1.2 }}>Resolvemos sus dudas</h2>
+          <p className="text-sm mb-7" style={{ color: "#6B6B6B", lineHeight: 1.65 }}>Lo que más nos preguntan sobre nuestros servicios. Si no encuentra su respuesta, hable con nosotros.</p>
+          <div className="rounded-2xl p-5" style={{ background: "#fff", border: "1px solid #E4E6F7", boxShadow: "0 20px 40px -30px rgba(39,43,124,0.35)" }}>
+            <p className="text-sm font-bold mb-3" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif" }}>¿Necesita ayuda?</p>
+            <button type="button" onClick={onChat} className="w-full flex items-center gap-3 rounded-xl px-3 py-2.5 mb-2 text-left transition-colors hover:opacity-90" style={{ background: "#272B7C" }}>
+              <ChatAvatarFace size={30} ring="light" />
+              <span className="text-sm font-bold" style={{ color: "#fff", fontFamily: "Montserrat, sans-serif" }}>Chatee con Joel</span>
+            </button>
+            <a href="tel:+576013164530" className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors hover:bg-[#F7F8FF]" style={{ color: "#272B7C", textDecoration: "none" }}>
+              <Bi n="telephone" size={15} color="#272B7C" /> (601) 316-4530
+            </a>
+            <a href="mailto:info@transarchivos.com" className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors hover:bg-[#F7F8FF]" style={{ color: "#272B7C", textDecoration: "none" }}>
+              <Bi n="envelope" size={15} color="#272B7C" /> info@transarchivos.com
+            </a>
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          {FAQS.map((f, i) => {
+            const on = open === i;
+            return (
+              <div key={f.q} className="rounded-2xl overflow-hidden transition-shadow" style={{ background: "#fff", border: `1px solid ${on ? "#C9CDEE" : "#E4E6F7"}`, boxShadow: on ? "0 18px 36px -28px rgba(39,43,124,0.45)" : "none" }}>
+                <button type="button" onClick={() => setOpen(on ? -1 : i)} aria-expanded={on}
+                  className="w-full flex items-center justify-between gap-4 px-5 md:px-6 py-4 text-left">
+                  <span className="text-sm md:text-[15px] font-bold" style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif" }}>{f.q}</span>
+                  <span className="flex items-center justify-center rounded-full shrink-0 transition-transform" style={{ width: 28, height: 28, background: on ? "#272B7C" : "#F2F3FA", transform: on ? "rotate(45deg)" : "none" }}>
+                    <Bi n="plus-lg" size={13} color={on ? "#fff" : "#272B7C"} />
+                  </span>
+                </button>
+                <div className="grid transition-all duration-300" style={{ gridTemplateRows: on ? "1fr" : "0fr" }}>
+                  <div className="overflow-hidden">
+                    <p className="px-5 md:px-6 pb-5 text-sm" style={{ color: "#6B6B6B", lineHeight: 1.7 }}>{f.a}</p>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── Aparición al hacer scroll ──────────────────────────────────────────────
+// Mismo efecto que en Transpack: cada bloque entra con un fundido y un leve
+// desplazamiento hacia arriba cuando aparece en pantalla al bajar. Se aplica
+// solo a las secciones debajo del hero, recorriendo su contenido: entra en
+// los contenedores (max-w / mx-auto) y, si encuentra una grilla, anima cada
+// tarjeta por separado y escalonada. Respeta "reducir movimiento".
+
+function useScrollReveal(rootRef: React.RefObject<HTMLElement | null>) {
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root || !("IntersectionObserver" in window)) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const items: HTMLElement[] = [];
+    const collect = (el: Element, depth: number) => {
+      let k = 0;
+      for (const child of Array.from(el.children) as HTMLElement[]) {
+        const cs = getComputedStyle(child);
+        if (cs.position === "absolute" || cs.position === "fixed" || cs.display === "none") continue;
+        const cls = typeof child.className === "string" ? child.className : "";
+        const isWrapper = depth < 3 && (/\bmax-w-|\bmx-auto\b/.test(cls) || (child.children.length === 1 && child.tagName === "DIV" && !/\bgrid\b|rounded/.test(cls)));
+        if (isWrapper) { collect(child, depth + 1); continue; }
+        if (/\bgrid\b/.test(cls) && child.children.length > 1 && child.children.length <= 12) {
+          (Array.from(child.children) as HTMLElement[]).forEach((g, i) => { g.style.transitionDelay = `${Math.min(i, 5) * 90}ms`; items.push(g); });
+          continue;
+        }
+        child.style.transitionDelay = `${Math.min(k, 3) * 80}ms`;
+        items.push(child);
+        k++;
+      }
+    };
+    root.querySelectorAll(":scope > section, :scope > div > section").forEach((sec, i) => { if (i > 0) collect(sec, 0); });
+
+    items.forEach(el => el.classList.add("reveal"));
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        const el = e.target as HTMLElement;
+        el.classList.add("is-visible");
+        io.unobserve(el);
+        // Quita el retraso una vez visible para no frenar los efectos hover.
+        window.setTimeout(() => { el.style.transitionDelay = ""; }, 1300);
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
+    items.forEach(el => io.observe(el));
+    return () => io.disconnect();
+  }, [rootRef]);
+}
+
 function LandingPage() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -1585,6 +1754,46 @@ function LandingPage() {
   // Estado del chat en App (no dentro de ChatBot): así el avatar del hero
   // también puede abrirlo con un clic, no solo el botón flotante.
   const [chatOpen, setChatOpen] = useState(false);
+  const [chatSeed, setChatSeed] = useState<{ text: string; id: number } | null>(null);
+  const pageRef = useRef<HTMLDivElement>(null);
+  // Animación de entrada (solo la carpeta): solo la primera carga de la sesión
+  // y nunca con "reducir movimiento". El estado final es la página normal.
+  const [intro] = useState(() => {
+    try {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
+      if (sessionStorage.getItem("ta-intro") === "1") return false;
+      sessionStorage.setItem("ta-intro", "1");
+    } catch { /* sin almacenamiento: se anima igual */ }
+    return true;
+  });
+  useScrollReveal(pageRef);
+  const askJoel = (text: string) => { setChatSeed({ text, id: Date.now() }); setChatOpen(true); };
+
+  // Tarjeta de soporte (audífonos): guarda la posición del botón al abrir.
+  const supportBtnRef = useRef<HTMLButtonElement>(null);
+  const [supportAnchor, setSupportAnchor] = useState<DOMRect | null>(null);
+  const openSupport = () => {
+    setOpenMenu(null); setSearchOpen(false);
+    if (supportBtnRef.current) setSupportAnchor(supportBtnRef.current.getBoundingClientRect());
+  };
+  const toggleSupport = () => { if (supportAnchor) setSupportAnchor(null); else openSupport(); };
+  // Se abre al pasar el cursor y se cierra al salir, con un pequeño margen
+  // para alcanzar a cruzar el espacio entre el botón y la tarjeta.
+  const supportLeaveTimer = useRef<number | undefined>(undefined);
+  const supportHoverIn = () => { clearTimeout(supportLeaveTimer.current); if (!supportAnchor) openSupport(); };
+  const supportHoverOut = () => { clearTimeout(supportLeaveTimer.current); supportLeaveTimer.current = window.setTimeout(() => setSupportAnchor(null), 220); };
+  useEffect(() => {
+    if (!supportAnchor) return;
+    const close = () => setSupportAnchor(null);
+    const onDown = (e: MouseEvent) => {
+      const t = e.target as HTMLElement;
+      if (!t.closest("[data-support-popover]") && !supportBtnRef.current?.contains(t)) close();
+    };
+    window.addEventListener("scroll", close, { passive: true });
+    window.addEventListener("resize", close);
+    document.addEventListener("mousedown", onDown);
+    return () => { window.removeEventListener("scroll", close); window.removeEventListener("resize", close); document.removeEventListener("mousedown", onDown); };
+  }, [supportAnchor]);
 
   // Búsqueda del header: reemplaza la fila del nav por un input cuando está
   // abierta (mismo mecanismo "el pill crece" que Servicios/Nosotros), y
@@ -1662,11 +1871,11 @@ function LandingPage() {
     { label: "Servicios", href: "#servicios" },
     { label: "Nosotros", href: "/nosotros" },
     { label: "Blog", href: "#blog" },
-    { label: "Contacto", href: "#cotizador" },
+    { label: "Contacto", href: "#faq" },
   ];
 
   return (
-    <div className="min-h-full" style={{ background: "#ffffff", fontFamily: "Inter, sans-serif", color: "#37352F" }}>
+    <div ref={pageRef} className="min-h-full" style={{ background: "#ffffff", fontFamily: "Inter, sans-serif", color: "#37352F" }}>
 
       {/* ── HEADER — pill flotante que se convierte en barra completa al hacer scroll ── */}
       {/* fixed (no sticky): el header sale del flujo del documento para que el hero
@@ -1690,7 +1899,10 @@ function LandingPage() {
           // igual de bien pero con un degradado, más estético.
           background: scrolled ? "#ffffff" : "transparent",
           boxShadow: scrolled ? "0 4px 20px rgba(10,13,61,0.12)" : "none",
-          transition: "background 0.3s ease, box-shadow 0.3s ease",
+          // Arriba del todo, la barra flota separada del borde superior; al
+          // hacer scroll se pega arriba y pasa a barra completa.
+          paddingTop: scrolled ? 0 : 18,
+          transition: "background 0.3s ease, box-shadow 0.3s ease, padding-top 0.3s ease",
         }}
       >
         {/* Logo — suelto, alineado con el borde del bloque de texto del hero (no
@@ -1699,8 +1911,8 @@ function LandingPage() {
             abrirse "Servicios" el header crece en alto, y con top-1/2 el logo se
             iba arrastrando hacia el centro nuevo en vez de quedarse arriba, fijo
             junto a la fila 1 del navbar. */}
-        <a href="#" className="absolute z-10 left-4 md:left-28" style={{ top: -2 }}>
-          <HeaderLogo scrolled={scrolled} size={64} />
+        <a href="#" className="absolute z-10 left-4 md:left-28" style={{ top: scrolled ? 5 : 12, transition: "top 0.3s ease" }}>
+          <HeaderLogo scrolled={scrolled} size={scrolled ? 50 : 64} />
         </a>
 
         {/* Pill / barra — una sola figura que se ENSANCHA (crece en alto) cuando
@@ -1780,7 +1992,7 @@ function LandingPage() {
                   <NavDropdownTrigger label="Servicios" open={openMenu === "servicios"} setOpen={() => setOpenMenu("servicios")} />
                   <NavDropdownTrigger label="Nosotros" open={openMenu === "nosotros"} setOpen={() => setOpenMenu("nosotros")} />
                   <NavDropdownTrigger label="Blog" open={openMenu === "blog"} setOpen={() => setOpenMenu("blog")} />
-                  {[{ label: "Contacto", href: "#cotizador" }].map(l => (
+                  {[{ label: "Contacto", href: "#faq" }].map(l => (
                     <a key={l.label} href={l.href}
                       className="px-3.5 py-2 rounded-full text-sm font-medium transition-colors"
                       style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif" }}
@@ -1808,10 +2020,10 @@ function LandingPage() {
               style={{ width: 36, height: 36, background: searchOpen ? "#1800AD" : "#fff", border: `1.5px solid ${searchOpen ? "#1800AD" : "#E4E6F7"}`, marginLeft: 8 }}>
               <Bi n={searchOpen ? "x-lg" : "search"} size={searchOpen ? 13 : 14} color={searchOpen ? "#fff" : "#272B7C"} />
             </button>
-            <button type="button" onClick={() => setChatOpen(true)} aria-label="Soporte" title="Soporte"
+            <button ref={supportBtnRef} type="button" onClick={toggleSupport} onMouseEnter={supportHoverIn} onMouseLeave={supportHoverOut} aria-label="Soporte" title="Soporte" aria-expanded={!!supportAnchor}
               className="flex items-center justify-center rounded-full shrink-0 transition-transform hover:scale-105 active:scale-95"
-              style={{ width: 36, height: 36, background: "#fff", border: "1.5px solid #E4E6F7", marginLeft: 6, marginRight: scrolled ? 8 : 0 }}>
-              <Bi n="headset" size={15} color="#272B7C" />
+              style={{ width: 36, height: 36, background: supportAnchor ? "#272B7C" : "#fff", border: `1.5px solid ${supportAnchor ? "#272B7C" : "#E4E6F7"}`, marginLeft: 6, marginRight: scrolled ? 8 : 0 }}>
+              <Bi n="headset" size={15} color={supportAnchor ? "#fff" : "#272B7C"} />
             </button>
           </div>
 
@@ -1879,130 +2091,46 @@ function LandingPage() {
         )}
       </header>
 
-      {/* ── HERO ────────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden" style={{ background: "#F7F8FF" }}>
-        {/* Background shape — solo desde md, donde el hero pasa a 2 columnas (avatar/mapa incluidos) */}
-        <div className="hidden md:block absolute inset-0 pointer-events-none">
-          {/* Base: dark navy canvas for the lava lamp */}
-          <div className="absolute top-0 right-0 w-[55%] h-full" style={{ background: "#0a0d3d" }} />
-          {/* Lava blobs — larger + faster for vivid integration */}
-          <div className="absolute" style={{ top: "0%",  right: "5%",  width: 420, height: 420, borderRadius: "50%", background: "#1800AD", filter: "blur(55px)", opacity: 0.95, animation: "blob1 11s ease-in-out infinite" }} />
-          <div className="absolute" style={{ top: "35%", right: "20%", width: 380, height: 380, borderRadius: "50%", background: "#FFDE59", filter: "blur(50px)", opacity: 0.85, animation: "blob2 13s ease-in-out infinite" }} />
-          <div className="absolute" style={{ top: "50%", right: "0%",  width: 380, height: 380, borderRadius: "50%", background: "#3D2FCC", filter: "blur(48px)", opacity: 0.90, animation: "blob3 10s ease-in-out infinite" }} />
-          <div className="absolute" style={{ top: "10%", right: "30%", width: 300, height: 300, borderRadius: "50%", background: "#5B3FD4", filter: "blur(45px)", opacity: 0.80, animation: "blob4 12s ease-in-out infinite" }} />
-          <div className="absolute" style={{ top: "65%", right: "28%", width: 280, height: 280, borderRadius: "50%", background: "#FFDE59", filter: "blur(44px)", opacity: 0.65, animation: "blob1 14s ease-in-out infinite reverse" }} />
-          <div className="absolute" style={{ top: "25%", right: "2%",  width: 260, height: 260, borderRadius: "50%", background: "#272B7C", filter: "blur(42px)", opacity: 0.75, animation: "blob2 9s ease-in-out infinite reverse" }} />
+      {/* ── HERO ────────────────────────────────────────────────────────────
+          Centrado sobre los videos de fondo: insignia, título, bajada y una
+          caja para escribirle directo a Joel. Debajo, la franja navy con una
+          muesca recortada (a través de ella se ven los videos) y la sección
+          "Dónde operamos". */}
+      <section className="relative overflow-hidden" style={{ background: "#0a0d3d" }}>
+        <HeroVideoBackground />
+        <div className="relative">
+        <div className="relative max-w-2xl mx-auto px-6 pt-28 md:pt-44 pb-6 text-center flex flex-col justify-center md:min-h-[72vh]">
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-5" style={{ fontFamily: "Poppins, sans-serif", color: "#fff", lineHeight: 1.15, textShadow: "0 2px 18px rgba(10,13,61,0.45)" }}>
+            Sus archivos,<br />
+            bajo{" "}
+            <span className="inline-block rounded-xl md:rounded-2xl px-3 md:px-4 align-middle" style={{ background: "#FFDE59", color: "#272B7C", textShadow: "none", paddingBottom: "0.12em" }}>resguardo</span>.
+          </h1>
+
+          <p className="text-base max-w-2xl mx-auto mb-7" style={{ color: "rgba(255,255,255,0.85)", textWrap: "balance", textShadow: "0 1px 10px rgba(10,13,61,0.5)" }}>
+            Clasificamos, digitalizamos, custodiamos y destruimos legalmente sus documentos
+          </p>
+
+          <HeroAskJoel onAsk={askJoel} />
+        </div>
         </div>
 
-        {/* Avatar + mapa: posicionados sobre el panel navy REAL (55% de la sección),
-            no sobre la columna angosta del grid de abajo (esa tiene tope por max-w-6xl
-            y en pantallas anchas queda descentrada respecto al panel navy).
-            Oculto en mobile: a una sola columna esta capa (con medidas fijas en px)
-            queda encima del texto — hasta que tengamos una versión mobile propia. */}
-        <div className="hidden md:block absolute right-0 overflow-hidden" style={{ top: 0, width: "55%", height: 840, zIndex: 5 }}>
-          {/* Mapa sin recortar, grande, pegado al borde derecho del panel (capa de
-              fondo) y el avatar por encima, con el brazo montándose sobre el mapa —
-              mismo nivel espacial/tamaño/posición que la referencia del cliente. */}
-          <div className="relative w-full h-full" style={{ transform: "translateX(-70px)" }}>
-            <ColombiaMap />
-            {/* Clic en el avatar del hero también abre el chat (Joel) — no solo
-                el botón flotante de la esquina. */}
-            <div className="absolute cursor-pointer" style={{ left: 170, bottom: 100, zIndex: 20 }}
-              onClick={() => setChatOpen(true)} title="Hablar con Joel" role="button" aria-label="Hablar con Joel">
-              <AnimatedAvatar src={avatarImg} alt="Asesor Transarchivos" />
-            </div>
+        {/* Carpeta: cuerpo de un solo color (mismo tono claro de la sección de blog, #FBFBF8) con una pestaña
+            arriba a la izquierda, como una carpeta de archivo, sobre los videos. */}
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 mt-24 md:mt-36">
+          <div className={`relative h-[130px] md:h-[170px] ${intro ? "folder-intro" : ""}`}>
+            {/* La pestaña baja 3 px por dentro del cuerpo (se solapan) para que
+                nunca se vea una línea de corte entre ambos durante la animación. */}
+            <svg className="folder-tab absolute left-0 block" width="280" height="49" viewBox="0 0 280 49" aria-hidden="true" style={{ bottom: "calc(100% - 3px)" }}>
+              <path d="M0 49 V18 Q0 0 18 0 H196 Q209 0 217 10 L242 38 Q249 46 262 46 H280 V49 Z" fill="#FBFBF8" />
+            </svg>
+            <div className="absolute inset-0" style={{ background: "#FBFBF8", borderRadius: "0 28px 0 0" }} />
           </div>
-        </div>
-
-        {/* Sin max-w-6xl: el texto debe alinearse con el panel claro real (45% de la
-            sección), igual que el avatar/mapa se alinea con el panel navy (55%). Con
-            max-w-6xl, en monitores muy anchos el contenido quedaba centrado dentro de
-            una caja angosta, muy a la derecha del borde real y con un vacío enorme a
-            la izquierda. */}
-        <div className="relative px-8 md:px-16 pt-36 md:pt-40 pb-16 grid md:grid-cols-[45%_55%] gap-8 items-start">
-          {/* Lápiz: sin recortar, se deja sangrar un poco por el borde izquierdo
-              como antes (no tiene problema de encimarse con el panel navy). */}
-          <img src={lapizImg} alt="" aria-hidden="true"
-            className="hidden md:block absolute pointer-events-none select-none"
-            style={{ top: 90, left: -24, width: 340, height: "auto", opacity: 0.14, zIndex: 0 }} />
-          {/* Escudo: SÍ necesita recorte — al moverlo hacia la derecha el pie se
-              salía sobre el panel navy. El ancho del contenedor tiene que
-              calzar con el 45%/55% del propio panel navy (que se mide sobre el
-              ancho TOTAL de la sección, sin restar el padding) — no con el 45%
-              de la columna del grid (que sí resta el padding y quedaba ~6px
-              más ancho, dejando un pedazo asomado sobre el navy). */}
-          <div className="hidden md:block absolute pointer-events-none overflow-hidden"
-            style={{ top: 0, bottom: 0, left: 0, width: "45%", zIndex: 0 }}>
-            <img src={escudoImg} alt="" aria-hidden="true" className="absolute select-none"
-              style={{ bottom: 80, left: "65%", width: 300, height: "auto", opacity: 0.14 }} />
-          </div>
-
-          {/* LEFT — copy. Centrada en mobile/columna única. Desde md, el bloque se
-              centra DENTRO del panel claro (45%) en vez de pegarse al borde, con el
-              texto alineado a la izquierda dentro de ese bloque — igual que el avatar
-              se centra dentro del panel navy. */}
-          {/* w-full (ancho DEFINIDO = 100% de la columna del grid), tope en max-w-lg:
-              con solo max-w-lg (sin w-full) este bloque se encogía/agrandaba al ritmo
-              del propio h1 (cuya línea "bajo [palabra]." cambia de ancho al rotar de
-              palabra) — y al recentrarse con mx-auto, arrastraba con él a la insignia,
-              el párrafo y los botones. Con un ancho explícito (no "auto") el bloque no
-              se mueve nunca; solo se mueve el punto "." al final del h1, dentro de su
-              propia línea. w-full en vez de un px fijo para no desbordar la columna
-              del grid en pantallas medianas (~768–1265px), donde el 45% es angosto. */}
-          <div className="relative text-center md:text-left md:w-full md:max-w-lg md:mx-auto" style={{ zIndex: 1, marginTop: 80 }}>
-            <h1 className="text-5xl md:text-6xl font-bold tracking-tight" style={{ fontFamily: "Poppins, sans-serif", color: "#272B7C", lineHeight: 1.1, marginBottom: 4 }}>
-              Sus archivos,<br />
-              bajo <CyclingWord />.
-            </h1>
-            {/* Underline — ancho fijo, no depende del contenedor */}
-            <div className="flex justify-center md:justify-start" style={{ marginBottom: 24, marginTop: 2 }}>
-              <svg width="340" height="10" viewBox="0 0 340 10" fill="none">
-                <path d="M0 7 Q85 1 170 6 Q255 11 340 5" stroke="#FFDE59" strokeWidth="5" fill="none" strokeLinecap="round"/>
-              </svg>
-            </div>
-
-            <p className="text-lg mb-10 max-w-sm mx-auto md:mx-0" style={{ color: "#6B7280" }}>
-              Clasificamos, digitalizamos, custodiamos y destruimos legalmente sus documentos — con certificación y trayectoria real.
-            </p>
-
-            <div className="flex flex-wrap justify-center md:justify-start gap-3 mb-12">
-              <a href="#cotizador"
-                className="px-7 py-4 rounded-2xl font-bold text-sm transition-all hover:scale-105 active:scale-95 shadow-lg"
-                style={{ background: "#272B7C", color: "#fff", fontFamily: "Montserrat, sans-serif", boxShadow: "0 8px 24px rgba(39,43,124,0.28)" }}>
-                Agendar diagnóstico
-              </a>
-              <a href="#servicios"
-                className="px-7 py-4 rounded-2xl font-bold text-sm border-2 transition-all hover:scale-105 active:scale-95"
-                style={{ color: "#272B7C", borderColor: "#272B7C", background: "#fff", fontFamily: "Montserrat, sans-serif" }}>
-                Ver servicios
-              </a>
-            </div>
-
-            {/* Social proof row */}
-            <div className="flex items-center justify-center md:justify-start gap-6 flex-wrap">
-              {[
-                { val: "40+", label: "años" },
-                { val: "ISO 9001", label: "certificados" },
-                { val: "1983", label: "pioneros en Bogotá" },
-              ].map(s => (
-                <div key={s.val} className="flex items-baseline gap-1.5">
-                  <span className="text-2xl font-bold" style={{ fontFamily: "Poppins, sans-serif", color: "#272B7C" }}>{s.val}</span>
-                  <span className="text-xs" style={{ color: "#9B9B9B", fontFamily: "Montserrat, sans-serif" }}>{s.label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* RIGHT — celda vacía: solo reserva el ancho/alto de la columna en el grid.
-              El avatar y el mapa reales se dibujan en la capa absoluta de arriba,
-              alineada al panel navy completo en vez de a esta columna con tope. */}
-          <div aria-hidden="true" style={{ minHeight: 620 }} />
         </div>
 
         {/* Bottom trust bar */}
         <div className="relative border-t py-4" style={{ borderColor: "#E9E9E7", background: "#fff" }}>
           <div className="max-w-6xl mx-auto px-8 flex flex-wrap justify-center md:justify-between items-center gap-4">
-            {["Ley 594 de 2000", "ISO 9001", "Norma AGN", "Certificado de destrucción", "Custodia con vigilancia 24 h"].map(t => (
+            {["Ley 594 de 2000", "Norma AGN", "Certificado de destrucción", "Custodia con vigilancia 24 h"].map(t => (
               <span key={t} className="flex items-center gap-1.5 text-xs font-medium" style={{ color: "#6B7280", fontFamily: "Montserrat, sans-serif" }}>
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6.5" stroke="#272B7C" strokeOpacity=".3"/><path d="M4 7l2 2 4-4" stroke="#272B7C" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 {t}
@@ -2018,80 +2146,89 @@ function LandingPage() {
           Antes vivía al final de "Cómo trabajamos"; ahora se presenta antes
           de las unidades de negocio, como punto de partida para quien no
           sabe qué servicio necesita — el "producto nuevo" de la casa. */}
-      <section className="relative overflow-hidden py-16" style={{ background: "#fff" }}>
+      <section id="diagnostico" className="relative overflow-hidden py-16" style={{ background: "#fff", scrollMarginTop: 80 }}>
         <div className="max-w-6xl mx-auto px-6 relative">
-          <img src={egProducto1Img} alt="" aria-hidden="true"
-            className="hidden xl:block absolute pointer-events-none select-none"
-            style={{ width: 220, height: "auto", bottom: 220, left: -195, zIndex: 0 }} />
-          <img src={egProducto2Img} alt="" aria-hidden="true"
-            className="hidden xl:block absolute pointer-events-none select-none"
-            style={{ width: 340, height: "auto", bottom: 260, right: -275, zIndex: 0 }} />
+          <div className="relative overflow-hidden rounded-3xl grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]"
+            style={{ background: "#fff", border: "1.5px solid #E4E6F7", boxShadow: "0 30px 60px -34px rgba(39,43,124,0.3)" }}>
 
-          <div className="relative overflow-hidden rounded-3xl p-6 md:p-9"
-            style={{ background: "#fff", border: "1.5px solid #E4E6F7", boxShadow: "0 30px 60px -34px rgba(39,43,124,0.3)", paddingBottom: 46 }}>
-            <Bi n="search" size={280} color="#272B7C"
-              className="hidden md:block absolute pointer-events-none select-none"
-              style={{ top: -50, right: -50, opacity: 0.04, transform: "rotate(12deg)" }} />
-
-            <div className="relative max-w-2xl">
-              <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full mb-3"
+            {/* Izquierda: propuesta + proceso */}
+            <div className="relative p-6 md:p-10">
+              <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full mb-4"
                 style={{ background: "linear-gradient(135deg, #272B7C, #1800AD)", color: "#fff", fontFamily: "Montserrat, sans-serif", boxShadow: "0 8px 16px -8px rgba(39,43,124,0.5)" }}>
                 Diagnóstico documental
               </span>
-              <h3 className="text-xl md:text-2xl font-bold mb-2.5" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif", lineHeight: 1.25 }}>
+              <h3 className="text-2xl md:text-3xl font-bold mb-3" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif", lineHeight: 1.2 }}>
                 La <span style={{ background: "linear-gradient(transparent 62%, #FFDE59 62%)" }}>radiografía completa</span> de su archivo, antes de mover un solo papel
               </h3>
-              <p className="text-sm" style={{ color: "#6B6B6B", lineHeight: 1.6 }}>
+              <p className="text-sm mb-8" style={{ color: "#6B6B6B", lineHeight: 1.65 }}>
                 No le preguntamos qué servicio quiere: le mostramos qué está pasando hoy con su archivo, para que decida con información real — no con suposiciones.
               </p>
-            </div>
 
-            {/* Línea de tiempo del resultado */}
-            <div className="relative grid grid-cols-2 md:grid-cols-4 gap-3 mt-6 mb-6">
-              <div className="hidden md:block absolute" style={{ top: 16, left: "12.5%", right: "12.5%", height: 2, background: "#E4E6F7" }} />
-              {["Diagnóstico", "Hallazgos", "Plan de acción", "Propuesta"].map((s, i) => (
-                <div key={s} className="relative flex flex-col items-center text-center gap-1.5">
-                  <span className="flex items-center justify-center rounded-full font-bold text-xs relative"
-                    style={{ width: 32, height: 32, background: i === 0 ? "#272B7C" : "#fff", color: i === 0 ? "#fff" : "#272B7C", border: "2px solid #272B7C", fontFamily: "Poppins, sans-serif" }}>
-                    {i + 1}
-                  </span>
-                  <span className="text-[11px] font-semibold" style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif" }}>{s}</span>
-                </div>
-              ))}
-            </div>
+              {/* Proceso en 4 pasos (línea de tiempo vertical) */}
+              <ol className="relative mb-9">
+                <span className="absolute w-0.5 rounded-full" style={{ left: 15, top: 16, bottom: 16, background: "#E4E6F7" }} />
+                {[
+                  { t: "Diagnóstico", d: "Revisamos su archivo tal como está hoy." },
+                  { t: "Hallazgos", d: "Identificamos volumen, estado, riesgos y oportunidades." },
+                  { t: "Plan de acción", d: "Priorizamos qué hacer primero y con qué servicios." },
+                  { t: "Propuesta", d: "Recibe una propuesta clara, con alcance y tiempos." },
+                ].map((st, i) => (
+                  <li key={st.t} className="relative flex items-start gap-4 pb-5 last:pb-0">
+                    <span className="relative flex items-center justify-center rounded-full font-bold text-xs shrink-0"
+                      style={{ width: 32, height: 32, background: i === 0 ? "#272B7C" : "#fff", color: i === 0 ? "#fff" : "#272B7C", border: "2px solid #272B7C", fontFamily: "Poppins, sans-serif" }}>
+                      {i + 1}
+                    </span>
+                    <div className="pt-1">
+                      <p className="text-sm font-bold" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif" }}>{st.t}</p>
+                      <p className="text-xs mt-0.5" style={{ color: "#8A8A8A" }}>{st.d}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
 
-            <p className="relative text-[10px] font-bold uppercase tracking-wider mb-3 flex items-center gap-2" style={{ color: "#9B9B9B", fontFamily: "Montserrat, sans-serif" }}>
-              <span style={{ width: 16, height: 2, borderRadius: 1, background: "#C8960A" }} />
-              Lo que identifica
-            </p>
-            <div className="relative flex flex-wrap justify-center gap-2 mb-5">
-              {[
-                { i: monoVolumen, t: "Volumen y estado documental", d: "Cuántos documentos tiene y en qué condición se encuentran" },
-                { i: monoEspacio, t: "Espacio ocupado", d: "Metros lineales o cúbicos que ocupa su archivo hoy" },
-                { i: monoInventario, t: "Inventario y organización", d: "Cómo están clasificados y si siguen la TRD vigente" },
-                { i: monoDigitalizacion, t: "Oportunidades de digitalización", d: "Qué series pueden pasar a un flujo digital" },
-                { i: monoEscudo, t: "Necesidades de custodia", d: "Qué debe resguardarse bajo condiciones controladas" },
-                { i: monoDisposicionFinal, t: "Disposición final", d: "Qué documentos ya cumplieron su tiempo de retención" },
-                { i: monoArchivoLupa, t: "Riesgos y oportunidades de mejora", d: "Vacíos normativos y puntos por optimizar" },
-              ].map(({ i, t, d }) => (
-                <div key={t} className="rounded-lg p-2.5 flex flex-col items-center text-center gap-1.5 w-[calc(50%-4px)] sm:w-[calc(25%-6px)]"
-                  style={{ background: "#F7F8FF", border: "1px solid #E4E6F7" }}>
-                  <div className="flex items-center justify-center rounded-lg" style={{ width: 32, height: 32, background: "#fff", boxShadow: "0 6px 16px -8px rgba(39,43,124,0.25)" }}>
-                    <img src={i} alt="" className="select-none" style={{ width: 18, height: 18, objectFit: "contain" }} />
-                  </div>
-                  <div>
-                    <p className="text-[11px] font-bold leading-snug mb-0.5" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif" }}>{t}</p>
-                    <p className="text-[10px] leading-snug" style={{ color: "#8A8A8A" }}>{d}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="relative pt-5 flex justify-center" style={{ borderTop: "1px solid #E4E6F7" }}>
               <a href="#cotizador" className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold transition-all hover:scale-105 active:scale-95"
                 style={{ background: "#272B7C", color: "#fff", fontFamily: "Montserrat, sans-serif", textDecoration: "none", boxShadow: "0 14px 28px -10px rgba(39,43,124,0.45)" }}>
                 Solicitar diagnóstico <Bi n="arrow-right" size={15} color="#fff" />
               </a>
+            </div>
+
+            {/* Derecha: "informe" con lo que identifica */}
+            <div className="relative p-6 md:p-10 flex items-center" style={{ background: "#F7F8FF" }}>
+              <Bi n="search" size={260} color="#272B7C"
+                className="hidden md:block absolute pointer-events-none select-none"
+                style={{ top: -40, right: -40, opacity: 0.04, transform: "rotate(12deg)" }} />
+              <div className="relative w-full rounded-2xl overflow-hidden" style={{ background: "#fff", border: "1px solid #E4E6F7", boxShadow: "0 24px 48px -28px rgba(39,43,124,0.35)" }}>
+                <div className="flex items-center justify-between gap-3 px-5 py-4" style={{ borderBottom: "1px solid #ECEEF6" }}>
+                  <span className="flex items-center gap-3">
+                    <BiTile n="file-earmark-text" size={36} accent="#1800AD" />
+                    <span>
+                      <span className="block text-sm font-bold" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif" }}>Informe de diagnóstico</span>
+                      <span className="block text-[11px]" style={{ color: "#9B9B9B" }}>Lo que identificamos en su archivo</span>
+                    </span>
+                  </span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shrink-0" style={{ background: "#FFF6D6", color: "#8a6d00", fontFamily: "Montserrat, sans-serif" }}>7 puntos</span>
+                </div>
+                <ul className="px-5 py-1.5">
+                  {[
+                    { i: "stack", t: "Volumen y estado documental", d: "Cuántos documentos tiene y en qué condición se encuentran" },
+                    { i: "rulers", t: "Espacio ocupado", d: "Metros lineales o cúbicos que ocupa su archivo hoy" },
+                    { i: "list-check", t: "Inventario y organización", d: "Cómo están clasificados y si siguen la TRD vigente" },
+                    { i: "upc-scan", t: "Oportunidades de digitalización", d: "Qué series pueden pasar a un flujo digital" },
+                    { i: "shield-check", t: "Necesidades de custodia", d: "Qué debe resguardarse bajo condiciones controladas" },
+                    { i: "hourglass-bottom", t: "Disposición final", d: "Qué documentos ya cumplieron su tiempo de retención" },
+                    { i: "exclamation-triangle", t: "Riesgos y oportunidades de mejora", d: "Vacíos normativos y puntos por optimizar" },
+                  ].map((f, k) => (
+                    <li key={f.t} className="flex items-center gap-3 py-2.5" style={{ borderTop: k ? "1px solid #F1F2F8" : "none" }}>
+                      <BiTile n={f.i} size={32} accent="#272B7C" />
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[13px] font-semibold leading-snug" style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif" }}>{f.t}</p>
+                        <p className="text-[11px] leading-snug" style={{ color: "#8A8A8A" }}>{f.d}</p>
+                      </div>
+                      <Bi n="check-circle-fill" size={15} color="#16a34a" />
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
         </div>
@@ -2110,43 +2247,7 @@ function LandingPage() {
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" style={{ marginTop: 40 }}>
-            {services.map((s, i) => (
-              i === 0 ? (
-                <div key={s.title} className="relative">
-                  <div className="relative" style={{ zIndex: 1 }}>
-                    <ServiceCard service={s} />
-                  </div>
-                  {/* Personaje asomándose por la esquina de la primera card — el
-                      cuerpo va DETRÁS (z-index menor que la card, así que la
-                      card tapa lo que cae dentro de su área). La misma imagen
-                      se repite ENCIMA (z-index mayor) pero recortada con
-                      clip-path a solo la región de la manita, para que quede
-                      la mano montada sobre la card sin que se vea el resto
-                      del cuerpo duplicado. Estática (sin animación). */}
-                  <img src={personajeCardImg} alt="" aria-hidden="true"
-                    className="hidden lg:block absolute pointer-events-none select-none"
-                    style={{ width: 170, height: "auto", top: -58, left: -65, zIndex: 0 }} />
-                  <img src={personajeCardImg} alt="" aria-hidden="true"
-                    className="hidden lg:block absolute pointer-events-none select-none"
-                    style={{ width: 170, height: "auto", top: -58, left: -65, zIndex: 10, clipPath: "inset(38% 50% 43% 31%)" }} />
-                </div>
-              ) : i === 5 ? (
-                <div key={s.title} className="relative">
-                  <div className="relative" style={{ zIndex: 1 }}>
-                    <ServiceCard service={s} />
-                  </div>
-                  {/* Personaje al lado DERECHO de la card "Destrucción de
-                      Documentos" — más grande y más pegado, por ENCIMA de la
-                      card (no detrás): la carpeta amarilla y la mano se dejan
-                      montar sobre la card sin recortar, a propósito. */}
-                  <img src={personajeCard2Img} alt="" aria-hidden="true"
-                    className="hidden lg:block absolute pointer-events-none select-none"
-                    style={{ width: 270, height: "auto", top: -25, right: -150, zIndex: 10 }} />
-                </div>
-              ) : (
-                <ServiceCard key={s.title} service={s} />
-              )
-            ))}
+            {services.map(s => <ServiceCard key={s.title} service={s} />)}
           </div>
 
           {/* CTA */}
@@ -2167,54 +2268,11 @@ function LandingPage() {
       {/* ── MODELO: DIAGNÓSTICO → SOLUCIÓN → PROTECCIÓN → EXPANSIÓN ──────────
           Contenido del documento "Modelo de Negocio - Transarchivos". */}
       <section id="modelo" className="relative overflow-hidden py-20" style={{ background: "#fff" }}>
-        {/* Patrón de fondo decorativo con los 2 elementos gráficos del cliente
-            (eg-producto-1/2), repetidos a muy baja opacidad para unificar
-            visualmente "Cómo trabajamos" y "Diagnóstico documental" como una
-            sola franja — posiciones en % para que escale con el alto real de
-            toda la sección (ambos bloques juntos). */}
         <div className="absolute inset-0 pointer-events-none select-none overflow-hidden" aria-hidden="true" style={{ zIndex: 0 }}>
           {/* Un resplandor navy sutil (se quitó el dorado — se veía como una
               mancha amarilla pegada a la esquina). */}
           <div className="absolute rounded-full" style={{ width: 560, height: 560, top: "58%", left: "-10%", background: "radial-gradient(circle, rgba(24,0,173,0.08) 0%, transparent 70%)" }} />
 
-          {/* 4 "carriles" (izq. borde, izq. interior, der. borde, der.
-              interior). Cada carril es una pila vertical con separación fija
-              (misma distancia siempre = "espacios iguales"), pero cada
-              imagen tiene un pequeño jitter de posición/rotación/escala +
-              elección aleatoria de cuál de los 2 gráficos usar (semilla fija,
-              así que el resultado es "random" visualmente pero estable entre
-              renders). El carril interior queda a suficiente distancia
-              horizontal del exterior (>13% del ancho) para que, incluso con
-              el jitter y la rotación al máximo, ningún elemento se monte
-              sobre otro. */}
-          {(() => {
-            let seed = 42;
-            const rand = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; };
-            const SIZE = 230;
-            const ROW_GAP = 300; // > tamaño de imagen + margen de sobra
-            const lanes = [
-              { side: "left" as const, x: -6, rows: 5, offset: 0 },
-              { side: "left" as const, x: 26, rows: 5, offset: ROW_GAP / 2 },
-              { side: "right" as const, x: -6, rows: 5, offset: 60 },
-              { side: "right" as const, x: 26, rows: 5, offset: ROW_GAP / 2 + 60 },
-            ];
-            return lanes.flatMap((lane, li) =>
-              Array.from({ length: lane.rows }, (_, i) => {
-                const top = lane.offset + i * ROW_GAP + (rand() - 0.5) * 70; // jitter vertical, muy por debajo del ROW_GAP
-                const x = lane.x + (rand() - 0.5) * 3; // jitter horizontal leve
-                const img = rand() > 0.5 ? elementogSocio1Img : elementogSocio2Img;
-                const rot = (rand() - 0.5) * 20; // ±10deg
-                const scale = 0.85 + rand() * 0.3; // 0.85–1.15
-                return (
-                  <img key={`${li}-${i}`} src={img} alt="" style={{
-                    position: "absolute", width: SIZE, top,
-                    [lane.side]: `${x}%`,
-                    opacity: 0.05, transform: `rotate(${rot}deg) scale(${scale})`,
-                  }} />
-                );
-              })
-            );
-          })()}
         </div>
 
         <div className="relative max-w-6xl mx-auto px-6" style={{ zIndex: 1 }}>
@@ -2231,16 +2289,20 @@ function LandingPage() {
           <div className="relative grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               { n: 1, t: "Diagnóstico", k: "Entrada", ic: "clipboard2-pulse-fill", c: "#C8960A", d: "Detectamos su necesidad y abrimos la relación entendiendo qué pasa hoy con su archivo.", g: "linear-gradient(135deg, #B8860B 0%, #E5AE1A 100%)",
-                items: [{ i: monoArchivoLupa, l: "Diagnóstico documental", href: "#cotizador" }, { i: monoClasificacion, l: "Levantamiento de inventario", to: "/servicios/levantamiento-de-inventario" }] },
+                items: [{ i: "search", l: "Diagnóstico documental", href: "#cotizador" }, { i: "list-columns-reverse", l: "Levantamiento de inventario", to: "/servicios/levantamiento-de-inventario" }] },
               { n: 2, t: "Solución", k: "Transformación", ic: "gear-wide-connected", c: "#272B7C", d: "Resolvemos el problema documental con un proyecto a la medida.", g: "linear-gradient(135deg, #272B7C 0%, #4B50A0 100%)",
-                items: [{ i: monoDigitalizacion, l: "Digitalización", to: "/servicios/digitalizacion-de-documentos" }, { i: monoCarpeta, l: "Programa de Gestión Documental", to: "/servicios/programa-de-gestion-documental" }] },
+                items: [{ i: "upc-scan", l: "Digitalización", to: "/servicios/digitalizacion-de-documentos" }, { i: "folder2-open", l: "Programa de Gestión Documental", to: "/servicios/programa-de-gestion-documental" }] },
               { n: 3, t: "Protección", k: "Recurrencia", ic: "shield-fill-check", c: "#1800AD", d: "Protegemos su información y la mantenemos disponible cuando la necesite.", g: "linear-gradient(135deg, #1800AD 0%, #5B3FD4 100%)",
-                items: [{ i: monoCandado, l: "Custodia de archivos", to: "/servicios/custodia-de-archivos" }, { i: monoEscudo, l: "Custodia de medios magnéticos", to: "/servicios/custodia-de-medios-magneticos" }] },
+                items: [{ i: "archive", l: "Custodia de archivos", to: "/servicios/custodia-de-archivos" }, { i: "hdd-stack", l: "Custodia de medios magnéticos", to: "/servicios/custodia-de-medios-magneticos" }] },
               { n: 4, t: "Expansión", k: "Nuevos proyectos", ic: "rocket-takeoff-fill", c: "#272B7C", d: "Cerramos el ciclo de vida documental y ampliamos el valor de la relación.", g: "linear-gradient(135deg, #14163F 0%, #272B7C 100%)",
-                items: [{ i: monoDestruccion, l: "Destrucción legal", to: "/servicios/destruccion-de-documentos" }, { i: monoRayo, l: "Servicio inmediato", to: "/servicios/servicio-inmediato" }, { i: monoInhouse, l: "Servicio Inhouse", to: "/servicios/servicio-inhouse" }] },
+                items: [{ i: "file-earmark-x", l: "Destrucción legal", to: "/servicios/destruccion-de-documentos" }, { i: "lightning-charge", l: "Servicio inmediato", to: "/servicios/servicio-inmediato" }, { i: "person-badge", l: "Servicio Inhouse", to: "/servicios/servicio-inhouse" }] },
             ].map((st, idx, arr) => (
               <div key={st.n} className="group relative rounded-3xl flex flex-col transition-all hover:-translate-y-2"
-                style={{ background: "#fff", border: "1.5px solid #E4E6F7", boxShadow: "0 18px 40px -24px rgba(39,43,124,0.4)" }}>
+                // z-index decreciente: cada tarjeta queda por encima de la
+                // siguiente, así su flecha amarilla (que se monta sobre el borde
+                // de la tarjeta de al lado) siempre se ve completa, incluso al
+                // pasar el mouse.
+                style={{ background: "#fff", border: "1.5px solid #E4E6F7", boxShadow: "0 18px 40px -24px rgba(39,43,124,0.4)", zIndex: arr.length - idx }}>
                 <div className="relative px-6 pt-6 pb-7 overflow-hidden" style={{ background: st.g, borderRadius: "22px 22px 0 0", minHeight: 150 }}>
                   <span className="absolute select-none pointer-events-none font-bold" style={{ right: -6, top: -22, fontSize: 130, lineHeight: 1, color: "rgba(255,255,255,0.14)", fontFamily: "Poppins, sans-serif" }}>{st.n}</span>
                   <div className="relative">
@@ -2258,7 +2320,7 @@ function LandingPage() {
                       const inner = (
                         <>
                           <span className="flex items-center justify-center rounded-xl shrink-0" style={{ width: 38, height: 38, background: "#F7F8FF", border: "1px solid #E4E6F7" }}>
-                            <img src={it.i} alt="" style={{ width: 24, height: 24, objectFit: "contain" }} />
+                            <Bi n={it.i} size={17} color="#272B7C" />
                           </span>
                           <span className="flex-1">{it.l}</span>
                           <Bi n="arrow-right" size={14} color="#1800AD" className="transition-transform group-hover/item:translate-x-1" />
@@ -2417,6 +2479,10 @@ function LandingPage() {
 
       <Divider />
 
+      <FaqSection onChat={() => setChatOpen(true)} />
+
+      <Divider />
+
       {/* ── POR QUÉ TRANSARCHIVOS ────────────────────────────────────────────
           Franja de confianza (5 diferenciales), a los colores de marca y con
           contenido real del modelo de negocio / documento maestro: cumplimiento
@@ -2428,7 +2494,7 @@ function LandingPage() {
         <div className="relative max-w-6xl mx-auto px-6 py-5">
           <div className="grid grid-cols-2 md:grid-cols-5 divide-y md:divide-y-0 md:divide-x" style={{ borderColor: "#E4E6F7" }}>
             {[
-              { ic: "shield-check", t: "Cumplimiento normativo", d: "Operamos bajo la Ley 594 de 2000, el AGN y certificación ISO 9001." },
+              { ic: "shield-check", t: "Cumplimiento normativo", d: "Operamos bajo la Ley 594 de 2000 y la normativa del AGN." },
               { ic: "camera-video-fill", t: "Custodia con vigilancia 24/7", d: "Centro documental con CCTV, control de acceso y monitoreo ambiental permanente." },
               { ic: "graph-up-arrow", t: "Costo variable y escalable", d: "Paga por el volumen exacto que custodia, sin costos fijos de espacio o personal." },
               { ic: "lightning-charge-fill", t: "Ágil, in-house e inmediato", d: "Del diagnóstico al despacho express, adaptados al ritmo de su operación." },
@@ -2487,6 +2553,7 @@ function LandingPage() {
                   { label: "Nuestra historia", to: "/nosotros#historia" },
                   { label: "Normativa y certificados", to: "/nosotros#certificados" },
                   { label: "Nuestros clientes", to: "/nosotros#clientes" },
+                  { label: "Preguntas frecuentes", to: "/#faq" },
                 ].map(item => (
                   <li key={item.label}>
                     <Link to={item.to} className="text-sm transition-colors" style={{ color: "#6B6B6B" }}
@@ -2544,7 +2611,9 @@ function LandingPage() {
         </div>
       </footer>
 
-      <ChatBot open={chatOpen} setOpen={setChatOpen} />
+      {supportAnchor && <SupportPopover anchor={supportAnchor} onClose={() => setSupportAnchor(null)} onChat={() => setChatOpen(true)} onHoverIn={supportHoverIn} onHoverOut={supportHoverOut} />}
+
+      <ChatBot open={chatOpen} setOpen={setChatOpen} seed={chatSeed} />
     </div>
   );
 }
@@ -2564,7 +2633,7 @@ function LandingPage() {
 function NosotrosKicker({ icon, label }: { icon: string; label: string }) {
   return (
     <div className="flex items-center gap-3">
-      <img src={icon} alt="" className="w-10 h-10 object-contain shrink-0" />
+      <BiTile n={icon} size={40} accent="#1800AD" />
       <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "#9B9B9B", fontFamily: "Montserrat, sans-serif" }}>{label}</p>
     </div>
   );
@@ -2590,7 +2659,7 @@ function NosotrosPage() {
     { l: "Cultura", a: "cultura" },
     { l: "Clientes", a: "clientes" },
     { l: "Tecnología y seguridad", a: "aliados" },
-    { l: "Certificados", a: "certificados" },
+    { l: "Cumplimiento normativo", a: "certificados" },
   ];
 
   return (
@@ -2620,8 +2689,8 @@ function NosotrosPage() {
             En Transarchivos Ltda llevamos más de 40 años ayudando a empresas a transformar su gestión documental en una ventaja competitiva. Nacimos en 1983 para atender a Ecopetrol y desde entonces no hemos dejado de evolucionar. Fuimos pioneros en crear en Bogotá uno de los primeros centros especializados en custodia documental.
           </p>
 
-          <div className="grid grid-cols-3 gap-4 mt-10 max-w-xl">
-            {[["40+", "Años de experiencia"], ["1983", "Año de fundación"], ["ISO 9001", "Certificación de calidad"]].map(([v, l]) => (
+          <div className="grid grid-cols-2 gap-4 mt-10 max-w-sm">
+            {[["40+", "Años de experiencia"], ["1983", "Año de fundación"]].map(([v, l]) => (
               <div key={l} className="rounded-2xl p-4" style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)" }}>
                 <p className="font-bold" style={{ color: "#FFDE59", fontFamily: "Poppins, sans-serif", fontSize: v.length > 5 ? 20 : 26 }}>{v}</p>
                 <p className="text-xs mt-1" style={{ color: "rgba(255,255,255,0.7)" }}>{l}</p>
@@ -2648,7 +2717,7 @@ function NosotrosPage() {
 
         {/* Nuestra historia */}
         <section id="historia" style={{ scrollMarginTop: 76 }}>
-          <NosotrosKicker icon={iconoHistoria} label="Nuestra historia" />
+          <NosotrosKicker icon="clock-history" label="Nuestra historia" />
           <div className="grid lg:grid-cols-2 gap-6 mt-6">
             <div className="relative overflow-hidden rounded-3xl p-8 md:p-10 flex flex-col justify-between"
               style={{ background: "linear-gradient(135deg, #14163F 0%, #272B7C 55%, #1800AD 100%)", minHeight: 320 }}>
@@ -2670,7 +2739,6 @@ function NosotrosPage() {
                 {[
                   "Mantenido los estándares archivísticos de seguridad, accesibilidad, eficiencia, integridad, autenticidad y fiabilidad.",
                   "Permanecido alineados con la Ley 594 de 2000, la Resolución 8934 de 2014 y el Decreto 962 (Ley Antitrámites).",
-                  "Obtenido la certificación de calidad internacional ISO 9001.",
                   "Atendido multinacionales, pymes, microempresas y compañías en liquidación o reestructuración.",
                   "Desarrollado instrumentos técnicos como TVD, TRD, digitalización, microfilmación y custodia física, digital y en la nube.",
                 ].map((t, i) => (
@@ -2685,7 +2753,7 @@ function NosotrosPage() {
 
         {/* Misión y visión */}
         <section id="mision-vision" style={{ scrollMarginTop: 76 }}>
-          <NosotrosKicker icon={iconoMisionVision} label="Misión y visión" />
+          <NosotrosKicker icon="bullseye" label="Misión y visión" />
           <div className="grid lg:grid-cols-2 gap-6 mt-6">
             {[
               { t: "Misión", ic: "bullseye", x: "Somos pioneros de la gestión documental en Colombia. Ofrecemos soluciones integrales de consultoría archivística, administración, custodia física y transformación digital de la información, bajo el estricto cumplimiento legal. A través de servicios ágiles, in-house e inmediatos, aseguramos la calidad operativa y la seguridad de los datos (confidencialidad, integridad y disponibilidad). Nos comprometemos con la mejora continua de nuestros procesos para superar las expectativas de nuestras partes interesadas y mitigar los riesgos del entorno." },
@@ -2702,7 +2770,7 @@ function NosotrosPage() {
 
         {/* Nuestro equipo */}
         <section id="equipo" style={{ scrollMarginTop: 76 }}>
-          <NosotrosKicker icon={iconoEquipo} label="Nuestro equipo" />
+          <NosotrosKicker icon="people" label="Nuestro equipo" />
           <p className="text-sm max-w-2xl mt-4 mb-6" style={{ color: "#6B6B6B", lineHeight: 1.7 }}>
             Nuestro personal técnico de archivo está capacitado bajo normas archivísticas avanzadas y los lineamientos del Archivo General de la Nación (AGN). En los proyectos Inhouse, Transarchivos asume la figura de empleador del personal en sitio — selección, capacitación, reemplazos por incapacidad o vacaciones y evaluación de desempeño — con protocolos de contingencia ante ausencias, informes mensuales de gestión y cumplimiento de acuerdos de servicio.
           </p>
@@ -2723,7 +2791,7 @@ function NosotrosPage() {
 
         {/* Cultura organizacional */}
         <section id="cultura" style={{ scrollMarginTop: 76 }}>
-          <NosotrosKicker icon={iconoCultura} label="Cultura organizacional" />
+          <NosotrosKicker icon="heart" label="Cultura organizacional" />
           <p className="text-sm max-w-2xl mt-4 mb-6" style={{ color: "#6B6B6B", lineHeight: 1.7 }}>
             Nuestra cultura se sostiene en 4 principios que guían cómo trabajamos cada día con clientes, colegas, proveedores y visitantes.
           </p>
@@ -2745,22 +2813,22 @@ function NosotrosPage() {
 
         {/* Nuestros principales clientes */}
         <section id="clientes" style={{ scrollMarginTop: 76 }}>
-          <NosotrosKicker icon={iconoClientes} label="Nuestros principales clientes" />
+          <NosotrosKicker icon="briefcase" label="Nuestros principales clientes" />
           <p className="text-sm max-w-2xl mt-4 mb-6" style={{ color: "#6B6B6B" }}>
             Atendemos multinacionales, pymes y microempresas, y también compañías en liquidación o reestructuración, en estos sectores:
           </p>
           <div className="grid grid-cols-3 gap-3 mb-4 max-w-2xl">
             {[
-              { icon: bancaIcon, label: "Financiero y aseguradoras" },
-              { icon: saludIcon, label: "Salud y laboratorios" },
-              { icon: industriaIcon, label: "Petróleo y minería" },
+              { icon: "bank", label: "Financiero y aseguradoras" },
+              { icon: "heart-pulse", label: "Salud y laboratorios" },
+              { icon: "minecart-loaded", label: "Petróleo y minería" },
             ].map(s => (
               <div key={s.label} className="flex flex-col items-center text-center gap-3 rounded-2xl px-3 py-5 transition-all hover:-translate-y-1 cursor-default"
                 style={{ background: "#F7F8FF", border: "1.5px solid #E4E6F7" }}
                 onMouseEnter={e => { e.currentTarget.style.borderColor = "#272B7C"; e.currentTarget.style.boxShadow = "0 14px 28px -14px rgba(39,43,124,0.35)"; e.currentTarget.style.background = "#fff"; }}
                 onMouseLeave={e => { e.currentTarget.style.borderColor = "#E4E6F7"; e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.background = "#F7F8FF"; }}>
                 <div className="flex items-center justify-center rounded-2xl" style={{ width: 60, height: 60, background: "#fff", boxShadow: "0 6px 16px -8px rgba(39,43,124,0.25)" }}>
-                  <img src={s.icon} alt="" className="select-none" style={{ width: 36, height: 36, objectFit: "contain" }} />
+                  <Bi n={s.icon} size={26} color="#272B7C" />
                 </div>
                 <span className="text-xs font-semibold leading-tight" style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif" }}>{s.label}</span>
               </div>
@@ -2783,7 +2851,7 @@ function NosotrosPage() {
 
         {/* Tecnología y seguridad (antes "Aliados tecnológicos") */}
         <section id="aliados" style={{ scrollMarginTop: 76 }}>
-          <NosotrosKicker icon={iconoAliados} label="Tecnología y seguridad" />
+          <NosotrosKicker icon="cpu" label="Tecnología y seguridad" />
           <p className="text-sm max-w-2xl mt-4 mb-6" style={{ color: "#6B6B6B", lineHeight: 1.7 }}>
             La infraestructura y los protocolos con los que protegemos su información:
           </p>
@@ -2807,17 +2875,8 @@ function NosotrosPage() {
 
         {/* Certificados */}
         <section id="certificados" style={{ scrollMarginTop: 76 }}>
-          <NosotrosKicker icon={iconoCertificados} label="Certificados y cumplimiento normativo" />
-          <div className="relative overflow-hidden rounded-3xl p-7 flex items-center gap-5 mt-6 mb-6"
-            style={{ background: "linear-gradient(135deg, #272B7C 0%, #1800AD 100%)" }}>
-            <span className="absolute pointer-events-none select-none" style={{ right: -20, top: -30, fontSize: 140, lineHeight: 1, color: "rgba(255,255,255,0.06)" }}><Bi n="patch-check-fill" size={140} color="rgba(255,255,255,0.08)" /></span>
-            <BiTile n="patch-check-fill" accent="#FFDE59" size={64} solid />
-            <div className="relative">
-              <p className="text-lg font-bold" style={{ color: "#fff", fontFamily: "Poppins, sans-serif" }}>ISO 9001</p>
-              <p className="text-sm" style={{ color: "rgba(255,255,255,0.75)" }}>Certificación internacional de calidad</p>
-            </div>
-          </div>
-          <p className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif" }}>Marco normativo con el que operamos</p>
+          <NosotrosKicker icon="patch-check" label="Cumplimiento normativo" />
+          <p className="text-xs font-bold uppercase tracking-wider mt-6 mb-3" style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif" }}>Marco normativo con el que operamos</p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {norms.map(n => (
               <div key={n.code} className="rounded-2xl p-4 flex flex-col justify-center transition-all hover:-translate-y-0.5"
@@ -2833,7 +2892,7 @@ function NosotrosPage() {
         <div className="rounded-3xl p-10 text-center" style={{ background: "#F7F8FF", border: "1.5px solid #E4E6F7" }}>
           <p className="text-xl font-bold mb-2" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif" }}>¿Hablamos de la gestión documental de su empresa?</p>
           <p className="text-sm mb-6" style={{ color: "#6B6B6B" }}>Escríbanos y un asesor especializado le contactará a la brevedad.</p>
-          <Link to="/#contacto" className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold transition-all hover:scale-105"
+          <Link to="/#faq" className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold transition-all hover:scale-105"
             style={{ background: "#272B7C", color: "#fff", fontFamily: "Montserrat, sans-serif", textDecoration: "none", boxShadow: "0 14px 28px -10px rgba(39,43,124,0.45)" }}>
             Hablemos de su proyecto <Bi n="arrow-right" size={15} color="#fff" />
           </Link>
@@ -2874,7 +2933,7 @@ function ServiceDetailPage() {
 
         <div className="flex items-center gap-4 mb-6">
           <div style={{ width: 72, height: 72, borderRadius: 20, background: `${service.accent}14`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-            <img src={service.icon} alt="" style={{ width: 44, height: 44, objectFit: "contain" }} />
+            <Bi n={service.icon} size={32} color={service.accent} />
           </div>
           <div>
             <span style={{ fontSize: 11, fontFamily: "Montserrat, sans-serif", fontWeight: 600, color: service.accent, background: `${service.accent}14`, borderRadius: 99, padding: "3px 10px" }}>
@@ -2889,7 +2948,7 @@ function ServiceDetailPage() {
         <div className="p-6 rounded-2xl" style={{ background: "#F7F8FF", border: "1px solid #E9E9E7" }}>
           <p className="text-sm" style={{ color: "#9B9B9B" }}>
             Esta página está en construcción — pronto tendrá el detalle completo de este servicio (normativa, proceso, preguntas frecuentes). Mientras tanto, puede{" "}
-            <Link to="/#contacto" style={{ color: "#1800AD", fontWeight: 600 }}>contactarnos</Link> directamente.
+            <Link to="/#faq" style={{ color: "#1800AD", fontWeight: 600 }}>contactarnos</Link> directamente.
           </p>
         </div>
       </div>
@@ -3042,7 +3101,7 @@ function ArticlePage() {
             <div className="relative flex-1">
               <p className="text-lg md:text-xl font-bold mb-1" style={{ color: "#fff", fontFamily: "Poppins, sans-serif", lineHeight: 1.3 }}>¿Hablamos de la gestión documental de su empresa?</p>
               <p className="text-sm mb-4" style={{ color: "rgba(255,255,255,0.75)" }}>Agende su diagnóstico documental con el equipo de especialistas de Transarchivos.</p>
-              <a href="/#contacto" className="inline-flex px-6 py-3 rounded-xl text-sm font-bold transition-all hover:scale-105"
+              <a href="/#faq" className="inline-flex px-6 py-3 rounded-xl text-sm font-bold transition-all hover:scale-105"
                 style={{ background: "#FFDE59", color: "#1800AD", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>Agendar diagnóstico</a>
             </div>
           </div>

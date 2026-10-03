@@ -133,3 +133,29 @@ html {
   from { opacity: 1; transform: translateY(0%); }
   to   { opacity: 0; transform: translateY(-60%); }
 }
+
+/* Aparición al hacer scroll (ver useScrollReveal en App.tsx). */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.8s cubic-bezier(0.2, 0.7, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.reveal.is-visible { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; }
+}
+
+/* Entrada de la página (primera carga de la sesión): la carpeta sube desde el
+   borde inferior con rebote, y la pestaña se despliega. */
+@keyframes folderRise {
+  0% { transform: translateY(140%); }
+  70% { transform: translateY(-6%); }
+  100% { transform: translateY(0); }
+}
+@keyframes folderTabOpen {
+  0% { transform: scaleY(0.06); opacity: 0; }
+  60% { transform: scaleY(1.12); opacity: 1; }
+  100% { transform: scaleY(1); opacity: 1; }
+}
+.folder-intro { animation: folderRise 1.1s cubic-bezier(0.22, 0.9, 0.3, 1) 0.35s both; will-change: transform; backface-visibility: hidden; }
+.folder-intro .folder-tab { transform-origin: bottom left; animation: folderTabOpen 0.45s cubic-bezier(0.3, 1.4, 0.5, 1) 0.75s both; }
