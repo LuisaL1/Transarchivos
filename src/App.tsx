@@ -2370,61 +2370,6 @@ function LandingPage() {
 
       <Divider />
 
-      {/* ── ASESOR IA ─────────────────────────────────────────────────────
-          Protagoniza a "Joel" como asesor inteligente (no un simple
-          formulario de contacto): mismo degradado navy + glow dorado que el
-          resto del sitio (antes tenía un fondo morado/magenta con blobs que
-          no combinaba con la paleta de marca), copy orientado a generar la
-          necesidad de hablarle, y un mockup de chat más grande y "vivo"
-          (indicador de escritura). Reubicada justo después de Servicios
-          para capturar la intención de compra en caliente. */}
-      <section className="relative overflow-hidden py-8" style={{ background: "linear-gradient(135deg, #14163F 0%, #272B7C 55%, #1800AD 100%)" }}>
-        <div className="max-w-6xl mx-auto px-6 relative" style={{ zIndex: 1 }}>
-          <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-            {/* Left: copy */}
-            <div>
-              <h2 className="text-2xl font-bold mb-2.5" style={{ fontFamily: "Poppins, sans-serif", color: "#fff", lineHeight: 1.2 }}>
-                Conozca a <span style={{ color: "#FFDE59" }}>Joel</span>, su asesor inteligente
-              </h2>
-              <p className="text-sm max-w-md" style={{ color: "rgba(255,255,255,0.75)" }}>
-                Cuéntele qué está pasando con su archivo físico o digital: Joel identifica si necesita diagnóstico, custodia, digitalización o destrucción certificada, bajo la normativa archivística vigente, y lo conecta con el especialista indicado. Disponible 24/7, sin formularios ni esperas.
-              </p>
-            </div>
-
-            {/* Centro: botón entre el texto y el avatar. */}
-            <button onClick={() => setChatOpen(true)}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all hover:scale-105 active:scale-95 flex-shrink-0"
-              style={{ background: "#FFDE59", color: "#1800AD", fontFamily: "Montserrat, sans-serif", boxShadow: "0 8px 24px rgba(255,222,89,0.25)" }}>
-              Hablar con Joel ahora
-              <span>→</span>
-            </button>
-
-            {/* Right: foto de perfil de la IA — más discreta (círculo chico,
-                anillos finos) que antes, para que la sección no alargue tanto
-                el scroll de la página. */}
-            <div className="relative flex justify-center flex-shrink-0">
-              <div className="absolute rounded-full pointer-events-none" style={{ width: 195, height: 195, top: "50%", left: "50%", transform: "translate(-50%,-50%)", border: "1.5px dashed rgba(255,222,89,0.4)", zIndex: 0 }} />
-              <div className="absolute rounded-full pointer-events-none" style={{ width: 172, height: 172, top: "50%", left: "50%", transform: "translate(-50%,-50%)", border: "1.5px solid rgba(255,222,89,0.22)", zIndex: 0 }} />
-              <button onClick={() => setChatOpen(true)} aria-label="Hablar con Joel"
-                className="relative transition-transform hover:scale-[1.03] active:scale-95 cursor-pointer" style={{ zIndex: 1 }}>
-                <div className="rounded-full overflow-hidden mx-auto" style={{ width: 144, height: 144, boxShadow: "0 20px 46px rgba(0,0,0,0.4), 0 0 0 6px rgba(255,222,89,0.18), 0 0 0 2px rgba(255,255,255,0.25)" }}>
-                  <ChatAvatarFace size={144} ring={undefined} />
-                </div>
-                <span className="absolute bottom-3 right-3 w-4 h-4 rounded-full border-[3px]" style={{ background: "#22c55e", borderColor: "#14163F" }} />
-                <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-[11px] font-bold whitespace-nowrap" style={{ background: "#FFDE59", color: "#1800AD", fontFamily: "Montserrat, sans-serif", boxShadow: "0 8px 20px rgba(0,0,0,0.25)" }}>
-                  Joel · IA
-                </div>
-                <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-[11px] font-semibold whitespace-nowrap" style={{ background: "rgba(255,255,255,0.12)", color: "#fff", border: "1px solid rgba(255,255,255,0.25)", fontFamily: "Montserrat, sans-serif", backdropFilter: "blur(4px)" }}>
-                  ● En línea ahora
-                </div>
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <Divider />
-
       <QuoteSimulator />
 
       <Divider />
