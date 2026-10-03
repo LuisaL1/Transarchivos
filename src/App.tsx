@@ -56,13 +56,17 @@ function HeroVideoBackground() {
   const next = (idx + 1) % HERO_VIDEOS.length;
 
   return (
+    // Fondo inmediato: el primer cuadro del primer video (hero-poster.jpg,
+    // precargado en index.html), para que al recargar no se vea el azul
+    // de base mientras el video carga. También es el fondo en celular.
     <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true"
-      style={{ background: "radial-gradient(ellipse at 50% 30%, #272B7C 0%, #0a0d3d 75%)" }}>
+      style={{ backgroundColor: "#3a3c56", backgroundImage: "url(/videos/hero-poster.jpg)", backgroundSize: "cover", backgroundPosition: "center" }}>
       {!reduced && (
         <div className="hidden md:block absolute inset-0">
           {HERO_VIDEOS.map((src, i) => (
             <video key={src} ref={el => { refs.current[i] = el; }} src={src}
               muted playsInline autoPlay={i === 0} preload={i === idx || i === next ? "auto" : "none"}
+              poster={i === 0 ? "/videos/hero-poster.jpg" : undefined}
               onEnded={() => { if (i === idx) setIdx(next); }}
               className="absolute inset-0 w-full h-full"
               style={{ objectFit: "cover", opacity: i === idx ? 1 : 0, transition: "opacity 1.2s ease" }} />
@@ -1745,7 +1749,23 @@ function useScrollReveal(rootRef: React.RefObject<HTMLElement | null>) {
 
 function LandingPage() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  // Si el navegador restaura el scroll al recargar, el header arranca ya en
+  // su estado final (sin animar el cambio).
+  const [scrolled, setScrolled] = useState(() => typeof window !== "undefined" && window.scrollY > 24);
+  // Al cargar, el ancho del botón CTA se mide cuando terminan de cargar las
+  // fuentes y eso movía los elementos del navbar. Hasta pasado ese momento
+  // se desactivan las transiciones del header (clase nav-preload), así el
+  // navbar aparece estático; después vuelven los efectos normales.
+  const [navReady, setNavReady] = useState(false);
+  useEffect(() => {
+    // document.fonts.ready a veces se resuelve antes de que llegue la hoja de
+    // Google Fonts, así que además se espera un mínimo de 1,5 s.
+    let alive = true;
+    const minWait = new Promise(r => window.setTimeout(r, 1500));
+    const fonts = document.fonts?.ready ?? Promise.resolve();
+    Promise.all([minWait, fonts]).then(() => { if (alive) setNavReady(true); });
+    return () => { alive = false; };
+  }, []);
   // Un solo dropdown abierto a la vez en el pill ("Servicios" o "Nosotros",
   // antes solo existía "Servicios" con un boolean — ahora que hay dos, se
   // necesita saber CUÁL está abierto, no solo si algo está abierto).
@@ -1892,7 +1912,7 @@ function LandingPage() {
           ser unos px más bajo que el header y dejaba una franja transparente
           alrededor del logo por donde se colaba el contenido al hacer scroll. */}
       <header
-        className="fixed top-0 left-0 right-0 z-50 pb-3 min-h-[72px] md:min-h-0 flex items-center justify-center"
+        className={`fixed top-0 left-0 right-0 z-50 pb-3 min-h-[72px] md:min-h-0 flex items-center justify-center ${navReady ? "" : "nav-preload"}`}
         style={{
           // Sin borderBottom: una línea de 1px sólida se ve dura/"cortada" al
           // volver de scrolled a flotante — una sombra suave, sin borde, separa
@@ -2096,7 +2116,7 @@ function LandingPage() {
           caja para escribirle directo a Joel. Debajo, la franja navy con una
           muesca recortada (a través de ella se ven los videos) y la sección
           "Dónde operamos". */}
-      <section className="relative overflow-hidden" style={{ background: "#0a0d3d" }}>
+      <section className="relative overflow-hidden" style={{ background: "#3a3c56" }}>
         <HeroVideoBackground />
         <div className="relative">
         <div className="relative max-w-2xl mx-auto px-6 pt-28 md:pt-44 pb-6 text-center flex flex-col justify-center md:min-h-[72vh]">
