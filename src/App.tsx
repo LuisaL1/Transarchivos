@@ -93,7 +93,7 @@ function HeroAskJoel({ onAsk }: { onAsk: (text: string) => void }) {
         className="flex items-center gap-3 rounded-2xl py-2 pl-5 pr-2"
         style={{ background: "#fff", border: "1px solid #E4E6F7", boxShadow: "0 24px 50px -30px rgba(39,43,124,0.35)" }}>
         <input type="text" value={text} onChange={e => setText(e.target.value)}
-          placeholder="Ej.: tengo 800 cajas de archivo y necesito organizarlas"
+          placeholder="¿Qué necesita su empresa? Organizar, digitalizar, custodiar o destruir documentos…"
           aria-label="Escríbale a Joel"
           className="flex-1 min-w-0 bg-transparent outline-none text-sm"
           style={{ color: "#272B7C" }} />
