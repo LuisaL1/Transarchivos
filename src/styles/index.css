@@ -1,0 +1,167 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+@import 'tailwindcss';
+
+@theme inline {
+  --color-navy: #272B7C;
+  --color-indigo-vivid: #1800AD;
+  --color-yellow-accent: #FFDE59;
+  --color-gray-light: #EAEAEA;
+  --font-heading: 'Poppins', sans-serif;
+  --font-subheading: 'Montserrat', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  color: #1a1a2e;
+  background: #ffffff;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Barra de desplazamiento delgada */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #272B7C40;
+  border-radius: 3px;
+}
+
+/* Custom animations */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes chatBounce {
+  0%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-6px); }
+}
+
+/* Onda del botón flotante del chat. */
+@keyframes chatPing {
+  0%   { transform: scale(1);   opacity: 0.5; }
+  75%, 100% { transform: scale(2); opacity: 0; }
+}
+
+/* Aparición al hacer scroll (ver useScrollReveal en App.tsx). */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.8s cubic-bezier(0.2, 0.7, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.reveal.is-visible { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; }
+}
+
+/* Entrada de la página (primera carga de la sesión): la carpeta sube desde el
+   borde inferior con rebote, y la pestaña se despliega. */
+@keyframes folderRise {
+  0% { transform: translateY(140%); }
+  70% { transform: translateY(-6%); }
+  100% { transform: translateY(0); }
+}
+@keyframes folderTabOpen {
+  0% { transform: scaleY(0.06); opacity: 0; }
+  60% { transform: scaleY(1.12); opacity: 1; }
+  100% { transform: scaleY(1); opacity: 1; }
+}
+.folder-intro { animation: folderRise 0.8s cubic-bezier(0.22, 0.9, 0.3, 1) 0.2s both; will-change: transform; backface-visibility: hidden; }
+.folder-intro .folder-tab { transform-origin: bottom left; animation: folderTabOpen 0.45s cubic-bezier(0.3, 1.4, 0.5, 1) 0.8s both; }
+
+/* Navbar estático durante la carga (ver navReady en App.tsx). */
+.nav-preload, .nav-preload * { transition: none !important; animation: none !important; }
+
+/* Ventana de búsqueda: fondo que aparece y panel que baja desde arriba. */
+@keyframes searchFade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes searchDrop {
+  from { opacity: 0; transform: translateY(-24px) scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Listas desplegables: flecha propia (la del navegador quedaba pegada al
+   borde derecho), con aire a la derecha y en el azul de la marca. */
+select {
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6l4 4 4-4' stroke='%23272B7C' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 14px 14px;
+  padding-right: 44px !important;
+  cursor: pointer;
+}
+select:disabled { cursor: default; opacity: 0.6; }
+
+/* ─── Puntero y foco ──────────────────────────────────────────────────────
+   Un mismo criterio en todo el sitio:
+   · Manito solo en lo que se puede pulsar (enlaces, botones, opciones,
+     tarjetas que llevan a otra página, listas desplegables).
+   · Cursor de texto en los campos donde se escribe.
+   · Flecha normal en el resto, incluidos los botones desactivados y las
+     tarjetas que solo se resaltan al pasar el mouse (no prometen un clic).
+   · Contorno visible en enlaces y botones al navegar con teclado (Tab),
+     sin mostrarlo al hacer clic. */
+a[href], button:not(:disabled), [role="button"], summary, label[for],
+select:not(:disabled), input[type="checkbox"], input[type="radio"],
+input[type="submit"], input[type="button"] {
+  cursor: pointer;
+}
+input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]), textarea {
+  cursor: text;
+}
+button:disabled, [aria-disabled="true"] {
+  cursor: default;
+}
+/* Imágenes y textos decorativos dentro de enlaces conservan la manito */
+a[href] *, button:not(:disabled) * { cursor: inherit; }
+
+:focus { outline: none; }
+/* Los campos de texto ya tienen su propio estilo de foco (borde/anillo). */
+a[href]:focus-visible, button:focus-visible, [role="button"]:focus-visible,
+select:focus-visible, summary:focus-visible {
+  outline: 2px solid #1800AD;
+  outline-offset: 3px;
+}
+
+/* Texto seleccionado con los colores de la marca */
+::selection { background: #FFDE59; color: #272B7C; }
+
+/* Mismo movimiento y sombra que las tarjetas de servicios (ServiceCard):
+   sube 4 px con un leve rebote y la sombra crece. */
+.card-lift {
+  box-shadow: 0 2px 10px rgba(39, 43, 124, 0.05);
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.card-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -12px rgba(39, 43, 124, 0.2);
+}
+
+/* Con el menú móvil abierto, el botón e invitación de Joel no tapan el menú. */
+body.menu-open [data-chat-launcher] { display: none !important; }
+
+/* Mientras se muestra el aviso de cookies, en celular el botón de Joel no lo tapa. */
+@media (max-width: 639px) { body.consent-open [data-chat-launcher] { display: none !important; } }
