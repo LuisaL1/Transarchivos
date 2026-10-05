@@ -47,6 +47,7 @@ src/
 └── styles/index.css      Estilos globales, animaciones, puntero/foco
 public/                   Archivos servidos tal cual (videos del hero, favicon, robots)
 tests/                    unit/ (Vitest), security/ (revisión estática), e2e/ (Playwright + axe)
+docs/                     Documentación técnica (arquitectura, UX/UI, conversión, pruebas, decisiones)
 RecursosTransarchivos/    Documentos fuente del cliente (contexto, no se publican)
 ```
 

@@ -48,6 +48,11 @@ de `index.html` y borrar `public/robots.txt`.
 - **Publicación oficial**: quitar `noindex` de `index.html` y borrar
   `public/robots.txt`.
 
+## Documentación técnica
+
+Ver `docs/` (arquitectura, diseño UX/UI, conversión y analítica, calidad y
+seguridad, decisiones y pendientes).
+
 ## Estructura
 
 Ver `AGENTS.md` (arquitectura, reglas de contenido, diseño y funcionamiento del
