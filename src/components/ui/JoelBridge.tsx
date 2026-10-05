@@ -33,7 +33,7 @@ export function JoelBridge({ src, side = "right", height = 210, sink = 34, offse
           <div className="absolute rounded-full" style={{ width: 70, height: 50, top: 6, [side === "right" ? "left" : "right"]: -26, backgroundImage: "radial-gradient(rgba(39,43,124,0.22) 1.3px, transparent 1.6px)", backgroundSize: "12px 12px" }} />
           {/* Sombra de piso */}
           <span className="absolute left-1/2 -translate-x-1/2 rounded-full" style={{ bottom: -6, width: height * 0.55, height: 12, background: "rgba(10,13,61,0.18)", filter: "blur(6px)" }} />
-          <img src={src} alt="" draggable={false} className="relative select-none h-full w-auto max-w-none"
+          <img loading="lazy" decoding="async" src={src} alt="" draggable={false} className="relative select-none h-full w-auto max-w-none"
             style={{
               transform: `${flip ? "scaleX(-1) " : ""}translateX(${shown ? 0 : dir * 40 * (flip ? -1 : 1)}px)`,
               opacity: shown ? 1 : 0,
@@ -67,7 +67,7 @@ export function JoelFigure({ src, height = 240, flip = false, className = "" }: 
       </div>
       <div className="absolute" style={{ width: 70, height: 50, top: 8, right: -24, backgroundImage: "radial-gradient(rgba(39,43,124,0.22) 1.3px, transparent 1.6px)", backgroundSize: "12px 12px" }} />
       <span className="absolute left-1/2 -translate-x-1/2 rounded-full" style={{ bottom: -6, width: height * 0.6, height: 12, background: "rgba(10,13,61,0.16)", filter: "blur(6px)" }} />
-      <img src={src} alt="" draggable={false} className="relative select-none h-full w-auto max-w-none"
+      <img loading="lazy" decoding="async" src={src} alt="" draggable={false} className="relative select-none h-full w-auto max-w-none"
         style={{ transform: `${flip ? "scaleX(-1) " : ""}translateY(${shown ? 0 : 24}px)`, opacity: shown ? 1 : 0, transition: "transform 0.9s cubic-bezier(0.2,0.7,0.2,1), opacity 0.9s ease", filter: "drop-shadow(0 14px 18px rgba(10,13,61,0.18))" }} />
     </div>
   );

@@ -13,9 +13,11 @@ reemplaza) a los documentos de la raíz del repositorio:
 | `docs/03-conversion-y-analitica.md` | Embudo, puntos de conversión, cotizador, chat, eventos de GA4 y consentimiento |
 | `docs/04-calidad-pruebas-y-seguridad.md` | Estrategia de calidad: qué se prueba, por qué y cómo extenderla |
 | `docs/05-decisiones-y-pendientes.md` | Decisiones tomadas con el cliente (no revertir) y trabajo pendiente priorizado |
+| `docs/06-seo.md` | SEO técnico: pre-generación de HTML, metadatos, datos estructurados, sitemap y checklist de publicación |
 
 **Fuente de verdad del contenido:** `RecursosTransarchivos/` (documentos del
 cliente). Todo texto del sitio sale de ahí y vive en `src/data/`.
 
-**Estado (octubre de 2026):** prototipo funcional completo, sin backend. El
-sitio está marcado `noindex` hasta su publicación oficial.
+**Estado (octubre de 2026):** prototipo funcional completo, sin backend, con SEO
+técnico listo. La indexación está desactivada hasta la publicación oficial
+(ver `docs/06-seo.md`).

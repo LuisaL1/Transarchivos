@@ -39,7 +39,7 @@ export function BlogSection() {
               className="group flex flex-col rounded-3xl overflow-hidden transition-all hover:-translate-y-1.5"
               style={{ background: "#fff", border: "1.5px solid #E4E6F7", boxShadow: `0 24px 50px -28px ${fc}66`, textDecoration: "none" }}>
               <div className="relative overflow-hidden" style={{ height: 300 }}>
-                <img src={featured.cover} alt="" className="w-full h-full" style={{ objectFit: "cover" }} />
+                <img loading="lazy" decoding="async" src={featured.cover} alt="" className="w-full h-full" style={{ objectFit: "cover" }} />
                 <span aria-hidden="true" className="absolute pointer-events-none" style={{ right: -44, top: -44, width: 110, height: 110, transform: "rotate(45deg)", background: "rgba(255,222,89,0.35)" }} />
                 <span className="absolute top-4 left-4 text-[11px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full" style={{ background: fc, color: "#fff", fontFamily: "Montserrat, sans-serif" }}>
                   Destacado · {featured.cat}
@@ -71,7 +71,7 @@ export function BlogSection() {
                   className="group relative flex gap-4 rounded-2xl p-3 transition-all hover:-translate-y-1"
                   style={{ background: "#fff", border: "1.5px solid #E4E6F7", boxShadow: `0 10px 24px -20px ${pc}80`, textDecoration: "none" }}>
                   <div className="relative overflow-hidden rounded-xl shrink-0" style={{ width: 100, height: 100 }}>
-                    <img src={p.cover} alt="" className="w-full h-full" style={{ objectFit: "cover" }} />
+                    <img loading="lazy" decoding="async" src={p.cover} alt="" className="w-full h-full" style={{ objectFit: "cover" }} />
                   </div>
                   <div className="flex-1 min-w-0 flex flex-col justify-center py-0.5">
                     <span className="text-[10px] font-bold uppercase tracking-wider mb-1.5" style={{ color: pc, fontFamily: "Montserrat, sans-serif" }}>{p.cat}</span>

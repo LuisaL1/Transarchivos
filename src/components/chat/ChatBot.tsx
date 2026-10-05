@@ -357,7 +357,7 @@ export function ChatBot({ open, setOpen, seed, heroJoel = false }: { open: boole
             </button>
           </div>
           <button onClick={() => setOpen(true)} aria-label="Hablar con Joel" className="shrink-0">
-            <img src={avatarImg} alt="" draggable={false} className="hidden sm:block h-[150px] md:h-[170px] w-auto select-none" style={{ filter: "drop-shadow(0 12px 18px rgba(29,32,80,0.25))" }} />
+            <img loading="lazy" decoding="async" src={avatarImg} alt="" draggable={false} className="hidden sm:block h-[150px] md:h-[170px] w-auto select-none" style={{ filter: "drop-shadow(0 12px 18px rgba(29,32,80,0.25))" }} />
           </button>
         </div>
       )}

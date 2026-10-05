@@ -8,10 +8,17 @@ import './styles/index.css'
 // La posición al volver con "atrás" la maneja la app (ver pages/HomePage).
 if ('scrollRestoration' in window.history) window.history.scrollRestoration = 'manual'
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+const root = document.getElementById('root')!
+const app = (
   <React.StrictMode>
     <BrowserRouter>
       <App />
     </BrowserRouter>
-  </React.StrictMode>,
+  </React.StrictMode>
 )
+// En producción cada ruta llega con su HTML pre-generado (SEO) y se hidrata.
+// Si el HTML es de otra ruta (404.html en una URL desconocida, vista previa
+// local) o no hay HTML (pnpm dev), se renderiza desde cero.
+const here = window.location.pathname.replace(/\/+$/, '') || '/'
+if (root.firstElementChild && root.dataset.path === here) ReactDOM.hydrateRoot(root, app)
+else { root.textContent = ''; ReactDOM.createRoot(root).render(app) }

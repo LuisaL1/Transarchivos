@@ -157,7 +157,7 @@ export function BlogPanelContent({ setOpen }: { setOpen: (v: boolean) => void })
         <div className="grid gap-0.5">
           {recent.map(p => (
             <Link key={p.slug} to={`/blog/${p.slug}`} onClick={close} className={`${menuItemCls} items-center`} style={{ textDecoration: "none" }}>
-              <img src={p.cover} alt="" className="shrink-0 rounded-lg object-cover" style={{ width: 64, height: 48 }} />
+              <img loading="lazy" decoding="async" src={p.cover} alt="" className="shrink-0 rounded-lg object-cover" style={{ width: 64, height: 48 }} />
               <span className="min-w-0">
                 <span className="block text-[10.5px] font-bold uppercase" style={{ letterSpacing: "0.1em", color: "#C8960A", fontFamily: "Montserrat, sans-serif" }}>{p.cat}</span>
                 <span className="block text-[13px] font-semibold truncate" style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif" }}>{p.title}</span>

@@ -131,7 +131,7 @@ export function ArticlePage() {
             <div className="relative">
               <div className="relative overflow-hidden rounded-3xl p-3" style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.16)", backdropFilter: "blur(10px)" }}>
                 <div className="relative overflow-hidden rounded-2xl" style={{ aspectRatio: "16 / 10" }}>
-                  <img src={post.cover} alt="" className="w-full h-full" style={{ objectFit: "cover" }} />
+                  <img src={post.cover} alt={post.title} fetchPriority="high" className="w-full h-full" style={{ objectFit: "cover" }} />
                   <Corner size={110} offset={-44} alpha={0.35} />
                 </div>
                 <div className="grid grid-cols-3 gap-2 px-3 pt-5 pb-3">
@@ -209,7 +209,7 @@ export function ArticlePage() {
                 );
                 if (b.t === "img") return (
                   <figure key={i} className="-mx-2 sm:-mx-4">
-                    <img src={b.src} alt={b.alt} className="w-full rounded-2xl" style={{ boxShadow: "0 24px 50px -28px rgba(39,43,124,0.5)" }} />
+                    <img loading="lazy" decoding="async" src={b.src} alt={b.alt} className="w-full rounded-2xl" style={{ boxShadow: "0 24px 50px -28px rgba(39,43,124,0.5)" }} />
                     <figcaption className="text-xs text-center mt-3" style={{ color: "#9B9B9B", fontFamily: "Montserrat, sans-serif" }}>{b.alt}</figcaption>
                   </figure>
                 );
@@ -263,7 +263,7 @@ export function ArticlePage() {
                 {others.map(o => (
                   <Link key={o.slug} to={`/blog/${o.slug}`} className="group flex items-start gap-3 rounded-xl p-2 -mx-2 transition-colors hover:bg-[#F2F3FA]" style={{ textDecoration: "none" }}>
                     <span className="relative overflow-hidden rounded-xl shrink-0" style={{ width: 64, height: 64 }}>
-                      <img src={o.cover} alt="" className="w-full h-full transition-transform duration-500 group-hover:scale-110" style={{ objectFit: "cover" }} />
+                      <img loading="lazy" decoding="async" src={o.cover} alt="" className="w-full h-full transition-transform duration-500 group-hover:scale-110" style={{ objectFit: "cover" }} />
                       <Corner size={34} offset={-17} alpha={0.4} />
                     </span>
                     <span className="min-w-0">

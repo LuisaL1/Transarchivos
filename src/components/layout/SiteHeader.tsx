@@ -22,7 +22,8 @@ export function SiteHeader({ solid = false, onChat }: { solid?: boolean; onChat:
   const [mobileOpen, setMobileOpen] = useState(false);
   // Si el navegador restaura el scroll al recargar, el header arranca ya en
   // su estado final (sin animar el cambio).
-  const [scrolledRaw, setScrolled] = useState(() => typeof window !== "undefined" && window.scrollY > 24);
+  // false al inicio (como el HTML pre-generado); el efecto de scroll lo corrige al montar.
+  const [scrolledRaw, setScrolled] = useState(false);
   const scrolled = solid || scrolledRaw;
   // Al cargar, el ancho del botón CTA se mide cuando terminan de cargar las
   // fuentes y eso movía los elementos del navbar. Hasta pasado ese momento

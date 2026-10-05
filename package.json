@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && vite build --ssr src/entry-server.tsx --outDir dist-ssr && node scripts/prerender.mjs",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit -p .",
     "lint": "eslint .",
@@ -15,9 +15,11 @@
     "test:coverage": "vitest run --coverage",
     "test:security": "vitest run tests/security",
     "test:e2e": "playwright test",
-    "check": "pnpm typecheck && pnpm lint && pnpm test && pnpm build",
+    "check": "pnpm typecheck && pnpm lint && pnpm test && pnpm build && pnpm test:seo",
     "check:all": "pnpm check && pnpm test:deps && pnpm test:e2e",
-    "test:deps": "pnpm audit --audit-level=high"
+    "test:deps": "pnpm audit --audit-level=high",
+    "test:ga": "GA_E2E=1 playwright test tests/e2e/analytics.spec.ts",
+    "test:seo": "SEO_DIST=1 vitest run"
   },
   "dependencies": {
     "bootstrap-icons": "^1.13.1",

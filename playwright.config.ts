@@ -22,9 +22,14 @@ export default defineConfig({
     { name: "celular", use: { ...devices["Pixel 7"] } },
   ],
   webServer: process.env.BASE_URL ? undefined : {
-    command: "pnpm build && pnpm preview --port 4173 --strictPort",
+    // Por defecto se compila SIN Google Analytics para no enviar visitas de
+    // prueba a la propiedad real. `pnpm test:ga` compila con el ID para
+    // verificar GA (variable de entorno o .env.production.local).
+    command: process.env.GA_E2E === "1"
+      ? "pnpm build && pnpm preview --port 4173 --strictPort"
+      : "VITE_GA_MEASUREMENT_ID= pnpm build && pnpm preview --port 4173 --strictPort",
     url: BASE_URL,
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: false,
     timeout: 180_000,
   },
 });

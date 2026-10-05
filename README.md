@@ -25,8 +25,8 @@ Pruebas de calidad, accesibilidad y seguridad: ver `TESTING.md`.
 Vercel (framework: Vite, salida: `dist`). `vercel.json` redirige todas las
 rutas a `index.html` para que funcionen las páginas internas al recargar.
 
-Antes de publicar oficialmente: quitar `<meta name="robots" content="noindex">`
-de `index.html` y borrar `public/robots.txt`.
+`pnpm build` pre-genera el HTML de cada ruta, el sitemap y el robots.txt (SEO).
+La indexación se activa con `VITE_SITE_INDEXABLE=true` (ver `docs/06-seo.md`).
 
 ## Pendientes de desarrollo
 
@@ -36,8 +36,10 @@ de `index.html` y borrar `public/robots.txt`.
   `vercel.json`.
 - **Suscripción del blog** (`BlogSection`): solo muestra el mensaje de éxito.
   Falta conectarla a la herramienta de correo que elija la empresa.
-- **Google Analytics**: configurar `VITE_GA_MEASUREMENT_ID` en Vercel (ver
-  `.env.example`).
+- **Google Analytics** (ID `G-PNPFD16QSZ`, ya integrado y verificado con
+  `pnpm test:ga`): crear la variable `VITE_GA_MEASUREMENT_ID=G-PNPFD16QSZ` en
+  Vercel → Settings → Environment Variables (entorno Production) y volver a
+  desplegar.
 - **Contraste de color (accesibilidad AA)**: los rótulos dorados y algunos
   textos grises no alcanzan el contraste mínimo (tabla en `TESTING.md`).
   Requiere aprobación de diseño.
@@ -45,8 +47,9 @@ de `index.html` y borrar `public/robots.txt`.
   - el bundle JS pesa ~530 KB (dividir por rutas con `React.lazy`);
   - imágenes pesadas: `joel.png` 1,1 MB, `logo.png` 378 KB y las poses de Joel
     de ~300 KB (convertir a WebP/AVIF).
-- **Publicación oficial**: quitar `noindex` de `index.html` y borrar
-  `public/robots.txt`.
+- **Publicación oficial**: seguir el checklist de `docs/06-seo.md` (dominio,
+  `VITE_SITE_INDEXABLE=true` en Vercel, Search Console, Google Business Profile
+  y redirecciones del sitio anterior).
 
 ## Documentación técnica
 

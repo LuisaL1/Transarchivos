@@ -27,7 +27,9 @@ export function AnalyticsTracker() {
 // Solo aparece si Google Analytics está configurado y el visitante aún no ha
 // decidido. Mientras está visible, en celular se oculta el botón de Joel.
 export function CookieBanner() {
-  const [visible, setVisible] = useState(() => analyticsEnabled && getConsent() === null);
+  // Se decide en el navegador (después de hidratar): el HTML pre-generado no lo incluye.
+  const [visible, setVisible] = useState(false);
+  useEffect(() => { setVisible(analyticsEnabled && getConsent() === null); }, []);
   useEffect(() => {
     document.body.classList.toggle("consent-open", visible);
     return () => document.body.classList.remove("consent-open");

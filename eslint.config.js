@@ -26,5 +26,5 @@ export default tseslint.config(
     },
   },
   // Las pruebas leen archivos del propio repositorio a propósito.
-  { files: ["tests/**"], rules: { "security/detect-non-literal-fs-filename": "off" } },
+  { files: ["tests/**"], rules: { "security/detect-non-literal-fs-filename": "off", "security/detect-non-literal-regexp": "off" } },
 );

@@ -15,7 +15,7 @@ pnpm exec playwright install chromium   # navegador para las pruebas de extremo 
 
 | Comando | Qué revisa | Tiempo aprox. |
 | --- | --- | --- |
-| `pnpm check` | Tipos + lint + pruebas unitarias + build. **Correr antes de cada commit.** | ~10 s |
+| `pnpm check` | Tipos + lint + pruebas unitarias + build (con pre-generación SEO) + `test:seo`. **Correr antes de cada commit.** | ~15 s |
 | `pnpm check:all` | Lo anterior + auditoría de dependencias + extremo a extremo | ~1 min |
 | `pnpm typecheck` | TypeScript estricto | |
 | `pnpm lint` | ESLint: calidad, hooks de React, accesibilidad (jsx-a11y) y patrones inseguros (eslint-plugin-security) | |
@@ -24,7 +24,9 @@ pnpm exec playwright install chromium   # navegador para las pruebas de extremo 
 | `pnpm test:coverage` | Igual, con cobertura de `src/lib`, `src/data` y `src/hooks` (reporte en `coverage/`) | |
 | `pnpm test:security` | Solo las pruebas de seguridad estática | |
 | `pnpm test:deps` | Vulnerabilidades conocidas en todas las dependencias (nivel alto o crítico) | |
-| `pnpm test:e2e` | Playwright sobre el build de producción, en escritorio (1440 px) y celular (Pixel 7) | ~30 s |
+| `pnpm test:seo` | Revisa el HTML pre-generado en `dist/`: un archivo por ruta, título/descripción/canónica/OG únicos, JSON-LD válido, un solo `<h1>`, contenido real, 404 con `noindex`, sitemap y robots coherentes (corre dentro de `pnpm check`) | ~1 s |
+| `pnpm test:e2e` | Playwright sobre el build de producción, en escritorio (1440 px) y celular (Pixel 7). Se compila **sin** Google Analytics para no enviar visitas de prueba | ~30 s |
+| `pnpm test:ga` | Verifica Google Analytics con el ID real: aviso de cookies, consentimiento denegado por defecto, cookies `_ga` y envío de datos solo al aceptar | ~10 s |
 
 Para probar las pruebas de extremo a extremo contra otro entorno (por ejemplo,
 una URL de Vercel Preview): `BASE_URL=https://su-preview.vercel.app pnpm test:e2e`.
@@ -79,6 +81,20 @@ El reporte HTML queda en `playwright-report/` (`pnpm exec playwright show-report
   - `pnpm test:deps` en local y en CI;
   - Dependabot (`.github/dependabot.yml`) abre PRs semanales de actualización;
   - en CI, **gitleaks** busca secretos en todo el historial de git.
+
+### SEO
+- `tests/unit/seo.test.ts`:
+  - títulos y descripciones únicos y de largo correcto;
+  - canónicas absolutas;
+  - `noindex` mientras no se active la indexación;
+  - 404 para rutas desconocidas;
+  - JSON-LD completo (empresa, FAQ, servicios, artículos, migas), sin horario inventado;
+  - escape seguro del `<head>`.
+- `tests/seo/dist.test.ts` (`pnpm test:seo`): el HTML pre-generado que reciben
+  buscadores y redes.
+- `tests/e2e/seo.spec.ts`:
+  - sin JavaScript, cada página trae H1, título, canónica y JSON-LD;
+  - al navegar, se actualizan el título y la canónica.
 
 ### 4. Funcionamiento de extremo a extremo (`tests/e2e/`)
 - `smoke.spec.ts`: cada ruta carga sin errores de JavaScript, sin recursos

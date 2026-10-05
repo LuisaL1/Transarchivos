@@ -27,6 +27,9 @@ test("buscador encuentra un servicio sin tildes", async ({ page, isMobile }) => 
 
 test("chat de Joel responde texto libre", async ({ page }) => {
   await page.goto("/");
+  // Con GA activo, el aviso de cookies oculta el botón del chat en celular hasta decidir.
+  const banner = page.getByRole("dialog", { name: "Aviso de cookies" });
+  if (await banner.isVisible()) await banner.getByRole("button", { name: "Rechazar" }).click();
   await page.locator("[data-chat-launcher]").first().click();
   const input = page.getByPlaceholder(/Escriba|mensaje|pregunta/i).first();
   await input.fill("quiero digitalizar mis documentos");

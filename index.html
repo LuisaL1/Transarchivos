@@ -1,13 +1,19 @@
 <!doctype html>
-<html lang="es">
+<html lang="es-CO">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Transarchivos Ltda. | Gestión Documental en Bogotá, Colombia</title>
-    <meta name="description" content="Clasificación, digitalización, custodia y destrucción legal de documentos para empresas en Colombia. Más de 40 años de trayectoria." />
-    <!-- Sitio en etapa de prototipo: no indexar. Quitar al publicar oficialmente (y borrar public/robots.txt). -->
-    <link rel="preload" as="image" href="/videos/hero-poster.jpg" fetchpriority="high" />
+    <!--seo:start-->
+    <title>Gestión documental en Bogotá | Transarchivos Ltda.</title>
     <meta name="robots" content="noindex, nofollow" />
+    <!--seo:end-->
+    <!-- Las etiquetas SEO de cada página (título, descripción, canónica, Open
+         Graph, JSON-LD) las inserta scripts/prerender.mjs en el build y
+         SeoHead al navegar. Ver docs/06-seo.md. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@400;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" />
+    <link rel="preload" as="image" href="/videos/hero-poster.jpg" fetchpriority="high" />
     <!-- Ícono: la "t" manuscrita del logo sobre el azul corporativo. Versión
          gruesa para la pestaña (16/32/48 px) y con la flecha del logo para
          pantallas de inicio (180/192/512 px). -->
@@ -17,9 +23,10 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#272B7C" />
+    <meta name="format-detection" content="telephone=no" />
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root"><!--app-html--></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

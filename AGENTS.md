@@ -41,12 +41,15 @@ src/
 │   ├── nosotros.ts           Menú de Nosotros
 │   └── search.ts             Índice del buscador
 ├── lib/joel.ts           "Cerebro" del asesor virtual (sin IA externa)
+├── seo/                  Datos de la empresa (site.ts) y metadatos por ruta (meta.ts)
+├── entry-server.tsx      Render en servidor para la pre-generación de HTML
 ├── data/joelPoses.ts     Poses de Joel por servicio (imágenes en assets/images/joel)
 ├── hooks/                Hooks reutilizables (aparición al hacer scroll)
 ├── assets/images/        Imágenes importadas desde el código
 └── styles/index.css      Estilos globales, animaciones, puntero/foco
 public/                   Archivos servidos tal cual (videos del hero, favicon, robots)
-tests/                    unit/ (Vitest), security/ (revisión estática), e2e/ (Playwright + axe)
+scripts/prerender.mjs     Pre-genera dist/<ruta>.html, 404, sitemap y robots (SEO)
+tests/                    unit/, security/, seo/ (HTML generado), e2e/ (Playwright + axe)
 docs/                     Documentación técnica (arquitectura, UX/UI, conversión, pruebas, decisiones)
 RecursosTransarchivos/    Documentos fuente del cliente (contexto, no se publican)
 ```
@@ -62,6 +65,9 @@ RecursosTransarchivos/    Documentos fuente del cliente (contexto, no se publica
 - Importar con el alias `@/` (apunta a `src/`).
 - Componentes: un archivo por componente o por grupo pequeño relacionado;
   exportaciones con nombre (`export function X`).
+- SEO: cada ruta se pre-genera en el servidor. No usar `window`/`document`/
+  `localStorage` durante el render (solo en efectos). Rutas nuevas → `src/seo/meta.ts`
+  (ver `docs/06-seo.md`).
 
 ## Diseño
 

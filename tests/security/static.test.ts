@@ -22,7 +22,7 @@ describe("Código", () => {
     for (const [f, s] of code) expect(s, f).not.toMatch(secret);
   });
   it("solo usa variables de entorno públicas VITE_ permitidas", () => {
-    for (const [f, s] of code) for (const m of s.match(/import\.meta\.env\.(\w+)/g) ?? []) expect(["import.meta.env.VITE_GA_MEASUREMENT_ID", "import.meta.env.DEV", "import.meta.env.PROD", "import.meta.env.MODE"], f).toContain(m);
+    for (const [f, s] of code) for (const m of s.match(/import\.meta\.env\.(\w+)/g) ?? []) expect(["import.meta.env.VITE_GA_MEASUREMENT_ID", "import.meta.env.VITE_SITE_INDEXABLE", "import.meta.env.VITE_GOOGLE_SITE_VERIFICATION", "import.meta.env.DEV", "import.meta.env.PROD", "import.meta.env.MODE"], f).toContain(m);
   });
 });
 

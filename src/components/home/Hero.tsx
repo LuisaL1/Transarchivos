@@ -1,13 +1,14 @@
 import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Bi } from "@/components/ui/Icons";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 export const HERO_VIDEOS = ["/videos/archivosvi2.mp4", "/videos/archivosvi4.mp4"];
 
 export function HeroVideoBackground() {
   const [idx, setIdx] = useState(0);
   const refs = useRef<(HTMLVideoElement | null)[]>([]);
-  const [reduced] = useState(() => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  const reduced = useReducedMotion();
 
   useEffect(() => {
     const v = refs.current[idx];

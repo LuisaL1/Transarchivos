@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Bi } from "@/components/ui/Icons";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 import colombiaMap from "@/assets/images/colombia.svg";
 import joelImg from "@/assets/images/joel.png"; // silueta en súper zoom
 
@@ -25,7 +26,7 @@ export function MapReveal() {
   const mapRef = useRef<HTMLDivElement>(null);
   const [p, setP] = useState(0);
   const [center, setCenter] = useState({ x: 0, y: 0, r: 2000 });
-  const [reduced] = useState(() => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  const reduced = useReducedMotion();
 
   useEffect(() => {
     if (reduced) return;
@@ -92,7 +93,7 @@ export function MapReveal() {
           {/* Mapa con Bogotá */}
           <div className="relative order-1 md:order-2 flex justify-center">
             <div ref={mapRef} className="relative h-[46vh] md:h-[78vh]" style={{ aspectRatio: "1006 / 1370", transform: `scale(${mapScale})`, transformOrigin: `${BOGOTA.left * 100}% ${BOGOTA.top * 100}%` }}>
-              <img src={colombiaMap} alt="Mapa de Colombia con Bogotá resaltada" draggable={false} className="w-full h-full select-none" style={{ objectFit: "contain", filter: "drop-shadow(0 18px 30px rgba(0,0,0,0.4))" }} />
+              <img loading="lazy" decoding="async" src={colombiaMap} alt="Mapa de Colombia con Bogotá resaltada" draggable={false} className="w-full h-full select-none" style={{ objectFit: "contain", filter: "drop-shadow(0 18px 30px rgba(0,0,0,0.4))" }} />
               <span className="absolute" style={{ left: `${BOGOTA.left * 100}%`, top: `${BOGOTA.top * 100}%`, transform: "translate(-50%, -50%)" }}>
                 <span className="absolute inset-0 rounded-full" style={{ background: "#FFDE59", animation: "mapPulse 1.8s cubic-bezier(0,0,0.2,1) infinite" }} />
                 <span className="relative block rounded-full" style={{ width: 16, height: 16, background: "#FFDE59", border: "3px solid #fff", boxShadow: "0 0 18px 4px rgba(255,222,89,0.7)" }} />

@@ -22,12 +22,11 @@
 | Prioridad | Pendiente | Detalle |
 | --- | --- | --- |
 | Alta | **Backend de solicitudes** | El cotizador y el chat arman un `mailto:`. Falta un servicio que reciba, guarde y notifique a Comercial, con acuse al cliente. Actualizar la CSP y las pruebas. |
-| Alta | **Google Analytics** | Configurar `VITE_GA_MEASUREMENT_ID` en Vercel, marcar los eventos clave y agregar `quote_step` y `chat_message` (ver 03). |
-| Alta | **Publicación** | Quitar `noindex` y `robots.txt`; agregar `sitemap.xml`, `robots.txt` definitivo, metadatos Open Graph y datos estructurados (`LocalBusiness`). |
+| Alta | **Google Analytics** | ID `G-PNPFD16QSZ` ya integrado y verificado (`pnpm test:ga`). Falta: crear la variable en Vercel (Production), marcar los eventos clave en GA4 y agregar `quote_step` y `chat_message` (ver 03). |
+| Alta | **Publicación** | SEO técnico listo. Falta seguir el checklist de `docs/06-seo.md`: dominio, `VITE_SITE_INDEXABLE=true`, Search Console, Google Business Profile y redirecciones 301 del sitio anterior. |
 | Media | **Suscripción del blog** | Conectarla a la herramienta de correo que elija la empresa. |
 | Media | **Contraste AA** | Rótulos dorados y grises terciarios (tabla en `TESTING.md`). Requiere aprobación de diseño. Después, activar `A11Y_STRICT`. |
 | Media | **Rendimiento** | Bundle JS de ~530 KB: dividir por rutas con `React.lazy`. Imágenes: `joel.png` 1,1 MB, `logo.png` 378 KB y poses de ~300 KB, pasarlas a WebP/AVIF con tamaños responsive. Videos del hero de ~10 MB: versión comprimida para celular. |
 | Media | **Logo vectorial** | Con el SVG oficial, rehacer el favicon y el logo nítidos. |
-| Baja | **Página 404** | Ruta comodín con diseño propio. |
 | Baja | **Joel** | Revisar periódicamente las preguntas que no entendió (`unknown` en el perfil local); hoy solo quedan en el navegador del visitante. |
 | Baja | **Avisos legales** | Página de política de privacidad y tratamiento de datos, enlazada desde el aviso de cookies y los formularios. |

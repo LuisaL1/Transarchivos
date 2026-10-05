@@ -61,6 +61,7 @@ Se puede entrar directo al paso 2 con `?servicio=<slug>&solucion=<id>#cotizador`
   - recurrente: le da la bienvenida de nuevo.
 
 ## Analítica (GA4)
+- **Propiedad:** ID de medición `G-PNPFD16QSZ`. Local: `.env.production.local` (no versionado; `pnpm dev` no envía datos). Producción: variable `VITE_GA_MEASUREMENT_ID` en Vercel (entorno Production). Verificación automática: `pnpm test:ga`.
 - Se activa solo con `VITE_GA_MEASUREMENT_ID`. Sin la variable no se carga nada.
 - **Consent Mode v2:** analítica denegada por defecto hasta que el visitante
   acepta en el aviso de cookies (Ley 1581 de 2012). La publicidad siempre queda denegada.

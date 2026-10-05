@@ -6,7 +6,8 @@ export default mergeConfig(viteConfig, defineConfig({
   test: {
     environment: "jsdom",
     setupFiles: ["./tests/setup.ts"],
-    include: ["tests/unit/**/*.test.{ts,tsx}", "tests/security/**/*.test.ts"],
+    // tests/seo revisa dist/ y solo corre con `pnpm test:seo` (después del build).
+    include: process.env.SEO_DIST === "1" ? ["tests/seo/**/*.test.ts"] : ["tests/unit/**/*.test.{ts,tsx}", "tests/security/**/*.test.ts"],
     css: false,
     coverage: {
       provider: "v8",

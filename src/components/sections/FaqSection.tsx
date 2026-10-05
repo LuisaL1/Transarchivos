@@ -22,7 +22,7 @@ export function FaqSection({ onChat }: { onChat: () => void }) {
           {/* Joel se asoma por detrás de la tarjeta de ayuda: es el momento
               en que el visitante tiene dudas, justo donde él aporta. */}
           <div className="relative mt-24">
-          <img src={avatarImg} alt="" aria-hidden="true" draggable={false}
+          <img loading="lazy" decoding="async" src={avatarImg} alt="" aria-hidden="true" draggable={false}
             className="absolute select-none pointer-events-none"
             style={{ height: 150, right: 18, bottom: "calc(100% - 46px)", zIndex: 0, filter: "drop-shadow(0 10px 14px rgba(29,32,80,0.18))" }} />
           <div className="relative rounded-2xl p-5" style={{ zIndex: 1, background: "#fff", border: "1px solid #E4E6F7", boxShadow: "0 20px 40px -30px rgba(39,43,124,0.35)" }}>
