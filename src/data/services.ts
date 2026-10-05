@@ -80,5 +80,3 @@ export const norms = [
   { code: "Decreto 2527 / 1950", name: "Validez jurídica de la microfilmación" },
   { code: "Norma Icontec 2001", name: "Estantería de carga pesada del Centro Documental" },
 ];
-
-// ─── Service Card (for Services section) ──────────────────────────────────────

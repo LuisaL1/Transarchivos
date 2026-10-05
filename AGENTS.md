@@ -8,8 +8,9 @@ React 19 + Vite 8 + Tailwind CSS v4 + TypeScript. Se publica en Vercel.
 - `pnpm dev` — servidor local en http://localhost:8443
 - `pnpm build` — build de producción en `dist/`
 - `pnpm typecheck` — verificación de tipos
-- Para probar el código sin variables o imports sobrantes:
-  `npx tsc --noEmit -p . --noUnusedLocals --noUnusedParameters`
+- `pnpm lint` — ESLint (calidad, accesibilidad, seguridad)
+- `pnpm test` / `pnpm test:e2e` — pruebas (ver `TESTING.md`)
+- `pnpm check` — todo lo anterior + build; debe quedar en verde antes de cada commit
 
 ## Arquitectura (`src/`)
 
@@ -40,10 +41,12 @@ src/
 │   ├── nosotros.ts           Menú de Nosotros
 │   └── search.ts             Índice del buscador
 ├── lib/joel.ts           "Cerebro" del asesor virtual (sin IA externa)
+├── data/joelPoses.ts     Poses de Joel por servicio (imágenes en assets/images/joel)
 ├── hooks/                Hooks reutilizables (aparición al hacer scroll)
 ├── assets/images/        Imágenes importadas desde el código
 └── styles/index.css      Estilos globales, animaciones, puntero/foco
 public/                   Archivos servidos tal cual (videos del hero, favicon, robots)
+tests/                    unit/ (Vitest), security/ (revisión estática), e2e/ (Playwright + axe)
 RecursosTransarchivos/    Documentos fuente del cliente (contexto, no se publican)
 ```
 
@@ -62,12 +65,18 @@ RecursosTransarchivos/    Documentos fuente del cliente (contexto, no se publica
 ## Diseño
 
 - Paleta: azul marino `#272B7C`, índigo `#1800AD`, amarillo `#FFDE59`,
-  dorado `#C8960A`, crema `#FBFBF8`, lavanda `#F1F3FB`.
+  dorado `#C8960A`, crema `#FBFBF8`, lavanda `#F1F3FB`. El menú de navegación
+  usa solo el azul marino. La lista blanca de colores está en
+  `tests/unit/content.test.ts`.
 - Tipografías: Poppins (títulos), Montserrat (rótulos/botones), Inter (texto).
 - Íconos: Bootstrap Icons (`<Bi n="..." />`, `<BiTile />`, `<MenuIcon />`).
-- Estilo corporativo: sin caricaturas (solo Joel), sin degradados en los fondos
-  de sección, tarjetas blancas con borde fino, motivo gráfico de carpeta.
-- La única animación del hero es la entrada de la carpeta.
+- Estilo corporativo: sin caricaturas (solo Joel), sin degradados (en su lugar,
+  el detalle de esquina del chat y el menú: cuadrado amarillo translúcido girado
+  45°), tarjetas blancas con borde fino, motivo gráfico de carpeta. Única
+  excepción: la sombra negra superior del hero de inicio.
+- Hero de inicio: pantalla dividida (panel azul con el título animado
+  "Sus archivos, bajo [palabra]" y videos a la derecha), pestaña de carpeta en
+  la división y Joel junto al selector "¿Qué necesitas hoy?".
 
 ## Joel (asesor virtual)
 

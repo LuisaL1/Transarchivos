@@ -1,3 +1,8 @@
+// ─── Service detail page ───────────────────────────────────────────────────────
+// Contenido de cada servicio tomado del "Informe Documento maestro"
+// (definición, objetivos/beneficios, etapas, argumentos de venta, modalidades
+// y normativa). Solo cifras que aparecen en ese documento.
+
 import { useState, useEffect, useRef } from "react";
 import { Link, useParams, useNavigate, useNavigationType } from "react-router-dom";
 import { ChatBot } from "@/components/chat/ChatBot";
@@ -9,6 +14,8 @@ import { SectionDecor } from "@/components/ui/SectionDecor";
 import { SERVICE_DETAILS } from "@/data/serviceDetails";
 import { services } from "@/data/services";
 import { SOLUTIONS } from "@/data/solutions";
+import { SERVICE_JOEL } from "@/data/joelPoses";
+import { JoelFigure } from "@/components/ui/JoelBridge";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 export function ServiceDetailPage() {
@@ -59,7 +66,7 @@ export function ServiceDetailPage() {
       {/* Hero: foto del archivo bajo un velo navy, con la carpeta como base */}
       <section className="relative isolate overflow-hidden" style={{ backgroundColor: "#272B7C" }}>
         <div aria-hidden="true" className="absolute inset-0" style={{ zIndex: -1, backgroundImage: "url(/videos/hero-poster.jpg)", backgroundSize: "cover", backgroundPosition: "center" }} />
-        <div aria-hidden="true" className="absolute inset-0" style={{ zIndex: -1, background: "rgba(20,22,63,0.82)" }} />
+        <div aria-hidden="true" className="absolute inset-0" style={{ zIndex: -1, background: "rgba(39,43,124,0.88)" }} />
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] gap-10 items-center pt-12 pb-24">
             <div>
@@ -131,6 +138,9 @@ export function ServiceDetailPage() {
             {kicker("Lo que obtiene")}
             {h2(<>Beneficios para <span style={{ background: "linear-gradient(transparent 62%, #FFDE59 62%)" }}>su empresa</span></>)}
             <p className="text-sm mt-4" style={{ color: "#6B6B6B", lineHeight: 1.7 }}>{service.desc}</p>
+            {SERVICE_JOEL[service.slug] && (
+              <div className="mt-10 pl-6"><JoelFigure src={SERVICE_JOEL[service.slug].src} height={SERVICE_JOEL[service.slug].height} /></div>
+            )}
           </div>
           <div className="grid sm:grid-cols-2 gap-3">
             {detail.benefits.map(b => (
@@ -182,7 +192,7 @@ export function ServiceDetailPage() {
             {detail.reasons.map((r, i) => (
               <div key={r.t} className="group relative rounded-3xl p-6 transition-all hover:-translate-y-1.5 overflow-hidden"
                 style={{ background: "#fff", border: "1.5px solid #E4E6F7", boxShadow: "0 18px 40px -28px rgba(39,43,124,0.45)" }}>
-                <span className="absolute select-none pointer-events-none font-bold" style={{ right: 16, top: 10, fontSize: 44, lineHeight: 1, color: "rgba(39,43,124,0.06)", fontFamily: "Poppins, sans-serif" }}>0{i + 1}</span>
+                <span aria-hidden="true" className="absolute select-none pointer-events-none font-bold" style={{ right: 16, top: 10, fontSize: 44, lineHeight: 1, color: "rgba(39,43,124,0.06)", fontFamily: "Poppins, sans-serif" }}>0{i + 1}</span>
                 <span className="grid place-items-center rounded-2xl mb-4 transition-colors bg-[#272B7C]/[0.08] group-hover:bg-[#272B7C]" style={{ width: 48, height: 48 }}>
                   <i className={`bi bi-${r.ic} text-[#272B7C] group-hover:text-[#FFDE59] transition-colors`} aria-hidden="true" style={{ fontSize: 21, lineHeight: 1 }} />
                 </span>
@@ -297,5 +307,3 @@ export function ServiceDetailPage() {
     </div>
   );
 }
-
-// ─── Página de artículo del blog ────────────────────────────────────────────────

@@ -1,3 +1,10 @@
+// ─── Aparición al hacer scroll ──────────────────────────────────────────────
+// Mismo efecto que en Transpack: cada bloque entra con un fundido y un leve
+// desplazamiento hacia arriba cuando aparece en pantalla al bajar. Se aplica
+// solo a las secciones debajo del hero, recorriendo su contenido: entra en
+// los contenedores (max-w / mx-auto) y, si encuentra una grilla, anima cada
+// tarjeta por separado y escalonada. Respeta "reducir movimiento".
+
 import { useEffect } from "react";
 
 export function useScrollReveal(rootRef: React.RefObject<HTMLElement | null>) {
@@ -41,8 +48,3 @@ export function useScrollReveal(rootRef: React.RefObject<HTMLElement | null>) {
     return () => io.disconnect();
   }, [rootRef]);
 }
-
-// ─── Búsqueda (ventana propia) ──────────────────────────────────────────────
-// Al tocar la lupa se abre una ventana centrada que baja desde arriba sobre
-// un fondo oscurecido (estilo "command palette"), en vez de reemplazar el nav
-// dentro de la barra. Se cierra con Esc, con la × o haciendo clic afuera.

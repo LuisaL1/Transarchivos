@@ -24,7 +24,7 @@ export function SolucionesSection() {
           {SOLUTIONS.map(sol => (
             // Toda la tarjeta lleva a cotizar la solución (como las tarjetas de
             // servicios); los enlaces de adentro conservan su propio destino.
-            <article key={sol.id} id={`sol-${sol.id}`} role="link" tabIndex={0}
+            <div key={sol.id} id={`sol-${sol.id}`} role="link" tabIndex={0}
               onClick={e => { if ((e.target as HTMLElement).closest("a")) return; navigate(`/?servicio=${sol.slugs[0]}&solucion=${sol.id}#cotizador`); }}
               onKeyDown={e => { if (e.key === "Enter") navigate(`/?servicio=${sol.slugs[0]}&solucion=${sol.id}#cotizador`); }}
               className="group relative flex flex-col rounded-3xl p-6 cursor-pointer card-lift border-[1.5px] border-[#E4E6F7] hover:border-[#272B7C]"
@@ -62,7 +62,7 @@ export function SolucionesSection() {
                   Cotizar esta solución <Bi n="arrow-right" size={14} color="#1800AD" />
                 </Link>
               </div>
-            </article>
+            </div>
           ))}
         </div>
       </div>

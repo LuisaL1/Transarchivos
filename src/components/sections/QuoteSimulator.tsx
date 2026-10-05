@@ -1,3 +1,11 @@
+// ─── Solicitud de cotización guiada ─────────────────────────────────────────
+// Basada en "LÓGICA DE COTIZACIÓN TRANSARCHIVOS": la cotización no se calcula
+// con una tabla de precios (todavía no existen tarifas ni fórmulas), sino que
+// captura las variables que Comercial necesita por tipo de servicio, ubica la
+// solicitud en el modelo (Entrada → Solución → Protección → Expansión), sugiere
+// servicios complementarios y decide el siguiente paso (completar información,
+// validación de Operaciones o cotización estándar).
+
 import { useState, useEffect } from "react";
 import { trackEvent } from "@/lib/analytics";
 import { useLocation } from "react-router-dom";
@@ -99,7 +107,7 @@ export function QuoteSimulator() {
       <h2 className="text-3xl font-bold text-center mb-4" style={{ fontFamily: "Poppins, sans-serif", color: "#272B7C" }}>
         Cuéntenos qué necesita y arme su solicitud
       </h2>
-      <p className="text-sm text-center max-w-xl mx-auto mb-10" style={{ color: "#9B9B9B" }}>
+      <p className="text-sm text-center max-w-xl mx-auto mb-10" style={{ color: "#6B6B6B" }}>
         Cuatro pasos cortos. Verá cómo se arma su solicitud antes de enviarla a nuestro equipo comercial.
       </p>
 
@@ -191,8 +199,8 @@ export function QuoteSimulator() {
                 <p className="text-sm mb-5" style={{ color: "#8A8A8A" }}>Si no conoce algún dato, elija "No lo sé": un asesor le ayudará a completarlo.</p>
                 <div className="grid sm:grid-cols-2 gap-x-4 gap-y-4">
                   <div className="sm:col-span-2">
-                    <label className={labelCls} style={labelStyle}>{cfg.volumeLabel}</label>
-                    <input value={answers.volume ?? ""} onChange={e => setA("volume", e.target.value)} placeholder={cfg.volumePlaceholder} className={inputCls} style={inputStyle} />
+                    <label htmlFor="cot-volume" className={labelCls} style={labelStyle}>{cfg.volumeLabel}</label>
+                    <input id="cot-volume" value={answers.volume ?? ""} onChange={e => setA("volume", e.target.value)} placeholder={cfg.volumePlaceholder} className={inputCls} style={inputStyle} />
                   </div>
                   {cfg.fields.map((f, i) => (
                     <div key={f.key} className={i === cfg.fields.length - 1 && cfg.fields.length % 2 === 1 ? "sm:col-span-2" : ""}>
@@ -204,12 +212,12 @@ export function QuoteSimulator() {
                     </div>
                   ))}
                   <div>
-                    <label className={labelCls} style={labelStyle}>Ubicación (ciudad y sede)</label>
-                    <input value={answers.ubicacion ?? ""} onChange={e => setA("ubicacion", e.target.value)} placeholder="Ej.: Bogotá, sede principal" className={inputCls} style={inputStyle} />
+                    <label htmlFor="cot-ubicacion" className={labelCls} style={labelStyle}>Ubicación (ciudad y sede)</label>
+                    <input id="cot-ubicacion" value={answers.ubicacion ?? ""} onChange={e => setA("ubicacion", e.target.value)} placeholder="Ej.: Bogotá, sede principal" className={inputCls} style={inputStyle} />
                   </div>
                   <div>
-                    <label className={labelCls} style={labelStyle}>Nivel de urgencia</label>
-                    <div className="grid grid-cols-3 gap-2">
+                    <p id="cot-urgencia" className={labelCls} style={labelStyle}>Nivel de urgencia</p>
+                    <div role="group" aria-labelledby="cot-urgencia" className="grid grid-cols-3 gap-2">
                       {QUOTE_URGENCY.map(o => {
                         const on = answers.urgencia === o;
                         return (
@@ -221,8 +229,8 @@ export function QuoteSimulator() {
                     </div>
                   </div>
                   <div className="sm:col-span-2">
-                    <label className={labelCls} style={labelStyle}>Requerimientos especiales <span style={{ color: "#9B9B9B", fontWeight: 400 }}>(opcional)</span></label>
-                    <textarea value={answers.especiales ?? ""} onChange={e => setA("especiales", e.target.value)} rows={2} placeholder="Restricciones, características del material, otra información…" className={`${inputCls} resize-none`} style={inputStyle} />
+                    <label htmlFor="cot-especiales" className={labelCls} style={labelStyle}>Requerimientos especiales <span style={{ color: "#9B9B9B", fontWeight: 400 }}>(opcional)</span></label>
+                    <textarea id="cot-especiales" value={answers.especiales ?? ""} onChange={e => setA("especiales", e.target.value)} rows={2} placeholder="Restricciones, características del material, otra información…" className={`${inputCls} resize-none`} style={inputStyle} />
                   </div>
                 </div>
                 <div className="flex justify-between gap-3 mt-6">
@@ -242,31 +250,31 @@ export function QuoteSimulator() {
                 <p className="text-sm mb-5" style={{ color: "#8A8A8A" }}>Usaremos estos datos solo para responder su solicitud.</p>
                 <div className="grid sm:grid-cols-2 gap-x-4 gap-y-4">
                   <div>
-                    <label className={labelCls} style={labelStyle}>Empresa</label>
-                    <input required value={contact.empresa ?? ""} onChange={e => setC("empresa", e.target.value)} className={inputCls} style={inputStyle} />
+                    <label htmlFor="cot-empresa" className={labelCls} style={labelStyle}>Empresa</label>
+                    <input id="cot-empresa" required value={contact.empresa ?? ""} onChange={e => setC("empresa", e.target.value)} className={inputCls} style={inputStyle} />
                   </div>
                   <div>
-                    <label className={labelCls} style={labelStyle}>Sector económico</label>
-                    <select required value={contact.sector ?? ""} onChange={e => setC("sector", e.target.value)} className={inputCls} style={inputStyle}>
+                    <label htmlFor="cot-sector" className={labelCls} style={labelStyle}>Sector económico</label>
+                    <select id="cot-sector" required value={contact.sector ?? ""} onChange={e => setC("sector", e.target.value)} className={inputCls} style={inputStyle}>
                       <option value="">Seleccione…</option>
                       {QUOTE_SECTORS.map(o => <option key={o} value={o}>{o}</option>)}
                     </select>
                   </div>
                   <div>
-                    <label className={labelCls} style={labelStyle}>Su nombre</label>
-                    <input required value={contact.nombre ?? ""} onChange={e => setC("nombre", e.target.value)} className={inputCls} style={inputStyle} />
+                    <label htmlFor="cot-nombre" className={labelCls} style={labelStyle}>Su nombre</label>
+                    <input id="cot-nombre" required value={contact.nombre ?? ""} onChange={e => setC("nombre", e.target.value)} className={inputCls} style={inputStyle} />
                   </div>
                   <div>
-                    <label className={labelCls} style={labelStyle}>Cargo</label>
-                    <input required value={contact.cargo ?? ""} onChange={e => setC("cargo", e.target.value)} className={inputCls} style={inputStyle} />
+                    <label htmlFor="cot-cargo" className={labelCls} style={labelStyle}>Cargo</label>
+                    <input id="cot-cargo" required value={contact.cargo ?? ""} onChange={e => setC("cargo", e.target.value)} className={inputCls} style={inputStyle} />
                   </div>
                   <div>
-                    <label className={labelCls} style={labelStyle}>Correo electrónico</label>
-                    <input required type="email" value={contact.email ?? ""} onChange={e => setC("email", e.target.value)} className={inputCls} style={inputStyle} />
+                    <label htmlFor="cot-email" className={labelCls} style={labelStyle}>Correo electrónico</label>
+                    <input id="cot-email" required type="email" value={contact.email ?? ""} onChange={e => setC("email", e.target.value)} className={inputCls} style={inputStyle} />
                   </div>
                   <div>
-                    <label className={labelCls} style={labelStyle}>Teléfono</label>
-                    <input required type="tel" value={contact.telefono ?? ""} onChange={e => setC("telefono", e.target.value)} className={inputCls} style={inputStyle} />
+                    <label htmlFor="cot-telefono" className={labelCls} style={labelStyle}>Teléfono</label>
+                    <input id="cot-telefono" required type="tel" value={contact.telefono ?? ""} onChange={e => setC("telefono", e.target.value)} className={inputCls} style={inputStyle} />
                   </div>
                 </div>
                 <div className="flex justify-between gap-3 mt-6">
@@ -378,6 +386,3 @@ export function QuoteSimulator() {
     </section>
   );
 }
-
-// ─── Blog / contenido especializado ─────────────────────────────────────────
-// Artículos reales de la carpeta RecursosTransarchivos (ver src/blogData.ts).

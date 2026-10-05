@@ -140,7 +140,7 @@ export function SiteHeader({ solid = false, onChat }: { solid?: boolean; onChat:
           ser unos px más bajo que el header y dejaba una franja transparente
           alrededor del logo por donde se colaba el contenido al hacer scroll. */}
       <header
-        className={`fixed top-0 left-0 right-0 z-50 pb-3 min-h-[72px] xl:min-h-0 flex items-center justify-center ${navReady ? "" : "nav-preload"}`}
+        className={`fixed top-0 left-0 right-0 z-50 min-h-[72px] xl:min-h-0 flex items-center justify-center ${navReady ? "" : "nav-preload"}`}
         style={{
           // Sin borderBottom: una línea de 1px sólida se ve dura/"cortada" al
           // volver de scrolled a flotante — una sombra suave, sin borde, separa
@@ -149,8 +149,11 @@ export function SiteHeader({ solid = false, onChat }: { solid?: boolean; onChat:
           boxShadow: scrolled || mobileOpen ? "0 4px 20px rgba(10,13,61,0.12)" : "none",
           // Arriba del todo, la barra flota separada del borde superior; al
           // hacer scroll se pega arriba y pasa a barra completa.
-          paddingTop: scrolled ? 0 : 18,
-          transition: "background 0.3s ease, box-shadow 0.3s ease, padding-top 0.3s ease",
+          // Scrolled: 6px arriba y abajo, así el pill (y su botón) queda centrado
+          // en la barra a la misma altura del logo y los íconos.
+          paddingTop: scrolled ? 6 : 18,
+          paddingBottom: scrolled ? 6 : 12,
+          transition: "background 0.3s ease, box-shadow 0.3s ease, padding-top 0.3s ease, padding-bottom 0.3s ease",
         }}
       >
         {/* Logo — suelto, alineado con el borde del bloque de texto del hero (no
@@ -159,16 +162,16 @@ export function SiteHeader({ solid = false, onChat }: { solid?: boolean; onChat:
             abrirse "Servicios" el header crece en alto, y con top-1/2 el logo se
             iba arrastrando hacia el centro nuevo en vez de quedarse arriba, fijo
             junto a la fila 1 del navbar. */}
-        <a href="#" className="absolute z-10 left-4 md:left-12 2xl:left-28" style={{ top: scrolled ? 5 : 12, transition: "top 0.3s ease" }}>
+        <Link to="/" aria-label="Transarchivos, ir al inicio" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="absolute z-10 left-4 md:left-12 2xl:left-28" style={{ top: scrolled ? 7 : 12, transition: "top 0.3s ease" }}>
           <HeaderLogo scrolled={scrolled || mobileOpen} size={scrolled || mobileOpen ? 50 : 64} />
-        </a>
+        </Link>
 
         {/* Búsqueda y soporte — fuera del pill, a la derecha (simétricos al
             logo de la izquierda), centrados con la fila del navbar. */}
-        <div ref={toolsRef} className="hidden xl:flex absolute z-10 right-4 md:right-12 2xl:right-28 items-center gap-2.5" style={{ top: scrolled ? 10 : 24, transition: "top 0.3s ease" }}>
+        <div ref={toolsRef} className="hidden xl:flex absolute z-10 right-4 md:right-12 2xl:right-28 items-center gap-2.5" style={{ top: scrolled ? 12 : 24, transition: "top 0.3s ease" }}>
           <button type="button" onClick={toggleSearch} aria-label={searchOpen ? "Cerrar búsqueda" : "Buscar"} title={searchOpen ? "Cerrar búsqueda" : "Buscar"}
             className="flex items-center justify-center rounded-full shrink-0 transition-transform hover:scale-105 active:scale-95"
-            style={{ width: 40, height: 40, background: searchOpen ? "#1800AD" : "#fff", border: `1.5px solid ${searchOpen ? "#1800AD" : "#E4E6F7"}`, boxShadow: scrolled ? "none" : "0 8px 20px -8px rgba(10,13,61,0.35)" }}>
+            style={{ width: 40, height: 40, background: searchOpen ? "#272B7C" : "#fff", border: `1.5px solid ${searchOpen ? "#272B7C" : "#E4E6F7"}`, boxShadow: scrolled ? "none" : "0 8px 20px -8px rgba(10,13,61,0.35)" }}>
             <Bi n={searchOpen ? "x-lg" : "search"} size={searchOpen ? 14 : 15} color={searchOpen ? "#fff" : "#272B7C"} />
           </button>
           <button ref={supportBtnRef} type="button" onClick={toggleSupport} onMouseEnter={supportHoverIn} onMouseLeave={supportHoverOut} aria-label="Soporte" title="Soporte" aria-expanded={!!supportAnchor}
@@ -248,7 +251,7 @@ export function SiteHeader({ solid = false, onChat }: { solid?: boolean; onChat:
                     <a key={l.label} href={l.href}
                       className="px-3.5 py-2 rounded-full text-sm font-medium transition-colors"
                       style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif" }}
-                      onMouseEnter={e => { e.currentTarget.style.background = "#1800AD"; e.currentTarget.style.color = "#ffffff"; }}
+                      onMouseEnter={e => { e.currentTarget.style.background = "#272B7C"; e.currentTarget.style.color = "#ffffff"; }}
                       onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#272B7C"; }}>
                       {l.label}
                     </a>
@@ -261,7 +264,7 @@ export function SiteHeader({ solid = false, onChat }: { solid?: boolean; onChat:
             <a href="#cotizador"
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold transition-transform hover:scale-105 active:scale-95 shrink-0"
               style={{ background: "#272B7C", color: "#ffffff", fontFamily: "Montserrat, sans-serif" }}>
-              Simular cotización
+              Solicitar cotización
               <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M3 11L11 3M11 3H5M11 3V9" stroke="#ffffff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </a>
 
@@ -368,7 +371,7 @@ function MobileMenu({ onClose, onSearch, onChat }: { onClose: () => void; onSear
                 <div className="overflow-hidden">
                   <div className="pl-4 pb-2">
                     {g.items.map(it => {
-                      const inner = (<><Bi n={it.icon} size={15} color="#1800AD" /><span className="text-sm" style={{ ...rowText, fontWeight: 500 }}>{it.label}</span></>);
+                      const inner = (<><Bi n={it.icon} size={15} color="#272B7C" /><span className="text-sm" style={{ ...rowText, fontWeight: 500 }}>{it.label}</span></>);
                       const cls = "flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors hover:bg-[#F7F8FF]";
                       return it.to
                         ? <Link key={it.label} to={it.to} onClick={onClose} className={cls} style={{ textDecoration: "none" }}>{inner}</Link>
@@ -398,7 +401,7 @@ function MobileMenu({ onClose, onSearch, onChat }: { onClose: () => void; onSear
       <div className="px-4 py-3 border-t" style={{ borderColor: "#ECEEF6", paddingBottom: "max(12px, env(safe-area-inset-bottom))" }}>
         <a href="#cotizador" onClick={onClose} className="max-w-xl mx-auto flex items-center justify-center gap-2 py-3.5 rounded-2xl text-sm font-bold"
           style={{ background: "#272B7C", color: "#fff", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
-          Simular cotización <Bi n="arrow-up-right" size={13} color="#fff" />
+          Solicitar cotización <Bi n="arrow-up-right" size={13} color="#fff" />
         </a>
       </div>
     </div>

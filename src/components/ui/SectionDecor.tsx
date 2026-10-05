@@ -1,3 +1,8 @@
+// ─── Fondos decorativos de sección ─────────────────────────────────────────
+// Capa detrás del contenido (z-index -1; la sección lleva "isolate"): un
+// color plano de la paleta (sin amarillo ni degradados), un parche de puntos y, en algunas, la silueta de la carpeta del hero en
+// contorno como marca de agua. Variantes: lavanda y crema.
+
 import { JoelSilhouette } from "@/components/ui/Brand";
 
 export function Divider() {

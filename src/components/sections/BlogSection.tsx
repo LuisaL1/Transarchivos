@@ -1,3 +1,6 @@
+// ─── Blog / contenido especializado ─────────────────────────────────────────
+// Artículos reales de la carpeta RecursosTransarchivos (ver src/data/blog.ts).
+
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Bi } from "@/components/ui/Icons";
@@ -37,7 +40,7 @@ export function BlogSection() {
               style={{ background: "#fff", border: "1.5px solid #E4E6F7", boxShadow: `0 24px 50px -28px ${fc}66`, textDecoration: "none" }}>
               <div className="relative overflow-hidden" style={{ height: 300 }}>
                 <img src={featured.cover} alt="" className="w-full h-full" style={{ objectFit: "cover" }} />
-                <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(20,22,63,0.05) 45%, rgba(20,22,63,0.55) 100%)" }} />
+                <span aria-hidden="true" className="absolute pointer-events-none" style={{ right: -44, top: -44, width: 110, height: 110, transform: "rotate(45deg)", background: "rgba(255,222,89,0.35)" }} />
                 <span className="absolute top-4 left-4 text-[11px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full" style={{ background: fc, color: "#fff", fontFamily: "Montserrat, sans-serif" }}>
                   Destacado · {featured.cat}
                 </span>
@@ -86,8 +89,9 @@ export function BlogSection() {
         <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-5 rounded-3xl p-7 md:px-9"
           style={{ background: "#fff", border: "1.5px solid #E4E6F7", boxShadow: "0 14px 34px -24px rgba(39,43,124,0.25)" }}>
           <div className="flex items-center gap-4">
-            <span className="flex items-center justify-center rounded-2xl shrink-0" style={{ width: 44, height: 44, background: "linear-gradient(135deg, #C8960A, #FFDE59)" }}>
-              <Bi n="envelope-paper" size={19} color="#fff" />
+            <span className="relative overflow-hidden flex items-center justify-center rounded-2xl shrink-0" style={{ width: 44, height: 44, background: "#272B7C" }}>
+              <span aria-hidden="true" className="absolute pointer-events-none" style={{ right: -16, top: -16, width: 30, height: 30, transform: "rotate(45deg)", background: "rgba(255,222,89,0.3)" }} />
+              <Bi n="envelope-paper" size={19} color="#FFDE59" className="relative" />
             </span>
             <div>
               <p className="font-bold text-base" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif" }}>Reciba novedades y guías en su correo</p>
@@ -112,10 +116,3 @@ export function BlogSection() {
     </section>
   );
 }
-
-// ─── Joel, asesor virtual (chat guiado) ─────────────────────────────────────
-// Mismo estilo y comportamiento que el chat de Transpack, con el avatar de
-// Transarchivos: invitación que asoma a los 7 s (una vez por sesión), botón
-// flotante, ventana con encabezado, mensajes uno a uno con "escribiendo…",
-// opciones rápidas, campo de texto libre (reconoce palabras clave) y botones
-// de acción (correo, teléfono, cotizador). No usa IA: sigue un guion.

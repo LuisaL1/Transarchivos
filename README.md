@@ -14,8 +14,11 @@ pnpm install     # instalar dependencias
 pnpm dev         # desarrollo en http://localhost:8443
 pnpm build       # build de producción en dist/
 pnpm preview     # ver el build localmente
-pnpm typecheck   # verificar tipos
+pnpm check       # tipos + lint + pruebas + build (antes de cada commit)
+pnpm check:all   # lo anterior + auditoría de seguridad + pruebas de extremo a extremo
 ```
+
+Pruebas de calidad, accesibilidad y seguridad: ver `TESTING.md`.
 
 ## Despliegue
 
@@ -24,6 +27,26 @@ rutas a `index.html` para que funcionen las páginas internas al recargar.
 
 Antes de publicar oficialmente: quitar `<meta name="robots" content="noindex">`
 de `index.html` y borrar `public/robots.txt`.
+
+## Pendientes de desarrollo
+
+- **Cotizador y chat**: hoy arman un correo (`mailto:`) a info@transarchivos.com.
+  Falta un backend o servicio de formularios que reciba la solicitud, la guarde
+  y notifique a Comercial. Si se usa un servicio externo, agregarlo a la CSP de
+  `vercel.json`.
+- **Suscripción del blog** (`BlogSection`): solo muestra el mensaje de éxito.
+  Falta conectarla a la herramienta de correo que elija la empresa.
+- **Google Analytics**: configurar `VITE_GA_MEASUREMENT_ID` en Vercel (ver
+  `.env.example`).
+- **Contraste de color (accesibilidad AA)**: los rótulos dorados y algunos
+  textos grises no alcanzan el contraste mínimo (tabla en `TESTING.md`).
+  Requiere aprobación de diseño.
+- **Rendimiento**:
+  - el bundle JS pesa ~530 KB (dividir por rutas con `React.lazy`);
+  - imágenes pesadas: `joel.png` 1,1 MB, `logo.png` 378 KB y las poses de Joel
+    de ~300 KB (convertir a WebP/AVIF).
+- **Publicación oficial**: quitar `noindex` de `index.html` y borrar
+  `public/robots.txt`.
 
 ## Estructura
 

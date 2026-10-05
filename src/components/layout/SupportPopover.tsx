@@ -1,3 +1,9 @@
+// ─── Soporte (ícono de audífonos del header) ────────────────────────────────
+// Tarjeta flotante bajo el ícono, abierta hacia la derecha (hacia el margen,
+// para no tapar el contenido del hero; si no cabe, se corre a la izquierda):
+// chat con Joel, teléfono, correo y enlace a las preguntas frecuentes. Se dibuja con position: fixed (el pill del
+// header recorta lo que sobresale) y se cierra al hacer clic fuera o scroll.
+
 import { Bi } from "@/components/ui/Icons";
 
 export function SupportPopover({ anchor, onClose, onChat, onHoverIn, onHoverOut }: { anchor: DOMRect; onClose: () => void; onChat: () => void; onHoverIn?: () => void; onHoverOut?: () => void }) {
@@ -9,7 +15,7 @@ export function SupportPopover({ anchor, onClose, onChat, onHoverIn, onHoverOut 
   return (
     <div data-support-popover onMouseEnter={onHoverIn} onMouseLeave={onHoverOut} className="fixed z-[60] w-[340px] rounded-3xl overflow-hidden"
       style={{ top: anchor.bottom + 12, left: Math.max(16, Math.min(anchor.left - 8, window.innerWidth - 340 - 16)), background: "#fff", boxShadow: "0 30px 60px -20px rgba(10,13,61,0.35), 0 4px 14px rgba(10,13,61,0.08)", animation: "fadeInUp 0.2s ease both" }}>
-      <div className="relative px-6 pt-5 pb-5 overflow-hidden" style={{ background: "linear-gradient(135deg, #14163F 0%, #272B7C 100%)" }}>
+      <div className="relative px-6 pt-5 pb-5 overflow-hidden" style={{ background: "#272B7C" }}>
         <span className="absolute pointer-events-none" style={{ top: -30, right: -30, width: 110, height: 110, background: "rgba(255,222,89,0.18)", transform: "rotate(45deg)", borderRadius: 18 }} />
         <p className="relative flex items-center gap-2 text-base font-bold" style={{ color: "#fff", fontFamily: "Poppins, sans-serif" }}>
           <Bi n="headset" size={17} color="#FFDE59" /> Soporte Transarchivos
@@ -42,7 +48,3 @@ export function SupportPopover({ anchor, onClose, onChat, onHoverIn, onHoverOut 
     </div>
   );
 }
-
-// ─── Preguntas frecuentes ───────────────────────────────────────────────────
-// Respuestas basadas en el contenido real del sitio (servicios, normativa,
-// cobertura). Acordeón: una abierta a la vez.

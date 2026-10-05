@@ -1,3 +1,8 @@
+// ─── Búsqueda (ventana propia) ──────────────────────────────────────────────
+// Al tocar la lupa se abre una ventana centrada que baja desde arriba sobre
+// un fondo oscurecido (estilo "command palette"), en vez de reemplazar el nav
+// dentro de la barra. Se cierra con Esc, con la × o haciendo clic afuera.
+
 import { useEffect, useRef } from "react";
 import { trackEvent } from "@/lib/analytics";
 import { Link } from "react-router-dom";
@@ -35,8 +40,8 @@ export function SearchOverlay({ query, setQuery, results, hasQuery, inputRef, on
   const pickResult = () => { trackSearch(query); trackEvent("search", { search_term: query }); onClose(); };
   return (
     <div data-search-overlay className="fixed inset-0 z-[70] flex justify-center px-4" style={{ paddingTop: "12vh" }}>
-      <div className="absolute inset-0" onClick={onClose}
-        style={{ background: "rgba(10,13,61,0.5)", backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)", animation: "searchFade 0.25s ease both" }} />
+      <div role="presentation" className="absolute inset-0" onClick={onClose}
+        style={{ background: "rgba(39,43,124,0.55)", backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)", animation: "searchFade 0.25s ease both" }} />
       <div role="dialog" aria-label="Buscar en el sitio" className="relative w-full max-w-[640px] self-start rounded-3xl overflow-hidden"
         style={{ background: "#fff", boxShadow: "0 40px 90px -30px rgba(10,13,61,0.6)", animation: "searchDrop 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.1) both" }}>
         <div className="flex items-center gap-3 px-5 py-4" style={{ borderBottom: "1px solid #ECEEF6" }}>
@@ -93,8 +98,3 @@ export function SearchOverlay({ query, setQuery, results, hasQuery, inputRef, on
     </div>
   );
 }
-
-// ─── Fondos decorativos de sección ─────────────────────────────────────────
-// Capa detrás del contenido (z-index -1; la sección lleva "isolate"): un
-// color plano de la paleta (sin amarillo ni degradados), un parche de puntos y, en algunas, la silueta de la carpeta del hero en
-// contorno como marca de agua. Variantes: lavanda y crema.

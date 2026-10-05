@@ -21,7 +21,7 @@ export function NavDropdownTrigger({ label, open, setOpen }: { label: string; op
       className="flex items-center gap-1 px-3.5 py-2 rounded-full text-sm font-medium transition-colors"
       style={{
         color: open ? "#ffffff" : "#272B7C",
-        background: open ? "#1800AD" : "transparent",
+        background: open ? "#272B7C" : "transparent",
         fontFamily: "Montserrat, sans-serif",
       }}
     >
@@ -42,7 +42,7 @@ export function NavDropdownTrigger({ label, open, setOpen }: { label: string; op
 
 export function MenuFeature({ kicker, title, text, cta, href, onClick }: { kicker: string; title: string; text: string; cta: string; href: string; onClick: () => void }) {
   return (
-    <div className="relative flex flex-col overflow-hidden rounded-2xl p-5" style={{ background: "linear-gradient(135deg, #272B7C 0%, #1800AD 100%)" }}>
+    <div className="relative flex flex-col overflow-hidden rounded-2xl p-5" style={{ background: "#272B7C" }}>
       <span aria-hidden="true" className="absolute pointer-events-none" style={{ right: -36, top: -36, width: 104, height: 104, transform: "rotate(45deg)", background: "rgba(255,222,89,0.25)" }} />
       <p className="relative mb-2 text-[10.5px] font-bold uppercase" style={{ letterSpacing: "0.16em", color: "#FFDE59", fontFamily: "Montserrat, sans-serif" }}>{kicker}</p>
       <p className="relative mb-2 text-[17px] font-bold leading-snug" style={{ color: "#fff", fontFamily: "Poppins, sans-serif" }}>{title}</p>
@@ -81,8 +81,8 @@ export function ServicesPanelContent({ setOpen }: { setOpen: (v: boolean) => voi
         </div>
         <div className="flex items-center justify-between mt-1.5 pt-2.5 px-2.5" style={{ borderTop: "1px solid #ECEEF6" }}>
           <span className="text-[11px]" style={{ color: "#9B9B9B" }}>9 servicios bajo la Ley 594 de 2000 y la normativa del AGN</span>
-          <a href="#servicios" onClick={close} className="text-xs font-semibold inline-flex items-center gap-1" style={{ color: "#1800AD", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
-            Ver todos <Bi n="arrow-right" size={12} color="#1800AD" />
+          <a href="#servicios" onClick={close} className="text-xs font-semibold inline-flex items-center gap-1" style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
+            Ver todos <Bi n="arrow-right" size={12} color="#272B7C" />
           </a>
         </div>
       </div>
@@ -175,5 +175,3 @@ export function BlogPanelContent({ setOpen }: { setOpen: (v: boolean) => void })
     </div>
   );
 }
-
-// ─── Logo ─────────────────────────────────────────────────────────────────────

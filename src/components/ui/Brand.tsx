@@ -14,7 +14,7 @@ export function ChatAvatarFace({ size, ring, round = false }: { size: number; ri
     <div style={{
       width: size, height: size, borderRadius: round ? "50%" : Math.round(size * 0.3), overflow: "hidden",
       position: "relative", flexShrink: 0,
-      background: round ? "linear-gradient(135deg, #FFF6D6 0%, #FFE39A 100%)" : "#EEF0FB",
+      background: round ? "#FFDE59" : "#EEF0FB",
       boxShadow: [
         ring === "light" ? "0 0 0 2px rgba(255,255,255,0.85)" : ring === "navy" ? "0 0 0 2px rgba(39,43,124,0.15)" : "",
         "0 4px 10px -3px rgba(10,13,61,0.35)",

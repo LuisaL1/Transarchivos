@@ -1,9 +1,17 @@
+// ─── App ──────────────────────────────────────────────────────────────────────
+// Toda la página principal (antes era el App exportado directamente). Ahora
+// App es un enrutador liviano: esto vive en "/", y cada card de servicio
+// enlaza a su propia página en "/servicios/:slug" (ver ServiceDetailPage).
+
 import { useState, useEffect, useLayoutEffect, useRef } from "react";
-import { trackEvent } from "@/lib/analytics";
+import { JoelBridge } from "@/components/ui/JoelBridge";
+import { JOEL } from "@/data/joelPoses";
+import avatarImg from "@/assets/images/joel.png";
 import { Link, useLocation, useNavigate, useNavigationType } from "react-router-dom";
 import { track } from "@/lib/joel";
 import { ChatBot } from "@/components/chat/ChatBot";
-import { HeroAskJoel, HeroVideoBackground } from "@/components/home/Hero";
+import { HeroQuickStart, HeroRotatingWord, HeroVideoBackground } from "@/components/home/Hero";
+import { MapReveal } from "@/components/home/MapReveal";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { BlogSection } from "@/components/sections/BlogSection";
 import { FaqSection } from "@/components/sections/FaqSection";
@@ -12,7 +20,7 @@ import { ServiceCard } from "@/components/sections/ServiceCard";
 import { SolucionesSection } from "@/components/sections/SolucionesSection";
 import { Logo } from "@/components/ui/Brand";
 import { Bi, BiTile } from "@/components/ui/Icons";
-import { Divider, SectionDecor } from "@/components/ui/SectionDecor";
+import { Divider, FolderOutline, SectionDecor } from "@/components/ui/SectionDecor";
 import { services } from "@/data/services";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 
@@ -20,18 +28,7 @@ export function HomePage() {
   // Estado del chat en App (no dentro de ChatBot): así el avatar del hero
   // también puede abrirlo con un clic, no solo el botón flotante.
   const [chatOpen, setChatOpen] = useState(false);
-  const [chatSeed, setChatSeed] = useState<{ text: string; id: number } | null>(null);
   const pageRef = useRef<HTMLDivElement>(null);
-  // Animación de entrada (solo la carpeta): solo la primera carga de la sesión
-  // y nunca con "reducir movimiento". El estado final es la página normal.
-  const [intro] = useState(() => {
-    try {
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
-      if (sessionStorage.getItem("ta-intro") === "1") return false;
-      sessionStorage.setItem("ta-intro", "1");
-    } catch { /* sin almacenamiento: se anima igual */ }
-    return true;
-  });
   useScrollReveal(pageRef);
   // Comportamiento del visitante (para Joel): qué secciones mira con calma.
   useEffect(() => {
@@ -46,7 +43,6 @@ export function HomePage() {
     return () => { io.disconnect(); Object.values(timers).forEach(clearTimeout); };
   }, []);
   const navigateHome = useNavigate();
-  const askJoel = (text: string) => { trackEvent("chat_question", { source: "hero" }); setChatSeed({ text, id: Date.now() }); setChatOpen(true); };
 
   const { hash, key: locKey } = useLocation();
   const navType = useNavigationType();
@@ -78,41 +74,81 @@ export function HomePage() {
       <SiteHeader onChat={() => setChatOpen(true)} />
 
       {/* ── HERO ────────────────────────────────────────────────────────────
-          Centrado sobre los videos de fondo: insignia, título, bajada y una
-          caja para escribirle directo a Joel. Debajo, la franja navy con una
-          muesca recortada (a través de ella se ven los videos) y la sección
-          "Dónde operamos". */}
-      <section className="relative overflow-hidden" style={{ background: "#3a3c56" }}>
+          Pantalla dividida (desde md): a la izquierda un panel azul marino
+          con el título animado y la frase; a la derecha los videos de
+          archivo. En celular, el video va de fondo con el texto encima. */}
+      <section className="relative overflow-hidden" style={{ background: "#272B7C" }}>
         <HeroVideoBackground />
-        <div className="relative">
-        <div className="relative max-w-2xl mx-auto px-6 pt-24 md:pt-44 pb-4 text-center flex flex-col justify-center min-h-[62svh] md:min-h-[72vh]">
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-5" style={{ fontFamily: "Poppins, sans-serif", color: "#fff", lineHeight: 1.15, textShadow: "0 2px 18px rgba(10,13,61,0.45)" }}>
-            Sus archivos,<br />
-            bajo{" "}
-            <span className="inline-block rounded-xl md:rounded-2xl px-3 md:px-4 align-middle" style={{ background: "#FFDE59", color: "#272B7C", textShadow: "none", paddingBottom: "0.12em" }}>resguardo</span>.
-          </h1>
-
-          <p className="text-base max-w-2xl mx-auto mb-7" style={{ color: "rgba(255,255,255,0.85)", textWrap: "balance", textShadow: "0 1px 10px rgba(10,13,61,0.5)" }}>
-            Clasificamos, digitalizamos, custodiamos y destruimos legalmente sus documentos
-          </p>
-
-          <HeroAskJoel onAsk={askJoel} />
+        {/* Elementos gráficos del panel azul: siluetas de carpeta en contorno
+            y un parche de puntos (mismo lenguaje de las demás secciones). */}
+        <div aria-hidden="true" className="hidden md:block absolute inset-y-0 left-0 w-1/2 overflow-hidden pointer-events-none" style={{ color: "rgba(255,255,255,0.08)" }}>
+          <FolderOutline style={{ width: 460, bottom: -90, left: -110, transform: "rotate(-8deg)" }} />
+          <div className="absolute" style={{ width: 160, height: 110, top: "22%", left: 32, backgroundImage: "radial-gradient(rgba(255,255,255,0.22) 1.4px, transparent 1.6px)", backgroundSize: "18px 18px" }} />
         </div>
-        </div>
+        {/* Sombra negra arriba: suaviza la unión del panel azul con el video
+            detrás del navbar. */}
+        <div aria-hidden="true" className="absolute inset-x-0 top-0 h-36 pointer-events-none" style={{ zIndex: 2, background: "linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.25) 45%, transparent 100%)" }} />
+        {/* Carpeta en contorno sobre la división, recortada a la forma azul
+            (panel + pestaña): solo se ve sobre el azul, nunca sobre el video. */}
+        <svg aria-hidden="true" className="hidden md:block absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 3 }}>
+          <defs>
+            <mask id="hero-blue-area" maskUnits="userSpaceOnUse" x="0" y="0" width="100%" height="100%">
+              <rect x="0" y="0" width="50%" height="100%" fill="#fff" />
+              <g transform="translate(-4 0)">
+                <svg x="50%" y="0" width="54" height="300" viewBox="-4 0 54 300" overflow="visible">
+                  <path d="M-4 0 L46 0 L46 192 Q46 206 37 215 L14 240 Q2 253 0 272 L0 300 L-4 300 Z" fill="#fff" />
+                </svg>
+              </g>
+            </mask>
+          </defs>
+          <g mask="url(#hero-blue-area)">
+            <g transform="translate(-160 0)">
+              <svg x="50%" y="16%" width="220" height="154" viewBox="0 0 400 280" overflow="visible">
+                <g transform="rotate(10 200 140)" fill="none" stroke="rgba(255,222,89,0.4)" strokeWidth="2">
+                  <path d="M8 60 V26 Q8 8 26 8 H150 Q163 8 171 18 L190 44 Q197 52 210 52 H374 Q392 52 392 70 V254 Q392 272 374 272 H26 Q8 272 8 254 Z" />
+                  <path d="M8 84 H392" strokeDasharray="6 8" />
+                </g>
+              </svg>
+            </g>
+          </g>
+        </svg>
 
-        {/* Carpeta: cuerpo de un solo color (mismo tono claro de la sección de blog, #FBFBF8) con una pestaña
-            arriba a la izquierda, como una carpeta de archivo, sobre los videos. */}
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 mt-10 md:mt-36">
-          <div className={`relative h-[44px] sm:h-[100px] md:h-[170px] ${intro ? "folder-intro" : ""}`}>
-            {/* La pestaña baja 3 px por dentro del cuerpo (se solapan) para que
-                nunca se vea una línea de corte entre ambos durante la animación. */}
-            <svg className="folder-tab absolute left-0 block w-[170px] h-[30px] sm:w-[280px] sm:h-[49px]" viewBox="0 0 280 49" preserveAspectRatio="none" aria-hidden="true" style={{ bottom: "calc(100% - 3px)" }}>
-              <path d="M0 49 V18 Q0 0 18 0 H196 Q209 0 217 10 L242 38 Q249 46 262 46 H280 V49 Z" fill="#FBFBF8" />
-            </svg>
-            <div className="absolute inset-0" style={{ background: "#FBFBF8", borderRadius: "0 28px 0 0" }} />
+        {/* Pestaña de carpeta en la unión del panel azul con el video: el panel
+            "se abre" como una carpeta hacia la imagen. */}
+        {/* Trazo continuo: entra y sale del borde con curvas suaves (sin
+            escalones), esquina exterior redondeada y bajada inclinada. */}
+        <svg aria-hidden="true" className="hidden md:block absolute pointer-events-none" viewBox="-4 0 54 300"
+          style={{ left: "calc(50% - 4px)", top: 0, width: 54, height: 300, zIndex: 1 }}>
+          <path d="M-4 0 L46 0 L46 192 Q46 206 37 215 L14 240 Q2 253 0 272 L0 300 L-4 300 Z" fill="#272B7C" />
+        </svg>
+
+        <div className="relative md:w-1/2 min-h-[64svh] md:min-h-[86vh] flex items-center">
+          <div className="w-full px-6 md:pl-12 lg:pl-20 xl:pl-28 md:pr-10 pt-28 pb-12 md:pt-40 md:pb-14 text-center md:text-left">
+            <h1 className="text-4xl md:text-[34px] lg:text-[44px] xl:text-5xl 2xl:text-[56px] font-bold tracking-tight mb-5" style={{ fontFamily: "Poppins, sans-serif", color: "#fff", lineHeight: 1.15 }}>
+              Sus archivos,<br />
+              <span className="whitespace-nowrap">bajo <HeroRotatingWord />.</span>
+            </h1>
+            <p className="text-base lg:text-lg max-w-md mx-auto md:mx-0" style={{ color: "rgba(255,255,255,0.82)", lineHeight: 1.6 }}>
+              Clasificamos, digitalizamos, custodiamos y destruimos legalmente sus documentos
+            </p>
+            {/* Joel (imagen de la marca en redes) junto a la tarjeta, volteado
+                para que señale el selector. Clic: abre el chat. */}
+            <div className="relative md:max-w-[440px] mx-auto md:mx-0">
+              <HeroQuickStart />
+              {/* Solo el cuerpo (fuera de la tarjeta) recibe el clic: la mano
+                  queda encima de las pestañas sin bloquearlas. */}
+              <div className="group hidden xl:flex absolute bottom-[30px] left-full -ml-[68px] items-end w-[176px] pointer-events-none" style={{ zIndex: 3 }}>
+                <img src={avatarImg} alt="" draggable={false} className="select-none h-[270px] w-[176px] max-w-none transition-transform duration-300 group-hover:-translate-y-1"
+                  style={{ transform: "scaleX(-1)", filter: "drop-shadow(0 18px 24px rgba(0,0,0,0.35))" }} />
+                <button type="button" onClick={() => setChatOpen(true)} aria-label="Hablar con Joel"
+                  className="absolute inset-y-0 right-0 left-[76px] pointer-events-auto rounded-2xl" />
+              </div>
+            </div>
           </div>
         </div>
+      </section>
 
+      <section className="relative">
         {/* Bottom trust bar */}
         <div className="relative border-t py-3 md:py-4" style={{ borderColor: "#E9E9E7", background: "#fff" }}>
           <div className="max-w-6xl mx-auto px-5 md:px-8 flex flex-wrap justify-center md:justify-between items-center gap-x-4 gap-y-2 md:gap-4">
@@ -126,7 +162,7 @@ export function HomePage() {
         </div>
       </section>
 
-      <Divider />
+      <MapReveal />
 
       {/* ── DIAGNÓSTICO DOCUMENTAL (producto de entrada) ─────────────────────
           Antes vivía al final de "Cómo trabajamos"; ahora se presenta antes
@@ -140,9 +176,10 @@ export function HomePage() {
 
             {/* Izquierda: propuesta + proceso */}
             <div className="relative p-6 md:p-10">
-              <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full mb-4"
-                style={{ background: "linear-gradient(135deg, #272B7C, #1800AD)", color: "#fff", fontFamily: "Montserrat, sans-serif", boxShadow: "0 8px 16px -8px rgba(39,43,124,0.5)" }}>
-                Diagnóstico documental
+              <span className="relative overflow-hidden inline-flex items-center text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full mb-4"
+                style={{ background: "#272B7C", color: "#fff", fontFamily: "Montserrat, sans-serif", boxShadow: "0 8px 16px -8px rgba(39,43,124,0.5)" }}>
+                <span aria-hidden="true" className="absolute pointer-events-none" style={{ right: -12, top: -12, width: 24, height: 24, transform: "rotate(45deg)", background: "rgba(255,222,89,0.3)" }} />
+                <span className="relative">Diagnóstico documental</span>
               </span>
               <h3 className="text-2xl md:text-3xl font-bold mb-3" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif", lineHeight: 1.2 }}>
                 La <span style={{ background: "linear-gradient(transparent 62%, #FFDE59 62%)" }}>radiografía completa</span> de su archivo, antes de mover un solo papel
@@ -152,8 +189,9 @@ export function HomePage() {
               </p>
 
               {/* Proceso en 4 pasos (línea de tiempo vertical) */}
-              <ol className="relative mb-9">
-                <span className="absolute w-0.5 rounded-full" style={{ left: 15, top: 16, bottom: 16, background: "#E4E6F7" }} />
+              <div className="relative mb-9">
+                <span aria-hidden="true" className="absolute w-0.5 rounded-full" style={{ left: 15, top: 16, bottom: 16, background: "#E4E6F7" }} />
+                <ol className="relative">
                 {[
                   { t: "Diagnóstico", d: "Revisamos su archivo tal como está hoy." },
                   { t: "Hallazgos", d: "Identificamos volumen, estado, riesgos y oportunidades." },
@@ -172,6 +210,7 @@ export function HomePage() {
                   </li>
                 ))}
               </ol>
+              </div>
 
               <a href="#cotizador" className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold transition-all hover:scale-105 active:scale-95"
                 style={{ background: "#272B7C", color: "#fff", fontFamily: "Montserrat, sans-serif", textDecoration: "none", boxShadow: "0 14px 28px -10px rgba(39,43,124,0.45)" }}>
@@ -248,6 +287,7 @@ export function HomePage() {
         </div>
       </section>
 
+      <JoelBridge src={JOEL.cajas} side="right" height={220} sink={30} offset={8} />
       <Divider />
 
       <SolucionesSection />
@@ -277,13 +317,13 @@ export function HomePage() {
 
           <div className="relative grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { n: 1, t: "Diagnóstico", k: "Entrada", ic: "clipboard2-pulse-fill", c: "#C8960A", d: "Detectamos su necesidad y abrimos la relación entendiendo qué pasa hoy con su archivo.", g: "linear-gradient(135deg, #B8860B 0%, #E5AE1A 100%)",
+              { n: 1, t: "Diagnóstico", k: "Entrada", ic: "clipboard2-pulse-fill", c: "#C8960A", d: "Detectamos su necesidad y abrimos la relación entendiendo qué pasa hoy con su archivo.", g: "#C8960A",
                 items: [{ i: "search", l: "Diagnóstico documental", href: "#cotizador" }, { i: "list-columns-reverse", l: "Levantamiento de inventario", to: "/servicios/levantamiento-de-inventario" }] },
-              { n: 2, t: "Solución", k: "Transformación", ic: "gear-wide-connected", c: "#272B7C", d: "Resolvemos el problema documental con un proyecto a la medida.", g: "linear-gradient(135deg, #272B7C 0%, #4B50A0 100%)",
+              { n: 2, t: "Solución", k: "Transformación", ic: "gear-wide-connected", c: "#272B7C", d: "Resolvemos el problema documental con un proyecto a la medida.", g: "#272B7C",
                 items: [{ i: "upc-scan", l: "Digitalización", to: "/servicios/digitalizacion-de-documentos" }, { i: "folder2-open", l: "Programa de Gestión Documental", to: "/servicios/programa-de-gestion-documental" }] },
-              { n: 3, t: "Protección", k: "Recurrencia", ic: "shield-fill-check", c: "#1800AD", d: "Protegemos su información y la mantenemos disponible cuando la necesite.", g: "linear-gradient(135deg, #1800AD 0%, #5B3FD4 100%)",
+              { n: 3, t: "Protección", k: "Recurrencia", ic: "shield-fill-check", c: "#1800AD", d: "Protegemos su información y la mantenemos disponible cuando la necesite.", g: "#1800AD",
                 items: [{ i: "archive", l: "Custodia de archivos", to: "/servicios/custodia-de-archivos" }, { i: "hdd-stack", l: "Custodia de medios magnéticos", to: "/servicios/custodia-de-medios-magneticos" }] },
-              { n: 4, t: "Expansión", k: "Nuevos proyectos", ic: "rocket-takeoff-fill", c: "#272B7C", d: "Cerramos el ciclo de vida documental y ampliamos el valor de la relación.", g: "linear-gradient(135deg, #14163F 0%, #272B7C 100%)",
+              { n: 4, t: "Expansión", k: "Nuevos proyectos", ic: "rocket-takeoff-fill", c: "#272B7C", d: "Cerramos el ciclo de vida documental y ampliamos el valor de la relación.", g: "#272B7C",
                 items: [{ i: "file-earmark-x", l: "Destrucción legal", to: "/servicios/destruccion-de-documentos" }, { i: "lightning-charge", l: "Servicio inmediato", to: "/servicios/servicio-inmediato" }, { i: "person-badge", l: "Servicio Inhouse", to: "/servicios/servicio-inhouse" }] },
             ].map((st, idx, arr) => (
               <div key={st.n} role="link" tabIndex={0}
@@ -299,7 +339,7 @@ export function HomePage() {
                 // pasar el mouse.
                 style={{ background: "#fff", border: "1.5px solid #E4E6F7", zIndex: arr.length - idx }}>
                 <div className="relative px-6 pt-6 pb-7 overflow-hidden" style={{ background: st.g, borderRadius: "22px 22px 0 0", minHeight: 150 }}>
-                  <span className="absolute select-none pointer-events-none font-bold" style={{ right: -6, top: -22, fontSize: 130, lineHeight: 1, color: "rgba(255,255,255,0.14)", fontFamily: "Poppins, sans-serif" }}>{st.n}</span>
+                  <span aria-hidden="true" className="absolute select-none pointer-events-none font-bold" style={{ right: -6, top: -22, fontSize: 130, lineHeight: 1, color: "rgba(255,255,255,0.14)", fontFamily: "Poppins, sans-serif" }}>{st.n}</span>
                   <div className="relative">
                     <span className="inline-flex items-center justify-center mb-3" style={{ width: 46, height: 46, borderRadius: 14, background: "rgba(255,255,255,0.18)", border: "1px solid rgba(255,255,255,0.35)", backdropFilter: "blur(4px)" }}>
                       <Bi n={st.ic} size={23} color="#fff" />
@@ -343,10 +383,11 @@ export function HomePage() {
         </div>
       </section>
 
+      <JoelBridge src={JOEL.ipad} side="right" height={220} sink={175} offset={30} />
       <Divider />
 
       <div className="relative isolate overflow-hidden">
-        <SectionDecor variant="lavender" joel />
+        <SectionDecor variant="lavender" />
         <QuoteSimulator />
       </div>
 
@@ -474,7 +515,7 @@ export function HomePage() {
           <div className="grid md:grid-cols-4 gap-10 mb-10">
             <div>
               <Logo size="sm" />
-              <p className="mt-4 text-sm leading-relaxed max-w-xs" style={{ color: "#8A8A8A" }}>
+              <p className="mt-4 text-sm leading-relaxed max-w-xs" style={{ color: "#6B6B6B" }}>
                 Empresa colombiana de gestión documental. Clasificación, digitalización, custodia, conservación y destrucción legal de archivos bajo normativa AGN.
               </p>
             </div>
@@ -538,7 +579,7 @@ export function HomePage() {
           <div className="h-px" style={{ background: "#E4E6F7" }} />
 
           <div className="pt-6 flex flex-wrap justify-between items-center gap-4">
-            <p className="text-xs" style={{ color: "#9B9B9B" }}>© {new Date().getFullYear()} Transarchivos Ltda. · Bogotá, Colombia</p>
+            <p className="text-xs" style={{ color: "#6B6B6B" }}>© {new Date().getFullYear()} Transarchivos Ltda. · Bogotá, Colombia</p>
             <div className="flex gap-2">
               {[
                 { n: "LinkedIn", ic: "linkedin", u: "https://linkedin.com/company/transarchivos-ltda01" },
@@ -557,19 +598,7 @@ export function HomePage() {
         </div>
       </footer>
 
-      <ChatBot open={chatOpen} setOpen={setChatOpen} seed={chatSeed} />
+      <ChatBot open={chatOpen} setOpen={setChatOpen} heroJoel />
     </div>
   );
 }
-
-// ─── Página "Nosotros" ──────────────────────────────────────────────────────
-// Contenido tomado del Documento maestro y de "Misión y visión" (carpeta
-// RecursosTransarchivos) — es la misma información que antes vivía apretada
-// en la sección #nosotros de la landing, ahora repartida en su propia página
-// con un anclaje real por cada ítem del menú desplegable "Nosotros".
-// "Nuestro equipo", "Cultura organizacional" y "Aliados tecnológicos" no
-// tienen nombres, fotos ni logos reales en los documentos fuente, así que en
-// vez de inventarlos se muestran con los hechos reales más cercanos (cómo se
-// forma y organiza el personal, los valores corporativos, la infraestructura
-// de seguridad) — "Aliados tecnológicos" se presenta honestamente como
-// "Tecnología y seguridad".

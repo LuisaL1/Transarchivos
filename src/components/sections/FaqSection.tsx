@@ -1,5 +1,9 @@
+// ─── Preguntas frecuentes ───────────────────────────────────────────────────
+// Respuestas basadas en el contenido real del sitio (servicios, normativa,
+// cobertura). Acordeón: una abierta a la vez.
+
 import { useState } from "react";
-import avatarImg from "@/assets/images/joel.png";
+import avatarImg from "@/assets/images/joel/joel-bata.png";
 import { ChatAvatarFace } from "@/components/ui/Brand";
 import { Bi } from "@/components/ui/Icons";
 import { SectionDecor } from "@/components/ui/SectionDecor";
@@ -62,10 +66,3 @@ export function FaqSection({ onChat }: { onChat: () => void }) {
     </section>
   );
 }
-
-// ─── Aparición al hacer scroll ──────────────────────────────────────────────
-// Mismo efecto que en Transpack: cada bloque entra con un fundido y un leve
-// desplazamiento hacia arriba cuando aparece en pantalla al bajar. Se aplica
-// solo a las secciones debajo del hero, recorriendo su contenido: entra en
-// los contenedores (max-w / mx-auto) y, si encuentra una grilla, anima cada
-// tarjeta por separado y escalonada. Respeta "reducir movimiento".

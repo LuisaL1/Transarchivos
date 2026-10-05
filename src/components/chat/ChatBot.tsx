@@ -1,3 +1,10 @@
+// ─── Joel, asesor virtual (chat guiado) ─────────────────────────────────────
+// Mismo estilo y comportamiento que el chat de Transpack, con el avatar de
+// Transarchivos: invitación que asoma a los 7 s (una vez por sesión), botón
+// flotante, ventana con encabezado, mensajes uno a uno con "escribiendo…",
+// opciones rápidas, campo de texto libre (reconoce palabras clave) y botones
+// de acción (correo, teléfono, cotizador). No usa IA: sigue un guion.
+
 import { useState, useEffect, useRef } from "react";
 import { trackEvent } from "@/lib/analytics";
 import { Link } from "react-router-dom";
@@ -214,7 +221,7 @@ export function ChatBubble({ msg }: { msg: ChatMsg }) {
 // "open"/"setOpen" viven en LandingPage para que el menú de soporte y la caja
 // del hero también puedan abrir el chat. "seed": pregunta escrita en la caja
 // del hero (con id para que dos preguntas iguales cuenten como distintas).
-export function ChatBot({ open, setOpen, seed }: { open: boolean; setOpen: (v: boolean | ((prev: boolean) => boolean)) => void; seed?: { text: string; id: number } | null }) {
+export function ChatBot({ open, setOpen, seed, heroJoel = false }: { open: boolean; setOpen: (v: boolean | ((prev: boolean) => boolean)) => void; seed?: { text: string; id: number } | null; heroJoel?: boolean }) {
   const [msgs, setMsgs] = useState<ChatMsg[]>([]);
   const [stepId, setStepId] = useState("start");
   const [data, setData] = useState<ChatData>({});
@@ -295,13 +302,15 @@ export function ChatBot({ open, setOpen, seed }: { open: boolean; setOpen: (v: b
   useEffect(() => {
     let seen = false;
     try { seen = sessionStorage.getItem("ta-chat-teaser") === "1"; } catch { /* sin almacenamiento */ }
-    if (seen) return;
+    // Si Joel ya aparece en el hero (pantallas medianas y grandes), no se
+    // repite la invitación con su figura.
+    if (seen || (heroJoel && window.matchMedia("(min-width: 768px)").matches)) return;
     const id = window.setTimeout(() => {
       setTeaser(true);
       try { sessionStorage.setItem("ta-chat-teaser", "1"); } catch { /* sin almacenamiento */ }
     }, 7000);
     return () => clearTimeout(id);
-  }, []);
+  }, [heroJoel]);
 
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" }); }, [msgs, typing]);
   useEffect(() => { if (open && step.input && !typing) inputRef.current?.focus(); }, [open, step, typing]);
@@ -460,14 +469,3 @@ export function ChatBot({ open, setOpen, seed }: { open: boolean; setOpen: (v: b
     </>
   );
 }
-
-// ─── App ──────────────────────────────────────────────────────────────────────
-
-// Toda la página principal (antes era el App exportado directamente). Ahora
-// App es un enrutador liviano: esto vive en "/", y cada card de servicio
-// enlaza a su propia página en "/servicios/:slug" (ver ServiceDetailPage).
-// ─── Soporte (ícono de audífonos del header) ────────────────────────────────
-// Tarjeta flotante bajo el ícono, abierta hacia la derecha (hacia el margen,
-// para no tapar el contenido del hero; si no cabe, se corre a la izquierda):
-// chat con Joel, teléfono, correo y enlace a las preguntas frecuentes. Se dibuja con position: fixed (el pill del
-// header recorta lo que sobresale) y se cierra al hacer clic fuera o scroll.

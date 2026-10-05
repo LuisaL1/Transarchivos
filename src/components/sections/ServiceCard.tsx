@@ -61,11 +61,3 @@ export function ServiceCard({ service }: { service: typeof services[0] }) {
     </Link>
   );
 }
-
-// ─── Solicitud de cotización guiada ─────────────────────────────────────────
-// Basada en "LÓGICA DE COTIZACIÓN TRANSARCHIVOS": la cotización no se calcula
-// con una tabla de precios (todavía no existen tarifas ni fórmulas), sino que
-// captura las variables que Comercial necesita por tipo de servicio, ubica la
-// solicitud en el modelo (Entrada → Solución → Protección → Expansión), sugiere
-// servicios complementarios y decide el siguiente paso (completar información,
-// validación de Operaciones o cotización estándar).
