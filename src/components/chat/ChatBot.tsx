@@ -160,19 +160,23 @@ export const getJoel = () => joelBrain ??= createJoel({
 // a qué se refería el visitante.
 export const LEARN_DEST: Record<string, string> = { q_service: "intent:cotizar", advisor: "intent:contacto", faq_list: "intent:normativa" };
 
-// Íconos de las opciones principales del chat: cuando todas las opciones de
-// un paso tienen ícono se muestran como lista (mismo estilo de los menús).
+// Íconos de las opciones del chat. TODAS las opciones se muestran con el mismo
+// formato (lista con ícono, como el menú inicial), así que toda opción tiene ícono.
 export const CHAT_OPTION_ICONS: Record<string, string> = {
   "Cotizar un servicio": "ui-checks", "Conocer los servicios": "grid", "Preguntas frecuentes": "question-circle",
   "Hablar con un asesor": "headset", "Volver al inicio": "arrow-counterclockwise",
   "Cotizar este servicio": "ui-checks", "Ver otro servicio": "grid", "Otra pregunta": "question-circle",
+  // Servicios: el mismo ícono de su tarjeta en el sitio
+  "Diagnóstico documental": "search",
+  ...Object.fromEntries(services.map(sv => [sv.title, sv.icon])),
+  // Volumen y urgencia
+  "Menos de 100 cajas": "box-seam", "Entre 100 y 1.000 cajas": "boxes", "Más de 1.000 cajas": "archive", "No lo sé": "question-circle",
+  "Sin urgencia": "calendar-check", "En las próximas semanas": "calendar-week", "Urgente": "lightning-charge",
 };
 
-// Ícono para cualquier opción de navegación del chat (incluidas las que arma
-// el cerebro de Joel, como "Cotizar Servicio Inmediato"). Las respuestas
-// cortas (volumen, urgencia, servicio a elegir) no tienen ícono y se
-// muestran como botones redondeados.
-export function chatOptionIcon(label: string): string | undefined {
+// Ícono para cualquier opción del chat (incluidas las que arma el cerebro de
+// Joel, como "Cotizar Servicio Inmediato"). Nunca queda una opción sin ícono.
+export function chatOptionIcon(label: string): string {
   if (CHAT_OPTION_ICONS[label]) return CHAT_OPTION_ICONS[label];
   if (/^Cotizar/.test(label)) return "ui-checks";
   if (/^(Solicitar|Empezar)/.test(label)) return "search";
@@ -181,7 +185,7 @@ export function chatOptionIcon(label: string): string | undefined {
   if (/^Dudas|normativa/i.test(label)) return "shield-check";
   if (/^Contarle/.test(label)) return "chat-dots";
   if (/^¿/.test(label)) return "question-circle";
-  return undefined;
+  return "chat-dots";
 }
 
 export function ChatBubble({ msg }: { msg: ChatMsg }) {
@@ -428,24 +432,13 @@ export function ChatBot({ open, setOpen, seed, heroJoel = false }: { open: boole
                   </div>
                 </div>
               )}
-              {!typing && options.length > 0 && options.every(o => chatOptionIcon(o.label)) && (
+              {!typing && options.length > 0 && (
                 <div className="rounded-2xl p-1.5 ml-8" style={{ background: "#fff", border: "1px solid #E4E6F7", animation: "fadeInUp 0.3s ease both" }}>
                   {options.map(o => (
                     <button key={o.label} type="button" onClick={() => choose(o)} className="group w-full flex items-center gap-3 rounded-xl px-2.5 py-2 text-left transition-colors hover:bg-[#F7F8FF]">
-                      <MenuIcon n={chatOptionIcon(o.label)!} size={32} />
+                      <MenuIcon n={chatOptionIcon(o.label)} size={32} />
                       <span className="flex-1 text-[13px] font-semibold" style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif" }}>{o.label}</span>
                       <Bi n="chevron-right" size={12} color="#9B9B9B" className="transition-transform group-hover:translate-x-0.5" />
-                    </button>
-                  ))}
-                </div>
-              )}
-              {!typing && options.length > 0 && !options.every(o => chatOptionIcon(o.label)) && (
-                <div className="flex flex-wrap justify-end gap-1.5 pt-1">
-                  {options.map(o => (
-                    <button key={o.label} onClick={() => choose(o)}
-                      className="rounded-full border px-3.5 py-2 text-left text-[13px] font-semibold transition-colors border-[#272B7C]/25 bg-white text-[#272B7C] hover:border-[#272B7C] hover:bg-[#272B7C] hover:text-white"
-                      style={{ animation: "fadeInUp 0.3s ease both", fontFamily: "Montserrat, sans-serif" }}>
-                      {o.label}
                     </button>
                   ))}
                 </div>
