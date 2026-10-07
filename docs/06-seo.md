@@ -102,7 +102,7 @@ pnpm build
 - **Enlaces internos:** cada artículo debería enlazar al menos a un servicio.
 
 ## Pendientes de rendimiento (Core Web Vitals)
-- **JS de unos 530 KB:** dividir por rutas. Con pre-generación e hidratación hay
+- **JS:** 352 KB de código propio + 223 KB de librerías en archivo aparte (`vendor`, en caché entre versiones). Los logos de clientes no se incrustan en el JS (`assetsInlineLimit` en `vite.config.ts`). Si crece, dividir por rutas. Con pre-generación e hidratación hay
   que precargar el chunk de la ruta antes de hidratar (por ejemplo, con
   `React.lazy` + `import()` resuelto en `main.tsx`).
 - **Imágenes:**
