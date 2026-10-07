@@ -20,6 +20,7 @@ Navegador ──POST /api/contact──► Función de Vercel (api/contact.ts) �
 - La función valida los datos, aplica el **campo trampa** contra bots (`website`) y rechaza envíos desde otros dominios.
 - Escapa el contenido antes de armar el correo y lo envía con **Brevo** (API transaccional).
 - El correo llega con **"Responder a" = el visitante**, así que basta con responderlo.
+- **Diseño de los correos:** banner en imagen (`public/brand/email-header.png`: azul, logo blanco y detalle de esquina) para que el modo oscuro de Gmail no altere los colores; cuerpo en tablas. El banner se carga desde el dominio que recibió la solicitud.
 - **Confirmación automática:** el visitante recibe "Recibimos su solicitud · Transarchivos" (con su nombre, el motivo o servicio, WhatsApp y teléfonos). Si responde, la respuesta llega a mercadeo@transarchivos.com. Si esta confirmación falla, la solicitud igual se da por enviada.
 - La clave de Brevo solo existe en el servidor: nunca llega al navegador.
 - El sitio no guarda copia de los datos.
