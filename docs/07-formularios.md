@@ -14,12 +14,13 @@ abre el programa de correo del visitante.
 ## Cómo viaja la información
 
 ```
-Navegador ──POST /api/contact──► Función de Vercel (api/contact.ts) ──API Brevo──► info@transarchivos.com
+Navegador ──POST /api/contact──► Función de Vercel (api/contact.ts) ──API Brevo──► mercadeo@transarchivos.com
 ```
 
 - La función valida los datos, aplica el **campo trampa** contra bots (`website`) y rechaza envíos desde otros dominios.
 - Escapa el contenido antes de armar el correo y lo envía con **Brevo** (API transaccional).
 - El correo llega con **"Responder a" = el visitante**, así que basta con responderlo.
+- **Confirmación automática:** el visitante recibe "Recibimos su solicitud · Transarchivos" (con su nombre, el motivo o servicio, WhatsApp y teléfonos). Si responde, la respuesta llega a mercadeo@transarchivos.com. Si esta confirmación falla, la solicitud igual se da por enviada.
 - La clave de Brevo solo existe en el servidor: nunca llega al navegador.
 - El sitio no guarda copia de los datos.
 
@@ -32,7 +33,7 @@ Navegador ──POST /api/contact──► Función de Vercel (api/contact.ts) �
    | Variable | Valor | Obligatoria |
    | --- | --- | --- |
    | `BREVO_API_KEY` | La clave de API de Brevo | Sí |
-   | `LEADS_TO` | Correo que recibe las solicitudes (por defecto `info@transarchivos.com`) | No |
+   | `LEADS_TO` | Correo que recibe las solicitudes (por defecto `mercadeo@transarchivos.com`) | No |
    | `LEADS_FROM` | Remitente verificado en Brevo (por defecto `no-reply@transarchivos.com`) | No |
    | `LEADS_FROM_NAME` | Nombre del remitente (por defecto "Sitio web Transarchivos") | No |
 

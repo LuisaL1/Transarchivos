@@ -109,7 +109,8 @@ test("cotizador: envía la solicitud directamente", async ({ page }) => {
   await page.locator("#cot-sector").selectOption({ index: 1 });
   await page.locator("#cot-autorizacion").check();
   await page.getByRole("button", { name: /Ver resumen/ }).click();
-  await page.getByRole("button", { name: /Enviar solicitud/ }).click();
+  await expect(page.getByRole("link", { name: /Enviar por WhatsApp/ })).toHaveAttribute("href", /wa.me\/576013164530\?text=.*Programa|wa.me\/576013164530\?text=/);
+  await page.getByRole("button", { name: /Enviar por correo/ }).click();
   await expect(page.getByText(/Recibimos su solicitud/)).toBeVisible();
   expect(sent!.kind).toBe("cotizacion");
   expect(sent!.fields!["Autorización de datos"]).toBe("Sí");

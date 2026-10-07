@@ -78,6 +78,11 @@ export function QuoteSimulator() {
     ["Contacto", `${contact.nombre || "—"}${contact.cargo ? " · " + contact.cargo : ""}`],
     ["Correo", contact.email || "—"], ["Teléfono", contact.telefono || "—"],
   ];
+  // Misma solicitud como mensaje de WhatsApp (chat con el texto ya escrito)
+  const whatsappQuote = () => whatsappUrl(
+    `Hola, Transarchivos. Quisiera una cotización.\n\n*Servicio:* ${title}` + (solutionInfo ? `\n*Solución:* ${solutionInfo.title}` : "") +
+    `\n\n*Datos de la solicitud*\n` + summary.map(([k, v]) => `- ${k}: ${v}`).join("\n") +
+    `\n\n*Contacto*\n` + contactRows.map(([k, v]) => `- ${k}: ${v}`).join("\n"));
   // Envío directo de la solicitud (función del sitio → Brevo → correo de la empresa)
   const [sendState, setSendState] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const sendQuote = async () => {
@@ -304,7 +309,7 @@ export function QuoteSimulator() {
             {step === 3 && (
               <div>
                 <p className="text-lg font-bold mb-1" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif" }}>Revise y envíe su solicitud</p>
-                <p className="text-sm mb-5" style={{ color: "#6B6B6B" }}>Al enviarla, la solicitud llega directamente a nuestro equipo comercial.</p>
+                <p className="text-sm mb-5" style={{ color: "#6B6B6B" }}>Envíela por correo o por WhatsApp: llega directamente a nuestro equipo comercial.</p>
                 <div className="flex items-start gap-3 rounded-2xl p-4 mb-5" style={{ background: `${nextStep.c}10`, border: `1px solid ${nextStep.c}33` }}>
                   <Bi n={nextStep.ic} size={20} color={nextStep.c} style={{ marginTop: 2, flexShrink: 0 }} />
                   <div>
@@ -340,9 +345,15 @@ export function QuoteSimulator() {
                   <button type="button" onClick={() => setStep(2)} className={secondaryBtn} style={{ background: "#fff", color: "#272B7C", border: "1.5px solid #DDE0F2", fontFamily: "Montserrat, sans-serif" }}>
                     <Bi n="arrow-left" size={14} color="#272B7C" /> Modificar datos
                   </button>
-                  <button type="button" onClick={sendQuote} disabled={sendState === "sending" || sendState === "sent"} className={`${primaryBtn} disabled:opacity-70`} style={{ background: sendState === "sent" ? "#16a34a" : "#272B7C", color: "#fff", fontFamily: "Montserrat, sans-serif" }}>
-                    {sendState === "sent" ? <><Bi n="check-lg" size={16} color="#fff" /> Solicitud enviada</> : sendState === "sending" ? "Enviando…" : <><Bi n="send" size={15} color="#FFDE59" /> Enviar solicitud</>}
-                  </button>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <a href={whatsappQuote()} target="_blank" rel="noopener noreferrer" onClick={() => trackEvent("generate_lead", { method: "whatsapp", service: selected, solution: solution ?? undefined })}
+                      className={primaryBtn} style={{ background: "#fff", color: "#272B7C", border: "1.5px solid #272B7C", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
+                      <Bi n="whatsapp" size={16} color="#16a34a" /> Enviar por WhatsApp
+                    </a>
+                    <button type="button" onClick={sendQuote} disabled={sendState === "sending" || sendState === "sent"} className={`${primaryBtn} disabled:opacity-70`} style={{ background: sendState === "sent" ? "#16a34a" : "#272B7C", color: "#fff", fontFamily: "Montserrat, sans-serif" }}>
+                      {sendState === "sent" ? <><Bi n="check-lg" size={16} color="#fff" /> Solicitud enviada</> : sendState === "sending" ? "Enviando…" : <><Bi n="envelope-arrow-up" size={15} color="#FFDE59" /> Enviar por correo</>}
+                    </button>
+                  </div>
                 </div>
                 {sendState === "sent" && (
                   <p role="status" className="mt-4 rounded-xl px-3.5 py-3 text-sm" style={{ background: "#EAF7EE", color: "#15803d" }}>

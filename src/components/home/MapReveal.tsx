@@ -8,7 +8,7 @@ import joelImg from "@/assets/images/joel.png"; // silueta en súper zoom
 // ─── Desde Bogotá, para toda Colombia (efecto al hacer scroll) ─────────────
 // Inspirado en el recurso de Audi que pidió el cliente: la sección queda fija
 // mientras se baja y el desplazamiento controla la animación.
-//   1. Mapa de Colombia con rutas desde 9 ciudades que llegan a Bogotá (centro
+//   1. Mapa de Colombia con rutas desde 10 ciudades que llegan a Bogotá (centro
 //      de operaciones): la información de todo el país se centraliza allí.
 //   2. Desde Bogotá se abre un círculo que revela el video de archivo hasta
 //      cubrir toda la pantalla, con el mensaje final.
@@ -24,6 +24,7 @@ const CITIES: { name: string; x: number; y: number; left?: boolean; below?: bool
   { name: "Cúcuta", x: 0.5472, y: 0.3277 },
   { name: "Bucaramanga", x: 0.5010, y: 0.3700 },
   { name: "Tunja", x: 0.4826, y: 0.4564 },
+  { name: "Medellín", x: 0.3160, y: 0.4178, left: true },
   { name: "Neiva", x: 0.3385, y: 0.5982 },
   { name: "Cali", x: 0.2445, y: 0.5697 },
   { name: "Armenia", x: 0.3085, y: 0.5109, left: true },

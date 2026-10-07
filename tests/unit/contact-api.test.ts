@@ -35,10 +35,21 @@ describe("/api/contact", () => {
     expect(url).toBe("https://api.brevo.com/v3/smtp/email");
     expect(init.headers["api-key"]).toBe("k");
     const sent = JSON.parse(init.body);
-    expect(sent.to[0].email).toBe("info@transarchivos.com");
+    expect(sent.to[0].email).toBe("mercadeo@transarchivos.com");
     expect(sent.replyTo.email).toBe("ana@empresa.com");
     expect(sent.htmlContent).toContain("Hola &lt;b&gt;");
     expect(sent.htmlContent).not.toContain("<b>");
+    // confirmación automática al visitante
+    expect(f).toHaveBeenCalledTimes(2);
+    const conf = JSON.parse(f.mock.calls[1][1].body);
+    expect(conf.to[0].email).toBe("ana@empresa.com");
+    expect(conf.replyTo.email).toBe("mercadeo@transarchivos.com");
+    expect(conf.subject).toMatch(/Recibimos su solicitud/);
+  });
+  it("si falla solo la confirmación, la solicitud igual se da por enviada", async () => {
+    const f = vi.fn().mockResolvedValueOnce(new Response("{}", { status: 201 })).mockRejectedValueOnce(new Error("x"));
+    vi.stubGlobal("fetch", f); vi.stubEnv("BREVO_API_KEY", "k");
+    expect((await POST(req(valid))).status).toBe(200);
   });
   it("si Brevo falla responde 502", async () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("{}", { status: 401 }))); vi.stubEnv("BREVO_API_KEY", "k");

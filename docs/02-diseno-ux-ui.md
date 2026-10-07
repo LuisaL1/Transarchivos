@@ -88,7 +88,7 @@ Todo respeta `prefers-reduced-motion`.
    - **Unión:** pestaña de carpeta y carpeta en contorno recortada a la forma azul.
    - **Celular:** una sola columna, con el video detrás bajo un velo azul.
 2. **Barra de confianza:** Ley 594 de 2000 · Norma AGN · Certificado de destrucción · Custodia con vigilancia 24 h.
-3. **Mapa → video** (cobertura nacional): rutas desde Cartagena, Santa Marta, Cúcuta, Bucaramanga, Tunja, Ibagué, Armenia, Cali y Neiva que convergen en Bogotá (las ciudades se resaltan una a una), silueta de Joel a la izquierda y revelado circular del video de la flota. Posiciones calibradas con coordenadas reales.
+3. **Mapa → video** (cobertura nacional): rutas desde Cartagena, Santa Marta, Cúcuta, Bucaramanga, Tunja, Medellín, Ibagué, Armenia, Cali y Neiva que convergen en Bogotá (las ciudades se resaltan una a una), silueta de Joel a la izquierda y revelado circular del video de la flota. Posiciones calibradas con coordenadas reales.
    - **Clientes** (`ClientsMarquee`, datos en `data/clients.ts`, logos en `assets/images/clientes/`): dos filas de logos en grises que se desplazan en sentidos opuestos y recuperan su color al pasar el mouse. Fuente: "Histórico de Clientes" del cliente.
    - **Indicadores** (`Stats`, datos en `data/stats.ts`): +40 años de experiencia · +3.200 contratos comerciales · +32.000 millones de folios custodiados. Mismo formato que Transpack.
 4. **Diagnóstico documental** (producto de entrada): propuesta, 4 pasos e "informe" de hallazgos.
