@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import { trackVisit } from "@/lib/joel";
 import { AnalyticsTracker, CookieBanner } from "@/components/layout/Analytics";
 import { SeoHead } from "@/components/layout/SeoHead";
+import { ContactModal } from "@/components/layout/ContactModal";
 import { ArticlePage } from "@/pages/ArticlePage";
 import { HomePage } from "@/pages/HomePage";
 import { NosotrosPage } from "@/pages/NosotrosPage";
@@ -25,6 +26,7 @@ export default function App() {
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
     <CookieBanner />
+    <ContactModal />
     </>
   );
 }

@@ -18,7 +18,7 @@ import { QUOTE_UNIT, quoteConfig } from "@/data/quote";
 import { SERVICE_DETAILS } from "@/data/serviceDetails";
 import { services } from "@/data/services";
 import { SOLUTIONS } from "@/data/solutions";
-import { whatsappUrl } from "@/data/contact";
+import { contactHref, whatsappUrl } from "@/data/contact";
 
 export type ChatData = Record<string, string>;
 
@@ -48,16 +48,14 @@ export const CHAT_URGENCY = ["Sin urgencia", "En las próximas semanas", "Urgent
 
 export const CHAT_FAQ_COUNT = 6;
 
-export const quoteMailto = (d: ChatData) => {
-  const body = `Hola, Transarchivos. Quisiera una cotización.\n\n` +
-    `- Servicio: ${unitBySlug(d.service)?.title ?? "—"}\n- Volumen aproximado: ${d.volume ?? "—"}\n- Urgencia: ${d.urgency ?? "—"}\n` +
-    `- Nombre: ${d.name ?? "—"}\n- Empresa: ${d.company ?? "—"}\n\n(Solicitud iniciada con Joel, asesor virtual)`;
-  return `mailto:info@transarchivos.com?subject=${encodeURIComponent("Solicitud de cotización — " + (unitBySlug(d.service)?.title ?? "Transarchivos"))}&body=${encodeURIComponent(body)}`;
-};
+export const quoteMailto = (d: ChatData) => contactHref({
+  motivo: "Solicitar una cotización", nombre: d.name, empresa: d.company,
+  mensaje: `Quisiera una cotización.\n- Servicio: ${unitBySlug(d.service)?.title ?? "—"}\n- Volumen aproximado: ${d.volume ?? "—"}\n- Urgencia: ${d.urgency ?? "—"}\n(Solicitud iniciada con Joel, asesor virtual)`,
+});
 
 export const CONTACT_ACTIONS: ChatAction[] = [
   { label: "Escribir por WhatsApp", icon: "whatsapp", href: whatsappUrl() },
-  { label: "Escribir a info@transarchivos.com", icon: "envelope-fill", href: "mailto:info@transarchivos.com" },
+  { label: "Escribirnos (formulario)", icon: "envelope-fill", href: contactHref() },
 ];
 
 export const CHAT_STEPS: Record<string, ChatStep> = {
@@ -97,11 +95,11 @@ export const CHAT_STEPS: Record<string, ChatStep> = {
       `Listo, ${d.name}. Este es el resumen de su solicitud:`,
       `• Servicio: ${unitBySlug(d.service)?.title}\n• Volumen: ${d.volume}\n• Urgencia: ${d.urgency}\n• Empresa: ${d.company}`,
       d.urgency === "Urgente"
-        ? "Como es urgente, le recomiendo escribirnos por WhatsApp. También puede enviarnos el resumen por correo:"
-        : "Envíenos el resumen por correo y un asesor le responderá con el alcance y las condiciones. Si quiere dar más detalles, puede completar la cotización detallada:",
+        ? "Como es urgente, le recomiendo escribirnos por WhatsApp. También puede enviarnos la solicitud:"
+        : "Complete sus datos de contacto para enviarnos la solicitud y un asesor le responderá con el alcance y las condiciones. También puede hacer la cotización detallada:",
     ],
     actions: d => [
-      { label: "Enviar solicitud por correo", icon: "envelope-arrow-up-fill", href: quoteMailto(d) },
+      { label: "Completar y enviar solicitud", icon: "envelope-arrow-up-fill", href: quoteMailto(d) },
       { label: "Completar cotización detallada", icon: "ui-checks", href: "#cotizador" },
       { label: "Escribir por WhatsApp", icon: "whatsapp", href: whatsappUrl() },
     ],

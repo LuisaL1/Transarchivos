@@ -51,6 +51,7 @@ src/
 ├── assets/images/        Imágenes importadas desde el código
 └── styles/index.css      Estilos globales, animaciones, puntero/foco
 public/                   Archivos servidos tal cual (videos del hero, favicon, robots)
+api/contact.ts            Función de Vercel: formularios → correo por Brevo (docs/07-formularios.md)
 scripts/prerender.mjs     Pre-genera dist/<ruta>.html, 404, sitemap y robots (SEO)
 tests/                    unit/, security/, seo/ (HTML generado), e2e/ (Playwright + axe)
 docs/                     Documentación técnica (arquitectura, UX/UI, conversión, pruebas, decisiones)

@@ -5,7 +5,21 @@ import path from 'node:path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [react(), tailwindcss(), {
+    // En desarrollo (pnpm dev) /api/contact se simula: no envía correos.
+    name: 'dev-contact-mock',
+    configureServer(server) {
+      server.middlewares.use('/api/contact', (req, res) => {
+        let body = ''
+        req.on('data', c => { body += c })
+        req.on('end', () => {
+          console.log('[dev] /api/contact (simulado):', body.slice(0, 400))
+          res.setHeader('Content-Type', 'application/json')
+          res.end(JSON.stringify({ ok: true, simulated: true }))
+        })
+      })
+    },
+  }],
   resolve: {
     alias: {
       '@': path.resolve(import.meta.dirname, './src'),

@@ -12,7 +12,7 @@ export function SupportPopover({ anchor, onClose, onChat, onHoverIn, onHoverOut 
     { ic: "chat-dots", t: "Chatee con Joel", d: "Asesor con IA, responde al instante", onClick: () => { onChat(); onClose(); } },
     { ic: "whatsapp", t: "Escríbanos por WhatsApp", d: WHATSAPP_LABEL, href: whatsappUrl() },
     { ic: "telephone", t: "Llámenos", d: PHONES.map(p => p.label).join(" · "), href: `tel:${PHONES[0].tel}` },
-    { ic: "envelope", t: "Escríbanos", d: "info@transarchivos.com", href: "mailto:info@transarchivos.com" },
+    { ic: "envelope", t: "Escríbanos", d: "Formulario de contacto", href: "#contacto" },
   ];
   return (
     <div data-support-popover onMouseEnter={onHoverIn} onMouseLeave={onHoverOut} className="fixed z-[60] w-[340px] rounded-3xl overflow-hidden"

@@ -10,6 +10,8 @@ import { useState, useEffect } from "react";
 import { trackEvent } from "@/lib/analytics";
 import { Link, useLocation } from "react-router-dom";
 import { track } from "@/lib/joel";
+import { sendLead } from "@/lib/leads";
+import { whatsappUrl } from "@/data/contact";
 import { Bi, MenuIcon } from "@/components/ui/Icons";
 import { QUOTE_SECTORS, QUOTE_URGENCY, quoteConfig } from "@/data/quote";
 import { services } from "@/data/services";
@@ -76,14 +78,19 @@ export function QuoteSimulator() {
     ["Contacto", `${contact.nombre || "—"}${contact.cargo ? " · " + contact.cargo : ""}`],
     ["Correo", contact.email || "—"], ["Teléfono", contact.telefono || "—"],
   ];
-  const mailto = () => {
-    const body =
-      `Solicitud de cotización — ${title}\n` + (solutionInfo ? `Solución de interés: ${solutionInfo.title}\n` : "") + `\nDATOS DE LA SOLICITUD\n` +
-      summary.map(([k, v]) => `- ${k}: ${v}`).join("\n") +
-      `\n\nCONTACTO\n` + contactRows.map(([k, v]) => `- ${k}: ${v}`).join("\n") +
-      `\n\nSiguiente paso sugerido: ${nextStep.t}` +
-      `\n\nAutorización de tratamiento de datos: otorgada en el sitio web (política de privacidad, transarchivos.com/privacidad).`;
-    return `mailto:info@transarchivos.com?subject=${encodeURIComponent("Solicitud de cotización — " + title)}&body=${encodeURIComponent(body)}`;
+  // Envío directo de la solicitud (función del sitio → Brevo → correo de la empresa)
+  const [sendState, setSendState] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const sendQuote = async () => {
+    setSendState("sending");
+    const fields: Record<string, string> = { "Servicio": title };
+    if (solutionInfo) fields["Solución de interés"] = solutionInfo.title;
+    summary.forEach(([k, v]) => { fields[k] = v; });
+    contactRows.forEach(([k, v]) => { fields[k] = v; });
+    fields["Siguiente paso sugerido"] = nextStep.t;
+    fields["Autorización de datos"] = "Sí";
+    const r = await sendLead("cotizacion", `Solicitud de cotización — ${title}`, fields, { email: contact.email ?? "", name: contact.nombre });
+    setSendState(r.ok ? "sent" : "error");
+    if (r.ok) trackEvent("generate_lead", { method: "cotizador", service: selected, solution: solution ?? undefined });
   };
 
   const inputCls = "w-full px-3.5 py-3 rounded-xl text-sm outline-none transition-colors focus:border-[#272B7C] focus:ring-4 focus:ring-[#272B7C]/10";
@@ -297,7 +304,7 @@ export function QuoteSimulator() {
             {step === 3 && (
               <div>
                 <p className="text-lg font-bold mb-1" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif" }}>Revise y envíe su solicitud</p>
-                <p className="text-sm mb-5" style={{ color: "#8A8A8A" }}>Se abrirá su correo con la solicitud lista para enviar a info@transarchivos.com.</p>
+                <p className="text-sm mb-5" style={{ color: "#6B6B6B" }}>Al enviarla, la solicitud llega directamente a nuestro equipo comercial.</p>
                 <div className="flex items-start gap-3 rounded-2xl p-4 mb-5" style={{ background: `${nextStep.c}10`, border: `1px solid ${nextStep.c}33` }}>
                   <Bi n={nextStep.ic} size={20} color={nextStep.c} style={{ marginTop: 2, flexShrink: 0 }} />
                   <div>
@@ -333,10 +340,20 @@ export function QuoteSimulator() {
                   <button type="button" onClick={() => setStep(2)} className={secondaryBtn} style={{ background: "#fff", color: "#272B7C", border: "1.5px solid #DDE0F2", fontFamily: "Montserrat, sans-serif" }}>
                     <Bi n="arrow-left" size={14} color="#272B7C" /> Modificar datos
                   </button>
-                  <a href={mailto()} onClick={() => trackEvent("generate_lead", { method: "cotizador", service: selected, solution: solution ?? undefined })} className={primaryBtn} style={{ background: "#272B7C", color: "#fff", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
-                    <Bi n="envelope-arrow-up" size={16} color="#fff" /> Enviar solicitud por correo
-                  </a>
+                  <button type="button" onClick={sendQuote} disabled={sendState === "sending" || sendState === "sent"} className={`${primaryBtn} disabled:opacity-70`} style={{ background: sendState === "sent" ? "#16a34a" : "#272B7C", color: "#fff", fontFamily: "Montserrat, sans-serif" }}>
+                    {sendState === "sent" ? <><Bi n="check-lg" size={16} color="#fff" /> Solicitud enviada</> : sendState === "sending" ? "Enviando…" : <><Bi n="send" size={15} color="#FFDE59" /> Enviar solicitud</>}
+                  </button>
                 </div>
+                {sendState === "sent" && (
+                  <p role="status" className="mt-4 rounded-xl px-3.5 py-3 text-sm" style={{ background: "#EAF7EE", color: "#15803d" }}>
+                    <Bi n="check-circle-fill" size={14} color="#15803d" className="mr-1.5" />¡Gracias! Recibimos su solicitud. Un asesor le responderá a {contact.email}.
+                  </p>
+                )}
+                {sendState === "error" && (
+                  <p role="alert" className="mt-4 rounded-xl px-3.5 py-3 text-xs" style={{ background: "#FFF6D6", color: "#8A6D00", lineHeight: 1.55 }}>
+                    No pudimos enviar la solicitud en este momento. Intente de nuevo o escríbanos por <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" style={{ color: "#272B7C", fontWeight: 700 }}>WhatsApp</a>.
+                  </p>
+                )}
               </div>
             )}
           </div>

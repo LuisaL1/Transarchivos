@@ -35,7 +35,7 @@ export function FaqSection({ onChat }: { onChat: () => void }) {
             <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors hover:bg-[#F7F8FF]" style={{ color: "#272B7C", textDecoration: "none" }}>
               <Bi n="whatsapp" size={15} color="#272B7C" /> WhatsApp {WHATSAPP_LABEL}
             </a>
-            <a href="mailto:info@transarchivos.com" className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors hover:bg-[#F7F8FF]" style={{ color: "#272B7C", textDecoration: "none" }}>
+            <a href="#contacto" className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors hover:bg-[#F7F8FF]" style={{ color: "#272B7C", textDecoration: "none" }}>
               <Bi n="envelope" size={15} color="#272B7C" /> info@transarchivos.com
             </a>
           </div>

@@ -394,7 +394,7 @@ function MobileMenu({ onClose, onSearch, onChat }: { onClose: () => void; onSear
         ))}
 
         <div className="mt-5 rounded-2xl p-4 flex flex-col gap-2" style={{ background: "#F7F8FF" }}>
-          <a href="mailto:info@transarchivos.com" className="flex items-center gap-2.5 text-sm" style={{ color: "#272B7C", textDecoration: "none" }}><Bi n="envelope" size={14} color="#C8960A" /> info@transarchivos.com</a>
+          <a href="#contacto" className="flex items-center gap-2.5 text-sm" style={{ color: "#272B7C", textDecoration: "none" }}><Bi n="envelope" size={14} color="#C8960A" /> info@transarchivos.com</a>
           <span className="flex items-center gap-2.5 text-sm" style={{ color: "#6B6B6B" }}><Bi n="geo-alt" size={14} color="#C8960A" /> Cl. 21 # 39A-40, Bogotá</span>
         </div>
       </div>

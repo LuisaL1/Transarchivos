@@ -17,7 +17,8 @@ export function PrivacyPage() {
   const h2 = (t: string) => <h2 className="text-xl md:text-2xl font-bold mt-10 mb-3" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif" }}>{t}</h2>;
   const rows: [string, string, string][] = [
     ["Cotizador del sitio", "Nombre, cargo, empresa, sector económico, correo electrónico, teléfono y la información de su archivo (volumen, ubicación, urgencia, requerimientos)", "Preparar y enviar la cotización, contactarle para aclarar el alcance y hacer seguimiento comercial a su solicitud"],
-    ["Chat con Joel (asesor virtual)", "Nombre, empresa y lo que usted escriba en el chat", "Orientarle y armar la solicitud de cotización que usted decida enviar"],
+    ["Formulario de contacto", "Nombre, empresa, correo, teléfono, motivo y mensaje", "Responder su consulta, solicitud, petición, queja o reclamo"],
+    ["Chat con Joel (asesor virtual)", "Nombre, empresa y lo que usted escriba en el chat", "Orientarle y armar la solicitud que usted decida enviar por el formulario"],
     ["WhatsApp, llamadas y correo", "Número de teléfono, correo y el contenido de su mensaje", "Atender su consulta o solicitud"],
     ["Suscripción al blog", "Correo electrónico", "Enviarle novedades y contenido sobre gestión documental; puede cancelar cuando quiera"],
     ["Google Analytics (solo si acepta las cookies)", "Datos de navegación: páginas visitadas, tiempo, dispositivo, ciudad aproximada e identificadores de cookies", "Medir y mejorar el sitio. No se usa con fines publicitarios"],
@@ -37,7 +38,7 @@ export function PrivacyPage() {
         <ul className="list-none space-y-1">
           <li><strong>Razón social:</strong> {BRAND.legalName}{LEGAL.nit ? ` · NIT ${LEGAL.nit}` : ""}</li>
           <li><strong>Dirección:</strong> {addr}</li>
-          <li><strong>Correo:</strong> <a href={`mailto:${LEGAL.privacyEmail}`} style={{ color: "#1800AD" }}>{LEGAL.privacyEmail}</a></li>
+          <li><strong>Correo:</strong> {LEGAL.privacyEmail} · <a href="#contacto" style={{ color: "#1800AD", fontWeight: 600 }}>formulario de contacto</a></li>
           <li><strong>Teléfonos:</strong> {PHONES.map(p => p.label).join(" · ")} · WhatsApp {WHATSAPP_LABEL}</li>
         </ul>
 
@@ -52,7 +53,7 @@ export function PrivacyPage() {
 
         {h2("3. Cómo se transmiten y guardan")}
         <ul className="list-disc pl-5 space-y-1.5">
-          <li>El cotizador y el chat no guardan sus datos en un servidor del sitio: preparan un correo que usted revisa y envía desde su propia cuenta a {LEGAL.privacyEmail}.</li>
+          <li>El formulario de contacto y el cotizador envían su solicitud directamente al correo de {BRAND.legalName} mediante Brevo (proveedor de envío de correos, que actúa como encargado del tratamiento). El sitio no guarda una copia de sus datos.</li>
           <li>Los mensajes por WhatsApp se rigen además por las condiciones de WhatsApp (Meta).</li>
           <li>El asesor virtual Joel guarda en su navegador (almacenamiento local) un perfil de los temas que consultó, para personalizar el saludo. Ese perfil no sale de su equipo y puede borrarlo limpiando los datos del sitio en su navegador.</li>
           <li>Conservamos los datos de las solicitudes mientras dure la relación comercial y el tiempo que exijan las normas contables y legales; después se eliminan de forma segura.</li>
@@ -76,7 +77,7 @@ export function PrivacyPage() {
         </ul>
 
         {h2("6. Cómo ejercerlos")}
-        <p>Escriba a <a href={`mailto:${LEGAL.privacyEmail}`} style={{ color: "#1800AD" }}>{LEGAL.privacyEmail}</a> con el asunto «Datos personales», indicando su nombre, documento de identidad, la solicitud y un medio de contacto. Responderemos las <strong>consultas</strong> en máximo 10 días hábiles y los <strong>reclamos</strong> (corrección, actualización, supresión o revocatoria) en máximo 15 días hábiles, según la Ley 1581 de 2012.</p>
+        <p>Escríbanos mediante el <a href="#contacto?motivo=Datos+personales+%28Ley+1581%29" style={{ color: "#1800AD", fontWeight: 600 }}>formulario de contacto</a> (motivo «Datos personales») o al correo {LEGAL.privacyEmail}, indicando su nombre, documento de identidad, la solicitud y un medio de contacto. Responderemos las <strong>consultas</strong> en máximo 10 días hábiles y los <strong>reclamos</strong> (corrección, actualización, supresión o revocatoria) en máximo 15 días hábiles, según la Ley 1581 de 2012.</p>
 
         {h2("7. Autorización")}
         <p>Al marcar la casilla de autorización en el cotizador o en la suscripción, o al escribirnos por nuestros canales, usted autoriza a {BRAND.legalName} a tratar sus datos para las finalidades descritas. Esta política hace parte de la política general de tratamiento de datos personales de la empresa, que puede solicitar al mismo correo.</p>

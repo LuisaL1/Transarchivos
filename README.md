@@ -30,10 +30,9 @@ La indexación se activa con `VITE_SITE_INDEXABLE=true` (ver `docs/06-seo.md`).
 
 ## Pendientes de desarrollo
 
-- **Cotizador y chat**: hoy arman un correo (`mailto:`) a info@transarchivos.com.
-  Falta un backend o servicio de formularios que reciba la solicitud, la guarde
-  y notifique a Comercial. Si se usa un servicio externo, agregarlo a la CSP de
-  `vercel.json`.
+- **Formularios → correo (Brevo)**: el formulario de contacto y el cotizador ya
+  envían a `/api/contact`. Falta que el área encargada configure Brevo y las
+  variables de entorno en Vercel (ver `docs/07-formularios.md`).
 - **Suscripción del blog** (`BlogSection`): solo muestra el mensaje de éxito.
   Falta conectarla a la herramienta de correo que elija la empresa.
 - **Google Analytics** (ID `G-PNPFD16QSZ`, ya integrado y verificado con

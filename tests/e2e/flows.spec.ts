@@ -78,3 +78,39 @@ test("el cotizador exige la autorización de tratamiento de datos", async ({ pag
   await page.getByRole("button", { name: /Ver resumen/ }).click();
   await expect(page.locator("#cot-autorizacion")).toHaveCount(0);
 });
+
+test("formulario de contacto: se abre desde soporte, exige autorización y envía", async ({ page, isMobile }) => {
+  test.skip(isMobile, "El ícono de soporte está en la barra de escritorio");
+  let sent: Record<string, unknown> | null = null;
+  await page.route("**/api/contact", async r => { sent = r.request().postDataJSON(); await r.fulfill({ json: { ok: true } }); });
+  await page.goto("/");
+  await page.getByRole("button", { name: /Soporte/ }).first().click();
+  await page.locator("[data-support-popover]").getByRole("link", { name: /Escríbanos Formulario/ }).click();
+  const dlg = page.getByRole("dialog", { name: "Escríbanos" });
+  await expect(dlg).toBeVisible();
+  await dlg.locator("#ct-nombre").fill("Ana Prueba");
+  await dlg.locator("#ct-email").fill("ana@empresa.com");
+  await dlg.locator("#ct-mensaje").fill("Quisiera información.");
+  await dlg.getByRole("button", { name: /Enviar mensaje/ }).click();
+  expect(await dlg.locator("#ct-autorizacion").evaluate(el => (el as HTMLInputElement).validity.valueMissing)).toBe(true);
+  await dlg.locator("#ct-autorizacion").check();
+  await dlg.getByRole("button", { name: /Enviar mensaje/ }).click();
+  await expect(dlg.getByText("¡Mensaje enviado!")).toBeVisible();
+  expect(sent).toMatchObject({ kind: "contacto", replyTo: { email: "ana@empresa.com" } });
+});
+
+test("cotizador: envía la solicitud directamente", async ({ page }) => {
+  let sent: { kind?: string; fields?: Record<string, string> } | null = null;
+  await page.route("**/api/contact", async r => { sent = r.request().postDataJSON(); await r.fulfill({ json: { ok: true } }); });
+  await page.goto("/?servicio=diagnostico#cotizador");
+  await page.locator("#cot-volume").fill("100 cajas");
+  await page.getByRole("button", { name: /Continuar/ }).first().click();
+  for (const [id, v] of [["cot-empresa", "Empresa"], ["cot-nombre", "Ana"], ["cot-cargo", "Gerente"], ["cot-email", "ana@empresa.com"], ["cot-telefono", "3000000000"]]) await page.locator(`#${id}`).fill(v);
+  await page.locator("#cot-sector").selectOption({ index: 1 });
+  await page.locator("#cot-autorizacion").check();
+  await page.getByRole("button", { name: /Ver resumen/ }).click();
+  await page.getByRole("button", { name: /Enviar solicitud/ }).click();
+  await expect(page.getByText(/Recibimos su solicitud/)).toBeVisible();
+  expect(sent!.kind).toBe("cotizacion");
+  expect(sent!.fields!["Autorización de datos"]).toBe("Sí");
+});

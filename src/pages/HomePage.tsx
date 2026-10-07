@@ -582,7 +582,7 @@ export function HomePage() {
                   </a>
                 </li>
                 <li>
-                  <a href="mailto:info@transarchivos.com" className="flex items-start gap-2.5 text-sm transition-colors break-all" style={{ color: "#6B6B6B" }}
+                  <a href="#contacto" className="flex items-start gap-2.5 text-sm transition-colors break-all" style={{ color: "#6B6B6B" }}
                     onMouseEnter={e => e.currentTarget.style.color = "#1800AD"} onMouseLeave={e => e.currentTarget.style.color = "#6B6B6B"}>
                     <Bi n="envelope-fill" size={14} color="#C8960A" style={{ marginTop: 3, flexShrink: 0 }} />
                     info@transarchivos.com

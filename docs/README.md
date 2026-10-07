@@ -13,6 +13,7 @@ reemplaza) a los documentos de la raíz del repositorio:
 | `docs/03-conversion-y-analitica.md` | Embudo, puntos de conversión, cotizador, chat, eventos de GA4 y consentimiento |
 | `docs/04-calidad-pruebas-y-seguridad.md` | Estrategia de calidad: qué se prueba, por qué y cómo extenderla |
 | `docs/05-decisiones-y-pendientes.md` | Decisiones tomadas con el cliente (no revertir) y trabajo pendiente priorizado |
+| `docs/07-formularios.md` | Formulario de contacto, cotizador y envío por Brevo (configuración en Vercel) |
 | `docs/06-seo.md` | SEO técnico: pre-generación de HTML, metadatos, datos estructurados, sitemap y checklist de publicación |
 
 **Fuente de verdad del contenido:** `RecursosTransarchivos/` (documentos del
