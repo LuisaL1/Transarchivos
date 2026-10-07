@@ -14,7 +14,7 @@ export function BlogSection() {
   const [featured, ...rest] = blogPosts;
 
   return (
-    <section id="blog" className="relative isolate overflow-hidden">
+    <section id="blog" className="relative isolate overflow-hidden" style={{ scrollMarginTop: 64 }}>
       <SectionDecor variant="cream" folder={false} />
 
       <div className="relative max-w-6xl mx-auto px-6 py-20">

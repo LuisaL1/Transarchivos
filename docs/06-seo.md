@@ -108,4 +108,4 @@ pnpm build
 - **Imágenes:**
   - `joel.png` (1,1 MB) y las poses (~300 KB): convertir a WebP/AVIF;
   - agregar `width`/`height` para evitar saltos de diseño.
-- **Video del hero:** ya tiene versión para celular (5,2 MB) y computador (9,8 MB). Si se necesita aún más liviano, recortar su duración (43 s) o usar `preload="metadata"`.
+- **Video del hero:** versiones para celular (6,2 MB), computador (9,1 MB) y Retina/4K (18,2 MB); cada pantalla descarga solo la suya. Si se necesita aún más liviano, recortar su duración (43 s) o usar `preload="metadata"`.

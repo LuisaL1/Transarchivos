@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Link, useParams, useNavigate, useNavigationType } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { track } from "@/lib/joel";
 import { ChatBot } from "@/components/chat/ChatBot";
 import { SiteHeader } from "@/components/layout/SiteHeader";
@@ -49,9 +49,8 @@ export function ArticlePage() {
   const pageRef = useRef<HTMLDivElement>(null);
   useScrollReveal(pageRef);
   const navigate = useNavigate();
-  const navType = useNavigationType();
-  // Volver: igual que en las páginas de servicio.
-  const goBack = () => { if (navType === "PUSH" && window.history.length > 1) navigate(-1); else navigate("/#blog"); };
+  // Volver / "Blog": siempre a la sección del blog en la portada.
+  const goBack = () => navigate("/#blog");
   const [chatOpen, setChatOpen] = useState(false);
   const [progress, setProgress] = useState(0);
 

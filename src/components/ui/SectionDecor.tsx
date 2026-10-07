@@ -9,6 +9,27 @@ export function Divider() {
   return <div className="border-b" style={{ borderColor: "#E9E9E7" }} />;
 }
 
+// Separador con silueta de carpeta (mismo trazo del borde de los heroes de
+// servicio): la línea fina entre secciones forma una pestaña alineada con el
+// contenido, rellena con el color de la sección de abajo. Muy sutil a propósito.
+export function FolderDivider({ color }: { color: string }) {
+  // Trazo dibujado en píxeles exactos (sin estirar): la línea recta y el
+  // contorno de la pestaña comparten color, grosor (1 px) y altura, así
+  // empalman sin escalones. El relleno tapa la línea bajo la pestaña.
+  const line = "#E4E6F7";
+  return (
+    <div aria-hidden="true" className="relative h-0 z-10 pointer-events-none">
+      <div className="absolute inset-x-0 bottom-0 h-px" style={{ background: line }} />
+      <div className="absolute inset-x-0 bottom-0 max-w-6xl mx-auto px-6">
+        <svg className="block" width="200" height="30" viewBox="0 0 200 30" shapeRendering="geometricPrecision">
+          <path d="M0 30 V12 Q0 0.5 12 0.5 H140 Q148.5 0.5 154.5 6.5 L173.5 25.5 Q177.5 29.5 186 29.5 H200 V30 Z" fill={color} />
+          <path d="M0.5 30 V12 Q0.5 0.5 12 0.5 H140 Q148.5 0.5 154.5 6.5 L173.5 25.5 Q177.5 29.5 186 29.5 H200" fill="none" stroke={line} strokeWidth="1" strokeLinejoin="round" />
+        </svg>
+      </div>
+    </div>
+  );
+}
+
 // ─── Nav Dropdown ─────────────────────────────────────────────────────────────
 
 export type DecorVariant = "lavender" | "cream";

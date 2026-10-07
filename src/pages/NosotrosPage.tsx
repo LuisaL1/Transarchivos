@@ -128,7 +128,7 @@ export function NosotrosPage() {
             <p className="text-sm mt-4" style={{ color: "#6B6B6B", lineHeight: 1.7 }}>
               Nacimos en 1983 en respuesta a una necesidad puntual de Ecopetrol de gestionar su información documental. A partir de esa experiencia, adecuamos en Bogotá un centro de información documental con especificaciones técnicas de custodia y capacitamos a nuestro personal como archivistas bajo normas archivísticas avanzadas.
             </p>
-            <div className="mt-10 pl-6"><JoelFigure src={JOEL.conCajas} height={250} /></div>
+            <div className="mt-10 pl-6"><JoelFigure src={JOEL.levantandoCajas} height={260} /></div>
           </div>
           <div className="grid sm:grid-cols-2 gap-3">
             {[
@@ -178,7 +178,7 @@ export function NosotrosPage() {
             <p className="text-sm mt-4" style={{ color: "#6B6B6B", lineHeight: 1.7 }}>
               Nuestro personal técnico de archivo está capacitado bajo normas archivísticas avanzadas y los lineamientos del Archivo General de la Nación (AGN). En los proyectos Inhouse, Transarchivos asume la figura de empleador del personal en sitio, con protocolos de contingencia ante ausencias, informes mensuales de gestión y cumplimiento de acuerdos de servicio.
             </p>
-            <div className="mt-10 pl-6"><JoelFigure src={JOEL.apuntes} height={240} /></div>
+            <div className="mt-10 pl-6"><JoelFigure src={JOEL.notas} height={250} /></div>
           </div>
           <div className="grid gap-4">
             {[
@@ -259,7 +259,7 @@ export function NosotrosPage() {
             {kicker("Tecnología y seguridad")}
             {h2(<>Infraestructura que {mark("protege")} su información</>)}
             <p className="text-sm mt-4" style={{ color: "#6B6B6B", lineHeight: 1.7 }}>La infraestructura y los protocolos con los que cuidamos cada documento, físico o digital, con trazabilidad en nuestro software propio Mido.</p>
-            <div className="mt-10 pl-6"><JoelFigure src={JOEL.ipad} height={240} /></div>
+            <div className="mt-10 pl-6"><JoelFigure src={JOEL.digitalizando} height={230} /></div>
           </div>
           <div className="grid sm:grid-cols-2 gap-3">
             {[
@@ -286,7 +286,10 @@ export function NosotrosPage() {
       <section id="certificados" className="relative isolate overflow-hidden py-16" style={{ scrollMarginTop: 80 }}>
         <SectionDecor variant="cream" flip />
         <div className="max-w-6xl mx-auto px-6">
-          <div className="max-w-2xl mb-8">{kicker("Cumplimiento normativo")}{h2("Marco normativo con el que operamos")}</div>
+          <div className="flex items-end justify-between gap-6 mb-8">
+            <div className="max-w-2xl">{kicker("Cumplimiento normativo")}{h2("Marco normativo con el que operamos")}</div>
+            <JoelFigure src={JOEL.legal} height={200} className="shrink-0 mr-6" />
+          </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {norms.map(n => (
               <div key={n.code} className="rounded-2xl p-4 card-lift" style={{ background: "#fff", border: "1.5px solid #E4E6F7" }}>

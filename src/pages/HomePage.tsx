@@ -22,7 +22,7 @@ import { ServiceCard } from "@/components/sections/ServiceCard";
 import { SolucionesSection } from "@/components/sections/SolucionesSection";
 import { Logo } from "@/components/ui/Brand";
 import { Bi, BiTile } from "@/components/ui/Icons";
-import { Divider, FolderOutline, SectionDecor } from "@/components/ui/SectionDecor";
+import { Divider, FolderDivider, FolderOutline, SectionDecor } from "@/components/ui/SectionDecor";
 import { services } from "@/data/services";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { WHATSAPP_LABEL, whatsappUrl } from "@/data/contact";
@@ -49,10 +49,19 @@ export function HomePage() {
 
   const { hash, key: locKey } = useLocation();
   const navType = useNavigationType();
+  // Llegada con ancla (p. ej. "/#servicios" desde un servicio): se lleva a la
+  // sección y se vuelve a ajustar mientras la página termina de acomodarse
+  // (el mapa, las imágenes y las fuentes cambian la altura al cargar).
   useEffect(() => {
     if (!hash) return;
-    const el = document.getElementById(hash.slice(1));
-    if (el) requestAnimationFrame(() => el.scrollIntoView({ behavior: "auto", block: "start" }));
+    const go = () => document.getElementById(hash.slice(1))?.scrollIntoView({ behavior: "auto", block: "start" });
+    let stop = false;
+    const cancel = () => { stop = true; };
+    window.addEventListener("wheel", cancel, { passive: true, once: true });
+    window.addEventListener("touchstart", cancel, { passive: true, once: true });
+    const timers = [0, 120, 400, 900, 1600].map(ms => window.setTimeout(() => { if (!stop) go(); }, ms));
+    requestAnimationFrame(go);
+    return () => { timers.forEach(clearTimeout); window.removeEventListener("wheel", cancel); window.removeEventListener("touchstart", cancel); };
   }, [hash, locKey]);
   // "Atrás" del navegador: al salir de la página principal se guarda la
   // posición; si se vuelve con atrás (POP), se restaura donde estaba en vez
@@ -267,10 +276,10 @@ export function HomePage() {
         </div>
       </section>
 
-      <Divider />
+      <FolderDivider color="#F1F3FB" />
 
       {/* ── SERVICES ────────────────────────────────────────────────────── */}
-      <section id="servicios" className="relative isolate overflow-hidden py-20">
+      <section id="servicios" className="relative isolate overflow-hidden py-20" style={{ scrollMarginTop: 64 }}>
         <SectionDecor variant="lavender" flip />
         <div className="max-w-6xl mx-auto px-6">
           <p className="text-xs font-bold uppercase tracking-widest text-center mb-3" style={{ color: "#9B9B9B", fontFamily: "Montserrat, sans-serif" }}>
@@ -295,15 +304,15 @@ export function HomePage() {
       </section>
 
       <JoelBridge src={JOEL.cajas} side="right" height={220} sink={30} offset={8} />
-      <Divider />
+      <FolderDivider color="#F1F3FB" />
 
       <SolucionesSection />
 
-      <Divider />
+      <FolderDivider color="#FBFBF8" />
 
       {/* ── MODELO: DIAGNÓSTICO → SOLUCIÓN → PROTECCIÓN → EXPANSIÓN ──────────
           Contenido del documento "Modelo de Negocio - Transarchivos". */}
-      <section id="modelo" className="relative isolate overflow-hidden py-20">
+      <section id="modelo" className="relative isolate overflow-hidden py-20" style={{ scrollMarginTop: 64 }}>
         <SectionDecor variant="cream" folder={false} />
         <div className="absolute inset-0 pointer-events-none select-none overflow-hidden" aria-hidden="true" style={{ zIndex: 0 }}>
           {/* Un resplandor navy sutil (se quitó el dorado — se veía como una
@@ -390,19 +399,19 @@ export function HomePage() {
         </div>
       </section>
 
-      <JoelBridge src={JOEL.ipad} side="right" height={220} sink={175} offset={30} />
-      <Divider />
+      <JoelBridge src={JOEL.telefono} side="right" height={220} sink={175} offset={30} />
+      <FolderDivider color="#F1F3FB" />
 
       <div className="relative isolate overflow-hidden">
         <SectionDecor variant="lavender" />
         <QuoteSimulator />
       </div>
 
-      <Divider />
+      <FolderDivider color="#FBFBF8" />
 
       <BlogSection />
 
-      <Divider />
+      <FolderDivider color="#FBFBF8" />
 
       {/* ── VIDEOS + REDES SOCIALES ───────────────────────────────────────────
           3 videos reales del canal de YouTube de Transarchivos
@@ -471,11 +480,11 @@ export function HomePage() {
       </div>
       </section>
 
-      <Divider />
+      <FolderDivider color="#F1F3FB" />
 
       <FaqSection onChat={() => setChatOpen(true)} />
 
-      <Divider />
+      <FolderDivider color="#F7F8FF" />
 
       {/* ── POR QUÉ TRANSARCHIVOS ────────────────────────────────────────────
           Franja de confianza (5 diferenciales), a los colores de marca y con

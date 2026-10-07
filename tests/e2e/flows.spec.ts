@@ -46,3 +46,21 @@ test("artículo: el índice lleva a la sección", async ({ page, isMobile }) => 
   await expect(page.getByRole("heading", { name: title })).toBeInViewport();
   if (!isMobile) await expect(page.getByText("Preguntas frecuentes").first()).toBeVisible();
 });
+
+test("desde un servicio, 'Servicios' lleva a la sección de servicios de la portada", async ({ page, isMobile }) => {
+  test.skip(isMobile, "El menú de escritorio abre el servicio");
+  await page.goto("/");
+  await page.getByRole("button", { name: /Servicios/ }).first().click();
+  await page.getByRole("link", { name: /Custodia de Archivos/ }).first().click();
+  await expect(page).toHaveURL(/\/servicios\/custodia-de-archivos/);
+  await page.getByRole("button", { name: "Servicios" }).last().click();
+  await expect(page).toHaveURL(/\/#servicios$/);
+  await expect.poll(async () => page.evaluate(() => Math.round(document.getElementById("servicios")?.getBoundingClientRect().top ?? 9999)), { timeout: 5000 }).toBeLessThan(120);
+});
+
+test("la flecha de volver de un servicio lleva a la sección de servicios", async ({ page }) => {
+  await page.goto("/servicios/digitalizacion-de-documentos");
+  await page.getByRole("button", { name: "Volver a servicios" }).click();
+  await expect(page).toHaveURL(/\/#servicios$/);
+  await expect.poll(async () => page.evaluate(() => Math.abs(Math.round(document.getElementById("servicios")?.getBoundingClientRect().top ?? 9999))), { timeout: 5000 }).toBeLessThan(120);
+});

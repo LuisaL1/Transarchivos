@@ -1,16 +1,17 @@
 // ─── Soporte (ícono de audífonos del header) ────────────────────────────────
 // Tarjeta flotante bajo el ícono, abierta hacia la derecha (hacia el margen,
 // para no tapar el contenido del hero; si no cabe, se corre a la izquierda):
-// chat con Joel, teléfono, correo y enlace a las preguntas frecuentes. Se dibuja con position: fixed (el pill del
+// chat con Joel, WhatsApp, teléfonos, correo y enlace a las preguntas frecuentes. Se dibuja con position: fixed (el pill del
 // header recorta lo que sobresale) y se cierra al hacer clic fuera o scroll.
 
 import { Bi } from "@/components/ui/Icons";
-import { WHATSAPP_LABEL, whatsappUrl } from "@/data/contact";
+import { PHONES, WHATSAPP_LABEL, whatsappUrl } from "@/data/contact";
 
 export function SupportPopover({ anchor, onClose, onChat, onHoverIn, onHoverOut }: { anchor: DOMRect; onClose: () => void; onChat: () => void; onHoverIn?: () => void; onHoverOut?: () => void }) {
   const items = [
     { ic: "chat-dots", t: "Chatee con Joel", d: "Asesor con IA, responde al instante", onClick: () => { onChat(); onClose(); } },
     { ic: "whatsapp", t: "Escríbanos por WhatsApp", d: WHATSAPP_LABEL, href: whatsappUrl() },
+    { ic: "telephone", t: "Llámenos", d: PHONES.map(p => p.label).join(" · "), href: `tel:${PHONES[0].tel}` },
     { ic: "envelope", t: "Escríbanos", d: "info@transarchivos.com", href: "mailto:info@transarchivos.com" },
   ];
   return (
@@ -42,7 +43,7 @@ export function SupportPopover({ anchor, onClose, onChat, onHoverIn, onHoverOut 
             : <button key={it.t} type="button" className={cls} onClick={it.onClick}>{inner}</button>;
         })}
       </div>
-      <a href="#faq" onClick={onClose} className="flex items-center justify-between px-6 py-4 text-sm font-bold transition-colors hover:bg-[#F7F8FF]"
+      <a href="/#faq" onClick={onClose} className="flex items-center justify-between px-6 py-4 text-sm font-bold transition-colors hover:bg-[#F7F8FF]"
         style={{ borderTop: "1px solid #ECEEF6", color: "#272B7C", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
         Ver preguntas frecuentes <Bi n="question-circle" size={16} color="#272B7C" />
       </a>

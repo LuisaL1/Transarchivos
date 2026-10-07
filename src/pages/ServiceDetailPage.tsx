@@ -4,7 +4,7 @@
 // y normativa). Solo cifras que aparecen en ese documento.
 
 import { useState, useEffect, useRef } from "react";
-import { Link, useParams, useNavigate, useNavigationType } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { ChatBot } from "@/components/chat/ChatBot";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { ServiceCard } from "@/components/sections/ServiceCard";
@@ -26,11 +26,9 @@ export function ServiceDetailPage() {
   const pageRef = useRef<HTMLDivElement>(null);
   useScrollReveal(pageRef);
   const navigate = useNavigate();
-  const navType = useNavigationType();
-  // Volver: si se llegó desde el sitio, regresa a donde estaba (como el
-  // "atrás" del navegador); si se entró directo por el enlace, va a la
-  // sección de servicios de la página principal.
-  const goBack = () => { if (navType === "PUSH" && window.history.length > 1) navigate(-1); else navigate("/#servicios"); };
+  // Volver / "Servicios": siempre a la sección de servicios de la portada
+  // (no al punto donde estaba el visitante, que podía ser el hero).
+  const goBack = () => navigate("/#servicios");
   const [chatOpen, setChatOpen] = useState(false);
 
   useEffect(() => { window.scrollTo(0, 0); }, [slug]);

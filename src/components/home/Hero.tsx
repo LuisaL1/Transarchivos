@@ -4,13 +4,13 @@ import { Bi } from "@/components/ui/Icons";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 // Video del hero: montaje institucional (archivo, digitalización, Mido y
-// vehículos). Dos versiones sin audio: liviana para celular y HD para
-// computador; el navegador elige con el atributo "media" de <source>.
-// El montaje viene con fundidos cruzados entre clips y un final que empalma
-// con el inicio (bucle sin salto). Se reproduce al 80 % para un ritmo más
-// cinematográfico (ajustable en HERO_VIDEO_RATE).
-export const HERO_VIDEO = { mobile: "/videos/transarchivos-hero-movil.mp4", desktop: "/videos/transarchivos-hero.mp4" };
-export const HERO_VIDEO_RATE = 0.8;
+// vehículos), sin audio; el navegador elige la versión con el atributo
+// "media" de <source>.
+// Montaje cinematográfico: planos largos con movimiento de cámara lento,
+// fundidos cruzados de 1 s y bucle sin salto (sin filtros de color: imagen limpia).
+// Se reproduce al 70 % (ajustable en HERO_VIDEO_RATE).
+export const HERO_VIDEO = { mobile: "/videos/transarchivos-hero-movil.mp4", desktop: "/videos/transarchivos-hero.mp4", hd: "/videos/transarchivos-hero-4k.mp4" };
+export const HERO_VIDEO_RATE = 0.7;
 
 export function HeroVideoBackground() {
   const reduced = useReducedMotion();
@@ -30,6 +30,7 @@ export function HeroVideoBackground() {
           muted playsInline autoPlay loop preload="auto" poster="/videos/hero-poster.jpg"
           className="absolute inset-0 w-full h-full" style={{ objectFit: "cover" }}>
           <source src={HERO_VIDEO.mobile} type="video/mp4" media="(max-width: 767px)" />
+          <source src={HERO_VIDEO.hd} type="video/mp4" media="(min-width: 768px) and (min-resolution: 1.5dppx), (min-width: 2200px)" />
           <source src={HERO_VIDEO.desktop} type="video/mp4" />
         </video>
       )}
