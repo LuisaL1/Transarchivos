@@ -60,6 +60,13 @@ export function setConsent(value: "granted" | "denied") {
   gtag("consent", "update", { analytics_storage: value });
 }
 
+/** Borra la decisión de cookies y vuelve a mostrar el aviso (desde la política de privacidad). */
+export function resetConsent() {
+  try { localStorage.removeItem(CONSENT_KEY); } catch { /* sin almacenamiento */ }
+  gtag("consent", "update", { analytics_storage: "denied" });
+  window.dispatchEvent(new Event("ta-consent-reset"));
+}
+
 /** Página vista (se llama en cada cambio de ruta). */
 export function trackPageView(path: string) {
   gtag("event", "page_view", { page_path: path, page_location: window.location.href, page_title: document.title });

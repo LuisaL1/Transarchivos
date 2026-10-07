@@ -64,3 +64,17 @@ test("la flecha de volver de un servicio lleva a la sección de servicios", asyn
   await expect(page).toHaveURL(/\/#servicios$/);
   await expect.poll(async () => page.evaluate(() => Math.abs(Math.round(document.getElementById("servicios")?.getBoundingClientRect().top ?? 9999))), { timeout: 5000 }).toBeLessThan(120);
 });
+
+test("el cotizador exige la autorización de tratamiento de datos", async ({ page }) => {
+  await page.goto("/?servicio=diagnostico#cotizador");
+  await page.locator("#cot-volume").fill("100 cajas");
+  await page.getByRole("button", { name: /Continuar|Siguiente/ }).first().click();
+  for (const [id, v] of [["cot-empresa", "Empresa"], ["cot-nombre", "Ana"], ["cot-cargo", "Gerente"], ["cot-email", "ana@empresa.com"], ["cot-telefono", "3000000000"]]) await page.locator(`#${id}`).fill(v);
+  await page.locator("#cot-sector").selectOption({ index: 1 });
+  await page.getByRole("button", { name: /Ver resumen/ }).click();
+  await expect(page.locator("#cot-autorizacion")).toBeVisible();
+  expect(await page.locator("#cot-autorizacion").evaluate(el => (el as HTMLInputElement).validity.valueMissing)).toBe(true);
+  await page.locator("#cot-autorizacion").check();
+  await page.getByRole("button", { name: /Ver resumen/ }).click();
+  await expect(page.locator("#cot-autorizacion")).toHaveCount(0);
+});

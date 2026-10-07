@@ -85,7 +85,7 @@ export const CHAT_STEPS: Record<string, ChatStep> = {
     options: CHAT_URGENCY.map(v => ({ label: v, next: "q_name", set: { urgency: v } })),
   },
   q_name: {
-    say: () => ["Perfecto. ¿Cuál es su nombre?"],
+    say: () => ["Perfecto. ¿Cuál es su nombre?", "Usaremos sus datos solo para responder su solicitud, según nuestra política de privacidad (transarchivos.com/privacidad)."],
     input: { key: "name", placeholder: "Escriba su nombre…", next: () => "q_company" },
   },
   q_company: {

@@ -148,6 +148,15 @@ function articleMeta(post: Post): PageMeta {
   };
 }
 
+function privacyMeta(): PageMeta {
+  const title = "Política de privacidad y datos personales | Transarchivos";
+  const description = "Cómo el sitio web de Transarchivos Ltda. recoge y trata sus datos personales, el uso de cookies y cómo ejercer sus derechos según la Ley 1581 de 2012.";
+  return {
+    ...base("/privacidad"), title, description, priority: 0.3,
+    jsonLd: [graph(webPage("/privacidad", title, description), breadcrumb([["Inicio", "/"], ["Privacidad", "/privacidad"]]))],
+  };
+}
+
 function notFoundMeta(path: string): PageMeta {
   return {
     ...base(path), canonical: SITE_URL + "/", robots: "noindex, follow", notFound: true,
@@ -162,6 +171,7 @@ export function getPageMeta(pathname: string): PageMeta {
   const path = pathname.replace(/\/+$/, "") || "/";
   if (path === "/") return homeMeta();
   if (path === "/nosotros") return nosotrosMeta();
+  if (path === "/privacidad") return privacyMeta();
   const svc = path.match(/^\/servicios\/([a-z0-9-]+)$/);
   if (svc) return serviceMeta(svc[1]) ?? notFoundMeta(path);
   const art = path.match(/^\/blog\/([a-z0-9-]+)$/);
@@ -170,7 +180,7 @@ export function getPageMeta(pathname: string): PageMeta {
 }
 
 /** Todas las rutas públicas (pre-generación y sitemap). */
-export const PUBLIC_ROUTES = ["/", "/nosotros", ...services.map(s => `/servicios/${s.slug}`), ...blogPosts.map(p => `/blog/${p.slug}`)];
+export const PUBLIC_ROUTES = ["/", "/nosotros", "/privacidad", ...services.map(s => `/servicios/${s.slug}`), ...blogPosts.map(p => `/blog/${p.slug}`)];
 
 // ─── HTML del <head> (lo usa la pre-generación) ─────────────────────────────
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");

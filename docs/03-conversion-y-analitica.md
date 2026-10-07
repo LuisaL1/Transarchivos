@@ -97,3 +97,9 @@ Se puede entrar directo al paso 2 con `?servicio=<slug>&solucion=<id>#cotizador`
 
 **No usar:** ISO 9001, testimonios o logos de clientes sin autorización, ni cifras
 que no estén en los documentos.
+
+## Protección de datos (Ley 1581 de 2012)
+- Política del sitio en `/privacidad` (`PrivacyPage`): qué datos recoge cada canal, finalidad, cookies, derechos y plazos (consultas 10 días hábiles, reclamos 15).
+- Autorización obligatoria y sin marcar por defecto en el cotizador (paso Contacto) y en la suscripción; el correo de cotización incluye la constancia.
+- El chat informa el uso de los datos antes de pedir el nombre.
+- El aviso de cookies enlaza a la política; desde ella el visitante puede cambiar su decisión (`resetConsent`).

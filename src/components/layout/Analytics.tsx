@@ -30,7 +30,12 @@ export function AnalyticsTracker() {
 export function CookieBanner() {
   // Se decide en el navegador (después de hidratar): el HTML pre-generado no lo incluye.
   const [visible, setVisible] = useState(false);
-  useEffect(() => { setVisible(analyticsEnabled && getConsent() === null); }, []);
+  useEffect(() => {
+    const check = () => setVisible(analyticsEnabled && getConsent() === null);
+    check();
+    window.addEventListener("ta-consent-reset", check);
+    return () => window.removeEventListener("ta-consent-reset", check);
+  }, []);
   useEffect(() => {
     document.body.classList.toggle("consent-open", visible);
     return () => document.body.classList.remove("consent-open");
@@ -43,7 +48,7 @@ export function CookieBanner() {
       <p className="text-sm font-bold mb-1" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif" }}>Usamos cookies analíticas</p>
       <p className="text-xs mb-4" style={{ color: "#6B6B6B", lineHeight: 1.6 }}>
         Nos ayudan a entender cómo se usa el sitio para mejorarlo. No las usamos con fines publicitarios. Puede aceptarlas o rechazarlas;
-        el sitio funciona igual. Más información en <Link to="/#faq" style={{ color: "#1800AD", fontWeight: 600 }}>contacto</Link>.
+        el sitio funciona igual. Más información en nuestra <Link to="/privacidad" style={{ color: "#1800AD", fontWeight: 600 }}>política de privacidad</Link>.
       </p>
       <div className="flex gap-2">
         <button type="button" onClick={() => decide("granted")} className="flex-1 py-2.5 rounded-xl text-sm font-bold"

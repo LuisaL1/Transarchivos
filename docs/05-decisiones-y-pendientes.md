@@ -29,4 +29,4 @@
 | Media | **Rendimiento** | Bundle JS de ~530 KB: dividir por rutas con `React.lazy`. Imágenes: `joel.png` 1,1 MB, `logo.png` 378 KB y poses de ~300 KB, pasarlas a WebP/AVIF con tamaños responsive. Videos del hero de ~10 MB: versión comprimida para celular. |
 | Media | **Logo vectorial** | Con el SVG oficial, rehacer el favicon y el logo nítidos. |
 | Baja | **Joel** | Revisar periódicamente las preguntas que no entendió (`unknown` en el perfil local); hoy solo quedan en el navegador del visitante. |
-| Baja | **Avisos legales** | Página de política de privacidad y tratamiento de datos, enlazada desde el aviso de cookies y los formularios. |
+| Alta | **Datos legales** | La política de privacidad del sitio (`/privacidad`) ya está publicada. Falta: agregar el NIT en `LEGAL.nit` (`src/seo/site.ts`) y que el área legal de Transarchivos la revise; enlazar también la política general de la empresa si la tienen publicada. |

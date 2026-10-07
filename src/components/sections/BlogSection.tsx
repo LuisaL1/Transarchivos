@@ -103,12 +103,18 @@ export function BlogSection() {
               <Bi n="check-circle-fill" size={14} color="#15803d" className="mr-1.5" />¡Gracias! Le avisaremos cuando publiquemos.
             </p>
           ) : (
-            <form className="flex gap-3 md:w-[380px]" onSubmit={e => { e.preventDefault(); if (email.trim()) setSent(true); }}>
+            <form className="md:w-[380px]" onSubmit={e => { e.preventDefault(); if (email.trim()) setSent(true); }}>
+              <div className="flex gap-3">
               <input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="su@correo.com"
                 className="flex-1 min-w-0 px-4 py-2.5 rounded-full text-sm outline-none"
                 style={{ background: "#fff", border: "1.5px solid #E4E6F7", color: "#272B7C" }} />
               <button type="submit" className="px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all hover:opacity-85 cursor-pointer"
                 style={{ background: "#272B7C", color: "#fff", fontFamily: "Montserrat, sans-serif" }}>Suscribirme</button>
+              </div>
+              <label htmlFor="sub-autorizacion" className="mt-2.5 flex items-start gap-2 text-[11px] cursor-pointer" style={{ color: "#6B6B6B", lineHeight: 1.5 }}>
+                <input id="sub-autorizacion" type="checkbox" required className="mt-0.5 h-3.5 w-3.5 shrink-0 accent-[#272B7C]" />
+                <span>Autorizo el tratamiento de mi correo para recibir novedades, según la <Link to="/privacidad" style={{ color: "#1800AD", fontWeight: 600 }}>política de privacidad</Link>.</span>
+              </label>
             </form>
           )}
         </div>

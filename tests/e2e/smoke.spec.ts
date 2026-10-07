@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 // Todas las rutas cargan, sin errores de JavaScript ni recursos rotos.
-const ROUTES = ["/", "/nosotros", "/servicios/custodia-de-archivos", "/servicios/digitalizacion-de-documentos", "/blog/mido-software-gestion-documental"];
+const ROUTES = ["/", "/nosotros", "/privacidad", "/servicios/custodia-de-archivos", "/servicios/digitalizacion-de-documentos", "/blog/mido-software-gestion-documental"];
 
 for (const route of ROUTES) {
   test(`carga ${route} sin errores`, async ({ page }) => {

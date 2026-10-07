@@ -8,7 +8,7 @@
 
 import { useState, useEffect } from "react";
 import { trackEvent } from "@/lib/analytics";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { track } from "@/lib/joel";
 import { Bi, MenuIcon } from "@/components/ui/Icons";
 import { QUOTE_SECTORS, QUOTE_URGENCY, quoteConfig } from "@/data/quote";
@@ -81,7 +81,8 @@ export function QuoteSimulator() {
       `Solicitud de cotización — ${title}\n` + (solutionInfo ? `Solución de interés: ${solutionInfo.title}\n` : "") + `\nDATOS DE LA SOLICITUD\n` +
       summary.map(([k, v]) => `- ${k}: ${v}`).join("\n") +
       `\n\nCONTACTO\n` + contactRows.map(([k, v]) => `- ${k}: ${v}`).join("\n") +
-      `\n\nSiguiente paso sugerido: ${nextStep.t}`;
+      `\n\nSiguiente paso sugerido: ${nextStep.t}` +
+      `\n\nAutorización de tratamiento de datos: otorgada en el sitio web (política de privacidad, transarchivos.com/privacidad).`;
     return `mailto:info@transarchivos.com?subject=${encodeURIComponent("Solicitud de cotización — " + title)}&body=${encodeURIComponent(body)}`;
   };
 
@@ -247,7 +248,7 @@ export function QuoteSimulator() {
             {step === 2 && (
               <form onSubmit={e => { e.preventDefault(); setStep(3); }}>
                 <p className="text-lg font-bold mb-1" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif" }}>¿A quién contactamos?</p>
-                <p className="text-sm mb-5" style={{ color: "#8A8A8A" }}>Usaremos estos datos solo para responder su solicitud.</p>
+                <p className="text-sm mb-5" style={{ color: "#6B6B6B" }}>Usaremos estos datos solo para responder su solicitud.</p>
                 <div className="grid sm:grid-cols-2 gap-x-4 gap-y-4">
                   <div>
                     <label htmlFor="cot-empresa" className={labelCls} style={labelStyle}>Empresa</label>
@@ -277,6 +278,11 @@ export function QuoteSimulator() {
                     <input id="cot-telefono" required type="tel" value={contact.telefono ?? ""} onChange={e => setC("telefono", e.target.value)} className={inputCls} style={inputStyle} />
                   </div>
                 </div>
+                {/* Autorización de tratamiento de datos (Ley 1581 de 2012): obligatoria, sin marcar por defecto */}
+                <label htmlFor="cot-autorizacion" className="mt-5 flex items-start gap-2.5 text-xs cursor-pointer" style={{ color: "#4B4B4B", lineHeight: 1.55 }}>
+                  <input id="cot-autorizacion" type="checkbox" required checked={contact.autorizacion === "si"} onChange={e => setC("autorizacion", e.target.checked ? "si" : "")} className="mt-0.5 h-4 w-4 shrink-0 accent-[#272B7C]" />
+                  <span>Autorizo a Transarchivos Ltda. a tratar mis datos personales para responder esta solicitud, según su <Link to="/privacidad" target="_blank" style={{ color: "#1800AD", fontWeight: 600 }}>política de privacidad y tratamiento de datos</Link>.</span>
+                </label>
                 <div className="flex justify-between gap-3 mt-6">
                   <button type="button" onClick={() => setStep(1)} className={secondaryBtn} style={{ background: "#fff", color: "#272B7C", border: "1.5px solid #DDE0F2", fontFamily: "Montserrat, sans-serif" }}>
                     <Bi n="arrow-left" size={14} color="#272B7C" /> Atrás

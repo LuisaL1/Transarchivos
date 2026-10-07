@@ -7,6 +7,7 @@ import { ArticlePage } from "@/pages/ArticlePage";
 import { HomePage } from "@/pages/HomePage";
 import { NosotrosPage } from "@/pages/NosotrosPage";
 import { NotFoundPage } from "@/pages/NotFoundPage";
+import { PrivacyPage } from "@/pages/PrivacyPage";
 import { ServiceDetailPage } from "@/pages/ServiceDetailPage";
 
 export default function App() {
@@ -20,6 +21,7 @@ export default function App() {
       <Route path="/nosotros" element={<NosotrosPage />} />
       <Route path="/servicios/:slug" element={<ServiceDetailPage />} />
       <Route path="/blog/:slug" element={<ArticlePage />} />
+      <Route path="/privacidad" element={<PrivacyPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
     <CookieBanner />

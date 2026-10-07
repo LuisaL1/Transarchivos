@@ -15,7 +15,9 @@ import joelImg from "@/assets/images/joel.png"; // silueta en súper zoom
 // Con "reducir movimiento" se muestra el mapa sin animación.
 
 const BOGOTA = { left: 0.486, top: 0.495 }; // posición del punto dentro del mapa
-const VIDEO = "/videos/archivosvi4.mp4";
+// Flota de Transarchivos (toma del video institucional), en bucle con
+// movimiento de cámara lento; versión vertical para celular.
+const VIDEO = { desktop: "/videos/transarchivos-flota.mp4", mobile: "/videos/transarchivos-flota-movil.mp4" };
 
 const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 // Entra lento (se ve nacer el círculo en Bogotá) y acelera al final.
@@ -108,8 +110,13 @@ export function MapReveal() {
         {/* Video revelado desde Bogotá */}
         {!reduced && (
           <div aria-hidden={endText < 0.5} inert={endText < 0.5} className="absolute inset-0" style={{ clipPath: `circle(${reveal * center.r}px at ${center.x}px ${center.y}px)`, pointerEvents: endText > 0.5 ? "auto" : "none" }}>
-            <video src={VIDEO} autoPlay muted loop playsInline className="absolute inset-0 w-full h-full" style={{ objectFit: "cover" }}
-              ref={el => { if (el) { el.muted = true; el.setAttribute("muted", ""); } }} />
+            <video autoPlay muted loop playsInline preload="metadata"
+              ref={el => { if (el) { el.muted = true; el.setAttribute("muted", ""); el.defaultPlaybackRate = 0.7; el.playbackRate = 0.7; } }}
+              onLoadedMetadata={e => { e.currentTarget.playbackRate = 0.7; }}
+              className="absolute inset-0 w-full h-full" style={{ objectFit: "cover" }}>
+              <source src={VIDEO.mobile} type="video/mp4" media="(max-width: 767px)" />
+              <source src={VIDEO.desktop} type="video/mp4" />
+            </video>
             <div className="absolute inset-0" style={{ background: "rgba(39,43,124,0.6)" }} />
             <div className="relative h-full max-w-6xl mx-auto px-6 flex flex-col justify-center items-center text-center"
               style={{ opacity: endText, transform: `translateY(${(1 - endText) * 24}px)` }}>
