@@ -35,7 +35,7 @@ Navegador ──POST /api/contact──► Función de Vercel (api/contact.ts) �
    | `BREVO_API_KEY` | La clave de API de Brevo | Sí |
    | `LEADS_TO` | Correo que recibe las solicitudes (por defecto `mercadeo@transarchivos.com`) | No |
    | `LEADS_FROM` | Remitente verificado en Brevo (por defecto `no-reply@transarchivos.com`) | No |
-   | `LEADS_FROM_NAME` | Nombre del remitente (por defecto "Sitio web Transarchivos") | No |
+   | `LEADS_FROM_NAME` | Nombre del remitente (por defecto "Transarchivos") | No |
 
 4. Volver a desplegar. Enviar una prueba desde el formulario y revisar la bandeja (y la carpeta de spam la primera vez).
 

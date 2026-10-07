@@ -5,7 +5,7 @@
 //   BREVO_API_KEY     clave de API de Brevo (obligatoria)
 //   LEADS_TO          correo que recibe las solicitudes (por defecto mercadeo@transarchivos.com)
 //   LEADS_FROM        remitente verificado en Brevo (por defecto no-reply@transarchivos.com)
-//   LEADS_FROM_NAME   nombre del remitente (por defecto "Sitio web Transarchivos")
+//   LEADS_FROM_NAME   nombre del remitente (por defecto "Transarchivos")
 
 type Payload = { kind?: string; subject?: string; fields?: Record<string, unknown>; replyTo?: { email?: string; name?: string }; website?: string };
 
@@ -26,12 +26,21 @@ function confirmation(kind: string, name: string, fields: Record<string, string>
 <p style="margin:0 0 12px">Hola${first ? ` ${first}` : ""},</p>
 <p style="margin:0 0 12px">Gracias por escribirnos. Recibimos ${about} y un asesor de nuestro equipo le responderá a este correo a la mayor brevedad.</p>
 <p style="margin:0 0 18px">Si necesita atención inmediata, puede escribirnos por WhatsApp o llamarnos:</p>
-<p style="margin:0 0 6px"><a href="https://wa.me/576013164530" style="color:#272B7C;font-weight:bold">WhatsApp (601) 316-4530</a></p>
+<p style="margin:0 0 6px"><a href="https://wa.me/573243586973" style="color:#272B7C;font-weight:bold">WhatsApp 324 358 6973</a></p>
 <p style="margin:0 0 18px;color:#6B6B6B">Teléfonos: (601) 316-4530 · 324 358 6973</p>
 <p style="margin:0;color:#6B6B6B;font-size:12px">Este es un mensaje automático de confirmación. Tratamos sus datos según nuestra <a href="https://www.transarchivos.com/privacidad" style="color:#1800AD">política de privacidad</a>.</p>
 </div></div></div>`;
-  const text = `Hola${name ? ` ${name.split(" ")[0]}` : ""},\n\nGracias por escribirnos. Recibimos ${aboutText} y un asesor le responderá a este correo a la mayor brevedad.\n\nAtención inmediata: WhatsApp (601) 316-4530 · Teléfonos (601) 316-4530 · 324 358 6973\n\nMensaje automático de Transarchivos Ltda.`;
+  const text = `Hola${name ? ` ${name.split(" ")[0]}` : ""},\n\nGracias por escribirnos. Recibimos ${aboutText} y un asesor le responderá a este correo a la mayor brevedad.\n\nAtención inmediata: WhatsApp 324 358 6973 · Teléfonos (601) 316-4530 · 324 358 6973\n\nMensaje automático de Transarchivos Ltda.`;
   return { subject, html, text };
+}
+
+// Diagnóstico sin enviar correos: GET /api/contact → ¿hay clave? ¿Brevo la acepta?
+export async function GET(): Promise<Response> {
+  const key = process.env.BREVO_API_KEY;
+  if (!key) return json({ configured: false });
+  const r = await fetch("https://api.brevo.com/v3/account", { headers: { "api-key": key, Accept: "application/json" } }).catch(() => null);
+  const d = r ? await r.json().catch(() => ({})) as { code?: string; message?: string } : {};
+  return json({ configured: true, brevo: r?.ok ? "ok" : `${r?.status ?? "sin respuesta"} ${d.code ?? ""} ${d.message ?? ""}`.trim(), from: process.env.LEADS_FROM || "no-reply@transarchivos.com", to: process.env.LEADS_TO || "mercadeo@transarchivos.com" });
 }
 
 export async function POST(req: Request): Promise<Response> {
@@ -65,7 +74,7 @@ export async function POST(req: Request): Promise<Response> {
   const html = `<div style="font-family:Arial,sans-serif;color:#37352F"><h2 style="color:#272B7C;margin:0 0 12px">${esc(subject)}</h2><table style="border-collapse:collapse;font-size:14px">${rows}</table><p style="color:#6B6B6B;font-size:12px;margin-top:16px">Enviado desde el sitio web de Transarchivos. Responda este correo para contestarle directamente a la persona.</p></div>`;
   const text = `${subject}\n\n` + Object.entries(fields).map(([k, v]) => `${k}: ${v}`).join("\n");
 
-  const sender = { email: process.env.LEADS_FROM || "no-reply@transarchivos.com", name: process.env.LEADS_FROM_NAME || "Sitio web Transarchivos" };
+  const sender = { email: process.env.LEADS_FROM || "no-reply@transarchivos.com", name: process.env.LEADS_FROM_NAME || "Transarchivos" };
   const leadsTo = process.env.LEADS_TO || "mercadeo@transarchivos.com";
   const send = (payload: Record<string, unknown>) => fetch("https://api.brevo.com/v3/smtp/email", {
     method: "POST",
@@ -80,7 +89,12 @@ export async function POST(req: Request): Promise<Response> {
     replyTo: { email: replyEmail, name: name || replyEmail },
     subject, htmlContent: html, textContent: text, tags: [`sitio-${kind}`],
   });
-  if (!res.ok) return json({ ok: false, error: "provider", status: res.status }, 502);
+  if (!res.ok) {
+    // Motivo que da Brevo (p. ej. remitente no verificado, clave inválida, IP no autorizada)
+    const detail = await res.json().catch(() => ({})) as { code?: string; message?: string };
+    console.error("Brevo rechazó el envío:", res.status, detail);
+    return json({ ok: false, error: "provider", status: res.status, detail: `${detail.code ?? ""} ${detail.message ?? ""}`.trim().slice(0, 200) }, 502);
+  }
 
   // 2) Confirmación automática al visitante (si falla, la solicitud ya llegó: no se reporta error)
   try {

@@ -18,6 +18,7 @@ export function ContactModal() {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ nombre: "", empresa: "", email: "", telefono: "", motivo: CONTACT_REASONS[1], mensaje: "", autorizacion: false, website: "" });
   const [status, setStatus] = useState<Status>("idle");
+  const [errCode, setErrCode] = useState("");
   const firstRef = useRef<HTMLInputElement>(null);
 
   // Abre la ventana desde cualquier enlace "#contacto…" del sitio
@@ -57,6 +58,7 @@ export function ContactModal() {
       "Teléfono": form.telefono || "—", "Mensaje": form.mensaje, "Autorización de datos": "Sí",
     }, { email: form.email, name: form.nombre }, form.website);
     setStatus(r.ok ? "sent" : "error");
+    setErrCode(r.ok ? "" : [r.error, r.detail].filter(Boolean).join(" · "));
     if (r.ok) trackEvent("generate_lead", { method: "formulario", motivo: form.motivo });
   };
 
@@ -127,6 +129,7 @@ export function ContactModal() {
             {status === "error" && (
               <p role="alert" className="mt-4 rounded-xl px-3.5 py-3 text-xs" style={{ background: "#FFF6D6", color: "#8A6D00", lineHeight: 1.55 }}>
                 No pudimos enviar su mensaje en este momento. Intente de nuevo o escríbanos por <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" style={{ color: "#272B7C", fontWeight: 700 }}>WhatsApp</a>.
+                {errCode && <span className="block mt-1.5 opacity-70" style={{ fontSize: 10 }}>Código: {errCode}</span>}
               </p>
             )}
             <button type="submit" disabled={status === "sending"} className="mt-5 w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-bold transition-opacity disabled:opacity-60"

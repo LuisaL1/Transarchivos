@@ -63,7 +63,7 @@ describe("Joel · indicadores", () => {
 describe("Joel · WhatsApp", () => {
   it("ofrece escribir por WhatsApp en lugar de llamar", () => {
     const r = ask("tienen whatsapp?");
-    expect(r.actions?.some(a => a.href?.startsWith("https://wa.me/576013164530"))).toBe(true);
+    expect(r.actions?.some(a => a.href?.startsWith("https://wa.me/573243586973"))).toBe(true);
     expect(JSON.stringify(ask("quiero hablar con un asesor"))).not.toContain("tel:");
   });
 });

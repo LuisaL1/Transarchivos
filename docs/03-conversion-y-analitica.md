@@ -23,7 +23,7 @@ Visita ─► Interés (servicio, solución, artículo, mapa)
 | "Cotizar esta solución" | Soluciones (toda la tarjeta es clicable) | Cotizador con servicio y solución |
 | Diagnóstico documental | Sección propia, tarjeta del menú, columna del artículo | Cotizador |
 | Chat de Joel | Botón flotante, Joel del hero, FAQ, soporte | Guion de cotización o asesor |
-| WhatsApp y correo | Navbar (soporte), menú de celular, chat de Joel, FAQ, pie, llamados finales | `https://wa.me/576013164530` con mensaje prellenado (`data/contact.ts`) / `mailto:` |
+| WhatsApp y correo | Navbar (soporte), menú de celular, chat de Joel, FAQ, pie, llamados finales | `https://wa.me/573243586973` con mensaje prellenado (`data/contact.ts`) / `mailto:` |
 | Suscripción al blog | Sección Blog | **Sin conectar** (solo muestra un mensaje de éxito) |
 
 ## Cotizador (`QuoteSimulator`)

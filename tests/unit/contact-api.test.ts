@@ -56,3 +56,11 @@ describe("/api/contact", () => {
     expect((await POST(req(valid))).status).toBe(502);
   });
 });
+
+describe("/api/contact · diagnóstico (GET)", () => {
+  it("indica si falta la clave", async () => {
+    vi.stubEnv("BREVO_API_KEY", "");
+    const { GET } = await import("../../api/contact");
+    expect(await (await GET()).json()).toEqual({ configured: false });
+  });
+});
