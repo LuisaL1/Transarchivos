@@ -15,7 +15,7 @@ import { SERVICE_DETAILS } from "@/data/serviceDetails";
 import { services } from "@/data/services";
 import { SOLUTIONS } from "@/data/solutions";
 import { SERVICE_JOEL } from "@/data/joelPoses";
-import { JoelFigure } from "@/components/ui/JoelBridge";
+import { JoelShowcase } from "@/components/ui/JoelBridge";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 export function ServiceDetailPage() {
@@ -139,7 +139,7 @@ export function ServiceDetailPage() {
             {h2(<>Beneficios para <span style={{ background: "linear-gradient(transparent 62%, #FFDE59 62%)" }}>su empresa</span></>)}
             <p className="text-sm mt-4" style={{ color: "#6B6B6B", lineHeight: 1.7 }}>{service.desc}</p>
             {SERVICE_JOEL[service.slug] && (
-              <div className="mt-10 pl-6"><JoelFigure src={SERVICE_JOEL[service.slug].src} height={SERVICE_JOEL[service.slug].height} /></div>
+              <JoelShowcase src={SERVICE_JOEL[service.slug].src} height={SERVICE_JOEL[service.slug].height} />
             )}
           </div>
           <div className="grid sm:grid-cols-2 gap-3">

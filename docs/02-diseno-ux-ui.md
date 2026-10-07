@@ -88,6 +88,8 @@ Todo respeta `prefers-reduced-motion`.
    - **Unión:** pestaña de carpeta y carpeta en contorno recortada a la forma azul.
    - **Celular:** una sola columna, con el video detrás bajo un velo azul.
 2. **Barra de confianza:** Ley 594 de 2000 · Norma AGN · Certificado de destrucción · Custodia con vigilancia 24 h.
+   - **Clientes** (`ClientsMarquee`, datos en `data/clients.ts`, logos en `assets/images/clientes/`): dos filas de logos en grises que se desplazan en sentidos opuestos y recuperan su color al pasar el mouse. Fuente: "Histórico de Clientes" del cliente.
+   - **Indicadores** (`Stats`, datos en `data/stats.ts`): +40 años de experiencia · +3.200 contratos comerciales · +32.000 millones de folios custodiados. Mismo formato que Transpack.
 3. **Mapa → video** (cobertura en Bogotá), con la silueta de Joel en súper zoom a la izquierda.
 4. **Diagnóstico documental** (producto de entrada): propuesta, 4 pasos e "informe" de hallazgos.
 5. **Servicios:** grilla de 9 tarjetas, luego la pose de Joel con cajas.
@@ -108,7 +110,8 @@ Todo respeta `prefers-reduced-motion`.
   - a la derecha, una tarjeta translúcida de cifras o datos;
   - abajo, el borde con forma de carpeta.
 - **Secciones** con rótulo dorado + H2 y tarjetas blancas; Joel en una pose
-  relacionada con el tema (`SERVICE_JOEL` en `data/joelPoses.ts`).
+  relacionada con el tema. En los servicios va en el escenario
+  "Joel en acción" (`JoelShowcase`, poses en `SERVICE_JOEL` de `data/joelPoses.ts`).
 - **Llamado final:** bloque azul con pestaña de carpeta, silueta de Joel,
   "Solicitar cotización" y teléfono.
 - **Por página:**

@@ -164,3 +164,21 @@ body.menu-open [data-chat-launcher] { display: none !important; }
 /* Pestañas del selector del hero: foco de teclado como anillo blanco interno. */
 .qs-tab:focus-visible { outline: 2px solid #fff; outline-offset: -3px; }
 
+
+/* Carrusel de clientes (ClientsMarquee): desplazamiento continuo, bordes
+   desvanecidos (máscara, no un degradado visible) y pausa al pasar el mouse. */
+@keyframes marquee { to { transform: translateX(-100%); } }
+.marquee-track { animation: marquee 360s linear infinite; }
+.marquee-reverse { animation-direction: reverse; }
+.marquee:hover .marquee-track { animation-play-state: paused; }
+.marquee {
+  mask-image: linear-gradient(90deg, transparent 0%, #000 8%, #000 92%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 8%, #000 92%, transparent 100%);
+}
+.client-logo { filter: grayscale(1); opacity: 0.6; transition: filter 0.3s ease, opacity 0.3s ease; }
+.client-logo:hover { filter: none; opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none; }
+  .marquee { overflow-x: auto; }
+  .marquee-track[aria-hidden="true"] { display: none; }
+}

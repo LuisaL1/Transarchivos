@@ -3,7 +3,7 @@
 // cobertura). Acordeón: una abierta a la vez.
 
 import { useState } from "react";
-import avatarImg from "@/assets/images/joel/joel-bata.png";
+import avatarImg from "@/assets/images/joel/joel-bata.webp";
 import { ChatAvatarFace } from "@/components/ui/Brand";
 import { Bi } from "@/components/ui/Icons";
 import { SectionDecor } from "@/components/ui/SectionDecor";

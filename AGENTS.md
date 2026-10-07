@@ -39,6 +39,8 @@ src/
 │   ├── quote.ts              Preguntas y unidades del cotizador
 │   ├── blog.ts               Artículos del blog
 │   ├── nosotros.ts           Menú de Nosotros
+│   ├── stats.ts              Indicadores de la portada (años, contratos, folios)
+│   ├── clients.ts            Clientes históricos (carrusel de logos; imágenes en assets/images/clientes)
 │   └── search.ts             Índice del buscador
 ├── lib/joel.ts           "Cerebro" del asesor virtual (sin IA externa)
 ├── seo/                  Datos de la empresa (site.ts) y metadatos por ruta (meta.ts)

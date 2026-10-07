@@ -99,11 +99,12 @@ No hay estado global (ni Context ni store). Cada página maneja su propio estado
 | --- | --- | --- |
 | `SiteHeader` | Navbar: flotante (píldora) arriba y barra blanca completa al hacer scroll; megamenús; buscador; soporte; menú de celular | Prop `solid` para páginas internas. Los menús abren al pasar el mouse **y** con clic. El radio de la píldora no se anima a propósito (ver comentarios). |
 | `NavMenus` | Contenido de los megamenús + `MenuFeature` (tarjeta azul con detalle de esquina) | Solo azul marino `#272B7C` |
-| `Hero` | `HeroVideoBackground` (2 videos en bucle con póster inmediato), `HeroRotatingWord`, `HeroQuickStart` (selector con pestañas) | Panel de detalle de alto fijo para que el título no salte al cambiar de pestaña |
+| `Hero` | `HeroVideoBackground` (video institucional en bucle, sin audio: `transarchivos-hero.mp4` 1600×900 en computador y `transarchivos-hero-movil.mp4` 960×540 en celular, con póster inmediato; fundidos cruzados entre clips, bucle sin salto y reproducción al 80 % con `HERO_VIDEO_RATE`), `HeroRotatingWord`, `HeroQuickStart` (selector con pestañas) | Panel de detalle de alto fijo para que el título no salte al cambiar de pestaña |
 | `MapReveal` | Sección fija de 260vh: mapa de Colombia → pin de Bogotá → revelado circular de video (clip-path) | Capa oculta con `inert` para que no reciba foco |
 | `QuoteSimulator` | Cotizador guiado de 4 pasos (ver 03) | Preguntas por servicio en `data/quote.ts` |
 | `ChatBot` | Chat de Joel: guion por pasos + texto libre vía `lib/joel.ts` | `heroJoel`: no muestra la invitación en pantallas medianas o grandes, porque Joel ya está en el hero |
 | `JoelBridge` / `JoelFigure` | Poses de Joel entre secciones y dentro de páginas | Ocultas en celular |
+| `JoelShowcase` | "Joel en acción" en cada servicio: tarjeta azul con pestaña de carpeta y Joel sobresaliendo por arriba | Pose y alto por servicio en `SERVICE_JOEL` (`data/joelPoses.ts`); visible también en celular |
 | `SectionDecor` | Fondo de sección: color plano, puntos y carpeta en contorno | Variantes `cream` / `lavender` |
 | `useScrollReveal` | Fundido de entrada escalonado al hacer scroll | Respeta `prefers-reduced-motion` |
 

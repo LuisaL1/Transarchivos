@@ -12,6 +12,8 @@ import { track } from "@/lib/joel";
 import { ChatBot } from "@/components/chat/ChatBot";
 import { HeroQuickStart, HeroRotatingWord, HeroVideoBackground } from "@/components/home/Hero";
 import { MapReveal } from "@/components/home/MapReveal";
+import { Stats } from "@/components/home/Stats";
+import { ClientsMarquee } from "@/components/home/ClientsMarquee";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { BlogSection } from "@/components/sections/BlogSection";
 import { FaqSection } from "@/components/sections/FaqSection";
@@ -161,6 +163,10 @@ export function HomePage() {
           </div>
         </div>
       </section>
+
+      <ClientsMarquee />
+
+      <Stats />
 
       <MapReveal />
 

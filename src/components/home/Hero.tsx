@@ -3,43 +3,35 @@ import { Link } from "react-router-dom";
 import { Bi } from "@/components/ui/Icons";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
-export const HERO_VIDEOS = ["/videos/archivosvi2.mp4", "/videos/archivosvi4.mp4"];
+// Video del hero: montaje institucional (archivo, digitalización, Mido y
+// vehículos). Dos versiones sin audio: liviana para celular y HD para
+// computador; el navegador elige con el atributo "media" de <source>.
+// El montaje viene con fundidos cruzados entre clips y un final que empalma
+// con el inicio (bucle sin salto). Se reproduce al 80 % para un ritmo más
+// cinematográfico (ajustable en HERO_VIDEO_RATE).
+export const HERO_VIDEO = { mobile: "/videos/transarchivos-hero-movil.mp4", desktop: "/videos/transarchivos-hero.mp4" };
+export const HERO_VIDEO_RATE = 0.8;
 
 export function HeroVideoBackground() {
-  const [idx, setIdx] = useState(0);
-  const refs = useRef<(HTMLVideoElement | null)[]>([]);
   const reduced = useReducedMotion();
-
-  useEffect(() => {
-    const v = refs.current[idx];
-    if (!v) return;
-    v.currentTime = 0;
-    v.play().catch(() => {});
-  }, [idx]);
-
-  const next = (idx + 1) % HERO_VIDEOS.length;
-
   return (
-    // Fondo inmediato: el primer cuadro del primer video (hero-poster.jpg,
+    // Fondo inmediato: el primer cuadro del video (hero-poster.jpg,
     // precargado en index.html), para que al recargar no se vea el azul
     // de base mientras el video carga (en celular y computador).
     <div className="absolute inset-0 md:left-1/2 overflow-hidden pointer-events-none" aria-hidden="true"
       style={{ backgroundColor: "#272B7C", backgroundImage: "url(/videos/hero-poster.jpg)", backgroundSize: "cover", backgroundPosition: "center" }}>
       {!reduced && (
-        <div className="absolute inset-0">
-          {HERO_VIDEOS.map((src, i) => (
-            <video key={src} src={src}
-              // React no escribe "muted" como atributo HTML: sin esto iPhone y
-              // Android bloquean la reproducción automática.
-              ref={el => { refs.current[i] = el; if (el) { el.muted = true; el.defaultMuted = true; el.setAttribute("muted", ""); } }}
-              muted playsInline autoPlay={i === 0} preload={i === idx || i === next ? "auto" : "none"}
-              poster={i === 0 ? "/videos/hero-poster.jpg" : undefined}
-              onEnded={() => { if (i === idx) setIdx(next); }}
-              onError={() => { if (i === idx) setIdx(next); }}
-              className="absolute inset-0 w-full h-full"
-              style={{ objectFit: "cover", opacity: i === idx ? 1 : 0, transition: "opacity 1.2s ease" }} />
-          ))}
-        </div>
+        <video
+          // React no escribe "muted" como atributo HTML: sin esto iPhone y
+          // Android bloquean la reproducción automática.
+          ref={el => { if (el) { el.muted = true; el.defaultMuted = true; el.setAttribute("muted", ""); el.defaultPlaybackRate = HERO_VIDEO_RATE; el.playbackRate = HERO_VIDEO_RATE; el.play().catch(() => {}); } }}
+          // Algunos navegadores reinician la velocidad al cargar la fuente.
+          onLoadedMetadata={e => { e.currentTarget.playbackRate = HERO_VIDEO_RATE; }}
+          muted playsInline autoPlay loop preload="auto" poster="/videos/hero-poster.jpg"
+          className="absolute inset-0 w-full h-full" style={{ objectFit: "cover" }}>
+          <source src={HERO_VIDEO.mobile} type="video/mp4" media="(max-width: 767px)" />
+          <source src={HERO_VIDEO.desktop} type="video/mp4" />
+        </video>
       )}
       {/* Velo: en celular el texto va encima del video (más oscuro); en la
           pantalla dividida el video está solo a la derecha (velo suave). */}

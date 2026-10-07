@@ -72,3 +72,44 @@ export function JoelFigure({ src, height = 240, flip = false, className = "" }: 
     </div>
   );
 }
+
+// ─── Joel en acción (página de cada servicio) ──────────────────────────────
+// Escenario de marca: tarjeta azul corporativo con la pestaña de carpeta, el
+// detalle de esquina amarillo y puntos; Joel, en la pose de ese servicio,
+// sobresale por arriba de la tarjeta (efecto "pop-out") con sombra de piso.
+// Sirve igual para escenas anchas (escritorio con equipo) y de cuerpo entero.
+export function JoelShowcase({ src, height = 300 }: { src: string; height?: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [shown, setShown] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || !("IntersectionObserver" in window) || window.matchMedia("(prefers-reduced-motion: reduce)").matches) { setShown(true); return; }
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setShown(true); io.disconnect(); } }, { rootMargin: "0px 0px -60px 0px" });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return (
+    <div ref={ref} aria-hidden="true" className="relative select-none" style={{ marginTop: height - 150 }}>
+      {/* Pestaña de carpeta sobre la tarjeta (mismo trazo del llamado final) */}
+      <svg className="absolute left-0 bottom-full block" width="180" height="30" viewBox="0 0 280 46" preserveAspectRatio="none">
+        <path d="M0 46 V18 Q0 0 18 0 H196 Q209 0 217 10 L242 38 Q249 46 262 46 Z" fill="#272B7C" />
+      </svg>
+      <div className="relative h-[190px] rounded-[0_28px_28px_28px]" style={{ background: "#272B7C" }}>
+        <div className="absolute inset-0 overflow-hidden rounded-[0_28px_28px_28px]">
+          <span className="absolute" style={{ right: -40, top: -40, width: 110, height: 110, transform: "rotate(45deg)", background: "rgba(255,222,89,0.22)" }} />
+          <span className="absolute" style={{ left: 22, bottom: 22, width: 110, height: 60, backgroundImage: "radial-gradient(rgba(255,255,255,0.22) 1.3px, transparent 1.6px)", backgroundSize: "14px 14px" }} />
+          {/* Sombra de piso */}
+          <span className="absolute left-1/2 -translate-x-1/2 rounded-full" style={{ bottom: 16, width: "38%", height: 16, background: "rgba(5,8,40,0.5)", filter: "blur(9px)" }} />
+        </div>
+        <img loading="lazy" decoding="async" src={src} alt="" draggable={false}
+          className="absolute left-1/2 w-auto max-w-[94%] object-contain object-bottom"
+          style={{
+            bottom: 18, height,
+            transform: `translateX(-50%) translateY(${shown ? 0 : 24}px)`, opacity: shown ? 1 : 0,
+            transition: "transform 0.7s cubic-bezier(0.2,0.8,0.2,1), opacity 0.6s ease",
+            filter: "drop-shadow(0 14px 18px rgba(5,8,40,0.35))",
+          }} />
+      </div>
+    </div>
+  );
+}
