@@ -9,6 +9,7 @@ import { serviceItems } from "@/data/services";
 import { SOLUTIONS } from "@/data/solutions";
 import { nosotrosGroups } from "@/data/nosotros";
 import { searchContent } from "@/data/search";
+import { whatsappUrl } from "@/data/contact";
 
 // ─── Navbar del sitio ─────────────────────────────────────────────────────────
 // Mismo navbar en todas las páginas (logo, menús desplegables, botón de
@@ -348,12 +349,12 @@ function MobileMenu({ onClose, onSearch, onChat }: { onClose: () => void; onSear
           {[
             { ic: "search", t: "Buscar", onClick: onSearch },
             { ic: "chat-dots", t: "Chat con Joel", onClick: onChat },
-            { ic: "telephone", t: "Llamar", href: "tel:+576013164530" },
+            { ic: "whatsapp", t: "WhatsApp", href: whatsappUrl() },
           ].map(q => {
             const inner = (<><Bi n={q.ic} size={18} color="#272B7C" /><span className="text-[11px] font-semibold" style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif" }}>{q.t}</span></>);
             const cls = "flex flex-col items-center gap-1.5 rounded-2xl py-3 transition-colors hover:bg-[#EEF0FB]";
             return q.href
-              ? <a key={q.t} href={q.href} className={cls} style={{ background: "#F7F8FF", textDecoration: "none" }}>{inner}</a>
+              ? <a key={q.t} href={q.href} {...(/^https?:/.test(q.href) ? { target: "_blank", rel: "noopener noreferrer" } : {})} className={cls} style={{ background: "#F7F8FF", textDecoration: "none" }}>{inner}</a>
               : <button key={q.t} type="button" onClick={q.onClick} className={cls} style={{ background: "#F7F8FF" }}>{inner}</button>;
           })}
         </div>

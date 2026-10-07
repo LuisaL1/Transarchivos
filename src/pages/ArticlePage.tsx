@@ -11,6 +11,7 @@ import { JOEL } from "@/data/joelPoses";
 import { type Item, type Post, blogPosts, readMinutes } from "@/data/blog";
 import { FAQS } from "@/data/faqs";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
+import { whatsappUrl } from "@/data/contact";
 
 // Detalle de esquina (el mismo del chat y del menú): un cuadrado amarillo
 // translúcido girado 45° asomando por la esquina superior derecha.
@@ -328,9 +329,9 @@ export function ArticlePage() {
                   style={{ background: "#FFDE59", color: "#272B7C", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
                   Solicitar cotización <Bi n="arrow-right" size={14} color="#272B7C" />
                 </Link>
-                <a href="tel:+576013164530" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold"
+                <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold"
                   style={{ background: "rgba(255,255,255,0.1)", color: "#fff", border: "1px solid rgba(255,255,255,0.3)", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
-                  <Bi n="telephone" size={14} color="#fff" /> (601) 316-4530
+                  <Bi n="whatsapp" size={14} color="#fff" /> Escribir por WhatsApp
                 </a>
               </div>
             </div>

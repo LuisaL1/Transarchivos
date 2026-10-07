@@ -40,6 +40,7 @@ src/
 │   ├── blog.ts               Artículos del blog
 │   ├── nosotros.ts           Menú de Nosotros
 │   ├── stats.ts              Indicadores de la portada (años, contratos, folios)
+│   ├── contact.ts            Número y enlace de WhatsApp (whatsappUrl)
 │   ├── clients.ts            Clientes históricos (carrusel de logos; imágenes en assets/images/clientes)
 │   └── search.ts             Índice del buscador
 ├── lib/joel.ts           "Cerebro" del asesor virtual (sin IA externa)

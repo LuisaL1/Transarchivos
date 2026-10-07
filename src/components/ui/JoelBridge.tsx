@@ -38,7 +38,7 @@ export function JoelBridge({ src, side = "right", height = 210, sink = 34, offse
               transform: `${flip ? "scaleX(-1) " : ""}translateX(${shown ? 0 : dir * 40 * (flip ? -1 : 1)}px)`,
               opacity: shown ? 1 : 0,
               transition: "transform 0.9s cubic-bezier(0.2,0.7,0.2,1), opacity 0.9s ease",
-              filter: "drop-shadow(0 14px 18px rgba(10,13,61,0.18))",
+              filter: "contrast(1.04) saturate(1.06) drop-shadow(0 2px 2px rgba(10,13,61,0.18)) drop-shadow(0 14px 18px rgba(10,13,61,0.18))",
             }} />
         </div>
       </div>
@@ -107,7 +107,8 @@ export function JoelShowcase({ src, height = 300 }: { src: string; height?: numb
             bottom: 18, height,
             transform: `translateX(-50%) translateY(${shown ? 0 : 24}px)`, opacity: shown ? 1 : 0,
             transition: "transform 0.7s cubic-bezier(0.2,0.8,0.2,1), opacity 0.6s ease",
-            filter: "drop-shadow(0 14px 18px rgba(5,8,40,0.35))",
+            // Ligero contraste y saturación + sombra de contacto: aspecto más 3D
+            filter: "contrast(1.04) saturate(1.06) drop-shadow(0 2px 3px rgba(5,8,40,0.35)) drop-shadow(0 16px 20px rgba(5,8,40,0.32))",
           }} />
       </div>
     </div>

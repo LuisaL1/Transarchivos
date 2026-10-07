@@ -5,11 +5,12 @@
 // header recorta lo que sobresale) y se cierra al hacer clic fuera o scroll.
 
 import { Bi } from "@/components/ui/Icons";
+import { WHATSAPP_LABEL, whatsappUrl } from "@/data/contact";
 
 export function SupportPopover({ anchor, onClose, onChat, onHoverIn, onHoverOut }: { anchor: DOMRect; onClose: () => void; onChat: () => void; onHoverIn?: () => void; onHoverOut?: () => void }) {
   const items = [
     { ic: "chat-dots", t: "Chatee con Joel", d: "Asesor con IA, responde al instante", onClick: () => { onChat(); onClose(); } },
-    { ic: "telephone", t: "Llámenos", d: "(601) 316-4530", href: "tel:+576013164530" },
+    { ic: "whatsapp", t: "Escríbanos por WhatsApp", d: WHATSAPP_LABEL, href: whatsappUrl() },
     { ic: "envelope", t: "Escríbanos", d: "info@transarchivos.com", href: "mailto:info@transarchivos.com" },
   ];
   return (
@@ -37,7 +38,7 @@ export function SupportPopover({ anchor, onClose, onChat, onHoverIn, onHoverOut 
           );
           const cls = "w-full flex items-center gap-3.5 px-6 py-3 text-left transition-colors hover:bg-[#F7F8FF]";
           return it.href
-            ? <a key={it.t} href={it.href} className={cls} style={{ textDecoration: "none" }} onClick={onClose}>{inner}</a>
+            ? <a key={it.t} href={it.href} {...(/^https?:/.test(it.href!) ? { target: "_blank", rel: "noopener noreferrer" } : {})} className={cls} style={{ textDecoration: "none" }} onClick={onClose}>{inner}</a>
             : <button key={it.t} type="button" className={cls} onClick={it.onClick}>{inner}</button>;
         })}
       </div>

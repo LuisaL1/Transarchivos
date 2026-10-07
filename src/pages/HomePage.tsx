@@ -25,6 +25,7 @@ import { Bi, BiTile } from "@/components/ui/Icons";
 import { Divider, FolderOutline, SectionDecor } from "@/components/ui/SectionDecor";
 import { services } from "@/data/services";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
+import { WHATSAPP_LABEL, whatsappUrl } from "@/data/contact";
 
 export function HomePage() {
   // Estado del chat en App (no dentro de ChatBot): así el avatar del hero
@@ -164,11 +165,11 @@ export function HomePage() {
         </div>
       </section>
 
+      <MapReveal />
+
       <ClientsMarquee />
 
       <Stats />
-
-      <MapReveal />
 
       {/* ── DIAGNÓSTICO DOCUMENTAL (producto de entrada) ─────────────────────
           Antes vivía al final de "Cómo trabajamos"; ahora se presenta antes
@@ -565,10 +566,10 @@ export function HomePage() {
                   Cl. 21 # 39A-40, Bogotá, Colombia
                 </li>
                 <li>
-                  <a href="tel:+576013164530" className="flex items-start gap-2.5 text-sm transition-colors" style={{ color: "#6B6B6B" }}
+                  <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" className="flex items-start gap-2.5 text-sm transition-colors" style={{ color: "#6B6B6B" }}
                     onMouseEnter={e => e.currentTarget.style.color = "#1800AD"} onMouseLeave={e => e.currentTarget.style.color = "#6B6B6B"}>
-                    <Bi n="telephone-fill" size={14} color="#C8960A" style={{ marginTop: 3, flexShrink: 0 }} />
-                    (601) 316-4530
+                    <Bi n="whatsapp" size={14} color="#C8960A" style={{ marginTop: 3, flexShrink: 0 }} />
+                    WhatsApp {WHATSAPP_LABEL}
                   </a>
                 </li>
                 <li>

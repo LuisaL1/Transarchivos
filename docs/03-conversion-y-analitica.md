@@ -23,7 +23,7 @@ Visita ─► Interés (servicio, solución, artículo, mapa)
 | "Cotizar esta solución" | Soluciones (toda la tarjeta es clicable) | Cotizador con servicio y solución |
 | Diagnóstico documental | Sección propia, tarjeta del menú, columna del artículo | Cotizador |
 | Chat de Joel | Botón flotante, Joel del hero, FAQ, soporte | Guion de cotización o asesor |
-| Teléfono y correo | Navbar (soporte), pie, llamados finales | `tel:` / `mailto:` |
+| WhatsApp y correo | Navbar (soporte), menú de celular, chat de Joel, FAQ, pie, llamados finales | `https://wa.me/576013164530` con mensaje prellenado (`data/contact.ts`) / `mailto:` |
 | Suscripción al blog | Sección Blog | **Sin conectar** (solo muestra un mensaje de éxito) |
 
 ## Cotizador (`QuoteSimulator`)
@@ -71,7 +71,7 @@ Se puede entrar directo al paso 2 con `?servicio=<slug>&solucion=<id>#cotizador`
 | --- | --- | --- |
 | `page_view` | Cada ruta | `page_path`, `page_location`, `page_title` |
 | `generate_lead` | Clic en "enviar" del resumen del cotizador | `method: "cotizador"`, `service`, `solution` |
-| `contact_click` | Cualquier enlace `tel:` o `mailto:` del sitio | `method`: `phone` · `email` · `email_quote` (correo con asunto, del chat o del cotizador) |
+| `contact_click` | Cualquier enlace de WhatsApp, `tel:` o `mailto:` del sitio | `method`: `whatsapp` · `phone` · `email` · `email_quote` (correo con asunto, del chat o del cotizador) |
 | `chat_open` | Se abre el chat | — |
 | `search` | Se elige un resultado del buscador | `search_term` |
 

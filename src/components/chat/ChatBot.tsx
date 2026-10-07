@@ -18,6 +18,7 @@ import { QUOTE_UNIT, quoteConfig } from "@/data/quote";
 import { SERVICE_DETAILS } from "@/data/serviceDetails";
 import { services } from "@/data/services";
 import { SOLUTIONS } from "@/data/solutions";
+import { whatsappUrl } from "@/data/contact";
 
 export type ChatData = Record<string, string>;
 
@@ -55,7 +56,7 @@ export const quoteMailto = (d: ChatData) => {
 };
 
 export const CONTACT_ACTIONS: ChatAction[] = [
-  { label: "Llamar al (601) 316-4530", icon: "telephone-fill", href: "tel:+576013164530" },
+  { label: "Escribir por WhatsApp", icon: "whatsapp", href: whatsappUrl() },
   { label: "Escribir a info@transarchivos.com", icon: "envelope-fill", href: "mailto:info@transarchivos.com" },
 ];
 
@@ -96,13 +97,13 @@ export const CHAT_STEPS: Record<string, ChatStep> = {
       `Listo, ${d.name}. Este es el resumen de su solicitud:`,
       `• Servicio: ${unitBySlug(d.service)?.title}\n• Volumen: ${d.volume}\n• Urgencia: ${d.urgency}\n• Empresa: ${d.company}`,
       d.urgency === "Urgente"
-        ? "Como es urgente, le recomiendo llamarnos directamente. También puede enviarnos el resumen por correo:"
+        ? "Como es urgente, le recomiendo escribirnos por WhatsApp. También puede enviarnos el resumen por correo:"
         : "Envíenos el resumen por correo y un asesor le responderá con el alcance y las condiciones. Si quiere dar más detalles, puede completar la cotización detallada:",
     ],
     actions: d => [
       { label: "Enviar solicitud por correo", icon: "envelope-arrow-up-fill", href: quoteMailto(d) },
       { label: "Completar cotización detallada", icon: "ui-checks", href: "#cotizador" },
-      { label: "Llamar al (601) 316-4530", icon: "telephone-fill", href: "tel:+576013164530" },
+      { label: "Escribir por WhatsApp", icon: "whatsapp", href: whatsappUrl() },
     ],
     options: [{ label: "Volver al inicio", next: "reset" }],
   },
@@ -213,7 +214,7 @@ export function ChatBubble({ msg }: { msg: ChatMsg }) {
               );
               return a.to
                 ? <Link key={a.label} to={a.to} className={cls} style={{ textDecoration: "none" }}>{inner}</Link>
-                : <a key={a.label} href={a.href} className={cls} style={{ textDecoration: "none" }}>{inner}</a>;
+                : <a key={a.label} href={a.href} {...(/^https?:/.test(a.href ?? "") ? { target: "_blank", rel: "noopener noreferrer" } : {})} className={cls} style={{ textDecoration: "none" }}>{inner}</a>;
             })}
           </div>
         )}

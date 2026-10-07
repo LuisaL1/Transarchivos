@@ -8,6 +8,7 @@ import { ChatAvatarFace } from "@/components/ui/Brand";
 import { Bi } from "@/components/ui/Icons";
 import { SectionDecor } from "@/components/ui/SectionDecor";
 import { FAQS } from "@/data/faqs";
+import { WHATSAPP_LABEL, whatsappUrl } from "@/data/contact";
 
 export function FaqSection({ onChat }: { onChat: () => void }) {
   const [open, setOpen] = useState(0);
@@ -31,8 +32,8 @@ export function FaqSection({ onChat }: { onChat: () => void }) {
               <ChatAvatarFace size={30} ring="light" />
               <span className="text-sm font-bold" style={{ color: "#fff", fontFamily: "Montserrat, sans-serif" }}>Chatee con Joel</span>
             </button>
-            <a href="tel:+576013164530" className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors hover:bg-[#F7F8FF]" style={{ color: "#272B7C", textDecoration: "none" }}>
-              <Bi n="telephone" size={15} color="#272B7C" /> (601) 316-4530
+            <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors hover:bg-[#F7F8FF]" style={{ color: "#272B7C", textDecoration: "none" }}>
+              <Bi n="whatsapp" size={15} color="#272B7C" /> WhatsApp {WHATSAPP_LABEL}
             </a>
             <a href="mailto:info@transarchivos.com" className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors hover:bg-[#F7F8FF]" style={{ color: "#272B7C", textDecoration: "none" }}>
               <Bi n="envelope" size={15} color="#272B7C" /> info@transarchivos.com

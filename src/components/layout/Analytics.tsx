@@ -15,6 +15,7 @@ export function AnalyticsTracker() {
       const a = (e.target as HTMLElement).closest("a");
       const href = a?.getAttribute("href") ?? "";
       if (href.startsWith("tel:")) trackEvent("contact_click", { method: "phone" });
+      else if (href.includes("wa.me/")) trackEvent("contact_click", { method: "whatsapp" });
       else if (href.startsWith("mailto:")) trackEvent("contact_click", { method: href.includes("subject=") ? "email_quote" : "email" });
     };
     document.addEventListener("click", onClick, true);
