@@ -182,3 +182,9 @@ body.menu-open [data-chat-launcher] { display: none !important; }
   .marquee { overflow-x: auto; }
   .marquee-track[aria-hidden="true"] { display: none; }
 }
+
+/* Rutas del mapa de cobertura (MapReveal): el trazo punteado avanza desde
+   cada ciudad hacia Bogotá. */
+.map-flow { stroke-dasharray: 10 14; animation: mapFlow 2s linear infinite; }
+@keyframes mapFlow { to { stroke-dashoffset: -48; } }
+@media (prefers-reduced-motion: reduce) { .map-flow { animation: none; } }

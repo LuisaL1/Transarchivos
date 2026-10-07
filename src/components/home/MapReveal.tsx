@@ -8,13 +8,36 @@ import joelImg from "@/assets/images/joel.png"; // silueta en súper zoom
 // ─── Desde Bogotá, para toda Colombia (efecto al hacer scroll) ─────────────
 // Inspirado en el recurso de Audi que pidió el cliente: la sección queda fija
 // mientras se baja y el desplazamiento controla la animación.
-//   1. Mapa de Colombia con el punto amarillo latiendo en Bogotá (centro de
-//      operaciones) y el mensaje de cobertura nacional.
+//   1. Mapa de Colombia con rutas desde 9 ciudades que llegan a Bogotá (centro
+//      de operaciones): la información de todo el país se centraliza allí.
 //   2. Desde Bogotá se abre un círculo que revela el video de archivo hasta
 //      cubrir toda la pantalla, con el mensaje final.
 // Con "reducir movimiento" se muestra el mapa sin animación.
 
-const BOGOTA = { left: 0.486, top: 0.495 }; // posición del punto dentro del mapa
+// Posiciones calibradas con coordenadas geográficas reales (lon/lat → mapa,
+// ajuste con Punta Gallinas, Leticia, Cabo Manglares y Puerto Carreño).
+const BOGOTA = { left: 0.4296, top: 0.5013 };
+// Ciudades desde las que la información llega al centro de Bogotá.
+const CITIES: { name: string; x: number; y: number; left?: boolean; below?: boolean }[] = [
+  { name: "Cartagena", x: 0.3237, y: 0.1906 },
+  { name: "Santa Marta", x: 0.4200, y: 0.1437 },
+  { name: "Cúcuta", x: 0.5472, y: 0.3277 },
+  { name: "Bucaramanga", x: 0.5010, y: 0.3700 },
+  { name: "Tunja", x: 0.4826, y: 0.4564 },
+  { name: "Neiva", x: 0.3385, y: 0.5982 },
+  { name: "Cali", x: 0.2445, y: 0.5697 },
+  { name: "Armenia", x: 0.3085, y: 0.5109, left: true },
+  { name: "Ibagué", x: 0.3423, y: 0.5161, below: true },
+];
+const MW = 1006, MH = 1370; // proporción del mapa (viewBox del SVG)
+// Curva desde la ciudad hasta Bogotá (el recorrido termina en Bogotá).
+const route = (c: { x: number; y: number }) => {
+  const x1 = c.x * MW, y1 = c.y * MH, x2 = BOGOTA.left * MW, y2 = BOGOTA.top * MH;
+  const d = Math.hypot(x2 - x1, y2 - y1), mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+  // control perpendicular a la recta, siempre hacia el mismo lado (arco suave)
+  const nx = -(y2 - y1) / d, ny = (x2 - x1) / d;
+  return `M${x1.toFixed(1)} ${y1.toFixed(1)} Q${(mx + nx * d * 0.22).toFixed(1)} ${(my + ny * d * 0.22).toFixed(1)} ${x2.toFixed(1)} ${y2.toFixed(1)}`;
+};
 // Flota de Transarchivos (toma del video institucional), en bucle con
 // movimiento de cámara lento; versión vertical para celular.
 const VIDEO = { desktop: "/videos/transarchivos-flota.mp4", mobile: "/videos/transarchivos-flota-movil.mp4" };
@@ -29,6 +52,15 @@ export function MapReveal() {
   const [p, setP] = useState(0);
   const [center, setCenter] = useState({ x: 0, y: 0, r: 2000 });
   const reduced = useReducedMotion();
+  // Ciudad resaltada: recorre las ciudades una a una (pausa al pasar el mouse).
+  const [active, setActive] = useState(0);
+  const [hover, setHover] = useState<number | null>(null);
+  useEffect(() => {
+    if (reduced || hover !== null) return;
+    const id = window.setInterval(() => setActive(i => (i + 1) % CITIES.length), 2400);
+    return () => clearInterval(id);
+  }, [reduced, hover]);
+  const current = hover ?? active;
 
   useEffect(() => {
     if (reduced) return;
@@ -96,6 +128,39 @@ export function MapReveal() {
           <div className="relative order-1 md:order-2 flex justify-center">
             <div ref={mapRef} className="relative h-[46vh] md:h-[78vh]" style={{ aspectRatio: "1006 / 1370", transform: `scale(${mapScale})`, transformOrigin: `${BOGOTA.left * 100}% ${BOGOTA.top * 100}%` }}>
               <img loading="lazy" decoding="async" src={colombiaMap} alt="Mapa de Colombia con Bogotá resaltada" draggable={false} className="w-full h-full select-none" style={{ objectFit: "contain", filter: "drop-shadow(0 18px 30px rgba(0,0,0,0.4))" }} />
+              {/* Rutas: de cada ciudad hacia Bogotá (los trazos y puntos viajan hacia el centro) */}
+              <svg aria-hidden="true" viewBox={`0 0 ${MW} ${MH}`} className="absolute inset-0 w-full h-full overflow-visible">
+                {CITIES.map((c, i) => {
+                  const d = route(c), on = i === current;
+                  return (
+                    <g key={c.name}>
+                      {/* línea base continua (siempre visible) */}
+                      <path d={d} fill="none" stroke={on ? "#FFDE59" : "#ffffff"} strokeOpacity={on ? 0.35 : 0.12} strokeWidth={on ? 4 : 2.5} strokeLinecap="round" style={{ transition: "stroke 0.5s, stroke-opacity 0.5s" }} />
+                      {/* trazo punteado que avanza hacia Bogotá */}
+                      <path d={d} fill="none" stroke={on ? "#FFDE59" : "#ffffff"} strokeOpacity={on ? 0.95 : 0.3} strokeWidth={on ? 4 : 2.2}
+                        strokeLinecap="round" className={reduced ? "" : "map-flow"} style={{ transition: "stroke 0.5s, stroke-opacity 0.5s, stroke-width 0.5s", animationDuration: `${1.8 + (i % 3) * 0.4}s` }} />
+                      {!reduced && (
+                        <circle r={on ? 7 : 4} fill={on ? "#FFDE59" : "#ffffff"} opacity={on ? 1 : 0.45}>
+                          <animateMotion dur={`${2.8 + (i % 4) * 0.5}s`} repeatCount="indefinite" path={d} begin={`-${i * 0.4}s`} />
+                        </circle>
+                      )}
+                      <circle cx={c.x * MW} cy={c.y * MH} r={on ? 26 : 0} fill="#FFDE59" fillOpacity="0.22" style={{ transition: "r 0.4s" }} />
+                      <circle cx={c.x * MW} cy={c.y * MH} r={on ? 10 : 6} fill={on ? "#fff" : "rgba(255,255,255,0.75)"} stroke="#FFDE59" strokeWidth={on ? 4 : 0} style={{ transition: "r 0.3s" }} />
+                    </g>
+                  );
+                })}
+              </svg>
+              {/* Etiquetas y zonas de mouse (HTML: texto nítido) */}
+              {CITIES.map((c, i) => (
+                <span key={c.name} onMouseEnter={() => setHover(i)} onMouseLeave={() => setHover(null)}
+                  className="absolute" style={{ left: `${c.x * 100}%`, top: `${c.y * 100}%`, width: 26, height: 26, transform: "translate(-50%, -50%)" }}>
+                  {/* Solo se muestra el nombre de la ciudad activa (discreto, sin saturar el mapa). */}
+                  <span className={`absolute whitespace-nowrap text-[10px] md:text-[11px] font-bold px-2 py-0.5 rounded-full transition-all duration-500 pointer-events-none ${c.below ? "top-full mt-0.5 left-1/2 -translate-x-1/2" : c.left ? "right-full mr-1 top-1/2 -translate-y-1/2" : "left-full ml-1 top-1/2 -translate-y-1/2"} ${i === current ? "opacity-100" : "opacity-0"}`}
+                    style={{ background: i === current ? "#FFDE59" : "rgba(255,255,255,0.92)", color: "#272B7C", fontFamily: "Montserrat, sans-serif", boxShadow: "0 6px 16px -6px rgba(0,0,0,0.5)" }}>
+                    {c.name}
+                  </span>
+                </span>
+              ))}
               <span className="absolute" style={{ left: `${BOGOTA.left * 100}%`, top: `${BOGOTA.top * 100}%`, transform: "translate(-50%, -50%)" }}>
                 <span className="absolute inset-0 rounded-full" style={{ background: "#FFDE59", animation: "mapPulse 1.8s cubic-bezier(0,0,0.2,1) infinite" }} />
                 <span className="relative block rounded-full" style={{ width: 16, height: 16, background: "#FFDE59", border: "3px solid #fff", boxShadow: "0 0 18px 4px rgba(255,222,89,0.7)" }} />
