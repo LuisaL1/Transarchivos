@@ -43,7 +43,7 @@ export function NavDropdownTrigger({ label, open, setOpen }: { label: string; op
 export function MenuFeature({ kicker, title, text, cta, href, onClick }: { kicker: string; title: string; text: string; cta: string; href: string; onClick: () => void }) {
   return (
     <div className="relative flex flex-col overflow-hidden rounded-2xl p-5" style={{ background: "#272B7C" }}>
-      <span aria-hidden="true" className="absolute pointer-events-none" style={{ right: -36, top: -36, width: 104, height: 104, transform: "rotate(45deg)", background: "rgba(255,222,89,0.25)" }} />
+      <span aria-hidden="true" className="absolute pointer-events-none" style={{ right: -36, top: -36, width: 104, height: 104, transform: "rotate(45deg)", borderRadius: 18, background: "rgba(255,222,89,0.25)" }} />
       <p className="relative mb-2 text-[10.5px] font-bold uppercase" style={{ letterSpacing: "0.16em", color: "#FFDE59", fontFamily: "Montserrat, sans-serif" }}>{kicker}</p>
       <p className="relative mb-2 text-[17px] font-bold leading-snug" style={{ color: "#fff", fontFamily: "Poppins, sans-serif" }}>{title}</p>
       <p className="relative mb-5 text-[12.5px] leading-relaxed" style={{ color: "rgba(255,255,255,0.75)" }}>{text}</p>

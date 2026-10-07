@@ -18,7 +18,7 @@ import { whatsappUrl } from "@/data/contact";
 function Corner({ size = 104, offset = -36, alpha = 0.25 }: { size?: number; offset?: number; alpha?: number }) {
   return (
     <span aria-hidden="true" className="absolute pointer-events-none"
-      style={{ right: offset, top: offset, width: size, height: size, transform: "rotate(45deg)", background: `rgba(255,222,89,${alpha})` }} />
+      style={{ right: offset, top: offset, width: size, height: size, transform: "rotate(45deg)", borderRadius: Math.max(4, Math.round(size * 0.17)), background: `rgba(255,222,89,${alpha})` }} />
   );
 }
 

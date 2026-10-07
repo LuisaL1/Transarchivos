@@ -83,7 +83,7 @@ RecursosTransarchivos/    Documentos fuente del cliente (contexto, no se publica
 - Íconos: Bootstrap Icons (`<Bi n="..." />`, `<BiTile />`, `<MenuIcon />`).
 - Estilo corporativo: sin caricaturas (solo Joel), sin degradados (en su lugar,
   el detalle de esquina del chat y el menú: cuadrado amarillo translúcido girado
-  45°), tarjetas blancas con borde fino, motivo gráfico de carpeta. Única
+  45° con puntas redondeadas, radio ≈ 17 % del lado), tarjetas blancas con borde fino, motivo gráfico de carpeta. Única
   excepción: la sombra negra superior del hero de inicio.
 - Hero de inicio: pantalla dividida (panel azul con el título animado
   "Sus archivos, bajo [palabra]" y videos a la derecha), pestaña de carpeta en

@@ -73,7 +73,7 @@ export function ContactModal() {
       <div role="dialog" aria-modal="true" aria-labelledby="contact-title" className="relative w-full sm:max-w-[560px] max-h-[100dvh] sm:max-h-[92vh] overflow-y-auto rounded-t-3xl sm:rounded-3xl"
         style={{ background: "#fff", boxShadow: "0 40px 90px -30px rgba(10,13,61,0.6)", animation: "searchDrop 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.1) both" }}>
         <div className="relative px-6 pt-5 pb-5 overflow-hidden" style={{ background: "#272B7C" }}>
-          <span aria-hidden="true" className="absolute pointer-events-none" style={{ top: -36, right: -36, width: 110, height: 110, background: "rgba(255,222,89,0.22)", transform: "rotate(45deg)" }} />
+          <span aria-hidden="true" className="absolute pointer-events-none" style={{ top: -36, right: -36, width: 110, height: 110, background: "rgba(255,222,89,0.22)", transform: "rotate(45deg)", borderRadius: 19 }} />
           <p id="contact-title" className="relative flex items-center gap-2 text-lg font-bold" style={{ color: "#fff", fontFamily: "Poppins, sans-serif" }}>
             <Bi n="envelope-paper" size={18} color="#FFDE59" /> Escríbanos
           </p>

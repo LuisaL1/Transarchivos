@@ -399,7 +399,7 @@ export function ChatBot({ open, setOpen, seed, heroJoel = false }: { open: boole
           style={{ minHeight: 0, boxShadow: "0 40px 80px -30px rgba(39,43,124,0.5)", animation: "fadeInUp 0.3s ease both" }}>
           <div className="h-[100dvh] sm:h-[min(620px,calc(100vh-130px))] flex flex-col min-h-0 flex-1">
             <header className="relative flex items-center gap-3 overflow-hidden px-5 py-4" style={{ background: "#272B7C", paddingTop: "max(16px, env(safe-area-inset-top))" }}>
-              <span aria-hidden="true" className="pointer-events-none absolute" style={{ right: -48, top: -48, width: 90, height: 90, transform: "rotate(45deg)", background: "rgba(255,222,89,0.22)" }} />
+              <span aria-hidden="true" className="pointer-events-none absolute" style={{ right: -48, top: -48, width: 90, height: 90, transform: "rotate(45deg)", borderRadius: 15, background: "rgba(255,222,89,0.22)" }} />
               <span className="relative">
                 <ChatAvatarFace size={42} round />
                 <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full border-2" style={{ background: "#22c55e", borderColor: "#272B7C" }} />

@@ -40,7 +40,7 @@ export function BlogSection() {
               style={{ background: "#fff", border: "1.5px solid #E4E6F7", boxShadow: `0 24px 50px -28px ${fc}66`, textDecoration: "none" }}>
               <div className="relative overflow-hidden" style={{ height: 300 }}>
                 <img loading="lazy" decoding="async" src={featured.cover} alt="" className="w-full h-full" style={{ objectFit: "cover" }} />
-                <span aria-hidden="true" className="absolute pointer-events-none" style={{ right: -44, top: -44, width: 110, height: 110, transform: "rotate(45deg)", background: "rgba(255,222,89,0.35)" }} />
+                <span aria-hidden="true" className="absolute pointer-events-none" style={{ right: -44, top: -44, width: 110, height: 110, transform: "rotate(45deg)", borderRadius: 19, background: "rgba(255,222,89,0.35)" }} />
                 <span className="absolute top-4 left-4 text-[11px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full" style={{ background: fc, color: "#fff", fontFamily: "Montserrat, sans-serif" }}>
                   Destacado · {featured.cat}
                 </span>
@@ -90,7 +90,7 @@ export function BlogSection() {
           style={{ background: "#fff", border: "1.5px solid #E4E6F7", boxShadow: "0 14px 34px -24px rgba(39,43,124,0.25)" }}>
           <div className="flex items-center gap-4">
             <span className="relative overflow-hidden flex items-center justify-center rounded-2xl shrink-0" style={{ width: 44, height: 44, background: "#272B7C" }}>
-              <span aria-hidden="true" className="absolute pointer-events-none" style={{ right: -16, top: -16, width: 30, height: 30, transform: "rotate(45deg)", background: "rgba(255,222,89,0.3)" }} />
+              <span aria-hidden="true" className="absolute pointer-events-none" style={{ right: -16, top: -16, width: 30, height: 30, transform: "rotate(45deg)", borderRadius: 5, background: "rgba(255,222,89,0.3)" }} />
               <Bi n="envelope-paper" size={19} color="#FFDE59" className="relative" />
             </span>
             <div>
