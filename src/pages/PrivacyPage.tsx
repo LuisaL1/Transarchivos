@@ -77,10 +77,10 @@ export function PrivacyPage() {
         </ul>
 
         {h2("6. Cómo ejercerlos")}
-        <p>Escríbanos mediante el <a href="#contacto?motivo=Datos+personales+%28Ley+1581%29" style={{ color: "#1800AD", fontWeight: 600 }}>formulario de contacto</a> (motivo «Datos personales») o al correo {LEGAL.privacyEmail}, indicando su nombre, documento de identidad, la solicitud y un medio de contacto. Responderemos las <strong>consultas</strong> en máximo 10 días hábiles y los <strong>reclamos</strong> (corrección, actualización, supresión o revocatoria) en máximo 15 días hábiles, según la Ley 1581 de 2012.</p>
+        <p>Escríbanos mediante el <a href="#contacto?motivo=Datos+personales+%28Ley+1581%29" style={{ color: "#1800AD", fontWeight: 600 }}>formulario de contacto</a> (motivo «Datos personales») o al correo {LEGAL.privacyEmail}, indicando su nombre, documento de identidad, la solicitud y un medio de contacto. Responderemos las <strong>consultas</strong> en máximo 10 días hábiles (prorrogables 5 días hábiles) y los <strong>reclamos</strong> (corrección, actualización, supresión o revocatoria) en máximo 15 días hábiles (prorrogables 8 días hábiles), según nuestra <Link to="/politicas#proteccion-de-datos" style={{ color: "#1800AD", fontWeight: 600 }}>Política de Protección de Datos Personales</Link>.</p>
 
         {h2("7. Autorización")}
-        <p>Al marcar la casilla de autorización en el cotizador o en la suscripción, o al escribirnos por nuestros canales, usted autoriza a {BRAND.legalName} a tratar sus datos para las finalidades descritas. Esta política hace parte de la política general de tratamiento de datos personales de la empresa, que puede solicitar al mismo correo.</p>
+        <p>Al marcar la casilla de autorización en el cotizador o en la suscripción, o al escribirnos por nuestros canales, usted autoriza a {BRAND.legalName} a tratar sus datos para las finalidades descritas. Este aviso complementa la <Link to="/politicas#proteccion-de-datos" style={{ color: "#1800AD", fontWeight: 600 }}>Política de Protección de Datos Personales</Link> de la empresa (vigente desde el 31 de octubre de 2016), que regula todo tratamiento de datos de Transarchivos.</p>
 
         {h2("8. Cambios")}
         <p>Podemos actualizar esta política. Publicaremos los cambios en esta página con su fecha de actualización.</p>

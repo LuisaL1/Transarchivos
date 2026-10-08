@@ -9,6 +9,7 @@ import { HomePage } from "@/pages/HomePage";
 import { NosotrosPage } from "@/pages/NosotrosPage";
 import { NotFoundPage } from "@/pages/NotFoundPage";
 import { PrivacyPage } from "@/pages/PrivacyPage";
+import { PoliciesPage } from "@/pages/PoliciesPage";
 import { ServiceDetailPage } from "@/pages/ServiceDetailPage";
 
 export default function App() {
@@ -23,6 +24,7 @@ export default function App() {
       <Route path="/servicios/:slug" element={<ServiceDetailPage />} />
       <Route path="/blog/:slug" element={<ArticlePage />} />
       <Route path="/privacidad" element={<PrivacyPage />} />
+      <Route path="/politicas" element={<PoliciesPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
     <CookieBanner />

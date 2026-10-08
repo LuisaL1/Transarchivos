@@ -595,7 +595,7 @@ export function HomePage() {
           <div className="h-px" style={{ background: "#E4E6F7" }} />
 
           <div className="pt-6 flex flex-wrap justify-between items-center gap-4">
-            <p className="text-xs" style={{ color: "#6B6B6B" }}>© {new Date().getFullYear()} Transarchivos Ltda. · Bogotá, Colombia · <Link to="/privacidad" style={{ color: "#272B7C", fontWeight: 600 }}>Política de privacidad y tratamiento de datos</Link></p>
+            <p className="text-xs" style={{ color: "#6B6B6B" }}>© {new Date().getFullYear()} Transarchivos Ltda. · Bogotá, Colombia · <Link to="/politicas" style={{ color: "#272B7C", fontWeight: 600 }}>Políticas</Link> · <Link to="/privacidad" style={{ color: "#272B7C", fontWeight: 600 }}>Privacidad y cookies</Link></p>
             <div className="flex gap-2">
               {[
                 { n: "LinkedIn", ic: "linkedin", u: "https://linkedin.com/company/transarchivos-ltda01" },

@@ -22,7 +22,9 @@ src/
 │   ├── HomePage.tsx          "/"  (estado del chat, hero, secciones)
 │   ├── ServiceDetailPage.tsx "/servicios/:slug"
 │   ├── NosotrosPage.tsx      "/nosotros"
-│   └── ArticlePage.tsx       "/blog/:slug"
+│   ├── ArticlePage.tsx       "/blog/:slug"
+│   ├── PoliciesPage.tsx      "/politicas" (7 políticas oficiales)
+│   └── PrivacyPage.tsx       "/privacidad" (aviso del sitio y cookies)
 ├── components/
 │   ├── layout/           Navbar compartido (SiteHeader), menús desplegables,
 │   │                     búsqueda (SearchOverlay) y tarjeta de soporte
@@ -36,6 +38,7 @@ src/
 │   ├── serviceDetails.ts     Contenido de la página de cada servicio
 │   ├── solutions.ts          Soluciones por necesidad del cliente
 │   ├── faqs.ts               Preguntas frecuentes
+│   ├── policies.ts           Políticas institucionales oficiales (/politicas; PDF en public/documentos)
 │   ├── quote.ts              Preguntas y unidades del cotizador
 │   ├── blog.ts               Artículos del blog
 │   ├── nosotros.ts           Menú de Nosotros
@@ -50,7 +53,7 @@ src/
 ├── hooks/                Hooks reutilizables (aparición al hacer scroll)
 ├── assets/images/        Imágenes importadas desde el código
 └── styles/index.css      Estilos globales, animaciones, puntero/foco
-public/                   Archivos servidos tal cual (videos del hero, favicon, robots)
+public/                   Archivos servidos tal cual (videos, favicon, robots, documentos/ PDF oficiales)
 api/contact.ts            Función de Vercel: formularios → correo por Brevo (docs/07-formularios.md)
 scripts/prerender.mjs     Pre-genera dist/<ruta>.html, 404, sitemap y robots (SEO)
 tests/                    unit/, security/, seo/ (HTML generado), e2e/ (Playwright + axe)

@@ -157,6 +157,15 @@ function privacyMeta(): PageMeta {
   };
 }
 
+function policiesMeta(): PageMeta {
+  const title = "Políticas institucionales | Transarchivos Ltda.";
+  const description = "Protección de datos personales, seguridad de la información, seguridad vial, responsabilidad social, transparencia empresarial y política HSEQ de Transarchivos.";
+  return {
+    ...base("/politicas"), title, description, priority: 0.3,
+    jsonLd: [graph(webPage("/politicas", title, description), breadcrumb([["Inicio", "/"], ["Políticas", "/politicas"]]))],
+  };
+}
+
 function notFoundMeta(path: string): PageMeta {
   return {
     ...base(path), canonical: SITE_URL + "/", robots: "noindex, follow", notFound: true,
@@ -172,6 +181,7 @@ export function getPageMeta(pathname: string): PageMeta {
   if (path === "/") return homeMeta();
   if (path === "/nosotros") return nosotrosMeta();
   if (path === "/privacidad") return privacyMeta();
+  if (path === "/politicas") return policiesMeta();
   const svc = path.match(/^\/servicios\/([a-z0-9-]+)$/);
   if (svc) return serviceMeta(svc[1]) ?? notFoundMeta(path);
   const art = path.match(/^\/blog\/([a-z0-9-]+)$/);
@@ -180,7 +190,7 @@ export function getPageMeta(pathname: string): PageMeta {
 }
 
 /** Todas las rutas públicas (pre-generación y sitemap). */
-export const PUBLIC_ROUTES = ["/", "/nosotros", "/privacidad", ...services.map(s => `/servicios/${s.slug}`), ...blogPosts.map(p => `/blog/${p.slug}`)];
+export const PUBLIC_ROUTES = ["/", "/nosotros", "/privacidad", "/politicas", ...services.map(s => `/servicios/${s.slug}`), ...blogPosts.map(p => `/blog/${p.slug}`)];
 
 // ─── HTML del <head> (lo usa la pre-generación) ─────────────────────────────
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
