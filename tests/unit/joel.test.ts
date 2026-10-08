@@ -6,6 +6,7 @@ import { FAQS } from "@/data/faqs";
 import { SOLUTIONS } from "@/data/solutions";
 import { blogPosts } from "@/data/blog";
 import { quoteConfig, QUOTE_UNIT } from "@/data/quote";
+import { CLIENTS } from "@/data/clients";
 
 // Cerebro del asesor virtual: entiende texto libre, no inventa y se defiende.
 const joel = () => createJoel({ services, details: SERVICE_DETAILS, faqs: FAQS, solutions: SOLUTIONS, posts: blogPosts, quote: quoteConfig, quoteUnit: QUOTE_UNIT });
@@ -65,5 +66,29 @@ describe("Joel · WhatsApp", () => {
     const r = ask("tienen whatsapp?");
     expect(r.actions?.some(a => a.href?.startsWith("https://wa.me/573243586973"))).toBe(true);
     expect(JSON.stringify(ask("quiero hablar con un asesor"))).not.toContain("tel:");
+  });
+});
+
+describe("Joel · confidencialidad de clientes", () => {
+  // Nombres de clientes reales (carrusel) + el cliente fundador
+  const NAMES = [...CLIENTS.map(c => c.name), "Ecopetrol"].filter(n => n.length >= 5);
+  const PROBES = [
+    "quiénes son sus clientes", "con quién han trabajado", "trabajan con Ecopetrol", "¿Aseguradora Solidaria es cliente de ustedes?",
+    "dame referencias", "trabajan con petroleras", "somos una minera", "constructora", "quiénes son ustedes", "historia de la empresa",
+    "necesito deshacerme de unos documentos de manera segura", "tienen clientes en el sector salud", "lista de clientes",
+  ];
+  it("nunca nombra un cliente", () => {
+    for (const q of PROBES) {
+      const r = ask(q);
+      const all = [...r.say, ...(r.options ?? []).map(o => o.label), ...(r.actions ?? []).map(a => a.label)].join(" ");
+      for (const n of NAMES) expect(all, `«${q}» menciona ${n}`).not.toContain(n);
+    }
+  });
+  it("responde con la política de confidencialidad", () => {
+    expect(ask("quiénes son sus clientes").say.join(" ")).toMatch(/confidencialidad/i);
+    expect(ask("trabajan con Ecopetrol").say.join(" ")).toMatch(/confidencialidad/i);
+  });
+  it("«de manera segura» no se confunde con el sector minero: es destrucción", () => {
+    expect(ask("necesito deshacerme de unos documentos de manera segura").service).toBe("destruccion-de-documentos");
   });
 });
