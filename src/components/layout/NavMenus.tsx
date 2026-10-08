@@ -153,14 +153,14 @@ export function BlogPanelContent({ setOpen }: { setOpen: (v: boolean) => void })
       <MenuFeature kicker="Blog y novedades" title="Conocimiento que protege la memoria de su empresa"
         text="Guías sobre gestión documental, normativa, tecnología y sostenibilidad."
         cta="Ver todos los artículos" href="#blog" onClick={close} />
-      <div className="py-1">
-        <div className="grid gap-0.5">
+      <div className="py-1 pr-2 min-w-0">
+        <div className="grid grid-cols-1 gap-0.5">
           {recent.map(p => (
             <Link key={p.slug} to={`/blog/${p.slug}`} onClick={close} className={`${menuItemCls} items-center`} style={{ textDecoration: "none" }}>
               <img loading="lazy" decoding="async" src={p.cover} alt="" className="shrink-0 rounded-lg object-cover" style={{ width: 64, height: 48 }} />
-              <span className="min-w-0">
+              <span className="min-w-0 flex-1 pr-2">
                 <span className="block text-[10.5px] font-bold uppercase" style={{ letterSpacing: "0.1em", color: "#C8960A", fontFamily: "Montserrat, sans-serif" }}>{p.cat}</span>
-                <span className="block text-[13px] font-semibold truncate" style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif" }}>{p.title}</span>
+                <span className="block text-[13px] font-semibold line-clamp-2" title={p.title} style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif" }}>{p.title}</span>
               </span>
             </Link>
           ))}

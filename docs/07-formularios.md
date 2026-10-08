@@ -40,6 +40,7 @@ Navegador ──POST /api/contact──► Función de Vercel (api/contact.ts) �
    | `LEADS_TO_GENERAL` | Correo general: soporte, PQRS, datos personales, trabajar con nosotros y otros (por defecto `info@transarchivos.com`) | No |
    | `LEADS_FROM` | Remitente (por defecto `no-reply@transarchivos.com`). Debe ser distinto de los buzones que reciben: si remitente y destinatario son el mismo, el correo de la empresa lo archiva como enviado por sí mismo | No |
    | `LEADS_FROM_NAME` | Nombre del remitente (por defecto "Transarchivos") | No |
+   | `EMAIL_ASSETS_URL` | Dominio de producción del que se cargan las imágenes de los correos (por defecto `https://transarchivos.vercel.app`; pasar a `https://www.transarchivos.com` cuando el dominio apunte a Vercel) | No |
 
 4. Volver a desplegar. Enviar una prueba desde el formulario y revisar la bandeja (y la carpeta de spam la primera vez).
 
