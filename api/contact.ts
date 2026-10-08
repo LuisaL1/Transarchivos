@@ -124,10 +124,21 @@ export async function POST(req: Request): Promise<Response> {
     return json({ ok: false, error: "provider", status: res.status, detail: `${detail.code ?? ""} ${detail.message ?? ""}`.trim().slice(0, 200) }, 502);
   }
 
-  // 2) Confirmación automática al visitante (si falla, la solicitud ya llegó: no se reporta error)
+  // 2) Confirmación automática al visitante. Si falla, la solicitud ya llegó:
+  // el visitante ve "enviado", pero el motivo queda en los logs de Vercel y en
+  // la respuesta ("confirmation") para poder diagnosticarlo.
+  let confirmationStatus = "sent";
   try {
     const c = confirmation(base, kind, name, fields);
-    await send({ to: [{ email: replyEmail, name: name || replyEmail }], replyTo: { email: leadsTo, name: "Transarchivos" }, subject: c.subject, htmlContent: c.html, textContent: c.text, tags: [`sitio-${kind}-confirmacion`] });
-  } catch { /* sin confirmación */ }
-  return json({ ok: true });
+    const rc = await send({ to: [{ email: replyEmail, name: name || replyEmail }], replyTo: { email: leadsTo, name: "Transarchivos" }, subject: c.subject, htmlContent: c.html, textContent: c.text, tags: [`sitio-${kind}-confirmacion`] });
+    if (!rc.ok) {
+      const d = await rc.json().catch(() => ({})) as { code?: string; message?: string };
+      console.error("Brevo rechazó la confirmación:", rc.status, d);
+      confirmationStatus = `failed ${rc.status} ${d.code ?? ""} ${d.message ?? ""}`.trim().slice(0, 200);
+    }
+  } catch (e) {
+    console.error("Error al enviar la confirmación:", e);
+    confirmationStatus = "failed network";
+  }
+  return json({ ok: true, confirmation: confirmationStatus });
 }
