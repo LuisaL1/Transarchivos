@@ -38,7 +38,7 @@ Navegador ──POST /api/contact──► Función de Vercel (api/contact.ts) �
    | `LEADS_TO` | Correo comercial: cotizador y motivos "Solicitar una cotización" e "Información sobre un servicio" (por defecto `mercadeo@transarchivos.com`) | No |
    | `LEADS_TO_NEWSLETTER` | Suscripciones al blog (por defecto `marketing@transarchivos.com`) | No |
    | `LEADS_TO_GENERAL` | Correo general: soporte, PQRS, datos personales, trabajar con nosotros y otros (por defecto `info@transarchivos.com`) | No |
-   | `LEADS_FROM` | Remitente verificado en Brevo (por defecto `no-reply@transarchivos.com`) | No |
+   | `LEADS_FROM` | Remitente verificado en Brevo (por defecto `mercadeo@transarchivos.com`) | No |
    | `LEADS_FROM_NAME` | Nombre del remitente (por defecto "Transarchivos") | No |
 
 4. Volver a desplegar. Enviar una prueba desde el formulario y revisar la bandeja (y la carpeta de spam la primera vez).

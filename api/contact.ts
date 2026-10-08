@@ -6,7 +6,7 @@
 //   LEADS_TO          correo comercial: cotizador y motivos comerciales (por defecto mercadeo@transarchivos.com)
 //   LEADS_TO_NEWSLETTER correo que recibe las suscripciones al blog (por defecto marketing@transarchivos.com)
 //   LEADS_TO_GENERAL  correo general: soporte, PQRS, datos personales, empleo y otros (por defecto info@transarchivos.com)
-//   LEADS_FROM        remitente verificado en Brevo (por defecto no-reply@transarchivos.com)
+//   LEADS_FROM        remitente verificado en Brevo (por defecto mercadeo@transarchivos.com)
 //   LEADS_FROM_NAME   nombre del remitente (por defecto "Transarchivos")
 
 type Payload = { kind?: string; subject?: string; fields?: Record<string, unknown>; replyTo?: { email?: string; name?: string }; website?: string };
@@ -61,7 +61,7 @@ export async function GET(): Promise<Response> {
   if (!key) return json({ configured: false });
   const r = await fetch("https://api.brevo.com/v3/account", { headers: { "api-key": key, Accept: "application/json" } }).catch(() => null);
   const d = r ? await r.json().catch(() => ({})) as { code?: string; message?: string } : {};
-  return json({ configured: true, brevo: r?.ok ? "ok" : `${r?.status ?? "sin respuesta"} ${d.code ?? ""} ${d.message ?? ""}`.trim(), from: process.env.LEADS_FROM || "no-reply@transarchivos.com", to: process.env.LEADS_TO || "mercadeo@transarchivos.com", toNewsletter: process.env.LEADS_TO_NEWSLETTER || "marketing@transarchivos.com", toGeneral: process.env.LEADS_TO_GENERAL || "info@transarchivos.com" });
+  return json({ configured: true, brevo: r?.ok ? "ok" : `${r?.status ?? "sin respuesta"} ${d.code ?? ""} ${d.message ?? ""}`.trim(), from: process.env.LEADS_FROM || "mercadeo@transarchivos.com", to: process.env.LEADS_TO || "mercadeo@transarchivos.com", toNewsletter: process.env.LEADS_TO_NEWSLETTER || "marketing@transarchivos.com", toGeneral: process.env.LEADS_TO_GENERAL || "info@transarchivos.com" });
 }
 
 export async function POST(req: Request): Promise<Response> {
@@ -97,7 +97,7 @@ export async function POST(req: Request): Promise<Response> {
   const html = layout(base, esc(subject), `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;font-size:14px">${rows}</table><p style="color:#6B6B6B;font-size:12px;margin:16px 0 0">Enviado desde el formulario del sitio web. Responda este correo para contestarle directamente a la persona.</p>`);
   const text = `${subject}\n\n` + Object.entries(fields).map(([k, v]) => `${k}: ${v}`).join("\n");
 
-  const sender = { email: process.env.LEADS_FROM || "no-reply@transarchivos.com", name: process.env.LEADS_FROM_NAME || "Transarchivos" };
+  const sender = { email: process.env.LEADS_FROM || "mercadeo@transarchivos.com", name: process.env.LEADS_FROM_NAME || "Transarchivos" };
   // Destino según el motivo: lo comercial a mercadeo, lo demás al correo general.
   const COMMERCIAL = ["Solicitar una cotización", "Información sobre un servicio"];
   const commercial = kind === "cotizacion" || COMMERCIAL.includes(fields["Motivo"] ?? "");
