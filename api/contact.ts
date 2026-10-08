@@ -22,7 +22,7 @@ function layout(base: string, title: string, inner: string) {
 <body style="margin:0;padding:0;background:#F1F3FB">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#F1F3FB" style="background:#F1F3FB"><tr><td align="center" style="padding:24px 12px">
 <table role="presentation" width="560" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:560px;background:#ffffff;border-radius:16px;overflow:hidden;border:1px solid #E4E6F7">
-<tr><td bgcolor="#272B7C" style="background:#272B7C;line-height:0"><img src="${base}/brand/email-header.png" width="560" alt="Transarchivos Ltda." style="display:block;width:100%;max-width:560px;height:auto;border:0"></td></tr>
+<tr><td bgcolor="#272B7C" style="background:#272B7C;line-height:0"><img src="${base}/brand/email-header.png?v=3" width="560" alt="Transarchivos Ltda." style="display:block;width:100%;max-width:560px;height:auto;border:0"></td></tr>
 <tr><td style="padding:26px 28px 6px;font-family:Arial,sans-serif"><h1 style="margin:0;color:#272B7C;font-size:21px;line-height:1.3">${title}</h1></td></tr>
 <tr><td style="padding:12px 28px 26px;font-family:Arial,sans-serif;font-size:15px;line-height:1.6;color:#37352F">${inner}</td></tr>
 <tr><td bgcolor="#F7F8FF" style="background:#F7F8FF;padding:14px 28px;font-family:Arial,sans-serif;font-size:12px;color:#6B6B6B;border-top:1px solid #E4E6F7">Transarchivos Ltda. · Cl. 21 # 39A-40, Bogotá · (601) 316-4530</td></tr>
