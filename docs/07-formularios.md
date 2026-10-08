@@ -6,6 +6,7 @@ abre el programa de correo del visitante.
 | Formulario | Dónde | Qué envía |
 | --- | --- | --- |
 | **Formulario de contacto** (`ContactModal`) | Tarjeta de soporte, pie de página, preguntas frecuentes, menú de celular, chat de Joel, política de privacidad | Nombre, empresa, correo, teléfono, motivo, mensaje y autorización de datos |
+| **Suscripción al blog** (`BlogSection`) | Sección Blog de la portada | Correo del suscriptor y autorización → marketing@; el suscriptor recibe "Suscripción confirmada" |
 | **Cotizador** (`QuoteSimulator`) | Sección `#cotizador` | Servicio, respuestas, datos de contacto, siguiente paso sugerido y autorización |
 
 - Cualquier enlace a `#contacto` abre el formulario. Con `contactHref({ motivo, mensaje, nombre, empresa })` (`src/data/contact.ts`) se abre con datos precargados. Así lo hace Joel al terminar una cotización en el chat.
@@ -14,7 +15,7 @@ abre el programa de correo del visitante.
 ## Cómo viaja la información
 
 ```
-Navegador ──POST /api/contact──► Función de Vercel (api/contact.ts) ──API Brevo──► mercadeo@transarchivos.com
+Navegador ──POST /api/contact──► Función de Vercel (api/contact.ts) ──API Brevo──► mercadeo@ (comercial) / info@ (general)
 ```
 
 - La función valida los datos, aplica el **campo trampa** contra bots (`website`) y rechaza envíos desde otros dominios.
@@ -34,7 +35,9 @@ Navegador ──POST /api/contact──► Función de Vercel (api/contact.ts) �
    | Variable | Valor | Obligatoria |
    | --- | --- | --- |
    | `BREVO_API_KEY` | La clave de API de Brevo | Sí |
-   | `LEADS_TO` | Correo que recibe las solicitudes (por defecto `mercadeo@transarchivos.com`) | No |
+   | `LEADS_TO` | Correo comercial: cotizador y motivos "Solicitar una cotización" e "Información sobre un servicio" (por defecto `mercadeo@transarchivos.com`) | No |
+   | `LEADS_TO_NEWSLETTER` | Suscripciones al blog (por defecto `marketing@transarchivos.com`) | No |
+   | `LEADS_TO_GENERAL` | Correo general: soporte, PQRS, datos personales, trabajar con nosotros y otros (por defecto `info@transarchivos.com`) | No |
    | `LEADS_FROM` | Remitente verificado en Brevo (por defecto `no-reply@transarchivos.com`) | No |
    | `LEADS_FROM_NAME` | Nombre del remitente (por defecto "Transarchivos") | No |
 

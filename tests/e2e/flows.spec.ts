@@ -115,3 +115,14 @@ test("cotizador: envía la solicitud directamente", async ({ page }) => {
   expect(sent!.kind).toBe("cotizacion");
   expect(sent!.fields!["Autorización de datos"]).toBe("Sí");
 });
+
+test("suscripción al blog: exige autorización y envía", async ({ page }) => {
+  let sent: { kind?: string } | null = null;
+  await page.route("**/api/contact", async r => { sent = r.request().postDataJSON(); await r.fulfill({ json: { ok: true } }); });
+  await page.goto("/#blog");
+  await page.getByPlaceholder("su@correo.com").fill("ana@empresa.com");
+  await page.locator("#sub-autorizacion").check();
+  await page.getByRole("button", { name: "Suscribirme" }).click();
+  await expect(page.getByText(/Le enviamos la confirmación/)).toBeVisible();
+  expect(sent!.kind).toBe("suscripcion");
+});

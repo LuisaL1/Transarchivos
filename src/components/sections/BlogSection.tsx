@@ -3,6 +3,8 @@
 
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { sendLead } from "@/lib/leads";
+import { trackEvent } from "@/lib/analytics";
 import { Bi } from "@/components/ui/Icons";
 import { SectionDecor } from "@/components/ui/SectionDecor";
 import { blogCatColor, blogPosts, readMinutes } from "@/data/blog";
@@ -10,6 +12,14 @@ import { blogCatColor, blogPosts, readMinutes } from "@/data/blog";
 export function BlogSection() {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
+  const [subState, setSubState] = useState<"idle" | "sending" | "error">("idle");
+  const subscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setSubState("sending");
+    const r = await sendLead("suscripcion", "Nueva suscripción al blog", { "Correo": email.trim(), "Origen": "Sección Blog del sitio web", "Autorización de datos": "Sí" }, { email: email.trim() });
+    if (r.ok) { setSent(true); trackEvent("sign_up", { method: "blog" }); } else setSubState("error");
+  };
 
   const [featured, ...rest] = blogPosts;
 
@@ -100,21 +110,22 @@ export function BlogSection() {
           </div>
           {sent ? (
             <p className="text-sm font-semibold" style={{ color: "#15803d", fontFamily: "Montserrat, sans-serif" }}>
-              <Bi n="check-circle-fill" size={14} color="#15803d" className="mr-1.5" />¡Gracias! Le avisaremos cuando publiquemos.
+              <Bi n="check-circle-fill" size={14} color="#15803d" className="mr-1.5" />¡Gracias! Le enviamos la confirmación a su correo.
             </p>
           ) : (
-            <form className="md:w-[380px]" onSubmit={e => { e.preventDefault(); if (email.trim()) setSent(true); }}>
+            <form className="md:w-[380px]" onSubmit={subscribe}>
               <div className="flex gap-3">
               <input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="su@correo.com"
                 className="flex-1 min-w-0 px-4 py-2.5 rounded-full text-sm outline-none"
                 style={{ background: "#fff", border: "1.5px solid #E4E6F7", color: "#272B7C" }} />
               <button type="submit" className="px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all hover:opacity-85 cursor-pointer"
-                style={{ background: "#272B7C", color: "#fff", fontFamily: "Montserrat, sans-serif" }}>Suscribirme</button>
+                disabled={subState === "sending"} style={{ background: "#272B7C", color: "#fff", fontFamily: "Montserrat, sans-serif" }}>{subState === "sending" ? "Enviando…" : "Suscribirme"}</button>
               </div>
               <label htmlFor="sub-autorizacion" className="mt-2.5 flex items-start gap-2 text-[11px] cursor-pointer" style={{ color: "#6B6B6B", lineHeight: 1.5 }}>
                 <input id="sub-autorizacion" type="checkbox" required className="mt-0.5 h-3.5 w-3.5 shrink-0 accent-[#272B7C]" />
                 <span>Autorizo el tratamiento de mi correo para recibir novedades, según la <Link to="/privacidad" style={{ color: "#1800AD", fontWeight: 600 }}>política de privacidad</Link>.</span>
               </label>
+              {subState === "error" && <p role="alert" className="mt-2 text-[11px]" style={{ color: "#8A6D00" }}>No pudimos registrar su correo. Intente de nuevo en unos minutos.</p>}
             </form>
           )}
         </div>

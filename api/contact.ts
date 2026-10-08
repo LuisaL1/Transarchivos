@@ -3,7 +3,9 @@
 //
 // Variables de entorno (Vercel → Settings → Environment Variables):
 //   BREVO_API_KEY     clave de API de Brevo (obligatoria)
-//   LEADS_TO          correo que recibe las solicitudes (por defecto mercadeo@transarchivos.com)
+//   LEADS_TO          correo comercial: cotizador y motivos comerciales (por defecto mercadeo@transarchivos.com)
+//   LEADS_TO_NEWSLETTER correo que recibe las suscripciones al blog (por defecto marketing@transarchivos.com)
+//   LEADS_TO_GENERAL  correo general: soporte, PQRS, datos personales, empleo y otros (por defecto info@transarchivos.com)
 //   LEADS_FROM        remitente verificado en Brevo (por defecto no-reply@transarchivos.com)
 //   LEADS_FROM_NAME   nombre del remitente (por defecto "Transarchivos")
 
@@ -30,6 +32,16 @@ function layout(base: string, title: string, inner: string) {
 // Correo de confirmación para el visitante ("recibimos su solicitud")
 function confirmation(base: string, kind: string, name: string, fields: Record<string, string>) {
   const first = esc(name.split(" ")[0] || "");
+  if (kind === "suscripcion") {
+    const subject = "Suscripción confirmada · Transarchivos";
+    const html = layout(base, "¡Gracias por suscribirse!", `
+<p style="margin:0 0 12px">Hola,</p>
+<p style="margin:0 0 12px">Su correo quedó registrado para recibir las novedades y guías sobre gestión documental de Transarchivos.</p>
+<p style="margin:0 0 18px">Si no solicitó esta suscripción o desea cancelarla, responda este correo con la palabra «Cancelar».</p>
+<p style="margin:0;color:#6B6B6B;font-size:12px">Tratamos sus datos según nuestra <a href="https://www.transarchivos.com/privacidad" style="color:#1800AD">política de privacidad</a>.</p>`);
+    const text = "Su correo quedó registrado para recibir las novedades y guías de Transarchivos. Para cancelar, responda este correo con la palabra «Cancelar».";
+    return { subject, html, text };
+  }
   const about = kind === "cotizacion" ? `su solicitud de cotización de <strong>${esc(fields["Servicio"] ?? "nuestros servicios")}</strong>` : `su mensaje (${esc(fields["Motivo"] ?? "contacto")})`;
   const aboutText = kind === "cotizacion" ? `su solicitud de cotización de ${fields["Servicio"] ?? "nuestros servicios"}` : `su mensaje (${fields["Motivo"] ?? "contacto"})`;
   const subject = "Recibimos su solicitud · Transarchivos";
@@ -49,7 +61,7 @@ export async function GET(): Promise<Response> {
   if (!key) return json({ configured: false });
   const r = await fetch("https://api.brevo.com/v3/account", { headers: { "api-key": key, Accept: "application/json" } }).catch(() => null);
   const d = r ? await r.json().catch(() => ({})) as { code?: string; message?: string } : {};
-  return json({ configured: true, brevo: r?.ok ? "ok" : `${r?.status ?? "sin respuesta"} ${d.code ?? ""} ${d.message ?? ""}`.trim(), from: process.env.LEADS_FROM || "no-reply@transarchivos.com", to: process.env.LEADS_TO || "mercadeo@transarchivos.com" });
+  return json({ configured: true, brevo: r?.ok ? "ok" : `${r?.status ?? "sin respuesta"} ${d.code ?? ""} ${d.message ?? ""}`.trim(), from: process.env.LEADS_FROM || "no-reply@transarchivos.com", to: process.env.LEADS_TO || "mercadeo@transarchivos.com", toNewsletter: process.env.LEADS_TO_NEWSLETTER || "marketing@transarchivos.com", toGeneral: process.env.LEADS_TO_GENERAL || "info@transarchivos.com" });
 }
 
 export async function POST(req: Request): Promise<Response> {
@@ -64,7 +76,7 @@ export async function POST(req: Request): Promise<Response> {
   // Campo trampa para bots: si viene lleno, se responde OK sin enviar nada.
   if (body.website) return json({ ok: true });
 
-  const kind = body.kind === "cotizacion" ? "cotizacion" : "contacto";
+  const kind = body.kind === "cotizacion" ? "cotizacion" : body.kind === "suscripcion" ? "suscripcion" : "contacto";
   const fields = Object.fromEntries(
     Object.entries(body.fields ?? {})
       .filter(([k, v]) => typeof v === "string" && k.length <= 60)
@@ -86,7 +98,11 @@ export async function POST(req: Request): Promise<Response> {
   const text = `${subject}\n\n` + Object.entries(fields).map(([k, v]) => `${k}: ${v}`).join("\n");
 
   const sender = { email: process.env.LEADS_FROM || "no-reply@transarchivos.com", name: process.env.LEADS_FROM_NAME || "Transarchivos" };
-  const leadsTo = process.env.LEADS_TO || "mercadeo@transarchivos.com";
+  // Destino según el motivo: lo comercial a mercadeo, lo demás al correo general.
+  const COMMERCIAL = ["Solicitar una cotización", "Información sobre un servicio"];
+  const commercial = kind === "cotizacion" || COMMERCIAL.includes(fields["Motivo"] ?? "");
+  const leadsTo = kind === "suscripcion" ? (process.env.LEADS_TO_NEWSLETTER || "marketing@transarchivos.com")
+    : commercial ? (process.env.LEADS_TO || "mercadeo@transarchivos.com") : (process.env.LEADS_TO_GENERAL || "info@transarchivos.com");
   const send = (payload: Record<string, unknown>) => fetch("https://api.brevo.com/v3/smtp/email", {
     method: "POST",
     headers: { "api-key": key, "Content-Type": "application/json", Accept: "application/json" },
@@ -96,7 +112,7 @@ export async function POST(req: Request): Promise<Response> {
   // 1) Solicitud al equipo de Transarchivos (responder = el visitante)
   const name = (body.replyTo?.name ?? "").slice(0, 120);
   const res = await send({
-    to: [{ email: leadsTo, name: "Mercadeo Transarchivos" }],
+    to: [{ email: leadsTo, name: kind === "suscripcion" ? "Marketing Transarchivos" : commercial ? "Mercadeo Transarchivos" : "Transarchivos" }],
     replyTo: { email: replyEmail, name: name || replyEmail },
     subject, htmlContent: html, textContent: text, tags: [`sitio-${kind}`],
   });

@@ -4,7 +4,7 @@ import { POST } from "../../api/contact";
 // Función /api/contact (Vercel → Brevo). No envía nada real: fetch se simula.
 const req = (body: unknown, headers: Record<string, string> = {}) =>
   new Request("https://www.transarchivos.com/api/contact", { method: "POST", headers: { "Content-Type": "application/json", host: "www.transarchivos.com", ...headers }, body: JSON.stringify(body) });
-const valid = { kind: "contacto", subject: "Contacto web — Otro", fields: { Nombre: "Ana", Correo: "ana@empresa.com", Mensaje: "Hola <b>", "Autorización de datos": "Sí" }, replyTo: { email: "ana@empresa.com", name: "Ana" } };
+const valid = { kind: "contacto", subject: "Contacto web — Información", fields: { Motivo: "Información sobre un servicio", Nombre: "Ana", Correo: "ana@empresa.com", Mensaje: "Hola <b>", "Autorización de datos": "Sí" }, replyTo: { email: "ana@empresa.com", name: "Ana" } };
 
 afterEach(() => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); });
 
@@ -62,5 +62,32 @@ describe("/api/contact · diagnóstico (GET)", () => {
     vi.stubEnv("BREVO_API_KEY", "");
     const { GET } = await import("../../api/contact");
     expect(await (await GET()).json()).toEqual({ configured: false });
+  });
+});
+
+describe("/api/contact · destino según el motivo", () => {
+  const sendTo = async (body: unknown) => {
+    const f = vi.fn().mockResolvedValue(new Response("{}", { status: 201 })); vi.stubGlobal("fetch", f); vi.stubEnv("BREVO_API_KEY", "k");
+    await POST(req(body));
+    return JSON.parse(f.mock.calls[0][1].body).to[0].email;
+  };
+  it("lo comercial va a mercadeo", async () => {
+    expect(await sendTo(valid)).toBe("mercadeo@transarchivos.com");
+    expect(await sendTo({ ...valid, kind: "cotizacion", fields: { ...valid.fields, Motivo: undefined } })).toBe("mercadeo@transarchivos.com");
+  });
+  it("empleo, PQRS, datos personales, soporte y otros van a info", async () => {
+    for (const m of ["Trabajar con nosotros", "Peticiones, quejas o reclamos", "Datos personales (Ley 1581)", "Soporte a un servicio contratado", "Otro"])
+      expect(await sendTo({ ...valid, fields: { ...valid.fields, Motivo: m } })).toBe("info@transarchivos.com");
+  });
+});
+
+describe("/api/contact · suscripción al blog", () => {
+  it("llega a marketing y confirma al suscriptor", async () => {
+    const f = vi.fn().mockResolvedValue(new Response("{}", { status: 201 })); vi.stubGlobal("fetch", f); vi.stubEnv("BREVO_API_KEY", "k");
+    await POST(req({ kind: "suscripcion", subject: "Nueva suscripción al blog", fields: { Correo: "ana@empresa.com", "Autorización de datos": "Sí" }, replyTo: { email: "ana@empresa.com" } }));
+    expect(JSON.parse(f.mock.calls[0][1].body).to[0].email).toBe("marketing@transarchivos.com");
+    const conf = JSON.parse(f.mock.calls[1][1].body);
+    expect(conf.to[0].email).toBe("ana@empresa.com");
+    expect(conf.subject).toMatch(/Suscripción confirmada/);
   });
 });

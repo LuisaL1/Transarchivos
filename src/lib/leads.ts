@@ -1,6 +1,6 @@
 // Envía una solicitud del sitio a /api/contact (función de Vercel → Brevo →
 // correo de la empresa). `fields` se muestra como tabla en el correo.
-export type LeadKind = "contacto" | "cotizacion";
+export type LeadKind = "contacto" | "cotizacion" | "suscripcion";
 export type LeadResult = { ok: true } | { ok: false; error: string; detail?: string };
 
 export async function sendLead(kind: LeadKind, subject: string, fields: Record<string, string>, replyTo: { email: string; name?: string }, website = ""): Promise<LeadResult> {
