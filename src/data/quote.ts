@@ -64,7 +64,7 @@ export const quoteConfig: Record<string, QConfig> = {
     fields: [
       { key: "tipo", label: "Tipo de documentos", options: ["Contratos y comerciales", "Historias laborales", "Historias clínicas", "Contables o legales", "Otros"] },
       { key: "estado", label: "Estado del documento", options: ["Bueno", "Con grapas o clips", "Deteriorado", "No lo sé"] },
-      { key: "modalidad", label: "Modalidad", options: ["En el centro de Transarchivos", "In-house, en sus instalaciones", "No lo sé"] },
+      { key: "modalidad", label: "Modalidad", options: ["En el centro de Transarchivos", "En sus instalaciones (in house)", "No lo sé"] },
       { key: "entrega", label: "Formato y entrega", options: ["PDF con OCR", "PDF / TIFF / JPG", "Integración con su DMS", "No lo sé"] },
       { key: "fisico", label: "Destino del archivo físico", options: ["Custodia", "Destrucción certificada", "Devolución", "No lo sé"] },
     ],
@@ -103,7 +103,7 @@ export const quoteConfig: Record<string, QConfig> = {
     volumeLabel: "Documentos requeridos", volumePlaceholder: "Ej.: 3 expedientes",
     level: "Nivel 4 · Expansión", next: [],
     fields: [
-      { key: "modalidad", label: "Modalidad", options: ["Digitalización prioritaria bajo demanda", "Despacho físico express", "No lo sé"] },
+      { key: "modalidad", label: "Modalidad", options: ["Digitalización prioritaria bajo demanda", "Despacho físico exprés", "No lo sé"] },
       { key: "custodia", label: "¿Los documentos están en custodia con Transarchivos?", options: ["Sí", "No", "Parcialmente"] },
       { key: "plazo", label: "Plazo requerido", options: ["Mismo día", "24 a 48 horas", "Esta semana"] },
     ],

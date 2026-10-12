@@ -12,7 +12,7 @@ test("menú Servicios lleva a la página del servicio", async ({ page, isMobile 
   test.skip(isMobile, "En celular el menú es un panel distinto");
   await page.goto("/");
   await page.getByRole("button", { name: /Servicios/ }).first().click();
-  await page.getByRole("link", { name: /Custodia de Archivos/ }).first().click();
+  await page.getByRole("link", { name: /Custodia de archivos/ }).first().click();
   await expect(page).toHaveURL(/\/servicios\/custodia-de-archivos/);
   await expect(page.locator("h1")).toContainText("Custodia");
 });
@@ -22,7 +22,7 @@ test("buscador encuentra un servicio sin tildes", async ({ page, isMobile }) => 
   await page.goto("/");
   await page.getByRole("button", { name: /Buscar/ }).first().click();
   await page.getByRole("dialog", { name: /Buscar/ }).locator("input").fill("digitalizacion");
-  await expect(page.getByRole("dialog").getByText(/Digitalización de Documentos/).first()).toBeVisible();
+  await expect(page.getByRole("dialog").getByText(/Digitalización de documentos/).first()).toBeVisible();
 });
 
 test("chat de Joel responde texto libre", async ({ page }) => {
@@ -51,7 +51,7 @@ test("desde un servicio, 'Servicios' lleva a la sección de servicios de la port
   test.skip(isMobile, "El menú de escritorio abre el servicio");
   await page.goto("/");
   await page.getByRole("button", { name: /Servicios/ }).first().click();
-  await page.getByRole("link", { name: /Custodia de Archivos/ }).first().click();
+  await page.getByRole("link", { name: /Custodia de archivos/ }).first().click();
   await expect(page).toHaveURL(/\/servicios\/custodia-de-archivos/);
   await page.getByRole("button", { name: "Servicios" }).last().click();
   await expect(page).toHaveURL(/\/#servicios$/);

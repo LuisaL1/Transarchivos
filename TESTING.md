@@ -56,7 +56,7 @@ El reporte HTML queda en `playwright-report/` (`pnpm exec playwright show-report
   - **solo colores de la paleta** (lista blanca: para añadir un color hay que
     agregarlo a propósito);
   - **sin degradados de color**.
-- `components.test.tsx`: el selector "¿Qué necesitas hoy?" cambia de servicio
+- `components.test.tsx`: el selector "¿Qué necesita hoy?" cambia de servicio
   y apunta a la cotización correcta.
 
 ### 3. Seguridad

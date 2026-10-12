@@ -18,7 +18,7 @@ Visita ─► Interés (servicio, solución, artículo, mapa)
 | Punto | Dónde | Destino |
 | --- | --- | --- |
 | "Solicitar cotización" | Navbar (siempre visible), heroes internos, llamados finales | `#cotizador` |
-| Selector "¿Qué necesitas hoy?" | Hero | Página del servicio o cotizador con el servicio elegido |
+| Selector "¿Qué necesita hoy?" | Hero | Página del servicio o cotizador con el servicio elegido |
 | Tarjetas de servicio | Inicio, servicios relacionados | Página del servicio |
 | "Cotizar esta solución" | Soluciones (toda la tarjeta es clicable) | Cotizador con servicio y solución |
 | Diagnóstico documental | Sección propia, tarjeta del menú, columna del artículo | Cotizador |

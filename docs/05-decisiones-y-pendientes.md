@@ -4,7 +4,7 @@
 
 | Tema | Decisión |
 | --- | --- |
-| Hero | Pantalla dividida: panel azul con el título animado ("Sus archivos, bajo [control·custodia·orden·legalidad·resguardo·protección]") y videos a la derecha. Selector "¿Qué necesitas hoy?" sin textos de relleno. |
+| Hero | Pantalla dividida: panel azul con el título animado ("Sus archivos, bajo [control·custodia·orden·legalidad·resguardo·protección]") y videos a la derecha. Selector "¿Qué necesita hoy?" sin textos de relleno. |
 | Pestaña de carpeta | En la división del hero, pegada al borde superior y del mismo azul del panel. Bajo el menú hay una sombra negra suave (pedida por el cliente). |
 | Joel en el hero | Junto al selector, volteado, con la mano sobre la tarjeta y sin globo de texto. Solo su cuerpo es clicable, para no bloquear la pestaña "Destruir". |
 | Mapa | La animación original del mapa se conserva. Se agregó solo la silueta de Joel en súper zoom, del color del mapa. Se descartaron rutas, camión, Joel detective y mini-Joel en el pin. |

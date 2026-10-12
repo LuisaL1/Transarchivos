@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { HeroQuickStart } from "@/components/home/Hero";
 
-describe("Selector del hero (¿Qué necesitas hoy?)", () => {
+describe("Selector del hero (¿Qué necesita hoy?)", () => {
   it("cambia de servicio y apunta a su cotización", async () => {
     render(<MemoryRouter><HeroQuickStart /></MemoryRouter>);
     const tabs = screen.getAllByRole("tab");

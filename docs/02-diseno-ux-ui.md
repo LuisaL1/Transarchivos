@@ -80,7 +80,7 @@ Todo respeta `prefers-reduced-motion`.
 1. **Hero** (pantalla dividida 50/50 desde `md`):
    - **Izquierda (panel azul):**
      - título "Sus archivos, bajo [palabra]" y subtítulo;
-     - selector **"¿Qué necesitas hoy?"**: 4 pestañas (Organizar, Digitalizar,
+     - selector **"¿Qué necesita hoy?"**: 4 pestañas (Organizar, Digitalizar,
        Custodiar, Destruir), cada una con detalle, "Ver servicio" y "Cotizar este servicio";
      - Joel de cuerpo entero junto al selector, desde `xl`, con la mano sobre la tarjeta.
        Solo su cuerpo recibe el clic, que abre el chat.

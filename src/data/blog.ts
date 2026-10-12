@@ -110,7 +110,7 @@ export const blogPosts: Post[] = [
       },
       {
         t: "p",
-        text: "Durante más de 40 años, Transarchivos ha actuado como un aliado estratégico de las empresas colombianas, implementando un Programa de Gestión Documental (PGD) diseñado para integrar la economía circular en cada fase del tratamiento de la información:",
+        text: "Durante más de 40 años, Transarchivos ha actuado como un aliado estratégico de las empresas colombianas, implementando un Programa de gestión documental (PGD) diseñado para integrar la economía circular en cada fase del tratamiento de la información:",
       },
       {
         t: "ul",
@@ -128,11 +128,11 @@ export const blogPosts: Post[] = [
       { t: "h2", text: "Optimice sus recursos hoy mismo" },
       {
         t: "p",
-        text: "Un Programa de Gestión Documental estructurado no solo asegura el cumplimiento de las normativas del Archivo General de la Nación (AGN) y las métricas ESG (Gobernanza Ambiental y Social), sino que libera capital operativo y espacio físico en su organización. Haga que la información de su compañía responda a los desafíos del mercado actual con el respaldo de más de cuatro décadas de experiencia comprobada por parte de Transarchivos.",
+        text: "Un Programa de gestión documental estructurado no solo asegura el cumplimiento de las normativas del Archivo General de la Nación (AGN) y las métricas ESG (Gobernanza Ambiental y Social), sino que libera capital operativo y espacio físico en su organización. Haga que la información de su compañía responda a los desafíos del mercado actual con el respaldo de más de cuatro décadas de experiencia comprobada por parte de Transarchivos.",
       },
       {
         t: "p",
-        text: "Descubra cómo implementar un Programa de Gestión Documental Sostenible para su empresa: visite nuestra sección de servicios en www.transarchivos.com y solicite una consultoría especializada con nuestro equipo de archivistas expertos.",
+        text: "Descubra cómo implementar un Programa de gestión documental Sostenible para su empresa: visite nuestra sección de servicios en www.transarchivos.com y solicite una consultoría especializada con nuestro equipo de archivistas expertos.",
       },
     ],
   },

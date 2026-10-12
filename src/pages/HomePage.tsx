@@ -201,7 +201,7 @@ export function HomePage() {
                 La <span style={{ background: "linear-gradient(transparent 62%, #FFDE59 62%)" }}>radiografía completa</span> de su archivo, antes de mover un solo papel
               </h3>
               <p className="text-sm mb-8" style={{ color: "#6B6B6B", lineHeight: 1.65 }}>
-                No le preguntamos qué servicio quiere: le mostramos qué está pasando hoy con su archivo, para que decida con información real — no con suposiciones.
+                Antes de recomendarle un servicio, analizamos el estado de su archivo. Así podrá tomar decisiones informadas, basadas en hallazgos reales y no en suposiciones.
               </p>
 
               {/* Proceso en 4 pasos (línea de tiempo vertical) */}
@@ -212,7 +212,7 @@ export function HomePage() {
                   { t: "Diagnóstico", d: "Revisamos su archivo tal como está hoy." },
                   { t: "Hallazgos", d: "Identificamos volumen, estado, riesgos y oportunidades." },
                   { t: "Plan de acción", d: "Priorizamos qué hacer primero y con qué servicios." },
-                  { t: "Propuesta", d: "Recibe una propuesta clara, con alcance y tiempos." },
+                  { t: "Propuesta", d: "Recibirá una propuesta clara, con alcance y plazos definidos." },
                 ].map((st, i) => (
                   <li key={st.t} className="relative flex items-start gap-4 pb-5 last:pb-0">
                     <span className="relative flex items-center justify-center rounded-full font-bold text-xs shrink-0"
@@ -336,11 +336,11 @@ export function HomePage() {
               { n: 1, t: "Diagnóstico", k: "Entrada", ic: "clipboard2-pulse-fill", c: "#C8960A", d: "Detectamos su necesidad y abrimos la relación entendiendo qué pasa hoy con su archivo.", g: "#C8960A",
                 items: [{ i: "search", l: "Diagnóstico documental", href: "#cotizador" }, { i: "list-columns-reverse", l: "Levantamiento de inventario", to: "/servicios/levantamiento-de-inventario" }] },
               { n: 2, t: "Solución", k: "Transformación", ic: "gear-wide-connected", c: "#272B7C", d: "Resolvemos el problema documental con un proyecto a la medida.", g: "#272B7C",
-                items: [{ i: "upc-scan", l: "Digitalización", to: "/servicios/digitalizacion-de-documentos" }, { i: "folder2-open", l: "Programa de Gestión Documental", to: "/servicios/programa-de-gestion-documental" }] },
+                items: [{ i: "upc-scan", l: "Digitalización", to: "/servicios/digitalizacion-de-documentos" }, { i: "folder2-open", l: "Programa de gestión documental", to: "/servicios/programa-de-gestion-documental" }] },
               { n: 3, t: "Protección", k: "Recurrencia", ic: "shield-fill-check", c: "#1800AD", d: "Protegemos su información y la mantenemos disponible cuando la necesite.", g: "#1800AD",
                 items: [{ i: "archive", l: "Custodia de archivos", to: "/servicios/custodia-de-archivos" }, { i: "hdd-stack", l: "Custodia de medios magnéticos", to: "/servicios/custodia-de-medios-magneticos" }] },
               { n: 4, t: "Expansión", k: "Nuevos proyectos", ic: "rocket-takeoff-fill", c: "#272B7C", d: "Cerramos el ciclo de vida documental y ampliamos el valor de la relación.", g: "#272B7C",
-                items: [{ i: "file-earmark-x", l: "Destrucción legal", to: "/servicios/destruccion-de-documentos" }, { i: "lightning-charge", l: "Servicio inmediato", to: "/servicios/servicio-inmediato" }, { i: "person-badge", l: "Servicio Inhouse", to: "/servicios/servicio-inhouse" }] },
+                items: [{ i: "file-earmark-x", l: "Destrucción legal", to: "/servicios/destruccion-de-documentos" }, { i: "lightning-charge", l: "Servicio inmediato", to: "/servicios/servicio-inmediato" }, { i: "person-badge", l: "Servicio in house", to: "/servicios/servicio-inhouse" }] },
             ].map((st, idx, arr) => (
               <div key={st.n} role="link" tabIndex={0}
                 // Toda la tarjeta lleva a su primer servicio (los enlaces de
@@ -499,8 +499,8 @@ export function HomePage() {
             {[
               { ic: "shield-check", t: "Cumplimiento normativo", d: "Operamos bajo la Ley 594 de 2000 y la normativa del AGN." },
               { ic: "camera-video-fill", t: "Custodia con vigilancia 24/7", d: "Centro documental con CCTV, control de acceso y monitoreo ambiental permanente." },
-              { ic: "graph-up-arrow", t: "Costo variable y escalable", d: "Paga por el volumen exacto que custodia, sin costos fijos de espacio o personal." },
-              { ic: "lightning-charge-fill", t: "Ágil, in-house e inmediato", d: "Del diagnóstico al despacho express, adaptados al ritmo de su operación." },
+              { ic: "graph-up-arrow", t: "Costo variable y escalable", d: "Pague solo por el volumen exacto que custodia, sin costos fijos de espacio o personal." },
+              { ic: "lightning-charge-fill", t: "Ágil, en su sede e inmediato", d: "Del diagnóstico al despacho exprés, adaptados al ritmo de su operación." },
               { ic: "award-fill", t: "Trayectoria desde 1983", d: "Pioneros de la gestión documental en Colombia, con más de 40 años de experiencia." },
             ].map(f => (
               <div key={f.t} className="flex flex-col items-center text-center gap-1.5 px-4 py-2.5 md:py-0" style={{ borderColor: "#E4E6F7" }}>

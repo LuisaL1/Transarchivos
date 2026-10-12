@@ -90,7 +90,7 @@ RecursosTransarchivos/    Documentos fuente del cliente (contexto, no se publica
   excepción: la sombra negra superior del hero de inicio.
 - Hero de inicio: pantalla dividida (panel azul con el título animado
   "Sus archivos, bajo [palabra]" y videos a la derecha), pestaña de carpeta en
-  la división y Joel junto al selector "¿Qué necesitas hoy?".
+  la división y Joel junto al selector "¿Qué necesita hoy?".
 
 ## Joel (asesor virtual)
 

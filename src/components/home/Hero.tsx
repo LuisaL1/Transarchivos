@@ -95,12 +95,12 @@ export function HeroQuickStart() {
   const q = QUICK[sel];
   return (
     <div className="mt-9 max-w-[440px] mx-auto md:mx-0">
-    <p className="text-center md:text-left text-sm font-semibold mb-3" style={{ color: "#fff", fontFamily: "Montserrat, sans-serif" }}>¿Qué necesitas hoy?</p>
+    <p className="text-center md:text-left text-sm font-semibold mb-3" style={{ color: "#fff", fontFamily: "Montserrat, sans-serif" }}>¿Qué necesita hoy?</p>
     <div className="text-left rounded-3xl p-2"
       style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.14)", backdropFilter: "blur(10px)", boxShadow: "0 30px 60px -30px rgba(0,0,0,0.55)" }}>
       {/* Pestañas: indicador amarillo que se desliza; foco de teclado interno
           (sin el contorno azul global, que se veía tosco sobre el amarillo). */}
-      <div role="tablist" aria-label="¿Qué necesitas hoy?" className="relative grid grid-cols-4">
+      <div role="tablist" aria-label="¿Qué necesita hoy?" className="relative grid grid-cols-4">
         <span aria-hidden="true" className="absolute top-0 bottom-0 rounded-2xl"
           style={{ width: "25%", left: `${sel * 25}%`, background: "#FFDE59", boxShadow: "0 10px 24px -12px rgba(255,222,89,0.8)", transition: "left 0.35s cubic-bezier(0.4,0,0.2,1)" }} />
         {QUICK.map((o, i) => {

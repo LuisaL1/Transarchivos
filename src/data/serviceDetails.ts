@@ -28,7 +28,7 @@ export const SERVICE_DETAILS: Record<string, SvcDetail> = {
     tagline: "Sus documentos, ordenados durante todo su ciclo de vida.",
     intro: "Un sistema estructurado de políticas, normas, procedimientos y herramientas para manejar los documentos desde su creación y uso hasta su conservación y disposición final. Lo diseñamos, formulamos e implementamos a la medida.",
     stats: [{ v: "Obligatorio", l: "para entidades públicas y privadas con funciones públicas" }, { v: "Decreto 1080", l: "de 2015 como respaldo" }, { v: "Cero papel", l: "jurídicamente válido" }],
-    benefits: ["Ahorra dinero reduciendo costos de almacenamiento y administración", "Encuentra información en segundos", "Cumple normas legales y evita sanciones", "Protege la información con control de acceso", "Libera espacio físico y digital", "Mejora la toma de decisiones con información confiable"],
+    benefits: ["Ahorro en costos de almacenamiento y administración", "Información disponible en segundos", "Cumplimiento legal y prevención de sanciones", "Información protegida con control de acceso", "Más espacio físico y digital", "Mejores decisiones con información confiable"],
     reasons: [
       { ic: "exclamation-triangle", t: "Riesgo legal", d: "Su ausencia expone a sanciones e investigaciones del AGN cuando la entidad tiene funciones públicas o está vigilada por superintendencias." },
       { ic: "diagram-3", t: "Productividad", d: "Unifica criterios de producción, recepción, consulta, retención y disposición de documentos físicos y electrónicos en todas las áreas." },
@@ -38,10 +38,10 @@ export const SERVICE_DETAILS: Record<string, SvcDetail> = {
     norms: ["Ley 594 de 2000", "Decreto 1080 de 2015", "Normas del AGN"],
   },
   "custodia-de-medios-magneticos": {
-    tagline: "¿Por qué sus backups no pueden quedarse en la oficina?",
+    tagline: "¿Por qué sus copias de seguridad no pueden quedarse en la oficina?",
     intro: "Almacenamiento especializado de soportes físicos de información: cintas LTO, DAT y DLT, discos duros externos, CDs, DVDs y otros medios. Una necesidad crítica para la continuidad del negocio.",
-    stats: [{ v: "Air gap", l: "copia desconectada de la red" }, { v: "24 h", l: "control de temperatura y humedad" }, { v: "GPS", l: "en vehículos propios de transporte" }],
-    benefits: ["Copia de respaldo protegida frente a ransomware", "Pilar de su Plan de Recuperación ante Desastres (DRP)", "Condiciones ambientales controladas", "Trazabilidad completa de cada medio", "Rotaciones programadas con su equipo de TI"],
+    stats: [{ v: "Air gap", l: "copia de seguridad aislada de la red" }, { v: "24 h", l: "control de temperatura y humedad" }, { v: "GPS", l: "en vehículos propios de transporte" }],
+    benefits: ["Copia de respaldo protegida frente a ransomware", "Respaldo para su plan de recuperación ante desastres (DRP)", "Condiciones ambientales controladas", "Trazabilidad completa de cada medio", "Rotaciones programadas con su equipo de TI"],
     steps: [
       { t: "Recolección", d: "En maletines herméticos e ignífugos con sellos numerados." },
       { t: "Transporte", d: "Vehículos propios monitoreados por GPS." },
@@ -50,18 +50,18 @@ export const SERVICE_DETAILS: Record<string, SvcDetail> = {
       { t: "Rotación", d: "Cronogramas diarios, semanales o mensuales con su TI." },
     ],
     reasons: [
-      { ic: "shield-lock", t: "Air gap frente a ransomware", d: "La nube no es infalible: el ransomware puede cifrar también sus réplicas. La copia física desconectada es su última línea de defensa." },
+      { ic: "shield-lock", t: "Copia aislada (air gap) frente a ransomware", d: "La nube no es infalible: el ransomware puede cifrar también sus réplicas. La copia física desconectada es su última línea de defensa." },
       { ic: "thermometer-half", t: "Infraestructura técnica", d: "Control automatizado de temperatura y humedad, blindaje electromagnético, extinción con agentes limpios y monitoreo perimetral." },
       { ic: "upc", t: "Cadena de custodia", d: "Sellos numerados, código de barras y acceso restringido a personal autorizado, en cumplimiento de la Ley 1581 de 2012." },
       { ic: "calendar-check", t: "Logística coordinada", d: "Rotaciones diarias, semanales o mensuales coordinadas con el equipo de TI de su empresa." },
     ],
-    norms: ["Ley 1581 de 2012", "Plan de Recuperación ante Desastres (DRP)"],
+    norms: ["Ley 1581 de 2012", "plan de recuperación ante desastres (DRP)"],
   },
   "custodia-de-archivos": {
     tagline: "Su archivo protegido, disponible cuando lo necesite.",
     intro: "Resguardo, protección y gestión de los documentos físicos y digitales de su organización, garantizando seguridad, integridad y disponibilidad a lo largo de todo su ciclo de vida.",
-    stats: [{ v: "24/7", l: "monitoreo y vigilancia con CCTV" }, { v: "Icontec", l: "estantería de carga pesada" }, { v: "Variable", l: "paga por el volumen que custodia" }],
-    benefits: ["Convierte un costo fijo de espacio en uno variable y escalable", "Elimina gastos propios de personal, seguridad y mantenimiento", "Consulta física o electrónica cuando la necesite", "Eliminación certificada al cumplir los tiempos de retención"],
+    stats: [{ v: "24/7", l: "monitoreo y vigilancia con CCTV" }, { v: "Icontec", l: "estantería de carga pesada" }, { v: "Variable", l: "pague por el volumen que custodia" }],
+    benefits: ["Un costo variable y escalable en lugar de un costo fijo de espacio", "Sin gastos propios de personal, seguridad ni mantenimiento", "Consulta física o electrónica cuando la necesite", "Eliminación certificada al cumplir los tiempos de retención"],
     steps: [
       { t: "Identificación", d: "Clasificación por tipo: contratos, facturas, correspondencia…" },
       { t: "Indexación", d: "Registro con metadatos: nombres, fechas, expedientes." },
@@ -70,7 +70,7 @@ export const SERVICE_DETAILS: Record<string, SvcDetail> = {
       { t: "Consulta", d: "Entrega física o electrónica, con auditoría y cumplimiento." },
     ],
     reasons: [
-      { ic: "cash-coin", t: "Costo variable", d: "Paga por el volumen exacto de cajas, sin arrendamientos ni administración de espacio propio." },
+      { ic: "cash-coin", t: "Costo variable", d: "Pague por el volumen exacto de cajas, sin arrendamientos ni administración de espacio propio." },
       { ic: "camera-video", t: "Seguridad integral", d: "Prevención y control de incendios, monitoreo 24/7 y control ambiental preventivo." },
       { ic: "upc-scan", t: "Localización inmediata", d: "Cada caja y expediente se codifica con código de barras y se asocia al software de gestión." },
       { ic: "hourglass-split", t: "Ciclo de vida", d: "Parametrizamos vencimientos con sus TRD y le avisamos antes de la eliminación segura y certificada." },
@@ -96,7 +96,7 @@ export const SERVICE_DETAILS: Record<string, SvcDetail> = {
     ],
     modes: [
       { ic: "building", t: "En nuestro centro de operación", d: "Con atención prioritaria para documentos urgentes." },
-      { ic: "house-door", t: "In-house, en su empresa", d: "El documento no sale de sus instalaciones." },
+      { ic: "house-door", t: "En su empresa (in house)", d: "El documento no sale de sus instalaciones." },
     ],
     norms: ["Ley 527 de 1999", "Decreto 1080 de 2015", "Normas del AGN"],
   },
@@ -104,7 +104,7 @@ export const SERVICE_DETAILS: Record<string, SvcDetail> = {
     tagline: "Destruir no es desaparecer: es cerrar el ciclo con seguridad.",
     intro: "Un proceso seguro, trazable y alineado con la normativa colombiana para eliminar los documentos que ya cumplieron su tiempo de retención, con acta de eliminación y certificado de destrucción.",
     stats: [{ v: "100%", l: "del papel triturado va a economía circular" }, { v: "1983", l: "profesionalizando la destrucción documental" }, { v: "Certificado", l: "válido ante DIAN y superintendencias" }],
-    benefits: ["Reduce costos de almacenar documentos sin valor", "Libera espacio físico", "Protege datos personales y la privacidad", "Aporta a indicadores ESG y a la huella de carbono"],
+    benefits: ["Menores costos por almacenar documentos sin valor", "Más espacio físico disponible", "Protección de los datos personales y la privacidad", "Aporte a los indicadores ESG y a la reducción de la huella de carbono"],
     steps: [
       { t: "Recolección", d: "Coordinada con su equipo." },
       { t: "Verificación", d: "El material corresponde a lo autorizado." },
@@ -168,7 +168,7 @@ export const SERVICE_DETAILS: Record<string, SvcDetail> = {
     ],
     modes: [
       { ic: "cloud-arrow-down", t: "Digitalización prioritaria bajo demanda", d: "La más rápida: escaneo en alta resolución y entrega electrónica cifrada." },
-      { ic: "truck", t: "Despacho físico express", d: "Transporte prioritario del original, con firmas y sellos húmedos, bajo estrictas condiciones de seguridad." },
+      { ic: "truck", t: "Despacho físico exprés", d: "Transporte prioritario del original, con firmas y sellos húmedos, bajo estrictas condiciones de seguridad." },
     ],
     norms: ["Ley 594 de 2000", "Ley 1581 de 2012", "Normas del AGN"],
   },

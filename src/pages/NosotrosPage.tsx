@@ -153,7 +153,7 @@ export function NosotrosPage() {
           <div className="text-center mb-10">{kicker("Misión y visión")}{h2("Hacia dónde vamos")}</div>
           <div className="grid md:grid-cols-2 gap-5">
             {[
-              { t: "Misión", ic: "bullseye", x: "Somos pioneros de la gestión documental en Colombia. Ofrecemos soluciones integrales de consultoría archivística, administración, custodia física y transformación digital de la información, bajo el estricto cumplimiento legal. A través de servicios ágiles, in-house e inmediatos, aseguramos la calidad operativa y la seguridad de los datos (confidencialidad, integridad y disponibilidad). Nos comprometemos con la mejora continua de nuestros procesos para superar las expectativas de nuestras partes interesadas y mitigar los riesgos del entorno." },
+              { t: "Misión", ic: "bullseye", x: "Somos pioneros de la gestión documental en Colombia. Ofrecemos soluciones integrales de consultoría archivística, administración, custodia física y transformación digital de la información, bajo el estricto cumplimiento legal. A través de servicios ágiles, en su sede (in house) e inmediatos, aseguramos la calidad operativa y la seguridad de los datos (confidencialidad, integridad y disponibilidad). Nos comprometemos con la mejora continua de nuestros procesos para superar las expectativas de nuestras partes interesadas y mitigar los riesgos del entorno." },
               { t: "Visión 2030", ic: "binoculars", x: "Para el año 2030, queremos consolidar nuestro liderazgo en Colombia como proveedores integrales de custodia física, consultoría archivística y transformación digital. Seremos reconocidos por la excelencia de nuestros estándares de calidad, la solidez en la seguridad de la información y la adopción de tecnologías seguras en la nube, garantizando un crecimiento sostenible que impulse el desarrollo y la estabilidad de nuestros colaboradores." },
             ].map((m, i) => (
               <div key={m.t} className="relative rounded-3xl p-7 overflow-hidden" style={{ background: i === 0 ? "#272B7C" : "#fff", border: i === 0 ? "none" : "1.5px solid #E4E6F7", boxShadow: "0 24px 50px -32px rgba(39,43,124,0.55)" }}>
@@ -176,14 +176,14 @@ export function NosotrosPage() {
             {kicker("Nuestro equipo")}
             {h2(<>Personal {mark("capacitado")} y respaldado</>)}
             <p className="text-sm mt-4" style={{ color: "#6B6B6B", lineHeight: 1.7 }}>
-              Nuestro personal técnico de archivo está capacitado bajo normas archivísticas avanzadas y los lineamientos del Archivo General de la Nación (AGN). En los proyectos Inhouse, Transarchivos asume la figura de empleador del personal en sitio, con protocolos de contingencia ante ausencias, informes mensuales de gestión y cumplimiento de acuerdos de servicio.
+              Nuestro personal técnico de archivo está capacitado bajo normas archivísticas avanzadas y los lineamientos del Archivo General de la Nación (AGN). En los proyectos in house, Transarchivos asume la figura de empleador del personal en sitio, con protocolos de contingencia ante ausencias, informes mensuales de gestión y cumplimiento de acuerdos de servicio.
             </p>
             <div className="mt-10 pl-6"><JoelFigure src={JOEL.notas} height={250} /></div>
           </div>
           <div className="grid gap-4">
             {[
               { ic: "mortarboard", t: "Formación archivística", x: "Personal capacitado bajo normas archivísticas avanzadas y lineamientos del AGN." },
-              { ic: "person-badge", t: "Empleador del personal Inhouse", x: "Selección, capacitación, reemplazos y evaluación de desempeño a cargo de Transarchivos." },
+              { ic: "person-badge", t: "Empleador del personal in house", x: "Selección, capacitación, reemplazos y evaluación de desempeño a cargo de Transarchivos." },
               { ic: "clipboard-data", t: "KPIs y SLA medibles", x: "Informes mensuales de gestión y cumplimiento de acuerdos de servicio con el cliente." },
             ].map((c, i) => (
               <div key={c.t} className="group relative rounded-3xl p-6 flex items-start gap-4 overflow-hidden card-lift" style={{ background: "#fff", border: "1.5px solid #E4E6F7" }}>
@@ -268,7 +268,7 @@ export function NosotrosPage() {
               { ic: "fire", t: "Extinción sin agua", x: "Sistemas de extinción de incendios con agentes limpios." },
               { ic: "camera-video", t: "Monitoreo y CCTV", x: "Vigilancia perimetral constante y control de acceso restringido." },
               { ic: "truck", t: "Transporte con GPS", x: "Vehículos propios monitoreados y trazabilidad por código de barras." },
-              { ic: "cloud-check", t: "Copias air gap y nube segura", x: "Respaldo desconectado de la red y tecnologías seguras en la nube." },
+              { ic: "cloud-check", t: "Copias aisladas (air gap) y nube segura", x: "Respaldo desconectado de la red y tecnologías seguras en la nube." },
             ].map(c => (
               <div key={c.t} className="flex items-start gap-3 rounded-2xl p-4" style={card}>
                 <BiTile n={c.ic} size={34} accent="#1800AD" />

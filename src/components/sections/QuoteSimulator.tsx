@@ -118,7 +118,7 @@ export function QuoteSimulator() {
         Solicite su cotización
       </p>
       <h2 className="text-3xl font-bold text-center mb-4" style={{ fontFamily: "Poppins, sans-serif", color: "#272B7C" }}>
-        Cuéntenos qué necesita y arme su solicitud
+        Cuéntenos qué necesita y prepare su solicitud
       </h2>
       <p className="text-sm text-center max-w-xl mx-auto mb-10" style={{ color: "#6B6B6B" }}>
         Cuatro pasos cortos. Verá cómo se arma su solicitud antes de enviarla a nuestro equipo comercial.

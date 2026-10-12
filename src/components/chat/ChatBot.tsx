@@ -174,7 +174,7 @@ export const CHAT_OPTION_ICONS: Record<string, string> = {
 };
 
 // Ícono para cualquier opción del chat (incluidas las que arma el cerebro de
-// Joel, como "Cotizar Servicio Inmediato"). Nunca queda una opción sin ícono.
+// Joel, como "Cotizar Servicio inmediato"). Nunca queda una opción sin ícono.
 export function chatOptionIcon(label: string): string {
   if (CHAT_OPTION_ICONS[label]) return CHAT_OPTION_ICONS[label];
   if (/^Cotizar/.test(label)) return "ui-checks";
