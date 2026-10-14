@@ -35,7 +35,7 @@ src/
 │   │                     cotizador, blog, preguntas frecuentes; y las compartidas por
 │   │                     las páginas internas: PageHero (encabezado) y CtaBand (llamado final)
 │   ├── home/             Piezas propias del hero (videos, barra de Joel)
-│   ├── chat/             Chat de Joel (interfaz y guion); LazyChatBot lo carga aparte
+│   ├── chat/             Chat de Joel (ChatBot: interfaz); LazyChatBot lo carga aparte
 │   └── ui/               Primitivas: íconos, marca (logo/Joel), fondos y pestaña de carpeta
 │                         (SectionDecor), rótulo/título de sección (SectionHead)
 ├── data/                 CONTENIDO del sitio (fuente única de verdad)
@@ -43,6 +43,7 @@ src/
 │   ├── serviceDetails.ts     Contenido de la página de cada servicio
 │   ├── solutions.ts          Soluciones por necesidad del cliente
 │   ├── faqs.ts               Preguntas frecuentes
+│   ├── chat.ts               Pasos, textos e íconos del chat de Joel (cotización guiada, asesor)
 │   ├── policies.ts           Políticas institucionales oficiales (/politicas; PDF en public/documentos)
 │   ├── quote.ts              Preguntas y unidades del cotizador
 │   ├── blog.ts               Artículos del blog
@@ -51,7 +52,12 @@ src/
 │   ├── contact.ts            Número y enlace de WhatsApp (whatsappUrl)
 │   ├── clients.ts            Clientes históricos (carrusel de logos; imágenes en assets/images/clientes)
 │   └── search.ts             Índice del buscador
+├── hooks/useAdvisorChat.ts  Lógica del chat de Joel y del chat con un asesor (API, puente, ventana de Zoho)
 ├── lib/joel.ts           "Cerebro" del asesor virtual (sin IA externa)
+├── lib/advisorEvents.ts  Eventos ta:open-advisor, ta:crm-chat, ta:send-quote
+├── lib/crmChat.ts        Carga de Zoho SalesIQ en la página aislada (solo al pedir un asesor; SALESIQ_WIDGET)
+├── lib/zohoBridge.ts     Puente: la conversación de Zoho se ve dentro de Joel
+├── lib/advisorChat.ts    Cliente de /api/advisor (modo API, listo para activar)
 ├── lib/visitor.ts        Lo que el sitio recuerda del visitante (localStorage): visitas, eventos, búsquedas
 ├── lib/leads.ts          Envío de formularios a /api/contact
 ├── lib/analytics.ts      Google Analytics con consentimiento (Consent Mode v2)
@@ -63,7 +69,10 @@ src/
 ├── styles/tokens.ts      Paleta en código (C.indigo, C.yellow…) para estilos en línea
 └── styles/index.css      Estilos globales, tokens de color de Tailwind (@theme), animaciones
 public/                   Archivos servidos tal cual (videos, favicon, robots, documentos/ PDF oficiales)
-api/contact.ts            Función de Vercel: formularios → correo por Brevo (docs/07-formularios.md)
+api/contact.mjs           Función de Vercel: formularios → correo por Brevo (docs/07-formularios.md)
+api/advisor.mjs           Función de Vercel: chat con un asesor por la API de Zoho SalesIQ (docs/08-chat-asesor.md)
+public/chat-asesor.html   Página aislada donde vive el widget de Zoho (CSP propia en vercel.json)
+src/styles/zoho-*.css     Diseño del sitio dentro de la ventana de Zoho (respaldo)
 scripts/prerender.mjs     Pre-genera dist/<ruta>.html, 404, sitemap y robots (SEO)
 scripts/generate-email-header.mjs  Banner de los correos (pnpm email:header)
 knip.json                 Detección de archivos, exportaciones y dependencias sin uso (pnpm lint:unused)
@@ -129,4 +138,12 @@ tipeo), responde preguntas específicas, maneja objeciones, se defiende de
 manipulación y temas ajenos, personaliza el saludo según el comportamiento del
 visitante y aprende palabras nuevas. Todo se guarda en el `localStorage` del
 visitante (no hay servidor). Recibe el conocimiento desde `src/data/` al crearse
-(ver `getJoel()` en `components/chat/ChatBot.tsx`).
+(ver `getJoel()` en `hooks/useAdvisorChat.ts`).
+
+**Chat con un asesor humano (Zoho SalesIQ):** Joel atiende primero; "Hablar con
+un asesor" o pedir una persona por escrito (`handoff`) conecta de una vez, sin
+mencionar Zoho. La conversación se ve dentro de Joel (puente); si falla, se abre
+la ventana de Zoho con el diseño del sitio. El resumen de la cotización guiada
+se envía al chat del equipo con "Enviar a un asesor". Zoho nunca se carga en las
+páginas del sitio ni antes de pedir un asesor. Las funciones de Vercel son
+`.mjs` (con `.ts` fallaban en Vercel). Ver `docs/08-chat-asesor.md`.

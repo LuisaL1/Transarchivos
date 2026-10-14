@@ -73,6 +73,9 @@ Se puede entrar directo al paso 2 con `?servicio=<slug>&solucion=<id>#cotizador`
 | `generate_lead` | Clic en "enviar" del resumen del cotizador | `method: "cotizador"`, `service`, `solution` |
 | `contact_click` | Cualquier enlace de WhatsApp, `tel:` o `mailto:` del sitio | `method`: `whatsapp` · `phone` · `email` · `email_quote` (correo con asunto, del chat o del cotizador) |
 | `chat_open` | Se abre el chat | — |
+| `contact_click` | Pide hablar con un asesor humano desde el chat de Joel | `method: "advisor_chat"` |
+| `generate_lead` | Se abre una conversación con un asesor (Zoho SalesIQ) con la pregunta del visitante | `method: "advisor_chat"` |
+| `generate_lead` | La cotización hecha con Joel se envía al chat de los asesores ("Enviar a un asesor") | `method: "chat_advisor"`, `service` |
 | `search` | Se elige un resultado del buscador | `search_term` |
 
 **Recomendado al conectar GA4:**

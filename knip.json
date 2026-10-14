@@ -2,13 +2,13 @@
   "$schema": "https://unpkg.com/knip@6/schema.json",
   "entry": [
     "src/entry-server.tsx",
-    "api/contact.ts",
+    "api/*.mjs",
     "scripts/*.mjs",
     "tests/**/*.{ts,tsx}"
   ],
   "project": [
     "src/**/*.{ts,tsx}",
-    "api/**/*.ts",
+    "api/**/*.mjs",
     "scripts/**/*.mjs",
     "tests/**/*.{ts,tsx}"
   ],

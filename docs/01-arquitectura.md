@@ -81,7 +81,7 @@ RecursosTransarchivos/ (documentos del cliente)
         ▼
 src/data/*.ts ──► páginas y secciones (render)
         ├──────► data/search.ts  (índice del buscador)
-        └──────► lib/joel.ts      (conocimiento de Joel, vía getJoel() en ChatBot)
+        └──────► lib/joel.ts      (conocimiento de Joel, vía getJoel() en hooks/useAdvisorChat.ts)
 
 Estado del visitante (solo en su navegador, localStorage/sessionStorage):
   ta-joel-profile        perfil de Joel (visitas, intereses, búsquedas, palabras aprendidas)

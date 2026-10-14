@@ -26,6 +26,29 @@ describe("Código", () => {
   });
 });
 
+describe("Funciones de Vercel (api/)", () => {
+  it("son .mjs: con .ts Vercel las cargaba como CommonJS (500) y .mts no las reconoce (404)", () => {
+    const fns = readdirSync("api");
+    expect(fns.length).toBeGreaterThan(0);
+    for (const f of fns) expect(f, `api/${f}`).toMatch(/\.mjs$/);
+  });
+  it("la clave de Brevo solo existe en el servidor, nunca en el navegador", () => {
+    for (const [f, s] of code) expect(s, f).not.toMatch(/BREVO_API_KEY|api\.brevo\.com/);
+    const api = readFileSync("api/contact.mjs", "utf8");
+    expect(api).toContain("process.env.BREVO_API_KEY");
+    expect(api).not.toMatch(/VITE_BREVO/);
+  });
+  it("las credenciales de Zoho solo existen en el servidor, nunca en el navegador", () => {
+    for (const [f, s] of code) expect(s, f).not.toMatch(/ZOHO_(CLIENT_SECRET|REFRESH_TOKEN|CLIENT_ID)|ADVISOR_SECRET|oauth\/v2\/token/);
+    const api = readFileSync("api/advisor.mjs", "utf8");
+    expect(api).toContain('env("ZOHO_REFRESH_TOKEN")');
+    expect(api).not.toMatch(/VITE_ZOHO/);
+  });
+  it("el chat de Joel no ejecuta ni interpreta HTML del visitante", () => {
+    for (const [f, s] of code.filter(([f]) => /chat|joel/i.test(f))) expect(s, f).not.toMatch(/innerHTML|dangerouslySetInnerHTML|DOMParser/);
+  });
+});
+
 describe("Repositorio", () => {
   it("ningún archivo .env real está versionado", () => {
     const tracked = execSync("git ls-files", { encoding: "utf8" }).split("\n");
@@ -35,7 +58,10 @@ describe("Repositorio", () => {
 
 describe("Cabeceras de seguridad (vercel.json)", () => {
   const cfg = JSON.parse(readFileSync("vercel.json", "utf8"));
-  const headers = Object.fromEntries(cfg.headers.find((h: { source: string }) => h.source === "/(.*)").headers.map((h: { key: string; value: string }) => [h.key, h.value]));
+  // El sitio (todo menos la página aislada del chat con un asesor) y esa página tienen cabeceras distintas
+  const pick = (src: string) => Object.fromEntries(cfg.headers.find((h: { source: string }) => h.source === src).headers.map((h: { key: string; value: string }) => [h.key, h.value]));
+  const headers = pick("/((?!chat-asesor).*)");
+  const helper = pick("/chat-asesor.html");
   it("define CSP, HSTS, nosniff, anti-clickjacking y referrer", () => {
     for (const k of ["Content-Security-Policy", "Strict-Transport-Security", "X-Content-Type-Options", "X-Frame-Options", "Referrer-Policy", "Permissions-Policy"]) expect(headers[k], k).toBeTruthy();
   });
@@ -46,4 +72,12 @@ describe("Cabeceras de seguridad (vercel.json)", () => {
     expect(headers["Content-Security-Policy"]).toMatch(/object-src 'none'/);
   });
   it("la página no puede embeberse en otros sitios", () => expect(headers["X-Frame-Options"]).toBe("DENY"));
+  it("el sitio nunca autoriza los scripts de Zoho: solo la página aislada del chat con un asesor", () => {
+    expect(headers["Content-Security-Policy"]).not.toMatch(/zoho/i);
+    const script = helper["Content-Security-Policy"].match(/script-src ([^;]+)/)[1];
+    expect(script).toMatch(/salesiq\.zohopublic\.com/);
+    expect(helper["Content-Security-Policy"]).toMatch(/frame-ancestors 'self'/);
+    expect(helper["X-Frame-Options"]).toBe("SAMEORIGIN");
+    expect(helper["X-Robots-Tag"]).toMatch(/noindex/);
+  });
 });

@@ -21,7 +21,9 @@
     "test:ga": "GA_E2E=1 playwright test tests/e2e/analytics.spec.ts",
     "test:seo": "SEO_DIST=1 vitest run",
     "email:header": "node scripts/generate-email-header.mjs",
-    "lint:unused": "knip --no-progress"
+    "lint:unused": "knip --no-progress",
+    "advisor:token": "node scripts/zoho-token.mjs",
+    "advisor:check": "node scripts/zoho-advisor-check.mjs"
   },
   "dependencies": {
     "bootstrap-icons": "^1.13.1",

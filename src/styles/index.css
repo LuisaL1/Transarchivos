@@ -199,3 +199,35 @@ body.menu-open [data-chat-launcher] { display: none !important; }
 .map-flow { stroke-dasharray: 10 14; animation: mapFlow 2s linear infinite; }
 @keyframes mapFlow { to { stroke-dashoffset: -48; } }
 @media (prefers-reduced-motion: reduce) { .map-flow { animation: none; } }
+
+/* ─── Chat con un asesor (Zoho SalesIQ) ──────────────────────────────────────
+   Zoho vive en una página aislada (public/chat-asesor.html) dentro de este
+   iframe. Escondido fuera de la pantalla mientras trabaja como puente; visible
+   en la esquina solo cuando se abre su ventana (clase ta-zoho-open). El marco
+   de la ventana de Zoho está en src/styles/zoho-host.css. */
+#ta-zoho-frame {
+  position: fixed;
+  left: -10000px;
+  bottom: 0;
+  width: 440px;
+  height: min(800px, 100vh);
+  border: 0;
+  background: transparent;
+  color-scheme: normal;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 70;
+}
+html.ta-zoho-open #ta-zoho-frame {
+  left: auto;
+  right: 0;
+  opacity: 1;
+  pointer-events: auto;
+}
+@media (max-width: 639px) {
+  html.ta-zoho-open #ta-zoho-frame {
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+}

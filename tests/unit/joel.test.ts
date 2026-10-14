@@ -92,3 +92,25 @@ describe("Joel · confidencialidad de clientes", () => {
     expect(ask("necesito deshacerme de unos documentos de manera segura").service).toBe("destruccion-de-documentos");
   });
 });
+
+describe("Joel · chat con un asesor", () => {
+  it("si pide un asesor, lo pasa de una vez (sin texto ni explicaciones)", () => {
+    for (const q of ["quiero hablar con un asesor", "necesito un asesor", "páseme con una persona real", "puedo hablar con alguien"]) {
+      const r = ask(q);
+      expect(r.intent, q).toBe("asesor");
+      expect(r.handoff, q).toBe(true);
+      expect(r.say, q).toEqual([]);
+    }
+  });
+  it("«asesoría» es pedir orientación, no un asesor; los datos de contacto tampoco pasan al asesor", () => {
+    expect(ask("necesito asesoría para organizar mi archivo").handoff).toBeFalsy();
+    expect(ask("me pueden asesorar con las TRD").handoff).toBeFalsy();
+    const r = ask("cuál es su teléfono");
+    expect(r.intent).toBe("contacto");
+    expect(r.handoff).toBeFalsy();
+    // Una línea, sin nombrar la plataforma, con el chat con un asesor como primera acción
+    expect(r.say).toHaveLength(1);
+    expect([...r.say, ...(r.actions ?? []).map(a => a.label)].join(" ")).not.toMatch(/Zoho/i);
+    expect(r.actions?.[0]).toMatchObject({ label: "Chatear con un asesor", crm: true });
+  });
+});

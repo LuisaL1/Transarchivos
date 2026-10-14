@@ -7,6 +7,7 @@
 | Hero | Video a pantalla completa con velo azul y contenido centrado: título animado ("Sus archivos, bajo [control·custodia·orden·legalidad·resguardo·protección]"), frase y selector con Joel. Reemplazó la pantalla dividida (oct. 2026). Selector "¿Qué necesita hoy?" sin textos de relleno. |
 | Colores | Inversión de colores a pedido del cliente ("mucho blanco"): fondos en índigo vivo #1800AD del manual de marca (Joel pidió este tono: el azul oscuro se veía opaco), textos en blanco, botones de acción en amarillo y tarjetas blancas. Aplica a todo el sitio (oct. 2026). |
 | Azul único | Todo el sitio usa un solo azul, el índigo vivo #1800AD del manual (textos, botones, menú, chat, ventanas). El azul oscuro #272B7C queda solo en el logo y en los correos (oct. 2026). |
+| Chat con un asesor | Igual que Transpack: Joel atiende primero y conecta de una vez con un asesor de Zoho SalesIQ (puente dentro de Joel; API lista pero bloqueada por un permiso de Zoho; ventana de Zoho como respaldo). La cotización guiada se envía al chat del equipo con «Enviar a un asesor». Zoho vive en `public/chat-asesor.html` con su propia CSP. Trato de usted, como el resto del sitio (oct. 2026). Ver `docs/08-chat-asesor.md`. |
 | Contraste | Las secciones alternan índigo y crema (demasiado azul seguido cansaba): hero, mapa, cifras, servicios, modelo, blog, FAQ y pie en índigo; confianza, clientes, diagnóstico, soluciones, cotizador, videos y diferenciales claras. Páginas internas: alternan desde su hero. (oct. 2026) |
 | Pestaña de carpeta | En la división del hero, pegada al borde superior y del mismo azul del panel. Bajo el menú hay una sombra negra suave (pedida por el cliente). |
 | Joel en el hero | Junto al selector, volteado, con la mano sobre la tarjeta y sin globo de texto. Solo su cuerpo es clicable, para no bloquear la pestaña "Destruir". |
@@ -24,7 +25,7 @@
 
 | Prioridad | Pendiente | Detalle |
 | --- | --- | --- |
-| Alta | **Backend de solicitudes** | El cotizador y el chat arman un `mailto:`. Falta un servicio que reciba, guarde y notifique a Comercial, con acuse al cliente. Actualizar la CSP y las pruebas. |
+| Alta | **Chat con un asesor: puesta en marcha** | Pegar el código del widget de SalesIQ de Transarchivos en `SALESIQ_WIDGET` (`src/lib/crmChat.ts`), autorizar el dominio en Zoho, apagar el bot de Zoho y probar con mensajes «PRUEBA técnica (ignorar)». Modo API: pendiente del permiso de organización de Zoho (ver `docs/08-chat-asesor.md`). |
 | Alta | **Google Analytics** | ID `G-PNPFD16QSZ` ya integrado y verificado (`pnpm test:ga`). Falta: crear la variable en Vercel (Production), marcar los eventos clave en GA4 y agregar `quote_step` y `chat_message` (ver 03). |
 | Alta | **Publicación** | SEO técnico listo. Falta seguir el checklist de `docs/06-seo.md`: dominio, `VITE_SITE_INDEXABLE=true`, Search Console, Google Business Profile y redirecciones 301 del sitio anterior. |
 | Media | **Suscripción del blog** | Conectarla a la herramienta de correo que elija la empresa. |

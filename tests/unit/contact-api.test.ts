@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { POST, resetRateLimit } from "../../api/contact";
+import { POST, resetRateLimit } from "../../api/contact.mjs";
 
 // Función /api/contact (Vercel → Brevo). No envía nada real: fetch se simula.
 const req = (body: unknown, headers: Record<string, string> = {}) =>

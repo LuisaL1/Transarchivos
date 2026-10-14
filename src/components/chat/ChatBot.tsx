@@ -1,208 +1,41 @@
-// ─── Joel, asesor virtual (chat guiado) ─────────────────────────────────────
-// Mismo estilo y comportamiento que el chat de Transpack, con el avatar de
-// Transarchivos: invitación que asoma a los 7 s (una vez por sesión), botón
-// flotante, ventana con encabezado, mensajes uno a uno con "escribiendo…",
-// opciones rápidas, campo de texto libre (reconoce palabras clave) y botones
-// de acción (correo, teléfono, cotizador). No usa IA: sigue un guion.
-
-import { useState, useEffect, useRef } from "react";
-import { trackEvent } from "@/lib/analytics";
+// ─── Joel, asesor virtual: interfaz del chat ────────────────────────────────
+// Invitación que asoma a los 7 s (una vez por sesión), botón flotante y
+// ventana con encabezado, mensajes, opciones rápidas (lista con ícono) y
+// campo de texto. La conversación está en src/data/chat.ts y la lógica en
+// src/hooks/useAdvisorChat.ts. No usa IA externa: sigue un guion y el cerebro
+// local de Joel (src/lib/joel.ts).
 import { Link } from "react-router-dom";
 import avatarImg from "@/assets/images/joel.webp";
-import { createJoel, newMemory, type JoelReply } from "@/lib/joel";
-import { track } from "@/lib/visitor";
+import { CHAT_TEXT as T, NAME, chatOptionIcon, type ChatMsg } from "@/data/chat";
+import { useAdvisorChat, type ChatSeed } from "@/hooks/useAdvisorChat";
+import { requestAdvisorChat, requestQuoteToAdvisor } from "@/lib/advisorEvents";
 import { ChatAvatarFace } from "@/components/ui/Brand";
 import { Bi, MenuIcon } from "@/components/ui/Icons";
-import { blogPosts } from "@/data/blog";
-import { FAQS } from "@/data/faqs";
-import { QUOTE_UNIT, quoteConfig } from "@/data/quote";
-import { SERVICE_DETAILS } from "@/data/serviceDetails";
-import { services } from "@/data/services";
-import { SOLUTIONS } from "@/data/solutions";
-import { contactHref, whatsappUrl } from "@/data/contact";
 import { C } from "@/styles/tokens";
 
-export type ChatData = Record<string, string>;
+const CARD = { background: "#fff", border: "1px solid #E4E6F7" } as const;
 
-export type ChatAction = { label: string; icon: string; href?: string; to?: string };
-
-export type ChatMsg = { from: "bot" | "user"; text: string; actions?: ChatAction[] };
-
-export type ChatOption = { label: string; next: string | ((d: ChatData) => string); set?: ChatData };
-
-export type ChatStep = {
-  say: (d: ChatData) => string[];
-  options?: ChatOption[] | ((d: ChatData) => ChatOption[]);
-  input?: { key: string; placeholder: string; next: (d: ChatData) => string };
-  actions?: (d: ChatData) => ChatAction[];
-};
-
-export const CHAT_UNITS = [
-  { slug: "diagnostico", title: "Diagnóstico documental", desc: "Le mostramos qué está pasando hoy con su archivo (volumen, estado, riesgos y oportunidades) antes de mover un solo papel." },
-  ...services.map(sv => ({ slug: sv.slug, title: sv.title, desc: sv.desc })),
-];
-
-export const unitBySlug = (slug: string) => CHAT_UNITS.find(u => u.slug === slug);
-
-export const CHAT_VOLUMES = ["Menos de 100 cajas", "Entre 100 y 1.000 cajas", "Más de 1.000 cajas", "No lo sé"];
-
-export const CHAT_URGENCY = ["Sin urgencia", "En las próximas semanas", "Urgente"];
-
-export const CHAT_FAQ_COUNT = 6;
-
-export const quoteMailto = (d: ChatData) => contactHref({
-  motivo: "Solicitar una cotización", nombre: d.name, empresa: d.company,
-  mensaje: `Quisiera una cotización.\n- Servicio: ${unitBySlug(d.service)?.title ?? "—"}\n- Volumen aproximado: ${d.volume ?? "—"}\n- Urgencia: ${d.urgency ?? "—"}\n(Solicitud iniciada con Joel, asesor virtual)`,
-});
-
-export const CONTACT_ACTIONS: ChatAction[] = [
-  { label: "Escribir por WhatsApp", icon: "whatsapp", href: whatsappUrl() },
-  { label: "Escribirnos (formulario)", icon: "envelope-fill", href: contactHref() },
-];
-
-export const CHAT_STEPS: Record<string, ChatStep> = {
-  start: {
-    say: () => ["¡Hola! Soy Joel, el asesor virtual de Transarchivos. 👋", "¿En qué le puedo ayudar hoy?"],
-    options: [
-      { label: "Cotizar un servicio", next: "q_service" },
-      { label: "Conocer los servicios", next: "info_list" },
-      { label: "Preguntas frecuentes", next: "faq_list" },
-      { label: "Hablar con un asesor", next: "advisor" },
-    ],
-  },
-
-  // Cotización guiada
-  q_service: {
-    say: () => ["Con gusto. ¿Qué servicio necesita?", "Si no está seguro, el diagnóstico documental es el mejor punto de partida."],
-    options: CHAT_UNITS.map(u => ({ label: u.title, next: "q_volume", set: { service: u.slug } })),
-  },
-  q_volume: {
-    say: d => [`${unitBySlug(d.service)?.title}: buena elección.`, "¿Aproximadamente qué volumen de archivo tiene?"],
-    options: CHAT_VOLUMES.map(v => ({ label: v, next: "q_urgency", set: { volume: v } })),
-  },
-  q_urgency: {
-    say: () => ["¿Qué tan pronto lo necesita?"],
-    options: CHAT_URGENCY.map(v => ({ label: v, next: "q_name", set: { urgency: v } })),
-  },
-  q_name: {
-    say: () => ["Perfecto. ¿Cuál es su nombre?", "Usaremos sus datos solo para responder su solicitud, según nuestra política de privacidad (transarchivos.com/privacidad)."],
-    input: { key: "name", placeholder: "Escriba su nombre…", next: () => "q_company" },
-  },
-  q_company: {
-    say: d => [`Gracias, ${d.name}. ¿De qué empresa nos escribe?`],
-    input: { key: "company", placeholder: "Nombre de la empresa…", next: () => "q_done" },
-  },
-  q_done: {
-    say: d => [
-      `Listo, ${d.name}. Este es el resumen de su solicitud:`,
-      `• Servicio: ${unitBySlug(d.service)?.title}\n• Volumen: ${d.volume}\n• Urgencia: ${d.urgency}\n• Empresa: ${d.company}`,
-      d.urgency === "Urgente"
-        ? "Como es urgente, le recomiendo escribirnos por WhatsApp. También puede enviarnos la solicitud:"
-        : "Complete sus datos de contacto para enviarnos la solicitud y un asesor le responderá con el alcance y las condiciones. También puede hacer la cotización detallada:",
-    ],
-    actions: d => [
-      { label: "Completar y enviar solicitud", icon: "envelope-arrow-up-fill", href: quoteMailto(d) },
-      { label: "Completar cotización detallada", icon: "ui-checks", href: "#cotizador" },
-      { label: "Escribir por WhatsApp", icon: "whatsapp", href: whatsappUrl() },
-    ],
-    options: [{ label: "Volver al inicio", next: "reset" }],
-  },
-
-  // Servicios
-  info_list: {
-    say: () => ["Estos son nuestros servicios. ¿Sobre cuál quiere saber más?"],
-    options: CHAT_UNITS.map(u => ({ label: u.title, next: "info_detail", set: { service: u.slug } })),
-  },
-  info_detail: {
-    say: d => [unitBySlug(d.service)?.desc ?? ""],
-    actions: d => d.service === "diagnostico"
-      ? [{ label: "Ver el diagnóstico documental", icon: "search", href: "#cotizador" }]
-      : [{ label: `Ver ${unitBySlug(d.service)?.title}`, icon: "box-arrow-up-right", to: `/servicios/${d.service}` }],
-    options: [
-      { label: "Cotizar este servicio", next: "q_volume" },
-      { label: "Ver otro servicio", next: "info_list" },
-      { label: "Volver al inicio", next: "reset" },
-    ],
-  },
-
-  // Preguntas frecuentes
-  faq_list: {
-    say: () => ["Estas son algunas de las preguntas que más nos hacen:"],
-    options: () => FAQS.slice(0, CHAT_FAQ_COUNT).map((f, i) => ({ label: f.q, next: "faq_answer", set: { faq: String(i) } })),
-  },
-  faq_answer: {
-    say: d => [FAQS[Number(d.faq)]?.a ?? ""],
-    actions: () => [{ label: "Ver todas las preguntas", icon: "question-circle", href: "#faq" }],
-    options: [
-      { label: "Otra pregunta", next: "faq_list" },
-      { label: "Cotizar un servicio", next: "q_service" },
-      { label: "Volver al inicio", next: "reset" },
-    ],
-  },
-
-  // Contacto y otros
-  advisor: {
-    say: () => ["Claro. Puede comunicarse con un asesor de Transarchivos por estos medios:"],
-    actions: () => CONTACT_ACTIONS,
-    options: [{ label: "Volver al inicio", next: "reset" }],
-  },
-};
-
-// Cerebro de Joel (src/joel.ts): se crea al usarse por primera vez, cuando
-// ya existen todos los datos del sitio que usa como conocimiento.
-export let joelBrain: ReturnType<typeof createJoel> | null = null;
-
-export const getJoel = () => joelBrain ??= createJoel({
-  services, details: SERVICE_DETAILS, faqs: FAQS, solutions: SOLUTIONS,
-  posts: blogPosts, quote: quoteConfig, quoteUnit: QUOTE_UNIT,
-});
-
-// Opciones que, al elegirse después de algo que Joel no entendió, le enseñan
-// a qué se refería el visitante.
-export const LEARN_DEST: Record<string, string> = { q_service: "intent:cotizar", advisor: "intent:contacto", faq_list: "intent:normativa" };
-
-// Íconos de las opciones del chat. TODAS las opciones se muestran con el mismo
-// formato (lista con ícono, como el menú inicial), así que toda opción tiene ícono.
-export const CHAT_OPTION_ICONS: Record<string, string> = {
-  "Cotizar un servicio": "ui-checks", "Conocer los servicios": "grid", "Preguntas frecuentes": "question-circle",
-  "Hablar con un asesor": "headset", "Volver al inicio": "arrow-counterclockwise",
-  "Cotizar este servicio": "ui-checks", "Ver otro servicio": "grid", "Otra pregunta": "question-circle",
-  // Servicios: el mismo ícono de su tarjeta en el sitio
-  "Diagnóstico documental": "search",
-  ...Object.fromEntries(services.map(sv => [sv.title, sv.icon])),
-  // Volumen y urgencia
-  "Menos de 100 cajas": "box-seam", "Entre 100 y 1.000 cajas": "boxes", "Más de 1.000 cajas": "archive", "No lo sé": "question-circle",
-  "Sin urgencia": "calendar-check", "En las próximas semanas": "calendar-week", "Urgente": "lightning-charge",
-};
-
-// Ícono para cualquier opción del chat (incluidas las que arma el cerebro de
-// Joel, como "Cotizar Servicio inmediato"). Nunca queda una opción sin ícono.
-export function chatOptionIcon(label: string): string {
-  if (CHAT_OPTION_ICONS[label]) return CHAT_OPTION_ICONS[label];
-  if (/^Cotizar/.test(label)) return "ui-checks";
-  if (/^(Solicitar|Empezar)/.test(label)) return "search";
-  if (/^(Ver|Conocer)/.test(label)) return "box-arrow-up-right";
-  if (/^Hablar/.test(label)) return "headset";
-  if (/^Dudas|normativa/i.test(label)) return "shield-check";
-  if (/^Contarle/.test(label)) return "chat-dots";
-  if (/^¿/.test(label)) return "question-circle";
-  return "chat-dots";
-}
-
+// Mensaje del chat: de Joel o de un asesor (izquierda, con acciones opcionales
+// en lista con ícono) o del visitante (derecha)
 export function ChatBubble({ msg }: { msg: ChatMsg }) {
-  const bot = msg.from === "bot";
+  const agent = msg.from === "agent";
+  const bot = msg.from === "bot" || agent;
   return (
     <div className={`flex items-end gap-2 ${bot ? "justify-start" : "justify-end"}`} style={{ animation: "fadeInUp 0.3s ease both" }}>
-      {bot && <ChatAvatarFace size={24} round />}
+      {agent ? (
+        // Asesor de Transarchivos: ícono de audífonos en lugar de la foto de Joel
+        <span className="grid shrink-0 place-items-center rounded-full" style={{ width: 24, height: 24, background: C.indigo }}><Bi n="headset" size={12} color={C.yellow} /></span>
+      ) : bot && <ChatAvatarFace size={24} round />}
       <div className={`max-w-[82%] ${bot ? "" : "text-right"}`}>
+        {agent && msg.name && <p className="mb-1 text-[11px] font-semibold" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>{msg.name}</p>}
         <div className="inline-block whitespace-pre-line px-3.5 py-2.5 text-left text-[13.5px] leading-relaxed"
           style={bot
-            ? { background: "#fff", color: "#37352F", border: "1px solid #E4E6F7", borderRadius: "4px 16px 16px 16px", boxShadow: "0 1px 2px rgba(10,13,61,0.05)" }
+            ? { ...CARD, color: "#37352F", borderRadius: "4px 16px 16px 16px", boxShadow: "0 1px 2px rgba(10,13,61,0.05)" }
             : { background: C.indigo, color: "#fff", borderRadius: "16px 16px 4px 16px" }}>
           {msg.text}
         </div>
         {msg.actions && (
-          <div className="mt-2 rounded-2xl p-1.5" style={{ background: "#fff", border: "1px solid #E4E6F7" }}>
+          <div className="mt-2 rounded-2xl p-1.5" style={CARD}>
             {msg.actions.map(a => {
               const cls = "group flex items-center gap-3 rounded-xl px-2.5 py-2 text-left transition-colors hover:bg-hielo";
               const inner = (
@@ -212,6 +45,8 @@ export function ChatBubble({ msg }: { msg: ChatMsg }) {
                   <Bi n="arrow-up-right" size={11} color={C.faint} />
                 </>
               );
+              // "Enviar a un asesor" y "Chatear con un asesor": los atiende useAdvisorChat
+              if (a.sendQuote || a.crm) return <button key={a.label} type="button" onClick={a.sendQuote ? requestQuoteToAdvisor : requestAdvisorChat} className={`${cls} w-full`}>{inner}</button>;
               return a.to
                 ? <Link key={a.label} to={a.to} className={cls} style={{ textDecoration: "none" }}>{inner}</Link>
                 : <a key={a.label} href={a.href} {...(/^https?:/.test(a.href ?? "") ? { target: "_blank", rel: "noopener noreferrer" } : {})} className={cls} style={{ textDecoration: "none" }}>{inner}</a>;
@@ -223,134 +58,16 @@ export function ChatBubble({ msg }: { msg: ChatMsg }) {
   );
 }
 
-// "open"/"setOpen" viven en LandingPage para que el menú de soporte y la caja
+// "open"/"setOpen" viven en la página para que el menú de soporte y la caja
 // del hero también puedan abrir el chat. "seed": pregunta escrita en la caja
 // del hero (con id para que dos preguntas iguales cuenten como distintas).
-export function ChatBot({ open, setOpen, seed, heroJoel = false }: { open: boolean; setOpen: (v: boolean | ((prev: boolean) => boolean)) => void; seed?: { text: string; id: number } | null; heroJoel?: boolean }) {
-  const [msgs, setMsgs] = useState<ChatMsg[]>([]);
-  const [stepId, setStepId] = useState("start");
-  const [data, setData] = useState<ChatData>({});
-  const [typing, setTyping] = useState(false);
-  const [text, setText] = useState("");
-  const [teaser, setTeaser] = useState(false);
-  const endRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const timers = useRef<number[]>([]);
-  const seedHandled = useRef(0);
-  const mem = useRef(newMemory());
-  // Paso "dinámico": la respuesta que arma el cerebro de Joel a un texto libre.
-  const dyn = useRef<ChatStep | null>(null);
-  const step = (stepId === "dyn" && dyn.current) ? dyn.current : CHAT_STEPS[stepId];
-
-  const toStep = (r: JoelReply): ChatStep => ({ say: () => r.say, actions: r.actions ? () => r.actions! : undefined, options: r.options });
-  // Pasa un texto libre por el cerebro de Joel y muestra su respuesta.
-  const think = (value: string, d: ChatData) => {
-    const r = getJoel().respond(value, mem.current);
-    if (r.service) { mem.current.lastService = r.service; track("service", r.service); }
-    mem.current.lastIntent = r.intent;
-    track("chat", r.intent);
-    if (!r.intent.startsWith("fallback")) mem.current.unknownStreak = 0;
-    dyn.current = toStep(r);
-    goTo("dyn", { ...d, ...(r.service ? { service: r.service } : {}) });
-  };
-
-  // Muestra los mensajes de un paso uno a uno, con indicador de "escribiendo".
-  const goTo = (id: string, d: ChatData) => {
-    let target = id === "reset" ? "start" : id;
-    const nextData = id === "reset" ? {} : d;
-    if (id === "reset") { setMsgs([]); mem.current = newMemory(); }
-    // El saludo se arma según lo que el visitante ha hecho en el sitio.
-    if (target === "start") { dyn.current = toStep(getJoel().greeting()); target = "dyn"; }
-    if (target === "info_detail" && nextData.service) track("service", nextData.service);
-    setData(nextData);
-    setStepId(target);
-    const s = target === "dyn" && dyn.current ? dyn.current : CHAT_STEPS[target];
-    const lines = s.say(nextData);
-    setTyping(true);
-    let delay = 0;
-    lines.forEach((line, i) => {
-      delay += Math.min(1100, 450 + line.length * 6);
-      const last = i === lines.length - 1;
-      timers.current.push(window.setTimeout(() => {
-        setMsgs(m => [...m, { from: "bot", text: line, actions: last ? s.actions?.(nextData) : undefined }]);
-        if (last) setTyping(false);
-      }, delay));
-    });
-  };
-
-  useEffect(() => () => timers.current.forEach(clearTimeout), []);
-  useEffect(() => { if (open) trackEvent("chat_open"); }, [open]);
-
-  // Al abrir: saludo la primera vez, o respuesta a la pregunta del hero.
-  useEffect(() => {
-    if (!open) return;
-    setTeaser(false);
-    if (seed && seed.id !== seedHandled.current) {
-      seedHandled.current = seed.id;
-      setMsgs(m => [...m, { from: "user", text: seed.text }]);
-      think(seed.text, data);
-      return;
-    }
-    if (msgs.length === 0 && !typing) goTo("start", {});
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, seed]);
-
-  // En celular el chat ocupa toda la pantalla: la página de atrás no se mueve.
-  useEffect(() => {
-    if (!open || window.matchMedia("(min-width: 640px)").matches) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = prev; };
-  }, [open]);
-
-  // Invitación discreta a los 7 s, una sola vez por sesión.
-  useEffect(() => {
-    let seen = false;
-    try { seen = sessionStorage.getItem("ta-chat-teaser") === "1"; } catch { /* sin almacenamiento */ }
-    // Si Joel ya aparece en el hero (pantallas medianas y grandes), no se
-    // repite la invitación con su figura.
-    if (seen || (heroJoel && window.matchMedia("(min-width: 768px)").matches)) return;
-    const id = window.setTimeout(() => {
-      setTeaser(true);
-      try { sessionStorage.setItem("ta-chat-teaser", "1"); } catch { /* sin almacenamiento */ }
-    }, 7000);
-    return () => clearTimeout(id);
-  }, [heroJoel]);
-
-  useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" }); }, [msgs, typing]);
-  useEffect(() => { if (open && step.input && !typing) inputRef.current?.focus(); }, [open, step, typing]);
-
-  const choose = (o: ChatOption) => {
-    const d = { ...data, ...o.set };
-    setMsgs(m => [...m, { from: "user", text: o.label }]);
-    const next = typeof o.next === "function" ? o.next(d) : o.next;
-    // Aprende de la elección si venía de algo que no entendió.
-    const dest = o.set?.service ? `service:${o.set.service}` : LEARN_DEST[next];
-    if (dest) getJoel().learn(mem.current, dest);
-    if (next.startsWith("brain:")) { think(next.slice(6), d); return; }
-    if (next === "q_volume" && d.service) track("quote", d.service);
-    goTo(next, d);
-  };
-
-  const send = () => {
-    const value = text.trim();
-    if (!value || typing) return;
-    setText("");
-    setMsgs(m => [...m, { from: "user", text: value }]);
-    if (step.input) {
-      const d = { ...data, [step.input.key]: value };
-      goTo(step.input.next(d), d);
-    } else {
-      think(value, data);
-    }
-  };
-
-  const options = typeof step.options === "function" ? step.options(data) : (step.options ?? []);
+export function ChatBot({ open, setOpen, seed, heroJoel = false }: { open: boolean; setOpen: (v: boolean | ((prev: boolean) => boolean)) => void; seed?: ChatSeed; heroJoel?: boolean }) {
+  const { msgs, typing, text, setText, step, options, choose, send, restart, teaser, setTeaser, endRef, inputRef, advisor, live, endAdvisor } = useAdvisorChat({ open, setOpen, seed, heroJoel });
 
   return (
     <>
       {/* Invitación: Joel se asoma junto al botón */}
-      {teaser && !open && (
+      {teaser && !open && advisor === "idle" && (
         <div data-chat-launcher className="fixed bottom-[68px] right-4 sm:bottom-[76px] sm:right-3 md:bottom-[88px] md:right-6 z-[60] flex items-end" style={{ animation: "fadeInUp 0.5s ease both" }}>
           <div className="relative sm:mb-16 sm:-mr-4 max-w-[230px] rounded-2xl rounded-br-sm bg-white px-4 py-3 text-[13.5px]"
             style={{ color: "#37352F", boxShadow: "0 20px 40px -16px rgba(10,13,61,0.35), 0 2px 8px rgba(10,13,61,0.08)" }}>
@@ -358,18 +75,18 @@ export function ChatBot({ open, setOpen, seed, heroJoel = false }: { open: boole
               <Bi n="x-lg" size={11} color={C.faint} />
             </button>
             <button onClick={() => setOpen(true)} className="pr-3 text-left leading-relaxed">
-              <b style={{ color: C.indigo }}>¡Hola! Soy Joel.</b> ¿Necesita organizar, digitalizar o custodiar su archivo? Le ayudo.
+              <b style={{ color: C.indigo }}>¡Hola! Soy {NAME}.</b> {T.teaser}
             </button>
           </div>
-          <button onClick={() => setOpen(true)} aria-label="Hablar con Joel" className="shrink-0">
+          <button onClick={() => setOpen(true)} aria-label={`Hablar con ${NAME}`} className="shrink-0">
             <img loading="lazy" decoding="async" src={avatarImg} alt="" draggable={false} className="hidden sm:block h-[150px] md:h-[170px] w-auto select-none" style={{ filter: "drop-shadow(0 12px 18px rgba(29,32,80,0.25))" }} />
           </button>
         </div>
       )}
 
-      {/* Botón flotante */}
-      <button data-chat-launcher onClick={() => setOpen(o => !o)} aria-expanded={open}
-        aria-label={open ? "Cerrar chat" : "Hablar con Joel, asesor virtual"}
+      {/* Botón flotante (con la ventana de Zoho abierta se usa su propio botón de cerrar) */}
+      {advisor !== "open" && <button data-chat-launcher onClick={() => setOpen(o => !o)} aria-expanded={open} aria-busy={advisor === "loading"}
+        aria-label={open ? T.closeChat : T.openChat}
         className={`fixed bottom-4 right-4 md:bottom-6 md:right-6 z-[60] items-center gap-2.5 rounded-full p-1.5 md:pr-4 text-white transition-transform hover:-translate-y-0.5 ${open ? "hidden sm:flex" : "flex"}`}
         style={{ background: C.indigo, boxShadow: "0 16px 34px -10px rgba(24,0,173,0.6)" }}>
         {open ? (
@@ -385,16 +102,16 @@ export function ChatBot({ open, setOpen, seed, heroJoel = false }: { open: boole
         )}
         <span className="hidden md:block text-left">
           <span className="flex items-center gap-1.5 text-[13px] font-semibold leading-tight" style={{ fontFamily: "Montserrat, sans-serif" }}>
-            {open ? "Cerrar" : "Joel"}
+            {open ? "Cerrar" : NAME}
             {!open && <span className="rounded-full px-1.5 py-px text-[9px] font-bold tracking-wide" style={{ background: C.yellow, color: C.indigo }}>IA</span>}
           </span>
-          {!open && <span className="block text-[11.5px] leading-tight" style={{ color: "rgba(255,255,255,0.7)" }}>En línea</span>}
+          {!open && <span className="block text-[11.5px] leading-tight" style={{ color: "rgba(255,255,255,0.7)" }}>{advisor === "loading" ? "Conectando…" : "En línea"}</span>}
         </span>
-      </button>
+      </button>}
 
       {/* Ventana */}
       {open && (
-        <section aria-label="Chat con Joel"
+        <section aria-label={T.window}
           // Celular: pantalla completa (más cómodo para escribir). Desde sm:
           // ventana flotante sobre el botón.
           className="fixed inset-0 sm:inset-auto sm:right-6 sm:bottom-[92px] sm:w-[400px] sm:max-h-[calc(100vh-130px)] z-[70] flex flex-col overflow-hidden rounded-none sm:rounded-[24px] bg-white sm:border sm:border-indigo/10"
@@ -408,33 +125,42 @@ export function ChatBot({ open, setOpen, seed, heroJoel = false }: { open: boole
               </span>
               <div className="relative flex-1 min-w-0">
                 <p className="flex items-center gap-2 font-semibold" style={{ color: "#fff", fontFamily: "Poppins, sans-serif" }}>
-                  Joel
-                  <span className="rounded-full px-2 py-px text-[10px] font-semibold uppercase tracking-wider" style={{ background: "rgba(255,255,255,0.15)", color: C.yellow }}>Asesor virtual</span>
+                  {NAME}
+                  <span className="rounded-full px-2 py-px text-[10px] font-semibold uppercase tracking-wider" style={{ background: "rgba(255,255,255,0.15)", color: C.yellow }}>{T.role}</span>
                 </p>
                 <p className="flex items-center gap-1.5 text-[12px]" style={{ color: "rgba(255,255,255,0.7)" }}>
-                  <span className="w-1.5 h-1.5 rounded-full" style={{ background: "#22c55e" }} /> En línea · Responde al instante
+                  <span className="w-1.5 h-1.5 rounded-full" style={{ background: "#22c55e" }} /> {T.status}
                 </p>
               </div>
-              <button onClick={() => goTo("reset", {})} className="relative grid h-8 w-8 place-items-center rounded-full transition-colors hover:bg-white/15" aria-label="Reiniciar conversación" title="Reiniciar conversación">
+              <button onClick={restart} className="relative grid h-8 w-8 place-items-center rounded-full transition-colors hover:bg-white/15" aria-label={T.restart} title={T.restart}>
                 <Bi n="arrow-counterclockwise" size={15} color="rgba(255,255,255,0.85)" />
               </button>
-              <button onClick={() => setOpen(false)} className="relative grid h-8 w-8 place-items-center rounded-full transition-colors hover:bg-white/15" aria-label="Cerrar chat">
+              <button onClick={() => setOpen(false)} className="relative grid h-8 w-8 place-items-center rounded-full transition-colors hover:bg-white/15" aria-label={T.closeChat}>
                 <Bi n="x-lg" size={14} color="rgba(255,255,255,0.85)" />
               </button>
             </header>
+
+            {/* Chat con un asesor dentro de Joel */}
+            {live !== "off" && (
+              <div className="flex items-center gap-2 px-4 py-2 text-[12.5px] font-semibold" style={{ background: "#FBFBF8", borderBottom: "1px solid #E4E6F7", color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>
+                <Bi n="headset" size={14} color={C.gold} />
+                <span className="flex-1">{T.advisorBanner}</span>
+                <button type="button" onClick={endAdvisor} className="rounded-lg px-2 py-1 underline-offset-2 hover:underline" style={{ color: C.indigo }}>{T.advisorEnd}</button>
+              </div>
+            )}
 
             <div className="flex-1 min-h-0 space-y-3 overflow-y-auto p-4" style={{ background: "#F6F7FD" }} aria-live="polite">
               {msgs.map((m, i) => <ChatBubble key={i} msg={m} />)}
               {typing && (
                 <div className="flex items-end gap-2">
                   <ChatAvatarFace size={24} round />
-                  <div className="flex gap-1 px-3.5 py-3" style={{ background: "#fff", border: "1px solid #E4E6F7", borderRadius: "4px 16px 16px 16px" }}>
+                  <div className="flex gap-1 px-3.5 py-3" style={{ ...CARD, borderRadius: "4px 16px 16px 16px" }}>
                     {[0, 1, 2].map(i => <span key={i} className="w-1.5 h-1.5 rounded-full" style={{ background: "rgba(24,0,173,0.6)", animation: `chatBounce 1.4s ${i * 0.15}s infinite` }} />)}
                   </div>
                 </div>
               )}
               {!typing && options.length > 0 && (
-                <div className="rounded-2xl p-1.5 ml-8" style={{ background: "#fff", border: "1px solid #E4E6F7", animation: "fadeInUp 0.3s ease both" }}>
+                <div className="rounded-2xl p-1.5 ml-8" style={{ ...CARD, animation: "fadeInUp 0.3s ease both" }}>
                   {options.map(o => (
                     <button key={o.label} type="button" onClick={() => choose(o)} className="group w-full flex items-center gap-3 rounded-xl px-2.5 py-2 text-left transition-colors hover:bg-hielo">
                       <MenuIcon n={chatOptionIcon(o.label)} size={32} />
@@ -449,10 +175,10 @@ export function ChatBot({ open, setOpen, seed, heroJoel = false }: { open: boole
 
             <form onSubmit={e => { e.preventDefault(); send(); }} className="flex items-center gap-2 bg-white p-3" style={{ borderTop: "1px solid #ECEEF6", paddingBottom: "max(12px, env(safe-area-inset-bottom))" }}>
               <input ref={inputRef} value={text} onChange={e => setText(e.target.value)}
-                placeholder={step.input?.placeholder ?? "Escriba su mensaje…"} aria-label="Mensaje"
+                placeholder={live !== "off" ? T.advisorPlaceholder : (step.input?.placeholder ?? T.placeholder)} aria-label={T.message}
                 className="min-w-0 flex-1 rounded-full px-4 py-2.5 text-[14px] outline-none transition focus:bg-white"
                 style={{ border: "1px solid #E4E6F7", background: "#F6F7FD", color: C.indigo }} />
-              <button type="submit" disabled={!text.trim() || typing} aria-label="Enviar"
+              <button type="submit" disabled={!text.trim() || typing} aria-label={T.send}
                 className="grid h-10 w-10 shrink-0 place-items-center rounded-full transition-opacity disabled:opacity-40" style={{ background: C.yellow }}>
                 <Bi n="send-fill" size={15} color={C.indigo} />
               </button>

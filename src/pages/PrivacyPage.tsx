@@ -23,7 +23,8 @@ export function PrivacyPage() {
   const rows: [string, string, string][] = [
     ["Cotizador del sitio", "Nombre, cargo, empresa, sector económico, correo electrónico, teléfono y la información de su archivo (volumen, ubicación, urgencia, requerimientos)", "Preparar y enviar la cotización, contactarle para aclarar el alcance y hacer seguimiento comercial a su solicitud"],
     ["Formulario de contacto", "Nombre, empresa, correo, teléfono, motivo y mensaje", "Responder su consulta, solicitud, petición, queja o reclamo"],
-    ["Chat con Joel (asesor virtual)", "Nombre, empresa y lo que usted escriba en el chat", "Orientarle y armar la solicitud que usted decida enviar por el formulario"],
+    ["Chat con Joel (asesor virtual)", "Nombre, empresa, celular y lo que usted escriba en el chat", "Orientarle y armar la solicitud. Si elige «Enviar a un asesor», el resumen de su cotización (con su nombre y celular) llega al chat del equipo comercial para darle seguimiento"],
+    ["Chat con un asesor (Zoho SalesIQ)", "Lo que usted escriba al asesor y, si Zoho los pide, sus datos de contacto", "Atender su consulta con un asesor humano. Zoho solo se carga si usted elige hablar con un asesor o enviar su cotización a uno"],
     ["WhatsApp, llamadas y correo", "Número de teléfono, correo y el contenido de su mensaje", "Atender su consulta o solicitud"],
     ["Suscripción al blog", "Correo electrónico", "Enviarle novedades y contenido sobre gestión documental; puede cancelar cuando quiera"],
     ["Google Analytics (solo si acepta las cookies)", "Datos de navegación: páginas visitadas, tiempo, dispositivo, ciudad aproximada e identificadores de cookies", "Medir y mejorar el sitio. No se usa con fines publicitarios"],
@@ -62,6 +63,7 @@ export function PrivacyPage() {
         <ul className="list-disc pl-5 space-y-1.5">
           <li>El formulario de contacto y el cotizador envían su solicitud directamente al correo de {BRAND.legalName} mediante Brevo (proveedor de envío de correos, que actúa como encargado del tratamiento). El sitio no guarda una copia de sus datos.</li>
           <li>Los mensajes por WhatsApp se rigen además por las condiciones de WhatsApp (Meta).</li>
+          <li>El chat con un asesor humano funciona con Zoho SalesIQ (Zoho Corporation), que actúa como encargado del tratamiento y puede procesar los datos en servidores fuera de Colombia, con garantías de protección adecuadas. Zoho no se carga ni guarda cookies mientras usted no elija hablar con un asesor.</li>
           <li>El asesor virtual Joel guarda en su navegador (almacenamiento local) un perfil de los temas que consultó, para personalizar el saludo. Ese perfil no sale de su equipo y puede borrarlo limpiando los datos del sitio en su navegador.</li>
           <li>Conservamos los datos de las solicitudes mientras dure la relación comercial y el tiempo que exijan las normas contables y legales; después se eliminan de forma segura.</li>
         </ul>
