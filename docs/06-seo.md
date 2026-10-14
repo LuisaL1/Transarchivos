@@ -29,7 +29,7 @@ pnpm build
  2. vite build --ssr entry-server    → dist-ssr/ (temporal)
  3. node scripts/prerender.mjs
       para cada ruta de PUBLIC_ROUTES:
-        renderToString(<App/> en esa URL)  → contenido
+        prerender(<App/> en esa URL)       → contenido (espera las páginas React.lazy)
         getPageMeta(url) → renderHeadTags  → <head>
         escribe dist/<ruta>.html  (con data-path="<ruta>")
       escribe dist/404.html, sitemap.xml, robots.txt
@@ -102,10 +102,8 @@ pnpm build
 - **Enlaces internos:** cada artículo debería enlazar al menos a un servicio.
 
 ## Pendientes de rendimiento (Core Web Vitals)
-- **JS:** 352 KB de código propio + 223 KB de librerías en archivo aparte (`vendor`, en caché entre versiones). Los logos de clientes no se incrustan en el JS (`assetsInlineLimit` en `vite.config.ts`). Si crece, dividir por rutas. Con pre-generación e hidratación hay
-  que precargar el chunk de la ruta antes de hidratar (por ejemplo, con
-  `React.lazy` + `import()` resuelto en `main.tsx`).
+- **JS (hecho):** 203 KB de código propio en el paquete principal (solo el inicio; antes 423 KB) + 229 KB de librerías aparte (`vendor`, en caché entre versiones) + un trozo por página interna (2–48 KB) y el chat de Joel (71 KB), que se descargan al usarse (`lib/lazyPage.tsx`; la pre-generación los precarga para que el HTML salga completo y sin scripts en línea, que la CSP prohíbe). Los logos de clientes no se incrustan en el JS (`assetsInlineLimit` en `vite.config.ts`).
 - **Imágenes:**
-  - `joel.png` (1,1 MB) y las poses (~300 KB): convertir a WebP/AVIF;
+  - `joel.webp` (126 KB; antes `joel.png` de 1,1 MB) y las poses ya van en WebP; falta AVIF si se quiere apurar más;
   - agregar `width`/`height` para evitar saltos de diseño.
 - **Video del hero:** versiones para celular (6,2 MB), computador (9,1 MB) y Retina/4K (18,2 MB); cada pantalla descarga solo la suya. Si se necesita aún más liviano, recortar su duración (43 s) o usar `preload="metadata"`.

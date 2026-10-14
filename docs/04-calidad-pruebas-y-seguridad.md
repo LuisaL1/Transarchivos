@@ -61,7 +61,7 @@ explica la **estrategia**.
 Corre en cada push y pull request a `main`:
 
 1. **Calidad:** typecheck → lint → pruebas con cobertura → build → control de
-   tamaño (falla si un JS supera 600 KB).
+   tamaño (falla si un JS supera 600 KB) y código sin uso (`pnpm lint:unused`, knip).
 2. **Seguridad:** auditoría de dependencias → pruebas de seguridad → gitleaks.
 3. **E2E:** instala Chromium → Playwright (escritorio y celular) → sube el
    reporte HTML como artefacto (14 días).

@@ -12,6 +12,22 @@
 type Payload = { kind?: string; subject?: string; fields?: Record<string, unknown>; replyTo?: { email?: string; name?: string }; website?: string };
 
 const json = (data: unknown, status = 200) => new Response(JSON.stringify(data), { status, headers: { "Content-Type": "application/json", "Cache-Control": "no-store" } });
+// Límite de envíos por IP: el formulario es público y cada envío cuesta dos
+// correos (aviso + confirmación). Se cuenta en memoria de la instancia de
+// Vercel (se reinicia al escalar o dormir): no sustituye a un servicio de
+// cuotas, pero frena a un script que repita envíos. Máx. 5 cada 10 min.
+const RATE = { max: 5, windowMs: 10 * 60_000 };
+const hits = new Map<string, number[]>();
+/** Solo para pruebas: olvida los envíos contados. */
+export function resetRateLimit() { hits.clear(); }
+function limited(ip: string): boolean {
+  const now = Date.now();
+  const recent = (hits.get(ip) ?? []).filter(t => now - t < RATE.windowMs);
+  recent.push(now); hits.set(ip, recent);
+  if (hits.size > 5000) hits.clear(); // sin crecimiento indefinido
+  return recent.length > RATE.max;
+}
+
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const EMAIL = /^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]{2,}$/;
 
@@ -49,8 +65,12 @@ function confirmation(base: string, kind: string, name: string, fields: Record<s
     const text = `Su correo quedó registrado para recibir las novedades y guías de Transarchivos.\n\nPara anular la suscripción, escriba a ${newsletterTo} con el asunto «Anular suscripción al blog».`;
     return { subject, html, text };
   }
-  const about = kind === "cotizacion" ? `su solicitud de cotización de <strong>${esc(fields["Servicio"] ?? "nuestros servicios")}</strong>` : `su mensaje (${esc(fields["Motivo"] ?? "contacto")})`;
-  const aboutText = kind === "cotizacion" ? `su solicitud de cotización de ${fields["Servicio"] ?? "nuestros servicios"}` : `su mensaje (${fields["Motivo"] ?? "contacto"})`;
+  // Solo se repite al visitante un dato corto (nombre del servicio o motivo):
+  // así el formulario no sirve para enviar textos largos a un tercero.
+  const short = (v: string | undefined, fallback: string) => (v ?? "").replace(/\s+/g, " ").trim().slice(0, 60) || fallback;
+  const what = kind === "cotizacion" ? short(fields["Servicio"], "nuestros servicios") : short(fields["Motivo"], "contacto");
+  const about = kind === "cotizacion" ? `su solicitud de cotización de <strong>${esc(what)}</strong>` : `su mensaje (${esc(what)})`;
+  const aboutText = kind === "cotizacion" ? `su solicitud de cotización de ${what}` : `su mensaje (${what})`;
   const subject = "Recibimos su solicitud · Transarchivos";
   const html = layout(base, "¡Recibimos su solicitud!", `
 <p style="margin:0 0 12px">Hola${first ? ` ${first}` : ""},</p>
@@ -76,6 +96,8 @@ export async function POST(req: Request): Promise<Response> {
   const origin = req.headers.get("origin");
   const host = req.headers.get("host");
   if (origin && host && new URL(origin).host !== host) return json({ ok: false, error: "origin" }, 403);
+  const ip = (req.headers.get("x-forwarded-for") ?? "").split(",")[0].trim() || "desconocida";
+  if (limited(ip)) return json({ ok: false, error: "rate" }, 429);
 
   let body: Payload;
   try { body = await req.json(); } catch { return json({ ok: false, error: "json" }, 400); }

@@ -6,10 +6,10 @@
 import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { JoelBridge } from "@/components/ui/JoelBridge";
 import { JOEL } from "@/data/joelPoses";
-import avatarImg from "@/assets/images/joel.png";
+import avatarImg from "@/assets/images/joel.webp";
 import { Link, useLocation, useNavigate, useNavigationType } from "react-router-dom";
-import { track } from "@/lib/joel";
-import { ChatBot } from "@/components/chat/ChatBot";
+import { track } from "@/lib/visitor";
+import { ChatBot } from "@/components/chat/LazyChatBot";
 import { HeroQuickStart, HeroRotatingWord, HeroVideoBackground } from "@/components/home/Hero";
 import { MapReveal } from "@/components/home/MapReveal";
 import { Stats } from "@/components/home/Stats";
@@ -26,6 +26,7 @@ import { FolderDivider, SectionDecor } from "@/components/ui/SectionDecor";
 import { services } from "@/data/services";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { WHATSAPP_LABEL, whatsappUrl } from "@/data/contact";
+import { C } from "@/styles/tokens";
 
 export function HomePage() {
   // Estado del chat en App (no dentro de ChatBot): así el avatar del hero
@@ -89,7 +90,7 @@ export function HomePage() {
           Video a pantalla completa de fondo (con velo azul marino para la
           lectura) y el contenido centrado: título animado, frase y el
           selector "¿Qué necesita hoy?" con Joel a su lado. */}
-      <section className="relative overflow-hidden" style={{ background: "#1800AD" }}>
+      <section className="relative overflow-hidden" style={{ background: C.indigo }}>
         <HeroVideoBackground />
         {/* Sombra negra arriba: da contraste al navbar sobre el video. */}
         <div aria-hidden="true" className="absolute inset-x-0 top-0 h-36 pointer-events-none" style={{ zIndex: 2, background: "linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.25) 45%, transparent 100%)" }} />
@@ -126,7 +127,7 @@ export function HomePage() {
           <div className="max-w-6xl mx-auto px-5 md:px-8 flex flex-wrap justify-center md:justify-between items-center gap-x-4 gap-y-2 md:gap-4">
             {["Ley 594 de 2000", "Norma AGN", "Certificado de destrucción", "Custodia con vigilancia 24 h"].map(t => (
               <span key={t} className="flex items-center gap-1.5 text-xs font-medium" style={{ color: "#6B7280", fontFamily: "Montserrat, sans-serif" }}>
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6.5" stroke="#1800AD" strokeOpacity=".3"/><path d="M4 7l2 2 4-4" stroke="#1800AD" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6.5" stroke={C.indigo} strokeOpacity=".3"/><path d="M4 7l2 2 4-4" stroke={C.indigo} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 {t}
               </span>
             ))}
@@ -153,20 +154,20 @@ export function HomePage() {
             {/* Izquierda: propuesta + proceso */}
             <div className="relative p-6 md:p-10">
               <span className="relative overflow-hidden inline-flex items-center text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full mb-4"
-                style={{ background: "#1800AD", color: "#fff", fontFamily: "Montserrat, sans-serif", boxShadow: "0 8px 16px -8px rgba(24,0,173,0.5)" }}>
+                style={{ background: C.indigo, color: "#fff", fontFamily: "Montserrat, sans-serif", boxShadow: "0 8px 16px -8px rgba(24,0,173,0.5)" }}>
                 <span aria-hidden="true" className="absolute pointer-events-none" style={{ right: -12, top: -12, width: 24, height: 24, transform: "rotate(45deg)", borderRadius: 4, background: "rgba(255,222,89,0.3)" }} />
                 <span className="relative">Diagnóstico documental</span>
               </span>
-              <h3 className="text-2xl md:text-3xl font-bold mb-3" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif", lineHeight: 1.2 }}>
+              <h3 className="text-2xl md:text-3xl font-bold mb-3" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif", lineHeight: 1.2 }}>
                 La <span style={{ background: "linear-gradient(transparent 62%, #FFDE59 62%)" }}>radiografía completa</span> de su archivo, antes de mover un solo papel
               </h3>
-              <p className="text-sm mb-8" style={{ color: "#6B6B6B", lineHeight: 1.65 }}>
+              <p className="text-sm mb-8" style={{ color: C.muted, lineHeight: 1.65 }}>
                 Antes de recomendarle un servicio, analizamos el estado de su archivo. Así podrá tomar decisiones informadas, basadas en hallazgos reales y no en suposiciones.
               </p>
 
               {/* Proceso en 4 pasos (línea de tiempo vertical) */}
               <div className="relative mb-9">
-                <span aria-hidden="true" className="absolute w-0.5 rounded-full" style={{ left: 15, top: 16, bottom: 16, background: "#E4E6F7" }} />
+                <span aria-hidden="true" className="absolute w-0.5 rounded-full" style={{ left: 15, top: 16, bottom: 16, background: C.border }} />
                 <ol className="relative">
                 {[
                   { t: "Diagnóstico", d: "Revisamos su archivo tal como está hoy." },
@@ -176,11 +177,11 @@ export function HomePage() {
                 ].map((st, i) => (
                   <li key={st.t} className="relative flex items-start gap-4 pb-5 last:pb-0">
                     <span className="relative flex items-center justify-center rounded-full font-bold text-xs shrink-0"
-                      style={{ width: 32, height: 32, background: i === 0 ? "#1800AD" : "#fff", color: i === 0 ? "#fff" : "#1800AD", border: "2px solid #1800AD", fontFamily: "Poppins, sans-serif" }}>
+                      style={{ width: 32, height: 32, background: i === 0 ? C.indigo : "#fff", color: i === 0 ? "#fff" : C.indigo, border: "2px solid #1800AD", fontFamily: "Poppins, sans-serif" }}>
                       {i + 1}
                     </span>
                     <div className="pt-1">
-                      <p className="text-sm font-bold" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif" }}>{st.t}</p>
+                      <p className="text-sm font-bold" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>{st.t}</p>
                       <p className="text-xs mt-0.5" style={{ color: "#8A8A8A" }}>{st.d}</p>
                     </div>
                   </li>
@@ -189,23 +190,23 @@ export function HomePage() {
               </div>
 
               <a href="#cotizador" className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold transition-all hover:scale-105 active:scale-95"
-                style={{ background: "#FFDE59", color: "#1800AD", fontFamily: "Montserrat, sans-serif", textDecoration: "none", boxShadow: "0 14px 28px -12px rgba(255,222,89,0.55)" }}>
-                Solicitar diagnóstico <Bi n="arrow-right" size={15} color="#1800AD" />
+                style={{ background: C.yellow, color: C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none", boxShadow: "0 14px 28px -12px rgba(255,222,89,0.55)" }}>
+                Solicitar diagnóstico <Bi n="arrow-right" size={15} color={C.indigo} />
               </a>
             </div>
 
             {/* Derecha: "informe" con lo que identifica */}
             <div className="relative p-6 md:p-10 flex items-center" style={{ background: "#F7F8FF" }}>
-              <Bi n="search" size={260} color="#1800AD"
+              <Bi n="search" size={260} color={C.indigo}
                 className="hidden md:block absolute pointer-events-none select-none"
                 style={{ top: -40, right: -40, opacity: 0.04, transform: "rotate(12deg)" }} />
               <div className="relative w-full rounded-2xl overflow-hidden" style={{ background: "#fff", border: "1px solid #E4E6F7", boxShadow: "0 24px 48px -28px rgba(24,0,173,0.35)" }}>
                 <div className="flex items-center justify-between gap-3 px-5 py-4" style={{ borderBottom: "1px solid #ECEEF6" }}>
                   <span className="flex items-center gap-3">
-                    <BiTile n="file-earmark-text" size={36} accent="#1800AD" />
+                    <BiTile n="file-earmark-text" size={36} accent={C.indigo} />
                     <span>
-                      <span className="block text-sm font-bold" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif" }}>Informe de diagnóstico</span>
-                      <span className="block text-[11px]" style={{ color: "#9B9B9B" }}>Lo que identificamos en su archivo</span>
+                      <span className="block text-sm font-bold" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>Informe de diagnóstico</span>
+                      <span className="block text-[11px]" style={{ color: C.faint }}>Lo que identificamos en su archivo</span>
                     </span>
                   </span>
                   <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shrink-0" style={{ background: "#FFF6D6", color: "#8a6d00", fontFamily: "Montserrat, sans-serif" }}>7 puntos</span>
@@ -221,9 +222,9 @@ export function HomePage() {
                     { i: "exclamation-triangle", t: "Riesgos y oportunidades de mejora", d: "Vacíos normativos y puntos por optimizar" },
                   ].map((f, k) => (
                     <li key={f.t} className="flex items-center gap-3 py-2.5" style={{ borderTop: k ? "1px solid #F1F2F8" : "none" }}>
-                      <BiTile n={f.i} size={32} accent="#1800AD" />
+                      <BiTile n={f.i} size={32} accent={C.indigo} />
                       <div className="min-w-0 flex-1">
-                        <p className="text-[13px] font-semibold leading-snug" style={{ color: "#1800AD", fontFamily: "Montserrat, sans-serif" }}>{f.t}</p>
+                        <p className="text-[13px] font-semibold leading-snug" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>{f.t}</p>
                         <p className="text-[11px] leading-snug" style={{ color: "#8A8A8A" }}>{f.d}</p>
                       </div>
                       <Bi n="check-circle-fill" size={15} color="#16a34a" />
@@ -236,13 +237,13 @@ export function HomePage() {
         </div>
       </section>
 
-      <FolderDivider color="#1800AD" />
+      <FolderDivider color={C.indigo} />
 
       {/* ── SERVICES ────────────────────────────────────────────────────── */}
       <section id="servicios" className="relative isolate overflow-hidden py-20" style={{ scrollMarginTop: 64 }}>
         <SectionDecor variant="dark" flip />
         <div className="max-w-6xl mx-auto px-6">
-          <p className="text-xs font-bold uppercase tracking-widest text-center mb-3" style={{ color: "#FFDE59", fontFamily: "Montserrat, sans-serif" }}>
+          <p className="text-xs font-bold uppercase tracking-widest text-center mb-3" style={{ color: C.yellow, fontFamily: "Montserrat, sans-serif" }}>
             Lo que hacemos
           </p>
           <h2 className="text-3xl font-bold text-center mb-14" style={{ fontFamily: "Poppins, sans-serif", color: "#fff" }}>
@@ -256,7 +257,7 @@ export function HomePage() {
           {/* CTA */}
           <div className="mt-12 flex justify-center">
             <a href="#faq" className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all hover:scale-105"
-              style={{ background: "#FFDE59", color: "#1800AD", fontFamily: "Montserrat, sans-serif", textDecoration: "none", boxShadow: "0 14px 28px -12px rgba(255,222,89,0.55)" }}>
+              style={{ background: C.yellow, color: C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none", boxShadow: "0 14px 28px -12px rgba(255,222,89,0.55)" }}>
               Agendar diagnóstico →
             </a>
           </div>
@@ -264,11 +265,11 @@ export function HomePage() {
       </section>
 
       <JoelBridge src={JOEL.cajas} side="right" height={220} sink={30} offset={8} />
-      <FolderDivider color="#FBFBF8" />
+      <FolderDivider color={C.cream} />
 
       <SolucionesSection />
 
-      <FolderDivider color="#1800AD" />
+      <FolderDivider color={C.indigo} />
 
       {/* ── MODELO: DIAGNÓSTICO → SOLUCIÓN → PROTECCIÓN → EXPANSIÓN ──────────
           Contenido del documento "Modelo de Negocio - Transarchivos". */}
@@ -282,9 +283,9 @@ export function HomePage() {
 
         <div className="relative max-w-6xl mx-auto px-6" style={{ zIndex: 1 }}>
           <div className="text-center mb-14">
-            <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#FFDE59", fontFamily: "Montserrat, sans-serif" }}>Cómo trabajamos</p>
+            <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: C.yellow, fontFamily: "Montserrat, sans-serif" }}>Cómo trabajamos</p>
             <h2 className="text-3xl md:text-4xl font-bold max-w-3xl mx-auto" style={{ fontFamily: "Poppins, sans-serif", color: "#fff", lineHeight: 1.2 }}>
-              Su socio integral para <span style={{ color: "#FFDE59" }}>todo el ciclo de vida documental</span>
+              Su socio integral para <span style={{ color: C.yellow }}>todo el ciclo de vida documental</span>
             </h2>
             <p className="text-sm mt-4 max-w-2xl mx-auto" style={{ color: "rgba(255,255,255,0.78)" }}>
               Le ayudamos a diagnosticar, organizar, transformar, proteger y disponer correctamente de su información documental. Cada servicio cumple una función dentro de un mismo recorrido.
@@ -292,16 +293,16 @@ export function HomePage() {
           </div>
 
           <div className="relative grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { n: 1, t: "Diagnóstico", k: "Entrada", ic: "clipboard2-pulse-fill", c: "#C8960A", d: "Detectamos su necesidad y abrimos la relación entendiendo qué pasa hoy con su archivo.", g: "#C8960A",
+            {([
+              { n: 1, t: "Diagnóstico", k: "Entrada", ic: "clipboard2-pulse-fill", c: C.gold, d: "Detectamos su necesidad y abrimos la relación entendiendo qué pasa hoy con su archivo.", g: C.gold,
                 items: [{ i: "search", l: "Diagnóstico documental", href: "#cotizador" }, { i: "list-columns-reverse", l: "Levantamiento de inventario", to: "/servicios/levantamiento-de-inventario" }] },
-              { n: 2, t: "Solución", k: "Transformación", ic: "gear-wide-connected", c: "#1800AD", d: "Resolvemos el problema documental con un proyecto a la medida.", g: "#1800AD",
+              { n: 2, t: "Solución", k: "Transformación", ic: "gear-wide-connected", c: C.indigo, d: "Resolvemos el problema documental con un proyecto a la medida.", g: C.indigo,
                 items: [{ i: "upc-scan", l: "Digitalización", to: "/servicios/digitalizacion-de-documentos" }, { i: "folder2-open", l: "Programa de gestión documental", to: "/servicios/programa-de-gestion-documental" }] },
-              { n: 3, t: "Protección", k: "Recurrencia", ic: "shield-fill-check", c: "#1800AD", d: "Protegemos su información y la mantenemos disponible cuando la necesite.", g: "#1800AD",
+              { n: 3, t: "Protección", k: "Recurrencia", ic: "shield-fill-check", c: C.indigo, d: "Protegemos su información y la mantenemos disponible cuando la necesite.", g: C.indigo,
                 items: [{ i: "archive", l: "Custodia de archivos", to: "/servicios/custodia-de-archivos" }, { i: "hdd-stack", l: "Custodia de medios magnéticos", to: "/servicios/custodia-de-medios-magneticos" }] },
-              { n: 4, t: "Expansión", k: "Nuevos proyectos", ic: "rocket-takeoff-fill", c: "#1800AD", d: "Cerramos el ciclo de vida documental y ampliamos el valor de la relación.", g: "#1800AD",
+              { n: 4, t: "Expansión", k: "Nuevos proyectos", ic: "rocket-takeoff-fill", c: C.indigo, d: "Cerramos el ciclo de vida documental y ampliamos el valor de la relación.", g: C.indigo,
                 items: [{ i: "file-earmark-x", l: "Destrucción legal", to: "/servicios/destruccion-de-documentos" }, { i: "lightning-charge", l: "Servicio inmediato", to: "/servicios/servicio-inmediato" }, { i: "person-badge", l: "Servicio in house", to: "/servicios/servicio-inhouse" }] },
-            ].map((st, idx, arr) => (
+            ] as { n: number; t: string; k: string; ic: string; c: string; d: string; g: string; items: { i: string; l: string; to?: string; href?: string }[] }[]).map((st, idx, arr) => (
               <div key={st.n} role="link" tabIndex={0}
                 // Toda la tarjeta lleva a su primer servicio (los enlaces de
                 // adentro conservan su propio destino). Mismo efecto de las
@@ -325,20 +326,20 @@ export function HomePage() {
                   </div>
                 </div>
                 <div className="flex flex-col flex-1 p-6">
-                  <p className="text-sm mb-5" style={{ color: "#6B6B6B", lineHeight: 1.6 }}>{st.d}</p>
+                  <p className="text-sm mb-5" style={{ color: C.muted, lineHeight: 1.6 }}>{st.d}</p>
                   <ul className="space-y-2 mt-auto">
                     {st.items.map(it => {
                       const inner = (
                         <>
                           <span className="flex items-center justify-center rounded-xl shrink-0" style={{ width: 38, height: 38, background: "#F7F8FF", border: "1px solid #E4E6F7" }}>
-                            <Bi n={it.i} size={17} color="#1800AD" />
+                            <Bi n={it.i} size={17} color={C.indigo} />
                           </span>
                           <span className="flex-1">{it.l}</span>
-                          <Bi n="arrow-right" size={14} color="#1800AD" className="transition-transform group-hover/item:translate-x-1" />
+                          <Bi n="arrow-right" size={14} color={C.indigo} className="transition-transform group-hover/item:translate-x-1" />
                         </>
                       );
-                      const cls = "group/item flex items-center gap-3 text-xs font-semibold rounded-2xl px-2.5 py-2 transition-colors hover:bg-[#F7F8FF]";
-                      const sty = { color: "#1800AD", fontFamily: "Montserrat, sans-serif", textDecoration: "none" } as const;
+                      const cls = "group/item flex items-center gap-3 text-xs font-semibold rounded-2xl px-2.5 py-2 transition-colors hover:bg-hielo";
+                      const sty = { color: C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none" } as const;
                       return (
                         <li key={it.l}>
                           {"to" in it && it.to
@@ -351,7 +352,7 @@ export function HomePage() {
                 </div>
                 {idx < arr.length - 1 && (
                   <span className="hidden lg:flex absolute items-center justify-center rounded-full z-10 font-bold"
-                    style={{ width: 34, height: 34, top: 36, right: -29, background: "#FFDE59", color: "#1800AD", boxShadow: "0 8px 18px -6px rgba(200,150,10,0.6)", fontSize: 16 }}><Bi n="arrow-right" size={17} color="#1800AD" style={{ WebkitTextStroke: "0.5px #1800AD" }} /></span>
+                    style={{ width: 34, height: 34, top: 36, right: -29, background: C.yellow, color: C.indigo, boxShadow: "0 8px 18px -6px rgba(200,150,10,0.6)", fontSize: 16 }}><Bi n="arrow-right" size={17} color={C.indigo} style={{ WebkitTextStroke: "0.5px #1800AD" }} /></span>
                 )}
               </div>
             ))}
@@ -360,18 +361,18 @@ export function HomePage() {
       </section>
 
       <JoelBridge src={JOEL.telefono} side="right" height={220} sink={175} offset={30} />
-      <FolderDivider color="#FBFBF8" />
+      <FolderDivider color={C.cream} />
 
       <div className="relative isolate overflow-hidden">
         <SectionDecor variant="light" />
         <QuoteSimulator />
       </div>
 
-      <FolderDivider color="#1800AD" />
+      <FolderDivider color={C.indigo} />
 
       <BlogSection />
 
-      <FolderDivider color="#FBFBF8" />
+      <FolderDivider color={C.cream} />
 
       {/* ── VIDEOS + REDES SOCIALES ───────────────────────────────────────────
           3 videos reales del canal de YouTube de Transarchivos
@@ -383,8 +384,8 @@ export function HomePage() {
       <SectionDecor variant="light" />
       <div className="max-w-6xl mx-auto px-6 py-16">
         <div className="text-center mb-8">
-          <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: "#C8960A", fontFamily: "Montserrat, sans-serif" }}>Conéctese con nosotros</p>
-          <h2 className="text-2xl md:text-3xl font-bold" style={{ fontFamily: "Poppins, sans-serif", color: "#1800AD" }}>
+          <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: C.gold, fontFamily: "Montserrat, sans-serif" }}>Conéctese con nosotros</p>
+          <h2 className="text-2xl md:text-3xl font-bold" style={{ fontFamily: "Poppins, sans-serif", color: C.indigo }}>
             Contenido y redes sociales de Transarchivos
           </h2>
         </div>
@@ -406,7 +407,7 @@ export function HomePage() {
                   allowFullScreen
                 />
               </div>
-              <p className="p-4 text-sm font-semibold leading-snug" style={{ color: "#1800AD", fontFamily: "Montserrat, sans-serif" }}>{v.title}</p>
+              <p className="p-4 text-sm font-semibold leading-snug" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>{v.title}</p>
             </div>
           ))}
         </div>
@@ -414,14 +415,14 @@ export function HomePage() {
         <div className="text-center mb-10">
           <a href="https://www.youtube.com/@Transarchivosltda" target="_blank" rel="noreferrer"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-bold transition-all hover:scale-105"
-            style={{ background: "#1800AD", color: "#fff", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
-            <Bi n="youtube" size={16} color="#FFDE59" />
+            style={{ background: C.indigo, color: "#fff", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
+            <Bi n="youtube" size={16} color={C.yellow} />
             Ver más en nuestro canal
           </a>
         </div>
 
         <div className="text-center">
-          <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: "#9B9B9B", fontFamily: "Montserrat, sans-serif" }}>Síganos en nuestras redes</p>
+          <p className="text-xs font-semibold uppercase tracking-wider mb-3" style={{ color: C.faint, fontFamily: "Montserrat, sans-serif" }}>Síganos en nuestras redes</p>
           <div className="flex flex-wrap justify-center gap-2">
             {[
               { n: "LinkedIn", ic: "linkedin", u: "https://linkedin.com/company/transarchivos-ltda01" },
@@ -432,7 +433,7 @@ export function HomePage() {
             ].map(({ n: r, ic, u }) => (
               <a key={r} href={u} target="_blank" rel="noreferrer" aria-label={r} title={r} className="flex items-center justify-center transition-all hover:-translate-y-0.5"
                 style={{ width: 40, height: 40, borderRadius: 12, background: "#1800AD14", textDecoration: "none" }}>
-                <Bi n={ic} size={19} color="#1800AD" />
+                <Bi n={ic} size={19} color={C.indigo} />
               </a>
             ))}
           </div>
@@ -440,7 +441,7 @@ export function HomePage() {
       </div>
       </section>
 
-      <FolderDivider color="#1800AD" />
+      <FolderDivider color={C.indigo} />
 
       <FaqSection onChat={() => setChatOpen(true)} />
 
@@ -455,7 +456,7 @@ export function HomePage() {
           de marca, pero sin el degradado fuerte. */}
       <section className="relative overflow-hidden" style={{ background: "#F7F8FF" }}>
         <div className="relative max-w-6xl mx-auto px-6 py-5">
-          <div className="grid grid-cols-2 md:grid-cols-5 divide-y md:divide-y-0 md:divide-x divide-[#E4E6F7]">
+          <div className="grid grid-cols-2 md:grid-cols-5 divide-y md:divide-y-0 md:divide-x divide-borde">
             {[
               { ic: "shield-check", t: "Cumplimiento normativo", d: "Operamos bajo la Ley 594 de 2000 y la normativa del AGN." },
               { ic: "camera-video-fill", t: "Custodia con vigilancia 24/7", d: "Centro documental con CCTV, control de acceso y monitoreo ambiental permanente." },
@@ -465,11 +466,11 @@ export function HomePage() {
             ].map(f => (
               <div key={f.t} className="flex flex-col items-center text-center gap-1.5 px-4 py-2.5 md:py-0">
                 <span className="flex items-center justify-center rounded-full shrink-0" style={{ width: 34, height: 34, border: "1.5px solid #C8960A" }}>
-                  <Bi n={f.ic} size={14} color="#C8960A" />
+                  <Bi n={f.ic} size={14} color={C.gold} />
                 </span>
                 <div>
-                  <p className="text-xs font-bold mb-0.5" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif" }}>{f.t}</p>
-                  <p className="text-[11px] leading-snug" style={{ color: "#6B6B6B" }}>{f.d}</p>
+                  <p className="text-xs font-bold mb-0.5" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>{f.t}</p>
+                  <p className="text-[11px] leading-snug" style={{ color: C.muted }}>{f.d}</p>
                 </div>
               </div>
             ))}
@@ -477,7 +478,7 @@ export function HomePage() {
         </div>
       </section>
 
-      <div className="border-b" style={{ borderColor: "#E4E6F7" }} />
+      <div className="border-b" style={{ borderColor: C.border }} />
 
       {/* ── FOOTER ───────────────────────────────────────────────────────────
           Rediseñado: fondo propio (antes se fundía con el blanco de la
@@ -486,7 +487,7 @@ export function HomePage() {
           /nosotros), columna de contacto (con los datos reales que antes
           vivían en la sección de Contacto, eliminada), e íconos de redes
           en vez de texto plano en la barra inferior. */}
-      <footer style={{ background: "#1800AD" }}>
+      <footer style={{ background: C.indigo }}>
         <div className="max-w-6xl mx-auto px-6 py-14">
           <div className="grid md:grid-cols-4 gap-10 mb-10">
             <div>
@@ -496,12 +497,12 @@ export function HomePage() {
               </p>
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider mb-4" style={{ color: "#FFDE59", fontFamily: "Montserrat, sans-serif" }}>Servicios</p>
+              <p className="text-xs font-bold uppercase tracking-wider mb-4" style={{ color: C.yellow, fontFamily: "Montserrat, sans-serif" }}>Servicios</p>
               <ul className="space-y-2.5">
                 {services.map(s => (
                   <li key={s.title}>
                     <Link to={`/servicios/${s.slug}`} className="text-sm transition-colors" style={{ color: "rgba(255,255,255,0.72)" }}
-                      onMouseEnter={e => e.currentTarget.style.color = "#FFDE59"} onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.72)"}>
+                      onMouseEnter={e => e.currentTarget.style.color = C.yellow} onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.72)"}>
                       {s.title}
                     </Link>
                   </li>
@@ -509,7 +510,7 @@ export function HomePage() {
               </ul>
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider mb-4" style={{ color: "#FFDE59", fontFamily: "Montserrat, sans-serif" }}>Empresa</p>
+              <p className="text-xs font-bold uppercase tracking-wider mb-4" style={{ color: C.yellow, fontFamily: "Montserrat, sans-serif" }}>Empresa</p>
               <ul className="space-y-2.5">
                 {[
                   { label: "Quiénes somos", to: "/nosotros#quienes-somos" },
@@ -520,7 +521,7 @@ export function HomePage() {
                 ].map(item => (
                   <li key={item.label}>
                     <Link to={item.to} className="text-sm transition-colors" style={{ color: "rgba(255,255,255,0.72)" }}
-                      onMouseEnter={e => e.currentTarget.style.color = "#FFDE59"} onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.72)"}>
+                      onMouseEnter={e => e.currentTarget.style.color = C.yellow} onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.72)"}>
                       {item.label}
                     </Link>
                   </li>
@@ -528,23 +529,23 @@ export function HomePage() {
               </ul>
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider mb-4" style={{ color: "#FFDE59", fontFamily: "Montserrat, sans-serif" }}>Contacto</p>
+              <p className="text-xs font-bold uppercase tracking-wider mb-4" style={{ color: C.yellow, fontFamily: "Montserrat, sans-serif" }}>Contacto</p>
               <ul className="space-y-3">
                 <li className="flex items-start gap-2.5 text-sm" style={{ color: "rgba(255,255,255,0.72)" }}>
-                  <Bi n="geo-alt-fill" size={14} color="#FFDE59" style={{ marginTop: 3, flexShrink: 0 }} />
+                  <Bi n="geo-alt-fill" size={14} color={C.yellow} style={{ marginTop: 3, flexShrink: 0 }} />
                   Cl. 21 # 39A-40, Bogotá, Colombia
                 </li>
                 <li>
                   <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" className="flex items-start gap-2.5 text-sm transition-colors" style={{ color: "rgba(255,255,255,0.72)" }}
-                    onMouseEnter={e => e.currentTarget.style.color = "#FFDE59"} onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.72)"}>
-                    <Bi n="whatsapp" size={14} color="#FFDE59" style={{ marginTop: 3, flexShrink: 0 }} />
+                    onMouseEnter={e => e.currentTarget.style.color = C.yellow} onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.72)"}>
+                    <Bi n="whatsapp" size={14} color={C.yellow} style={{ marginTop: 3, flexShrink: 0 }} />
                     WhatsApp {WHATSAPP_LABEL}
                   </a>
                 </li>
                 <li>
                   <a href="#contacto" className="flex items-start gap-2.5 text-sm transition-colors break-all" style={{ color: "rgba(255,255,255,0.72)" }}
-                    onMouseEnter={e => e.currentTarget.style.color = "#FFDE59"} onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.72)"}>
-                    <Bi n="envelope-fill" size={14} color="#FFDE59" style={{ marginTop: 3, flexShrink: 0 }} />
+                    onMouseEnter={e => e.currentTarget.style.color = C.yellow} onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.72)"}>
+                    <Bi n="envelope-fill" size={14} color={C.yellow} style={{ marginTop: 3, flexShrink: 0 }} />
                     info@transarchivos.com
                   </a>
                 </li>

@@ -16,10 +16,12 @@
     "test:security": "vitest run tests/security",
     "test:e2e": "playwright test",
     "check": "pnpm typecheck && pnpm lint && pnpm test && pnpm build && pnpm test:seo",
-    "check:all": "pnpm check && pnpm test:deps && pnpm test:e2e",
+    "check:all": "pnpm check && pnpm lint:unused && pnpm test:deps && pnpm test:e2e",
     "test:deps": "pnpm audit --audit-level=high",
     "test:ga": "GA_E2E=1 playwright test tests/e2e/analytics.spec.ts",
-    "test:seo": "SEO_DIST=1 vitest run"
+    "test:seo": "SEO_DIST=1 vitest run",
+    "email:header": "node scripts/generate-email-header.mjs",
+    "lint:unused": "knip --no-progress"
   },
   "dependencies": {
     "bootstrap-icons": "^1.13.1",
@@ -46,6 +48,7 @@
     "eslint-plugin-security": "^4.2.0",
     "globals": "^17.13.0",
     "jsdom": "^30.1.2",
+    "knip": "^6.41.0",
     "oxfmt": "^0.2.0",
     "tailwindcss": "^4.3.3",
     "typescript": "^5.7.0",

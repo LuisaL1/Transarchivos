@@ -7,7 +7,7 @@ import { services } from "@/data/services";
 // en vez de ser un campo decorativo sin función.
 export type SearchResult = { kind: "Servicio" | "Artículo" | "Sección"; title: string; desc: string; to?: string; href?: string };
 
-export const searchIndex: SearchResult[] = [
+const searchIndex: SearchResult[] = [
   { kind: "Sección", title: "Diagnóstico documental", desc: "Empiece por saber qué está pasando con su archivo, antes de mover un solo papel", href: "#cotizador" },
   { kind: "Sección", title: "Soluciones", desc: "Cumplimiento normativo, respaldo ante desastres, oficina cero papel, espacio y auditorías", href: "#soluciones" },
   { kind: "Sección", title: "Cómo trabajamos", desc: "Nuestro modelo de 4 pasos: diagnóstico, solución, protección y expansión", href: "#modelo" },
@@ -20,7 +20,7 @@ export const searchIndex: SearchResult[] = [
 
 // Sin tildes ni diéresis: quien escribe rápido en un buscador casi nunca
 // tipea acentos ("digitalizacion" debe encontrar "Digitalización").
-export const foldAccents = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "");
+const foldAccents = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "");
 
 export function searchContent(query: string): SearchResult[] {
   const q = foldAccents(query.trim().toLowerCase());

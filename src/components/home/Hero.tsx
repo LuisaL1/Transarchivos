@@ -2,6 +2,7 @@ import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Bi } from "@/components/ui/Icons";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { C } from "@/styles/tokens";
 
 // Video del hero: montaje institucional (archivo, digitalización, Mido y
 // vehículos), sin audio; el navegador elige la versión con el atributo
@@ -9,8 +10,8 @@ import { useReducedMotion } from "@/hooks/useReducedMotion";
 // Montaje cinematográfico: planos largos con movimiento de cámara lento,
 // fundidos cruzados de 1 s y bucle sin salto (sin filtros de color: imagen limpia).
 // Se reproduce al 70 % (ajustable en HERO_VIDEO_RATE).
-export const HERO_VIDEO = { mobile: "/videos/transarchivos-hero-movil.mp4", desktop: "/videos/transarchivos-hero.mp4", hd: "/videos/transarchivos-hero-4k.mp4" };
-export const HERO_VIDEO_RATE = 0.7;
+const HERO_VIDEO = { mobile: "/videos/transarchivos-hero-movil.mp4", desktop: "/videos/transarchivos-hero.mp4", hd: "/videos/transarchivos-hero-4k.mp4" };
+const HERO_VIDEO_RATE = 0.7;
 
 export function HeroVideoBackground() {
   const reduced = useReducedMotion();
@@ -19,7 +20,7 @@ export function HeroVideoBackground() {
     // precargado en index.html), para que al recargar no se vea el azul
     // de base mientras el video carga (en celular y computador).
     <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true"
-      style={{ backgroundColor: "#1800AD", backgroundImage: "url(/videos/hero-poster.jpg)", backgroundSize: "cover", backgroundPosition: "center" }}>
+      style={{ backgroundColor: C.indigo, backgroundImage: "url(/videos/hero-poster.jpg)", backgroundSize: "cover", backgroundPosition: "center" }}>
       {!reduced && (
         <video
           // React no escribe "muted" como atributo HTML: sin esto iPhone y
@@ -71,7 +72,7 @@ export function HeroRotatingWord() {
   }, [idx]);
   const word = HERO_WORDS[idx];
   return (
-    <span className="inline-flex align-middle rounded-xl md:rounded-2xl px-3 md:px-4" style={{ background: "#FFDE59", color: "#1800AD", textShadow: "none" }}>
+    <span className="inline-flex align-middle rounded-xl md:rounded-2xl px-3 md:px-4" style={{ background: C.yellow, color: C.indigo, textShadow: "none" }}>
       <span className="relative inline-block overflow-hidden" style={{ width: w ?? "auto", height: "1.22em", transition: "width 0.35s cubic-bezier(0.4,0,0.2,1)" }}>
         <span ref={ghost} className="invisible inline-block whitespace-nowrap">{word}</span>
         <span key={word} className="absolute left-0 top-0 whitespace-nowrap hero-word-in">{word}</span>
@@ -104,14 +105,14 @@ export function HeroQuickStart() {
           (sin el contorno azul global, que se veía tosco sobre el amarillo). */}
       <div role="tablist" aria-label="¿Qué necesita hoy?" className="relative grid grid-cols-4">
         <span aria-hidden="true" className="absolute top-0 bottom-0 rounded-2xl"
-          style={{ width: "25%", left: `${sel * 25}%`, background: "#FFDE59", boxShadow: "0 10px 24px -12px rgba(255,222,89,0.8)", transition: "left 0.35s cubic-bezier(0.4,0,0.2,1)" }} />
+          style={{ width: "25%", left: `${sel * 25}%`, background: C.yellow, boxShadow: "0 10px 24px -12px rgba(255,222,89,0.8)", transition: "left 0.35s cubic-bezier(0.4,0,0.2,1)" }} />
         {QUICK.map((o, i) => {
           const on = i === sel;
           return (
             <button key={o.label} type="button" role="tab" aria-selected={on} onClick={() => setSel(i)}
               className={`qs-tab relative flex flex-col items-center gap-1 py-2.5 rounded-2xl transition-colors ${on ? "" : "hover:bg-white/[0.07]"}`}>
-              <Bi n={o.icon} size={16} color={on ? "#1800AD" : "rgba(255,255,255,0.72)"} style={{ transition: "color 0.25s" }} />
-              <span className="text-[11px] font-bold" style={{ color: on ? "#1800AD" : "rgba(255,255,255,0.78)", fontFamily: "Montserrat, sans-serif", transition: "color 0.25s" }}>{o.label}</span>
+              <Bi n={o.icon} size={16} color={on ? C.indigo : "rgba(255,255,255,0.72)"} style={{ transition: "color 0.25s" }} />
+              <span className="text-[11px] font-bold" style={{ color: on ? C.indigo : "rgba(255,255,255,0.78)", fontFamily: "Montserrat, sans-serif", transition: "color 0.25s" }}>{o.label}</span>
             </button>
           );
         })}
@@ -120,23 +121,23 @@ export function HeroQuickStart() {
       {/* Detalle: alto fijo, texto centrado en vertical (sin huecos) */}
       <div role="tabpanel" className="mt-2 rounded-2xl" style={{ background: "#fff" }}>
         <div key={q.slug} className="hero-word-in flex items-center gap-3.5 px-4 h-[84px]">
-          <span className="grid place-items-center rounded-xl shrink-0" style={{ width: 44, height: 44, background: "#1800AD" }}>
-            <Bi n={q.icon} size={19} color="#FFDE59" />
+          <span className="grid place-items-center rounded-xl shrink-0" style={{ width: 44, height: 44, background: C.indigo }}>
+            <Bi n={q.icon} size={19} color={C.yellow} />
           </span>
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-bold leading-tight truncate" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif" }}>{q.title}</p>
-            <p className="text-xs mt-1 line-clamp-2" style={{ color: "#6B6B6B", lineHeight: 1.45 }}>{q.text}</p>
+            <p className="text-sm font-bold leading-tight truncate" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>{q.title}</p>
+            <p className="text-xs mt-1 line-clamp-2" style={{ color: C.muted, lineHeight: 1.45 }}>{q.text}</p>
           </div>
         </div>
         <div className="flex items-center justify-between gap-3 px-4 py-3" style={{ borderTop: "1px solid #F0F1FA" }}>
-          <Link to={`/servicios/${q.slug}`} className="group inline-flex items-center gap-1 text-xs font-semibold" style={{ color: "#1800AD", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
-            Ver servicio <Bi n="chevron-right" size={10} color="#1800AD" className="transition-transform group-hover:translate-x-0.5" />
+          <Link to={`/servicios/${q.slug}`} className="group inline-flex items-center gap-1 text-xs font-semibold" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
+            Ver servicio <Bi n="chevron-right" size={10} color={C.indigo} className="transition-transform group-hover:translate-x-0.5" />
           </Link>
-          <Link to={`/?servicio=${q.slug}#cotizador`} className="group inline-flex items-center gap-2 pl-4 pr-1.5 py-1.5 rounded-full text-xs font-bold transition-colors hover:bg-[#1800AD]"
-            style={{ background: "#1800AD", color: "#fff", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
+          <Link to={`/?servicio=${q.slug}#cotizador`} className="group inline-flex items-center gap-2 pl-4 pr-1.5 py-1.5 rounded-full text-xs font-bold transition-colors hover:bg-indigo"
+            style={{ background: C.indigo, color: "#fff", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
             Cotizar este servicio
-            <span className="grid place-items-center rounded-full transition-transform group-hover:translate-x-0.5" style={{ width: 24, height: 24, background: "#FFDE59" }}>
-              <Bi n="arrow-right" size={11} color="#1800AD" />
+            <span className="grid place-items-center rounded-full transition-transform group-hover:translate-x-0.5" style={{ width: 24, height: 24, background: C.yellow }}>
+              <Bi n="arrow-right" size={11} color={C.indigo} />
             </span>
           </Link>
         </div>

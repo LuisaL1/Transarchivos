@@ -8,8 +8,9 @@
 import { useState, useEffect, useRef } from "react";
 import { trackEvent } from "@/lib/analytics";
 import { Link } from "react-router-dom";
-import avatarImg from "@/assets/images/joel.png";
-import { createJoel, newMemory, track, type JoelReply } from "@/lib/joel";
+import avatarImg from "@/assets/images/joel.webp";
+import { createJoel, newMemory, type JoelReply } from "@/lib/joel";
+import { track } from "@/lib/visitor";
 import { ChatAvatarFace } from "@/components/ui/Brand";
 import { Bi, MenuIcon } from "@/components/ui/Icons";
 import { blogPosts } from "@/data/blog";
@@ -19,6 +20,7 @@ import { SERVICE_DETAILS } from "@/data/serviceDetails";
 import { services } from "@/data/services";
 import { SOLUTIONS } from "@/data/solutions";
 import { contactHref, whatsappUrl } from "@/data/contact";
+import { C } from "@/styles/tokens";
 
 export type ChatData = Record<string, string>;
 
@@ -196,18 +198,18 @@ export function ChatBubble({ msg }: { msg: ChatMsg }) {
         <div className="inline-block whitespace-pre-line px-3.5 py-2.5 text-left text-[13.5px] leading-relaxed"
           style={bot
             ? { background: "#fff", color: "#37352F", border: "1px solid #E4E6F7", borderRadius: "4px 16px 16px 16px", boxShadow: "0 1px 2px rgba(10,13,61,0.05)" }
-            : { background: "#1800AD", color: "#fff", borderRadius: "16px 16px 4px 16px" }}>
+            : { background: C.indigo, color: "#fff", borderRadius: "16px 16px 4px 16px" }}>
           {msg.text}
         </div>
         {msg.actions && (
           <div className="mt-2 rounded-2xl p-1.5" style={{ background: "#fff", border: "1px solid #E4E6F7" }}>
             {msg.actions.map(a => {
-              const cls = "group flex items-center gap-3 rounded-xl px-2.5 py-2 text-left transition-colors hover:bg-[#F7F8FF]";
+              const cls = "group flex items-center gap-3 rounded-xl px-2.5 py-2 text-left transition-colors hover:bg-hielo";
               const inner = (
                 <>
                   <MenuIcon n={a.icon} size={30} />
-                  <span className="flex-1 text-[13px] font-semibold" style={{ color: "#1800AD", fontFamily: "Montserrat, sans-serif" }}>{a.label}</span>
-                  <Bi n="arrow-up-right" size={11} color="#9B9B9B" />
+                  <span className="flex-1 text-[13px] font-semibold" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>{a.label}</span>
+                  <Bi n="arrow-up-right" size={11} color={C.faint} />
                 </>
               );
               return a.to
@@ -353,10 +355,10 @@ export function ChatBot({ open, setOpen, seed, heroJoel = false }: { open: boole
           <div className="relative sm:mb-16 sm:-mr-4 max-w-[230px] rounded-2xl rounded-br-sm bg-white px-4 py-3 text-[13.5px]"
             style={{ color: "#37352F", boxShadow: "0 20px 40px -16px rgba(10,13,61,0.35), 0 2px 8px rgba(10,13,61,0.08)" }}>
             <button onClick={() => setTeaser(false)} className="absolute right-2 top-1.5" aria-label="Cerrar invitación">
-              <Bi n="x-lg" size={11} color="#9B9B9B" />
+              <Bi n="x-lg" size={11} color={C.faint} />
             </button>
             <button onClick={() => setOpen(true)} className="pr-3 text-left leading-relaxed">
-              <b style={{ color: "#1800AD" }}>¡Hola! Soy Joel.</b> ¿Necesita organizar, digitalizar o custodiar su archivo? Le ayudo.
+              <b style={{ color: C.indigo }}>¡Hola! Soy Joel.</b> ¿Necesita organizar, digitalizar o custodiar su archivo? Le ayudo.
             </button>
           </div>
           <button onClick={() => setOpen(true)} aria-label="Hablar con Joel" className="shrink-0">
@@ -369,7 +371,7 @@ export function ChatBot({ open, setOpen, seed, heroJoel = false }: { open: boole
       <button data-chat-launcher onClick={() => setOpen(o => !o)} aria-expanded={open}
         aria-label={open ? "Cerrar chat" : "Hablar con Joel, asesor virtual"}
         className={`fixed bottom-4 right-4 md:bottom-6 md:right-6 z-[60] items-center gap-2.5 rounded-full p-1.5 md:pr-4 text-white transition-transform hover:-translate-y-0.5 ${open ? "hidden sm:flex" : "flex"}`}
-        style={{ background: "#1800AD", boxShadow: "0 16px 34px -10px rgba(24,0,173,0.6)" }}>
+        style={{ background: C.indigo, boxShadow: "0 16px 34px -10px rgba(24,0,173,0.6)" }}>
         {open ? (
           <span className="grid place-items-center rounded-full" style={{ width: 40, height: 40, background: "rgba(255,255,255,0.15)" }}>
             <Bi n="x-lg" size={16} color="#fff" />
@@ -378,13 +380,13 @@ export function ChatBot({ open, setOpen, seed, heroJoel = false }: { open: boole
           <span className="relative">
             <span className="absolute inset-0 rounded-full" style={{ background: "rgba(255,222,89,0.45)", animation: "chatPing 2.4s cubic-bezier(0,0,0.2,1) infinite" }} />
             <ChatAvatarFace size={40} round />
-            <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full border-2" style={{ background: "#22c55e", borderColor: "#1800AD" }} />
+            <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full border-2" style={{ background: "#22c55e", borderColor: C.indigo }} />
           </span>
         )}
         <span className="hidden md:block text-left">
           <span className="flex items-center gap-1.5 text-[13px] font-semibold leading-tight" style={{ fontFamily: "Montserrat, sans-serif" }}>
             {open ? "Cerrar" : "Joel"}
-            {!open && <span className="rounded-full px-1.5 py-px text-[9px] font-bold tracking-wide" style={{ background: "#FFDE59", color: "#1800AD" }}>IA</span>}
+            {!open && <span className="rounded-full px-1.5 py-px text-[9px] font-bold tracking-wide" style={{ background: C.yellow, color: C.indigo }}>IA</span>}
           </span>
           {!open && <span className="block text-[11.5px] leading-tight" style={{ color: "rgba(255,255,255,0.7)" }}>En línea</span>}
         </span>
@@ -395,19 +397,19 @@ export function ChatBot({ open, setOpen, seed, heroJoel = false }: { open: boole
         <section aria-label="Chat con Joel"
           // Celular: pantalla completa (más cómodo para escribir). Desde sm:
           // ventana flotante sobre el botón.
-          className="fixed inset-0 sm:inset-auto sm:right-6 sm:bottom-[92px] sm:w-[400px] sm:max-h-[calc(100vh-130px)] z-[70] flex flex-col overflow-hidden rounded-none sm:rounded-[24px] bg-white sm:border sm:border-[#1800AD]/10"
+          className="fixed inset-0 sm:inset-auto sm:right-6 sm:bottom-[92px] sm:w-[400px] sm:max-h-[calc(100vh-130px)] z-[70] flex flex-col overflow-hidden rounded-none sm:rounded-[24px] bg-white sm:border sm:border-indigo/10"
           style={{ minHeight: 0, boxShadow: "0 40px 80px -30px rgba(24,0,173,0.5)", animation: "fadeInUp 0.3s ease both" }}>
           <div className="h-[100dvh] sm:h-[min(620px,calc(100vh-130px))] flex flex-col min-h-0 flex-1">
-            <header className="relative flex items-center gap-3 overflow-hidden px-5 py-4" style={{ background: "#1800AD", paddingTop: "max(16px, env(safe-area-inset-top))" }}>
+            <header className="relative flex items-center gap-3 overflow-hidden px-5 py-4" style={{ background: C.indigo, paddingTop: "max(16px, env(safe-area-inset-top))" }}>
               <span aria-hidden="true" className="pointer-events-none absolute" style={{ right: -48, top: -48, width: 90, height: 90, transform: "rotate(45deg)", borderRadius: 15, background: "rgba(255,222,89,0.22)" }} />
               <span className="relative">
                 <ChatAvatarFace size={42} round />
-                <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full border-2" style={{ background: "#22c55e", borderColor: "#1800AD" }} />
+                <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full border-2" style={{ background: "#22c55e", borderColor: C.indigo }} />
               </span>
               <div className="relative flex-1 min-w-0">
                 <p className="flex items-center gap-2 font-semibold" style={{ color: "#fff", fontFamily: "Poppins, sans-serif" }}>
                   Joel
-                  <span className="rounded-full px-2 py-px text-[10px] font-semibold uppercase tracking-wider" style={{ background: "rgba(255,255,255,0.15)", color: "#FFDE59" }}>Asesor virtual</span>
+                  <span className="rounded-full px-2 py-px text-[10px] font-semibold uppercase tracking-wider" style={{ background: "rgba(255,255,255,0.15)", color: C.yellow }}>Asesor virtual</span>
                 </p>
                 <p className="flex items-center gap-1.5 text-[12px]" style={{ color: "rgba(255,255,255,0.7)" }}>
                   <span className="w-1.5 h-1.5 rounded-full" style={{ background: "#22c55e" }} /> En línea · Responde al instante
@@ -434,10 +436,10 @@ export function ChatBot({ open, setOpen, seed, heroJoel = false }: { open: boole
               {!typing && options.length > 0 && (
                 <div className="rounded-2xl p-1.5 ml-8" style={{ background: "#fff", border: "1px solid #E4E6F7", animation: "fadeInUp 0.3s ease both" }}>
                   {options.map(o => (
-                    <button key={o.label} type="button" onClick={() => choose(o)} className="group w-full flex items-center gap-3 rounded-xl px-2.5 py-2 text-left transition-colors hover:bg-[#F7F8FF]">
+                    <button key={o.label} type="button" onClick={() => choose(o)} className="group w-full flex items-center gap-3 rounded-xl px-2.5 py-2 text-left transition-colors hover:bg-hielo">
                       <MenuIcon n={chatOptionIcon(o.label)} size={32} />
-                      <span className="flex-1 text-[13px] font-semibold" style={{ color: "#1800AD", fontFamily: "Montserrat, sans-serif" }}>{o.label}</span>
-                      <Bi n="chevron-right" size={12} color="#9B9B9B" className="transition-transform group-hover:translate-x-0.5" />
+                      <span className="flex-1 text-[13px] font-semibold" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>{o.label}</span>
+                      <Bi n="chevron-right" size={12} color={C.faint} className="transition-transform group-hover:translate-x-0.5" />
                     </button>
                   ))}
                 </div>
@@ -449,10 +451,10 @@ export function ChatBot({ open, setOpen, seed, heroJoel = false }: { open: boole
               <input ref={inputRef} value={text} onChange={e => setText(e.target.value)}
                 placeholder={step.input?.placeholder ?? "Escriba su mensaje…"} aria-label="Mensaje"
                 className="min-w-0 flex-1 rounded-full px-4 py-2.5 text-[14px] outline-none transition focus:bg-white"
-                style={{ border: "1px solid #E4E6F7", background: "#F6F7FD", color: "#1800AD" }} />
+                style={{ border: "1px solid #E4E6F7", background: "#F6F7FD", color: C.indigo }} />
               <button type="submit" disabled={!text.trim() || typing} aria-label="Enviar"
-                className="grid h-10 w-10 shrink-0 place-items-center rounded-full transition-opacity disabled:opacity-40" style={{ background: "#FFDE59" }}>
-                <Bi n="send-fill" size={15} color="#1800AD" />
+                className="grid h-10 w-10 shrink-0 place-items-center rounded-full transition-opacity disabled:opacity-40" style={{ background: C.yellow }}>
+                <Bi n="send-fill" size={15} color={C.indigo} />
               </button>
             </form>
           </div>

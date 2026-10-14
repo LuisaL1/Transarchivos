@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Bi } from "@/components/ui/Icons";
 import { services } from "@/data/services";
+import { C } from "@/styles/tokens";
 
 export function ServiceCard({ service }: { service: typeof services[0] }) {
   const [hovered, setHovered] = useState(false);
@@ -46,10 +47,10 @@ export function ServiceCard({ service }: { service: typeof services[0] }) {
       </div>
 
       <div>
-        <p className="font-bold text-base mb-1.5" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif" }}>
+        <p className="font-bold text-base mb-1.5" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>
           {service.title}
         </p>
-        <p className="text-sm leading-relaxed" style={{ color: "#6B6B6B" }}>
+        <p className="text-sm leading-relaxed" style={{ color: C.muted }}>
           {service.desc}
         </p>
       </div>

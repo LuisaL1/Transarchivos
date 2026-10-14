@@ -10,25 +10,30 @@ import { pathToFileURL } from "node:url";
 
 const DIST = "dist";
 const ssr = await import(pathToFileURL(join(process.cwd(), "dist-ssr", "entry-server.js")).href);
-const { render, getPageMeta, renderHeadTags, PUBLIC_ROUTES, INDEXABLE, SITE_URL } = ssr;
+const { render, preload, getPageMeta, renderHeadTags, PUBLIC_ROUTES, INDEXABLE, SITE_URL } = ssr;
+await preload();
 
 const template = readFileSync(join(DIST, "index.html"), "utf8");
 if (!template.includes("<!--seo:start-->") || !template.includes('<div id="root"><!--app-html--></div>')) throw new Error("index.html sin marcadores SEO");
 
-function page(url) {
+async function page(url) {
   const meta = getPageMeta(url);
+  const app = await render(url);
+  // La CSP prohíbe scripts en línea: si React tuvo que agregar alguno (algo quedó
+  // en suspenso), el HTML no sirve y conviene enterarse en el build.
+  if (/<script(?![^>]*\bsrc=)/i.test(app)) throw new Error(`${url}: la pre-generación dejó un <script> en línea (contenido en suspenso)`);
   const html = template
     .replace(/<!--seo:start-->[\s\S]*?<!--seo:end-->/, renderHeadTags(meta))
-    .replace('<div id="root"><!--app-html--></div>', `<div id="root" data-path="${url}">${render(url)}</div>`);
+    .replace('<div id="root"><!--app-html--></div>', `<div id="root" data-path="${url}">${app}</div>`);
   return { meta, html };
 }
 const write = (file, content) => { const f = join(DIST, file); mkdirSync(dirname(f), { recursive: true }); writeFileSync(f, content); };
 
 for (const route of PUBLIC_ROUTES) {
-  const { html } = page(route);
+  const { html } = await page(route);
   write(route === "/" ? "index.html" : `${route.slice(1)}.html`, html);
 }
-write("404.html", page("/404").html);
+write("404.html", (await page("/404")).html);
 
 const today = new Date().toISOString().slice(0, 10);
 write("sitemap.xml", `<?xml version="1.0" encoding="UTF-8"?>

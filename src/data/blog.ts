@@ -6,9 +6,10 @@ import imgCiclo1 from "@/assets/images/blog/ciclo-vida-1.jpg";
 import imgCiclo2 from "@/assets/images/blog/ciclo-vida-2.jpg";
 import imgEco1 from "@/assets/images/blog/economia-circular-1.jpg";
 import imgEco2 from "@/assets/images/blog/economia-circular-2.jpg";
+import { C } from "@/styles/tokens";
 
 export type Item = string | { b: string; t: string };
-export type Block =
+type Block =
   | { t: "h2"; text: string }
   | { t: "p"; text: string; lead?: string }
   | { t: "ul"; items: Item[] }
@@ -356,10 +357,10 @@ export function readMinutes(p: Post) {
 // Un color por categoría (en vez del dorado único de antes) para que la
 // sección tenga más vida: cada eyebrow, subrayado y acento hereda el color
 // de su propia categoría.
-export const BLOG_CAT_COLOR: Record<string, string> = {
-  "Tecnología": "#1800AD",
+const BLOG_CAT_COLOR: Record<string, string> = {
+  "Tecnología": C.indigo,
   "Sostenibilidad": "#15803d",
-  "Inteligencia documental": "#C8960A",
+  "Inteligencia documental": C.gold,
 };
 
-export const blogCatColor = (c: string) => BLOG_CAT_COLOR[c] ?? "#1800AD";
+export const blogCatColor = (c: string) => BLOG_CAT_COLOR[c] ?? C.indigo;

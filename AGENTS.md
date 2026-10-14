@@ -11,13 +11,16 @@ React 19 + Vite 8 + Tailwind CSS v4 + TypeScript. Se publica en Vercel.
 - `pnpm lint` — ESLint (calidad, accesibilidad, seguridad)
 - `pnpm test` / `pnpm test:e2e` — pruebas (ver `TESTING.md`)
 - `pnpm check` — todo lo anterior + build; debe quedar en verde antes de cada commit
+- `pnpm check:all` — lo anterior + código sin uso (`lint:unused`, knip) + auditoría de dependencias + extremo a extremo
+- `pnpm email:header` — regenera el banner de los correos (`public/brand/email-header.png`)
 
 ## Arquitectura (`src/`)
 
 ```
 src/
 ├── main.tsx              Punto de entrada (router + estilos globales)
-├── App.tsx               Rutas de la aplicación
+├── App.tsx               Rutas: el inicio va en el paquete principal; las demás páginas y el chat
+│                         se cargan aparte (React.lazy); el pre-render las espera
 ├── pages/                Una página por ruta
 │   ├── HomePage.tsx          "/"  (estado del chat, hero, secciones)
 │   ├── ServiceDetailPage.tsx "/servicios/:slug"
@@ -28,11 +31,13 @@ src/
 ├── components/
 │   ├── layout/           Navbar compartido (SiteHeader), menús desplegables,
 │   │                     búsqueda (SearchOverlay) y tarjeta de soporte
-│   ├── sections/         Secciones reutilizables: tarjeta de servicio,
-│   │                     soluciones, cotizador, blog, preguntas frecuentes
+│   ├── sections/         Secciones reutilizables: tarjeta de servicio, soluciones,
+│   │                     cotizador, blog, preguntas frecuentes; y las compartidas por
+│   │                     las páginas internas: PageHero (encabezado) y CtaBand (llamado final)
 │   ├── home/             Piezas propias del hero (videos, barra de Joel)
-│   ├── chat/             Chat de Joel (interfaz y guion)
-│   └── ui/               Primitivas: íconos, marca (logo/Joel), fondos de sección
+│   ├── chat/             Chat de Joel (interfaz y guion); LazyChatBot lo carga aparte
+│   └── ui/               Primitivas: íconos, marca (logo/Joel), fondos y pestaña de carpeta
+│                         (SectionDecor), rótulo/título de sección (SectionHead)
 ├── data/                 CONTENIDO del sitio (fuente única de verdad)
 │   ├── services.ts           Los 9 servicios
 │   ├── serviceDetails.ts     Contenido de la página de cada servicio
@@ -47,15 +52,21 @@ src/
 │   ├── clients.ts            Clientes históricos (carrusel de logos; imágenes en assets/images/clientes)
 │   └── search.ts             Índice del buscador
 ├── lib/joel.ts           "Cerebro" del asesor virtual (sin IA externa)
+├── lib/visitor.ts        Lo que el sitio recuerda del visitante (localStorage): visitas, eventos, búsquedas
+├── lib/leads.ts          Envío de formularios a /api/contact
+├── lib/analytics.ts      Google Analytics con consentimiento (Consent Mode v2)
 ├── seo/                  Datos de la empresa (site.ts) y metadatos por ruta (meta.ts)
 ├── entry-server.tsx      Render en servidor para la pre-generación de HTML
 ├── data/joelPoses.ts     Poses de Joel por servicio (imágenes en assets/images/joel)
 ├── hooks/                Hooks reutilizables (aparición al hacer scroll)
 ├── assets/images/        Imágenes importadas desde el código
-└── styles/index.css      Estilos globales, animaciones, puntero/foco
+├── styles/tokens.ts      Paleta en código (C.indigo, C.yellow…) para estilos en línea
+└── styles/index.css      Estilos globales, tokens de color de Tailwind (@theme), animaciones
 public/                   Archivos servidos tal cual (videos, favicon, robots, documentos/ PDF oficiales)
 api/contact.ts            Función de Vercel: formularios → correo por Brevo (docs/07-formularios.md)
 scripts/prerender.mjs     Pre-genera dist/<ruta>.html, 404, sitemap y robots (SEO)
+scripts/generate-email-header.mjs  Banner de los correos (pnpm email:header)
+knip.json                 Detección de archivos, exportaciones y dependencias sin uso (pnpm lint:unused)
 tests/                    unit/, security/, seo/ (HTML generado), e2e/ (Playwright + axe)
 docs/                     Documentación técnica (arquitectura, UX/UI, conversión, pruebas, decisiones)
 RecursosTransarchivos/    Documentos fuente del cliente (contexto, no se publican)
@@ -70,6 +81,15 @@ RecursosTransarchivos/    Documentos fuente del cliente (contexto, no se publica
   No inventar cifras, precios, horarios ni certificaciones (la empresa NO tiene
   ISO 9001). Operan principalmente en Bogotá.
 - Importar con el alias `@/` (apunta a `src/`).
+- Colores: nunca escribir un hex nuevo. En estilos en línea usar `C.x` de
+  `styles/tokens.ts`; en clases de Tailwind, los tokens del `@theme` de
+  `styles/index.css` (`bg-indigo`, `text-dorado`, `border-borde`…). Ambas listas
+  deben coincidir.
+- Páginas internas: encabezado con `<PageHero>`, llamado final con `<CtaBand>`,
+  títulos de sección con `kicker()`/`h2()`/`mark()` de `ui/SectionHead`.
+- Lo que no se usa se borra: `pnpm lint:unused` (knip) falla en CI si quedan
+  archivos, exportaciones o dependencias sin uso; TypeScript rechaza variables
+  y parámetros sin uso.
 - Componentes: un archivo por componente o por grupo pequeño relacionado;
   exportaciones con nombre (`export function X`).
 - SEO: cada ruta se pre-genera en el servidor. No usar `window`/`document`/

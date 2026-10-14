@@ -1,10 +1,19 @@
 @import 'tailwindcss';
 
+/* Paleta (manual de marca). Misma lista que styles/tokens.ts (C.x) para los
+   estilos en línea: cambiar un color aquí y allá. */
 @theme inline {
-  --color-navy: #1800AD;
-  --color-indigo-vivid: #1800AD;
-  --color-yellow-accent: #FFDE59;
-  --color-gray-light: #EAEAEA;
+  --color-indigo: #1800AD;       /* índigo vivo: fondos, textos sobre blanco, botones */
+  --color-amarillo: #FFDE59;     /* acción y acentos */
+  --color-dorado: #C8960A;       /* rótulos sobre fondo claro */
+  --color-crema: #FBFBF8;        /* secciones claras */
+  --color-lavanda: #F1F3FB;
+  --color-hielo: #F7F8FF;        /* fondos de fila/hover */
+  --color-niebla: #F2F3FA;
+  --color-borde: #E4E6F7;        /* borde fino de tarjetas */
+  --color-borde-fuerte: #DDE0F2; /* borde de campos de formulario */
+  --color-gris: #6B6B6B;         /* texto secundario */
+  --color-gris-claro: #9B9B9B;   /* texto terciario */
   --font-heading: 'Poppins', sans-serif;
   --font-subheading: 'Montserrat', sans-serif;
   --font-body: 'Inter', sans-serif;

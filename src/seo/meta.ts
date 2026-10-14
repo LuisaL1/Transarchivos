@@ -8,7 +8,7 @@ import { BRAND, GOOGLE_VERIFICATION, INDEXABLE, SITE_URL, abs } from "@/seo/site
 // Una sola función para el servidor (pre-generación de HTML en el build) y el
 // navegador (SeoHead al cambiar de ruta), así ambos dicen exactamente lo mismo.
 
-export type JsonLd = Record<string, unknown>;
+type JsonLd = Record<string, unknown>;
 export type PageMeta = {
   path: string;
   title: string;

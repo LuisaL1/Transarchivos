@@ -1,6 +1,6 @@
 
 
-export type QField = { key: string; label: string; options: string[] };
+type QField = { key: string; label: string; options: string[] };
 
 export type QConfig = { volumeLabel: string; volumePlaceholder: string; fields: QField[]; level?: string; next: string[] };
 

@@ -16,7 +16,7 @@ declare global {
 }
 
 const RAW_ID = (import.meta.env.VITE_GA_MEASUREMENT_ID ?? "").trim();
-export const GA_ID = /^G-[A-Z0-9]+$/i.test(RAW_ID) ? RAW_ID.toUpperCase() : "";
+const GA_ID = /^G-[A-Z0-9]+$/i.test(RAW_ID) ? RAW_ID.toUpperCase() : "";
 export const analyticsEnabled = GA_ID !== "";
 
 const CONSENT_KEY = "ta-analytics-consent";

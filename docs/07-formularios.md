@@ -18,7 +18,7 @@ abre el programa de correo del visitante.
 Navegador ──POST /api/contact──► Función de Vercel (api/contact.ts) ──API Brevo──► mercadeo@ (comercial) / info@ (general)
 ```
 
-- La función valida los datos, aplica el **campo trampa** contra bots (`website`) y rechaza envíos desde otros dominios.
+- La función valida los datos, aplica el **campo trampa** contra bots (`website`), rechaza envíos desde otros dominios y **limita los envíos por IP** (5 cada 10 minutos; responde 429). El límite se cuenta en memoria de la instancia de Vercel, así que es un freno, no una cuota exacta. Lo que se repite al visitante en su confirmación (servicio o motivo) se acota a 60 caracteres, para que el formulario no sirva para enviar textos a terceros.
 - Escapa el contenido antes de armar el correo y lo envía con **Brevo** (API transaccional).
 - El correo llega con **"Responder a" = el visitante**, así que basta con responderlo.
 - **Diseño de los correos:** banner en imagen (`public/brand/email-header.png`: índigo #1800AD (mismo azul del sitio; al cambiarlo, regenerar la imagen y subir `?v=` en `api/contact.ts` para renovar la caché de Gmail), logo blanco y detalle de esquina) para que el modo oscuro de Gmail no altere los colores; cuerpo en tablas. El banner se carga desde el dominio que recibió la solicitud, con versión en la URL (`?v=3`): al cambiar la imagen hay que subir el número, porque Gmail guarda en caché las imágenes por dirección.

@@ -5,19 +5,21 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { ChatBot } from "@/components/chat/ChatBot";
+import { ChatBot } from "@/components/chat/LazyChatBot";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { ServiceCard } from "@/components/sections/ServiceCard";
-import { JoelSilhouette } from "@/components/ui/Brand";
 import { Bi, BiTile } from "@/components/ui/Icons";
-import { FolderDivider, SectionDecor, type DecorVariant } from "@/components/ui/SectionDecor";
+import { SectionDecor, type DecorVariant } from "@/components/ui/SectionDecor";
+import { h2, kicker } from "@/components/ui/SectionHead";
+import { CtaBand } from "@/components/sections/CtaBand";
+import { PageHero } from "@/components/sections/PageHero";
 import { SERVICE_DETAILS } from "@/data/serviceDetails";
 import { services } from "@/data/services";
 import { SOLUTIONS } from "@/data/solutions";
 import { SERVICE_JOEL } from "@/data/joelPoses";
 import { JoelShowcase } from "@/components/ui/JoelBridge";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
-import { whatsappUrl } from "@/data/contact";
+import { C } from "@/styles/tokens";
 
 export function ServiceDetailPage() {
   const { slug } = useParams();
@@ -36,8 +38,8 @@ export function ServiceDetailPage() {
   if (!service || !detail) {
     return (
       <div className="min-h-full flex flex-col items-center justify-center gap-4 px-6 text-center" style={{ fontFamily: "Inter, sans-serif" }}>
-        <p className="text-2xl font-bold" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif" }}>Servicio no encontrado</p>
-        <Link to="/#servicios" className="text-sm font-semibold" style={{ color: "#1800AD", textDecoration: "none" }}>← Volver a servicios</Link>
+        <p className="text-2xl font-bold" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>Servicio no encontrado</p>
+        <Link to="/#servicios" className="text-sm font-semibold" style={{ color: C.indigo, textDecoration: "none" }}>← Volver a servicios</Link>
       </div>
     );
   }
@@ -54,23 +56,15 @@ export function ServiceDetailPage() {
   const seq = ["benef", detail.steps && "steps", "why", (detail.modes || detail.audience) && "modes", "norms"].filter(Boolean) as string[];
   const tone = Object.fromEntries(seq.map((k, i) => [k, i % 2 ? "dark" : "light"])) as Record<string, DecorVariant>;
   const dk = (k: string) => tone[k] === "dark";
-  const kicker = (t: string, dark = false) => (
-    <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: dark ? "#FFDE59" : "#C8960A", fontFamily: "Montserrat, sans-serif" }}>{t}</p>
-  );
-  const h2 = (c: React.ReactNode, dark = false) => (
-    <h2 className="text-2xl md:text-3xl font-bold" style={{ color: dark ? "#fff" : "#1800AD", fontFamily: "Poppins, sans-serif", lineHeight: 1.2 }}>{c}</h2>
-  );
 
   return (
-    <div ref={pageRef} className="min-h-full" style={{ background: "#FBFBF8", fontFamily: "Inter, sans-serif", color: "#37352F" }}>
+    <div ref={pageRef} className="min-h-full" style={{ background: C.cream, fontFamily: "Inter, sans-serif", color: "#37352F" }}>
       {/* El mismo navbar del sitio, en su versión de barra blanca. */}
       <SiteHeader solid onChat={() => setChatOpen(true)} />
       <div aria-hidden="true" style={{ height: 60 }} />
 
       {/* Hero: foto del archivo bajo un velo navy, con la carpeta como base */}
-      <section className="relative isolate overflow-hidden" style={{ backgroundColor: "#1800AD" }}>
-        <div aria-hidden="true" className="absolute inset-0" style={{ zIndex: -1, backgroundImage: "url(/videos/hero-poster.jpg)", backgroundSize: "cover", backgroundPosition: "center" }} />
-        <div aria-hidden="true" className="absolute inset-0" style={{ zIndex: -1, background: "rgba(24,0,173,0.85)" }} />
+      <PageHero>
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] gap-10 items-center pt-12 pb-24">
             <div>
@@ -81,19 +75,19 @@ export function ServiceDetailPage() {
                   <Bi n="arrow-left" size={15} color="#fff" />
                 </button>
                 <p className="text-xs" style={{ color: "rgba(255,255,255,0.6)", fontFamily: "Montserrat, sans-serif" }}>
-                  <Link to="/" style={{ color: "inherit", textDecoration: "none" }}>Inicio</Link> / <button type="button" onClick={goBack} style={{ color: "inherit" }}>Servicios</button> / <span style={{ color: "#FFDE59" }}>{service.title}</span>
+                  <Link to="/" style={{ color: "inherit", textDecoration: "none" }}>Inicio</Link> / <button type="button" onClick={goBack} style={{ color: "inherit" }}>Servicios</button> / <span style={{ color: C.yellow }}>{service.title}</span>
                 </p>
               </div>
-              <span className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full mb-5" style={{ background: "rgba(255,255,255,0.1)", color: "#FFDE59", border: "1px solid rgba(255,222,89,0.35)", fontFamily: "Montserrat, sans-serif" }}>
-                <Bi n={service.icon} size={13} color="#FFDE59" /> {service.tag}
+              <span className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full mb-5" style={{ background: "rgba(255,255,255,0.1)", color: C.yellow, border: "1px solid rgba(255,222,89,0.35)", fontFamily: "Montserrat, sans-serif" }}>
+                <Bi n={service.icon} size={13} color={C.yellow} /> {service.tag}
               </span>
               <h1 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: "#fff", fontFamily: "Poppins, sans-serif", lineHeight: 1.1 }}>{service.title}</h1>
-              <p className="text-lg md:text-xl font-semibold mb-4" style={{ color: "#FFDE59", fontFamily: "Poppins, sans-serif", lineHeight: 1.35 }}>{detail.tagline}</p>
+              <p className="text-lg md:text-xl font-semibold mb-4" style={{ color: C.yellow, fontFamily: "Poppins, sans-serif", lineHeight: 1.35 }}>{detail.tagline}</p>
               <p className="text-base max-w-xl mb-8" style={{ color: "rgba(255,255,255,0.78)", lineHeight: 1.7 }}>{detail.intro}</p>
               <div className="flex flex-wrap gap-3">
                 <Link to={`/?servicio=${service.slug}#cotizador`} className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold transition-transform hover:scale-[1.03]"
-                  style={{ background: "#FFDE59", color: "#1800AD", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
-                  Solicitar cotización <Bi n="arrow-right" size={14} color="#1800AD" />
+                  style={{ background: C.yellow, color: C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
+                  Solicitar cotización <Bi n="arrow-right" size={14} color={C.indigo} />
                 </Link>
                 <Link to="/#faq" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold"
                   style={{ background: "rgba(255,255,255,0.08)", color: "#fff", border: "1px solid rgba(255,255,255,0.3)", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
@@ -106,8 +100,8 @@ export function ServiceDetailPage() {
             <div className="relative">
               <div className="rounded-3xl p-6 md:p-7" style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.16)", backdropFilter: "blur(10px)" }}>
                 <div className="flex items-center gap-3 mb-6">
-                  <span className="grid place-items-center rounded-2xl" style={{ width: 56, height: 56, background: "#FFDE59" }}>
-                    <Bi n={service.icon} size={26} color="#1800AD" />
+                  <span className="grid place-items-center rounded-2xl" style={{ width: 56, height: 56, background: C.yellow }}>
+                    <Bi n={service.icon} size={26} color={C.indigo} />
                   </span>
                   <p className="text-sm font-semibold" style={{ color: "rgba(255,255,255,0.85)", fontFamily: "Montserrat, sans-serif" }}>En cifras</p>
                 </div>
@@ -123,9 +117,7 @@ export function ServiceDetailPage() {
             </div>
           </div>
         </div>
-        {/* Borde inferior: la misma pestaña de carpeta que separa las secciones */}
-        <FolderDivider color="#FBFBF8" />
-      </section>
+      </PageHero>
 
       {/* Qué incluye / beneficios */}
       <section className="relative isolate overflow-hidden py-16">
@@ -134,7 +126,7 @@ export function ServiceDetailPage() {
           <div>
             {kicker("Lo que obtiene")}
             {h2(<>Beneficios para <span style={{ background: "linear-gradient(transparent 62%, #FFDE59 62%)" }}>su empresa</span></>)}
-            <p className="text-sm mt-4" style={{ color: "#6B6B6B", lineHeight: 1.7 }}>{service.desc}</p>
+            <p className="text-sm mt-4" style={{ color: C.muted, lineHeight: 1.7 }}>{service.desc}</p>
             {SERVICE_JOEL[service.slug] && (
               <JoelShowcase src={SERVICE_JOEL[service.slug].src} height={SERVICE_JOEL[service.slug].height} />
             )}
@@ -145,7 +137,7 @@ export function ServiceDetailPage() {
                 <span className="grid place-items-center rounded-lg shrink-0" style={{ width: 28, height: 28, background: "#EAF7EE" }}>
                   <Bi n="check-lg" size={14} color="#16a34a" />
                 </span>
-                <span className="text-sm font-semibold" style={{ color: "#1800AD", lineHeight: 1.45 }}>{b}</span>
+                <span className="text-sm font-semibold" style={{ color: C.indigo, lineHeight: 1.45 }}>{b}</span>
               </div>
             ))}
           </div>
@@ -165,10 +157,10 @@ export function ServiceDetailPage() {
               <div className="hidden lg:block absolute" style={{ top: 26, left: "8%", right: "8%", height: 2, background: "repeating-linear-gradient(90deg, rgba(255,255,255,0.3) 0 8px, transparent 8px 14px)" }} />
               {detail.steps.map((st, i) => (
                 <div key={st.t} className="relative flex lg:flex-col items-center gap-3 lg:gap-0 text-left lg:text-center">
-                  <span className="relative grid place-items-center rounded-full font-bold lg:mb-4 shrink-0" style={{ width: 44, height: 44, background: i === 0 ? "#FFDE59" : "#fff", color: "#1800AD", border: "2px solid #FFDE59", fontFamily: "Poppins, sans-serif", fontSize: 18, boxShadow: "0 10px 24px -12px rgba(0,0,0,0.5)" }}>{i + 1}</span>
+                  <span className="relative grid place-items-center rounded-full font-bold lg:mb-4 shrink-0" style={{ width: 44, height: 44, background: i === 0 ? C.yellow : "#fff", color: C.indigo, border: "2px solid #FFDE59", fontFamily: "Poppins, sans-serif", fontSize: 18, boxShadow: "0 10px 24px -12px rgba(0,0,0,0.5)" }}>{i + 1}</span>
                   <div className="rounded-2xl p-4 w-full h-full" style={{ background: "#fff", border: "1px solid #E4E6F7" }}>
-                    <p className="text-sm font-bold mb-1" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif" }}>{st.t}</p>
-                    <p className="text-xs" style={{ color: "#6B6B6B", lineHeight: 1.55 }}>{st.d}</p>
+                    <p className="text-sm font-bold mb-1" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>{st.t}</p>
+                    <p className="text-xs" style={{ color: C.muted, lineHeight: 1.55 }}>{st.d}</p>
                   </div>
                 </div>
               ))}
@@ -190,11 +182,11 @@ export function ServiceDetailPage() {
               <div key={r.t} className="group relative rounded-3xl p-6 transition-all hover:-translate-y-1.5 overflow-hidden"
                 style={{ background: "#fff", border: "1.5px solid #E4E6F7", boxShadow: "0 18px 40px -28px rgba(24,0,173,0.45)" }}>
                 <span aria-hidden="true" className="absolute select-none pointer-events-none font-bold" style={{ right: 16, top: 10, fontSize: 44, lineHeight: 1, color: "rgba(24,0,173,0.06)", fontFamily: "Poppins, sans-serif" }}>0{i + 1}</span>
-                <span className="grid place-items-center rounded-2xl mb-4 transition-colors bg-[#1800AD]/[0.08] group-hover:bg-[#1800AD]" style={{ width: 48, height: 48 }}>
-                  <i className={`bi bi-${r.ic} text-[#1800AD] group-hover:text-[#FFDE59] transition-colors`} aria-hidden="true" style={{ fontSize: 21, lineHeight: 1 }} />
+                <span className="grid place-items-center rounded-2xl mb-4 transition-colors bg-indigo/[0.08] group-hover:bg-indigo" style={{ width: 48, height: 48 }}>
+                  <i className={`bi bi-${r.ic} text-indigo group-hover:text-amarillo transition-colors`} aria-hidden="true" style={{ fontSize: 21, lineHeight: 1 }} />
                 </span>
-                <p className="text-base font-bold mb-2" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif", lineHeight: 1.3 }}>{r.t}</p>
-                <p className="text-sm" style={{ color: "#6B6B6B", lineHeight: 1.6 }}>{r.d}</p>
+                <p className="text-base font-bold mb-2" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif", lineHeight: 1.3 }}>{r.t}</p>
+                <p className="text-sm" style={{ color: C.muted, lineHeight: 1.6 }}>{r.d}</p>
               </div>
             ))}
           </div>
@@ -212,13 +204,13 @@ export function ServiceDetailPage() {
                 <div className="grid md:grid-cols-2 gap-5">
                   {detail.modes.map((m, i) => (
                     <div key={m.t} className="relative rounded-3xl p-7 flex items-start gap-5 overflow-hidden"
-                      style={{ background: i === 0 ? (dk("modes") ? "rgba(255,255,255,0.08)" : "#1800AD") : "#fff", border: i === 0 ? (dk("modes") ? "1.5px solid rgba(255,255,255,0.22)" : "none") : "1.5px solid #E4E6F7", boxShadow: "0 24px 50px -32px rgba(24,0,173,0.45)" }}>
-                      <span className="grid place-items-center rounded-2xl shrink-0" style={{ width: 56, height: 56, background: i === 0 ? "#FFDE59" : "#1800AD" }}>
-                        <Bi n={m.ic} size={24} color={i === 0 ? "#1800AD" : "#FFDE59"} />
+                      style={{ background: i === 0 ? (dk("modes") ? "rgba(255,255,255,0.08)" : C.indigo) : "#fff", border: i === 0 ? (dk("modes") ? "1.5px solid rgba(255,255,255,0.22)" : "none") : "1.5px solid #E4E6F7", boxShadow: "0 24px 50px -32px rgba(24,0,173,0.45)" }}>
+                      <span className="grid place-items-center rounded-2xl shrink-0" style={{ width: 56, height: 56, background: i === 0 ? C.yellow : C.indigo }}>
+                        <Bi n={m.ic} size={24} color={i === 0 ? C.indigo : C.yellow} />
                       </span>
                       <div>
-                        <p className="text-lg font-bold mb-1.5" style={{ color: i === 0 ? "#fff" : "#1800AD", fontFamily: "Poppins, sans-serif" }}>{m.t}</p>
-                        <p className="text-sm" style={{ color: i === 0 ? "rgba(255,255,255,0.75)" : "#6B6B6B", lineHeight: 1.6 }}>{m.d}</p>
+                        <p className="text-lg font-bold mb-1.5" style={{ color: i === 0 ? "#fff" : C.indigo, fontFamily: "Poppins, sans-serif" }}>{m.t}</p>
+                        <p className="text-sm" style={{ color: i === 0 ? "rgba(255,255,255,0.75)" : C.muted, lineHeight: 1.6 }}>{m.d}</p>
                       </div>
                     </div>
                   ))}
@@ -231,10 +223,10 @@ export function ServiceDetailPage() {
                 <div className={`grid gap-4 sm:grid-cols-2 ${detail.audience.items.length > 4 ? "lg:grid-cols-3" : "lg:grid-cols-4"}`}>
                   {detail.audience.items.map(a => (
                     <div key={a.t} className="flex items-start gap-3 rounded-2xl p-5" style={{ background: "#fff", border: "1px solid #E4E6F7" }}>
-                      <BiTile n={a.ic} size={42} accent="#1800AD" />
+                      <BiTile n={a.ic} size={42} accent={C.indigo} />
                       <div>
-                        <p className="text-sm font-bold" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif" }}>{a.t}</p>
-                        {a.d && <p className="text-xs mt-1" style={{ color: "#6B6B6B", lineHeight: 1.55 }}>{a.d}</p>}
+                        <p className="text-sm font-bold" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>{a.t}</p>
+                        {a.d && <p className="text-xs mt-1" style={{ color: C.muted, lineHeight: 1.55 }}>{a.d}</p>}
                       </div>
                     </div>
                   ))}
@@ -252,19 +244,19 @@ export function ServiceDetailPage() {
           <div className="rounded-3xl p-6 md:p-8 flex flex-col md:flex-row md:items-center gap-5 mb-14" style={{ background: "#fff", border: "1px solid #E4E6F7" }}>
             <div className="flex items-center gap-3 md:w-64 shrink-0">
               <BiTile n="patch-check" size={44} accent="#16a34a" />
-              <p className="text-base font-bold" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif", lineHeight: 1.25 }}>Respaldo normativo</p>
+              <p className="text-base font-bold" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif", lineHeight: 1.25 }}>Respaldo normativo</p>
             </div>
             <div className="flex flex-wrap gap-2">
               {detail.norms.map(n => (
-                <span key={n} className="text-xs font-semibold px-3 py-1.5 rounded-full" style={{ background: "#F2F3FA", color: "#1800AD", fontFamily: "Montserrat, sans-serif" }}>{n}</span>
+                <span key={n} className="text-xs font-semibold px-3 py-1.5 rounded-full" style={{ background: "#F2F3FA", color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>{n}</span>
               ))}
             </div>
           </div>
 
           <div className="flex items-end justify-between gap-4 mb-6">
             <div>{kicker("Complemente su solución", dk("norms"))}{h2("Servicios relacionados", dk("norms"))}</div>
-            <Link to="/#servicios" className="hidden sm:inline-flex items-center gap-1.5 text-sm font-bold" style={{ color: dk("norms") ? "#FFDE59" : "#1800AD", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
-              Ver todos <Bi n="arrow-right" size={13} color={dk("norms") ? "#FFDE59" : "#1800AD"} />
+            <Link to="/#servicios" className="hidden sm:inline-flex items-center gap-1.5 text-sm font-bold" style={{ color: dk("norms") ? C.yellow : C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
+              Ver todos <Bi n="arrow-right" size={13} color={dk("norms") ? C.yellow : C.indigo} />
             </Link>
           </div>
           <div className="grid gap-5 md:grid-cols-3">
@@ -274,32 +266,7 @@ export function ServiceDetailPage() {
       </section>
 
       {/* Llamado final */}
-      <section className="py-16" style={{ background: "#FBFBF8" }}>
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="relative">
-            <svg aria-hidden="true" className="absolute left-0 bottom-full block" width="220" height="36" viewBox="0 0 280 46" preserveAspectRatio="none">
-              <path d="M0 46 V18 Q0 0 18 0 H196 Q209 0 217 10 L242 38 Q249 46 262 46 Z" fill="#1800AD" />
-            </svg>
-            <div className="relative overflow-hidden rounded-[0_28px_28px_28px] p-8 md:p-12 flex flex-col md:flex-row md:items-center justify-between gap-6" style={{ background: "#1800AD" }}>
-              <JoelSilhouette style={{ height: 300, bottom: -40, right: 40, opacity: 0.28, background: "#FFFFFF" }} />
-              <div className="relative max-w-xl">
-                <p className="text-2xl md:text-3xl font-bold mb-2" style={{ color: "#fff", fontFamily: "Poppins, sans-serif", lineHeight: 1.2 }}>¿Listo para empezar con {service.title.toLowerCase()}?</p>
-                <p className="text-sm" style={{ color: "rgba(255,255,255,0.72)" }}>Arme su solicitud en minutos o hable con un asesor. Sin compromiso.</p>
-              </div>
-              <div className="relative flex flex-wrap gap-3">
-                <Link to={`/?servicio=${service.slug}#cotizador`} className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold transition-transform hover:scale-[1.03]"
-                  style={{ background: "#FFDE59", color: "#1800AD", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
-                  Solicitar cotización <Bi n="arrow-right" size={14} color="#1800AD" />
-                </Link>
-                <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold"
-                  style={{ background: "rgba(255,255,255,0.1)", color: "#fff", border: "1px solid rgba(255,255,255,0.3)", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
-                  <Bi n="whatsapp" size={14} color="#fff" /> Escribir por WhatsApp
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <CtaBand title={`¿Listo para empezar con ${service.title.toLowerCase()}?`} text="Arme su solicitud en minutos o hable con un asesor. Sin compromiso." to={`/?servicio=${service.slug}#cotizador`} />
       <ChatBot open={chatOpen} setOpen={setChatOpen} />
     </div>
   );

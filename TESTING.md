@@ -16,7 +16,8 @@ pnpm exec playwright install chromium   # navegador para las pruebas de extremo 
 | Comando | Qué revisa | Tiempo aprox. |
 | --- | --- | --- |
 | `pnpm check` | Tipos + lint + pruebas unitarias + build (con pre-generación SEO) + `test:seo`. **Correr antes de cada commit.** | ~15 s |
-| `pnpm check:all` | Lo anterior + auditoría de dependencias + extremo a extremo | ~1 min |
+| `pnpm check:all` | Lo anterior + código sin uso + auditoría de dependencias + extremo a extremo | ~1 min |
+| `pnpm lint:unused` | knip: archivos, exportaciones y dependencias sin uso (corre en CI) | ~5 s |
 | `pnpm typecheck` | TypeScript estricto | |
 | `pnpm lint` | ESLint: calidad, hooks de React, accesibilidad (jsx-a11y) y patrones inseguros (eslint-plugin-security) | |
 | `pnpm test` | Pruebas unitarias, de contenido y de seguridad estática (Vitest) | |
@@ -130,4 +131,5 @@ déjelo fijo en `tests/e2e/a11y.spec.ts`.
 3. Página o recorrido nuevo → agregue la ruta a `smoke.spec.ts` y `a11y.spec.ts`
    y, si tiene interacción, un caso en `flows.spec.ts`.
 4. Servicio externo nuevo → CSP en `vercel.json`.
-5. `pnpm check:all` en verde antes de abrir el PR.
+5. Borre lo que quede sin uso (`pnpm lint:unused` lo señala).
+6. `pnpm check:all` en verde antes de abrir el PR.

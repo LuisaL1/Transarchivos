@@ -14,14 +14,16 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Bi, BiTile } from "@/components/ui/Icons";
 import { norms } from "@/data/services";
-import { ChatBot } from "@/components/chat/ChatBot";
+import { ChatBot } from "@/components/chat/LazyChatBot";
 import { SiteHeader } from "@/components/layout/SiteHeader";
-import { JoelSilhouette } from "@/components/ui/Brand";
 import { JoelFigure } from "@/components/ui/JoelBridge";
-import { FolderDivider, SectionDecor } from "@/components/ui/SectionDecor";
+import { SectionDecor } from "@/components/ui/SectionDecor";
+import { h2, kicker, mark } from "@/components/ui/SectionHead";
+import { CtaBand } from "@/components/sections/CtaBand";
+import { PageHero } from "@/components/sections/PageHero";
 import { JOEL } from "@/data/joelPoses";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
-import { whatsappUrl } from "@/data/contact";
+import { C } from "@/styles/tokens";
 
 export function NosotrosPage() {
   const { hash } = useLocation();
@@ -38,25 +40,15 @@ export function NosotrosPage() {
     }
   }, [hash]);
 
-  // Las secciones alternan tono: claras (textos índigo) e índigo (textos blancos).
-  const kicker = (t: string, dark = false) => (
-    <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: dark ? "#FFDE59" : "#C8960A", fontFamily: "Montserrat, sans-serif" }}>{t}</p>
-  );
-  const h2 = (c: React.ReactNode, dark = false) => (
-    <h2 className="text-2xl md:text-3xl font-bold" style={{ color: dark ? "#fff" : "#1800AD", fontFamily: "Poppins, sans-serif", lineHeight: 1.2 }}>{c}</h2>
-  );
-  const mark = (t: string, dark = false) => <span style={dark ? { color: "#FFDE59" } : { background: "linear-gradient(transparent 62%, #FFDE59 62%)" }}>{t}</span>;
   const card = { background: "#fff", border: "1px solid #E4E6F7", boxShadow: "0 14px 30px -26px rgba(24,0,173,0.45)" } as const;
 
   return (
-    <div ref={pageRef} className="min-h-full" style={{ background: "#FBFBF8", fontFamily: "Inter, sans-serif", color: "#37352F" }}>
+    <div ref={pageRef} className="min-h-full" style={{ background: C.cream, fontFamily: "Inter, sans-serif", color: "#37352F" }}>
       <SiteHeader solid onChat={() => setChatOpen(true)} />
       <div aria-hidden="true" style={{ height: 60 }} />
 
       {/* Hero: mismo formato de las páginas de servicio */}
-      <section id="quienes-somos" className="relative isolate overflow-hidden" style={{ backgroundColor: "#1800AD", scrollMarginTop: 70 }}>
-        <div aria-hidden="true" className="absolute inset-0" style={{ zIndex: -1, backgroundImage: "url(/videos/hero-poster.jpg)", backgroundSize: "cover", backgroundPosition: "center" }} />
-        <div aria-hidden="true" className="absolute inset-0" style={{ zIndex: -1, background: "rgba(24,0,173,0.85)" }} />
+      <PageHero id="quienes-somos" scrollMarginTop={70}>
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] gap-10 items-center pt-12 pb-24">
             <div>
@@ -66,23 +58,23 @@ export function NosotrosPage() {
                   <Bi n="arrow-left" size={15} color="#fff" />
                 </Link>
                 <p className="text-xs" style={{ color: "rgba(255,255,255,0.6)", fontFamily: "Montserrat, sans-serif" }}>
-                  <Link to="/" style={{ color: "inherit", textDecoration: "none" }}>Inicio</Link> / <span style={{ color: "#FFDE59" }}>Nosotros</span>
+                  <Link to="/" style={{ color: "inherit", textDecoration: "none" }}>Inicio</Link> / <span style={{ color: C.yellow }}>Nosotros</span>
                 </p>
               </div>
-              <span className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full mb-5" style={{ background: "rgba(255,255,255,0.1)", color: "#FFDE59", border: "1px solid rgba(255,222,89,0.35)", fontFamily: "Montserrat, sans-serif" }}>
-                <Bi n="building" size={13} color="#FFDE59" /> Quiénes somos
+              <span className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full mb-5" style={{ background: "rgba(255,255,255,0.1)", color: C.yellow, border: "1px solid rgba(255,222,89,0.35)", fontFamily: "Montserrat, sans-serif" }}>
+                <Bi n="building" size={13} color={C.yellow} /> Quiénes somos
               </span>
               <h1 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: "#fff", fontFamily: "Poppins, sans-serif", lineHeight: 1.1 }}>
                 Pioneros de la gestión documental en Colombia
               </h1>
-              <p className="text-lg md:text-xl font-semibold mb-4" style={{ color: "#FFDE59", fontFamily: "Poppins, sans-serif", lineHeight: 1.35 }}>Más de 40 años cuidando la información de las empresas.</p>
+              <p className="text-lg md:text-xl font-semibold mb-4" style={{ color: C.yellow, fontFamily: "Poppins, sans-serif", lineHeight: 1.35 }}>Más de 40 años cuidando la información de las empresas.</p>
               <p className="text-base max-w-xl mb-8" style={{ color: "rgba(255,255,255,0.78)", lineHeight: 1.7 }}>
                 Nacimos en 1983 para atender a Ecopetrol y desde entonces no hemos dejado de evolucionar. Fuimos pioneros en crear en Bogotá uno de los primeros centros especializados en custodia documental, y hoy ayudamos a las empresas a convertir su gestión documental en una ventaja competitiva.
               </p>
               <div className="flex flex-wrap gap-3">
                 <Link to="/#cotizador" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold transition-transform hover:scale-[1.03]"
-                  style={{ background: "#FFDE59", color: "#1800AD", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
-                  Solicitar cotización <Bi n="arrow-right" size={14} color="#1800AD" />
+                  style={{ background: C.yellow, color: C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
+                  Solicitar cotización <Bi n="arrow-right" size={14} color={C.indigo} />
                 </Link>
                 <Link to="/#servicios" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold"
                   style={{ background: "rgba(255,255,255,0.08)", color: "#fff", border: "1px solid rgba(255,255,255,0.3)", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
@@ -93,8 +85,8 @@ export function NosotrosPage() {
 
             <div className="rounded-3xl p-6 md:p-7" style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.16)", backdropFilter: "blur(10px)" }}>
               <div className="flex items-center gap-3 mb-6">
-                <span className="grid place-items-center rounded-2xl" style={{ width: 56, height: 56, background: "#FFDE59" }}>
-                  <Bi n="building" size={26} color="#1800AD" />
+                <span className="grid place-items-center rounded-2xl" style={{ width: 56, height: 56, background: C.yellow }}>
+                  <Bi n="building" size={26} color={C.indigo} />
                 </span>
                 <p className="text-sm font-semibold" style={{ color: "rgba(255,255,255,0.85)", fontFamily: "Montserrat, sans-serif" }}>En cifras</p>
               </div>
@@ -109,9 +101,7 @@ export function NosotrosPage() {
             </div>
           </div>
         </div>
-        {/* Borde inferior: la misma pestaña de carpeta que separa las secciones */}
-        <FolderDivider color="#FBFBF8" />
-      </section>
+      </PageHero>
 
       {/* Historia */}
       <section id="historia" className="relative isolate overflow-hidden py-16" style={{ scrollMarginTop: 80 }}>
@@ -120,7 +110,7 @@ export function NosotrosPage() {
           <div>
             {kicker("Nuestra historia")}
             {h2(<>Más de 40 años de {mark("trayectoria")}</>)}
-            <p className="text-sm mt-4" style={{ color: "#6B6B6B", lineHeight: 1.7 }}>
+            <p className="text-sm mt-4" style={{ color: C.muted, lineHeight: 1.7 }}>
               Nacimos en 1983 en respuesta a una necesidad puntual de Ecopetrol de gestionar su información documental. A partir de esa experiencia, adecuamos en Bogotá un centro de información documental con especificaciones técnicas de custodia y capacitamos a nuestro personal como archivistas bajo normas archivísticas avanzadas.
             </p>
             <div className="mt-10 pl-6"><JoelFigure src={JOEL.levantandoCajas} height={260} /></div>
@@ -133,8 +123,8 @@ export function NosotrosPage() {
               { ic: "tools", t: "Desarrollado TVD, TRD, digitalización, microfilmación y custodia física, digital y en la nube." },
             ].map(x => (
               <div key={x.t} className="flex items-start gap-3 rounded-2xl p-4" style={card}>
-                <BiTile n={x.ic} size={34} accent="#1800AD" />
-                <span className="text-sm" style={{ color: "#1800AD", lineHeight: 1.5 }}>{x.t}</span>
+                <BiTile n={x.ic} size={34} accent={C.indigo} />
+                <span className="text-sm" style={{ color: C.indigo, lineHeight: 1.5 }}>{x.t}</span>
               </div>
             ))}
           </div>
@@ -152,11 +142,11 @@ export function NosotrosPage() {
               { t: "Visión 2030", ic: "binoculars", x: "Para el año 2030, queremos consolidar nuestro liderazgo en Colombia como proveedores integrales de custodia física, consultoría archivística y transformación digital. Seremos reconocidos por la excelencia de nuestros estándares de calidad, la solidez en la seguridad de la información y la adopción de tecnologías seguras en la nube, garantizando un crecimiento sostenible que impulse el desarrollo y la estabilidad de nuestros colaboradores." },
             ].map((m, i) => (
               <div key={m.t} className="relative rounded-3xl p-7 overflow-hidden" style={{ background: i === 0 ? "rgba(255,255,255,0.08)" : "#fff", border: i === 0 ? "1.5px solid rgba(255,255,255,0.22)" : "1.5px solid #E4E6F7", boxShadow: "0 24px 50px -32px rgba(0,0,0,0.55)" }}>
-                <span className="grid place-items-center rounded-2xl mb-4" style={{ width: 52, height: 52, background: i === 0 ? "#FFDE59" : "#1800AD" }}>
-                  <Bi n={m.ic} size={22} color={i === 0 ? "#1800AD" : "#FFDE59"} />
+                <span className="grid place-items-center rounded-2xl mb-4" style={{ width: 52, height: 52, background: i === 0 ? C.yellow : C.indigo }}>
+                  <Bi n={m.ic} size={22} color={i === 0 ? C.indigo : C.yellow} />
                 </span>
-                <p className="text-lg font-bold mb-2" style={{ color: i === 0 ? "#fff" : "#1800AD", fontFamily: "Poppins, sans-serif" }}>{m.t}</p>
-                <p className="text-sm" style={{ color: i === 0 ? "rgba(255,255,255,0.78)" : "#6B6B6B", lineHeight: 1.7 }}>{m.x}</p>
+                <p className="text-lg font-bold mb-2" style={{ color: i === 0 ? "#fff" : C.indigo, fontFamily: "Poppins, sans-serif" }}>{m.t}</p>
+                <p className="text-sm" style={{ color: i === 0 ? "rgba(255,255,255,0.78)" : C.muted, lineHeight: 1.7 }}>{m.x}</p>
               </div>
             ))}
           </div>
@@ -170,7 +160,7 @@ export function NosotrosPage() {
           <div>
             {kicker("Nuestro equipo")}
             {h2(<>Personal {mark("capacitado")} y respaldado</>)}
-            <p className="text-sm mt-4" style={{ color: "#6B6B6B", lineHeight: 1.7 }}>
+            <p className="text-sm mt-4" style={{ color: C.muted, lineHeight: 1.7 }}>
               Nuestro personal técnico de archivo está capacitado bajo normas archivísticas avanzadas y los lineamientos del Archivo General de la Nación (AGN). En los proyectos in house, Transarchivos asume la figura de empleador del personal en sitio, con protocolos de contingencia ante ausencias, informes mensuales de gestión y cumplimiento de acuerdos de servicio.
             </p>
             <div className="mt-10 pl-6"><JoelFigure src={JOEL.notas} height={250} /></div>
@@ -183,12 +173,12 @@ export function NosotrosPage() {
             ].map((c, i) => (
               <div key={c.t} className="group relative rounded-3xl p-6 flex items-start gap-4 overflow-hidden card-lift" style={{ background: "#fff", border: "1.5px solid #E4E6F7" }}>
                 <span aria-hidden="true" className="absolute select-none font-bold" style={{ right: 16, top: 10, fontSize: 40, lineHeight: 1, color: "rgba(24,0,173,0.06)", fontFamily: "Poppins, sans-serif" }}>0{i + 1}</span>
-                <span className="grid place-items-center rounded-2xl shrink-0 transition-colors bg-[#1800AD]/[0.08] group-hover:bg-[#1800AD]" style={{ width: 48, height: 48 }}>
-                  <i className={`bi bi-${c.ic} text-[#1800AD] group-hover:text-[#FFDE59] transition-colors`} aria-hidden="true" style={{ fontSize: 21, lineHeight: 1 }} />
+                <span className="grid place-items-center rounded-2xl shrink-0 transition-colors bg-indigo/[0.08] group-hover:bg-indigo" style={{ width: 48, height: 48 }}>
+                  <i className={`bi bi-${c.ic} text-indigo group-hover:text-amarillo transition-colors`} aria-hidden="true" style={{ fontSize: 21, lineHeight: 1 }} />
                 </span>
                 <div>
-                  <p className="text-base font-bold mb-1" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif" }}>{c.t}</p>
-                  <p className="text-sm" style={{ color: "#6B6B6B", lineHeight: 1.6 }}>{c.x}</p>
+                  <p className="text-base font-bold mb-1" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>{c.t}</p>
+                  <p className="text-sm" style={{ color: C.muted, lineHeight: 1.6 }}>{c.x}</p>
                 </div>
               </div>
             ))}
@@ -210,11 +200,11 @@ export function NosotrosPage() {
             ].map((v, i) => (
               <div key={v.t} className="group relative rounded-3xl p-6 overflow-hidden card-lift" style={{ background: "#fff", border: "1.5px solid #E4E6F7" }}>
                 <span aria-hidden="true" className="absolute select-none font-bold" style={{ right: 16, top: 10, fontSize: 44, lineHeight: 1, color: "rgba(24,0,173,0.06)", fontFamily: "Poppins, sans-serif" }}>0{i + 1}</span>
-                <span className="grid place-items-center rounded-2xl mb-4 transition-colors bg-[#1800AD]/[0.08] group-hover:bg-[#1800AD]" style={{ width: 48, height: 48 }}>
-                  <i className={`bi bi-${v.ic} text-[#1800AD] group-hover:text-[#FFDE59] transition-colors`} aria-hidden="true" style={{ fontSize: 21, lineHeight: 1 }} />
+                <span className="grid place-items-center rounded-2xl mb-4 transition-colors bg-indigo/[0.08] group-hover:bg-indigo" style={{ width: 48, height: 48 }}>
+                  <i className={`bi bi-${v.ic} text-indigo group-hover:text-amarillo transition-colors`} aria-hidden="true" style={{ fontSize: 21, lineHeight: 1 }} />
                 </span>
-                <p className="text-base font-bold mb-2" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif" }}>{v.t}</p>
-                <p className="text-sm" style={{ color: "#6B6B6B", lineHeight: 1.6 }}>{v.x}</p>
+                <p className="text-base font-bold mb-2" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>{v.t}</p>
+                <p className="text-sm" style={{ color: C.muted, lineHeight: 1.6 }}>{v.x}</p>
               </div>
             ))}
           </div>
@@ -227,7 +217,7 @@ export function NosotrosPage() {
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-10">
             {kicker("Nuestros clientes")}{h2(<>Experiencia en {mark("múltiples sectores")}</>)}
-            <p className="text-sm mt-4 max-w-2xl mx-auto" style={{ color: "#6B6B6B" }}>Atendemos multinacionales, pymes y microempresas, y también compañías en liquidación o reestructuración.</p>
+            <p className="text-sm mt-4 max-w-2xl mx-auto" style={{ color: C.muted }}>Atendemos multinacionales, pymes y microempresas, y también compañías en liquidación o reestructuración.</p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {[
@@ -236,10 +226,10 @@ export function NosotrosPage() {
               { ic: "bricks", l: "Construcción" }, { ic: "airplane", l: "Líneas aéreas" },
             ].map(x => (
               <div key={x.l} className="group flex items-center gap-3 rounded-2xl p-4 card-lift" style={{ background: "#fff", border: "1.5px solid #E4E6F7" }}>
-                <span className="grid place-items-center rounded-xl shrink-0 transition-colors bg-[#1800AD]/[0.08] group-hover:bg-[#1800AD]" style={{ width: 42, height: 42 }}>
-                  <i className={`bi bi-${x.ic} text-[#1800AD] group-hover:text-[#FFDE59] transition-colors`} aria-hidden="true" style={{ fontSize: 18, lineHeight: 1 }} />
+                <span className="grid place-items-center rounded-xl shrink-0 transition-colors bg-indigo/[0.08] group-hover:bg-indigo" style={{ width: 42, height: 42 }}>
+                  <i className={`bi bi-${x.ic} text-indigo group-hover:text-amarillo transition-colors`} aria-hidden="true" style={{ fontSize: 18, lineHeight: 1 }} />
                 </span>
-                <span className="text-sm font-semibold" style={{ color: "#1800AD", fontFamily: "Montserrat, sans-serif" }}>{x.l}</span>
+                <span className="text-sm font-semibold" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>{x.l}</span>
               </div>
             ))}
           </div>
@@ -266,10 +256,10 @@ export function NosotrosPage() {
               { ic: "cloud-check", t: "Copias aisladas (air gap) y nube segura", x: "Respaldo desconectado de la red y tecnologías seguras en la nube." },
             ].map(c => (
               <div key={c.t} className="flex items-start gap-3 rounded-2xl p-4" style={card}>
-                <BiTile n={c.ic} size={34} accent="#1800AD" />
+                <BiTile n={c.ic} size={34} accent={C.indigo} />
                 <div>
-                  <p className="text-sm font-bold" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif" }}>{c.t}</p>
-                  <p className="text-xs mt-0.5" style={{ color: "#6B6B6B", lineHeight: 1.5 }}>{c.x}</p>
+                  <p className="text-sm font-bold" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>{c.t}</p>
+                  <p className="text-xs mt-0.5" style={{ color: C.muted, lineHeight: 1.5 }}>{c.x}</p>
                 </div>
               </div>
             ))}
@@ -288,8 +278,8 @@ export function NosotrosPage() {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {norms.map(n => (
               <div key={n.code} className="rounded-2xl p-4 card-lift" style={{ background: "#fff", border: "1.5px solid #E4E6F7" }}>
-                <p className="text-sm font-bold" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif" }}>{n.code}</p>
-                <p className="text-[11px] leading-snug mt-1" style={{ color: "#6B6B6B" }}>{n.name}</p>
+                <p className="text-sm font-bold" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>{n.code}</p>
+                <p className="text-[11px] leading-snug mt-1" style={{ color: C.muted }}>{n.name}</p>
               </div>
             ))}
           </div>
@@ -297,32 +287,7 @@ export function NosotrosPage() {
       </section>
 
       {/* Llamado final (mismo de las páginas de servicio) */}
-      <section className="py-16" style={{ background: "#FBFBF8" }}>
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="relative">
-            <svg aria-hidden="true" className="absolute left-0 bottom-full block" width="220" height="36" viewBox="0 0 280 46" preserveAspectRatio="none">
-              <path d="M0 46 V18 Q0 0 18 0 H196 Q209 0 217 10 L242 38 Q249 46 262 46 Z" fill="#1800AD" />
-            </svg>
-            <div className="relative overflow-hidden rounded-[0_28px_28px_28px] p-8 md:p-12 flex flex-col md:flex-row md:items-center justify-between gap-6" style={{ background: "#1800AD" }}>
-              <JoelSilhouette style={{ height: 300, bottom: -40, right: 40, opacity: 0.28, background: "#FFFFFF" }} />
-              <div className="relative max-w-xl">
-                <p className="text-2xl md:text-3xl font-bold mb-2" style={{ color: "#fff", fontFamily: "Poppins, sans-serif", lineHeight: 1.2 }}>¿Hablamos de la gestión documental de su empresa?</p>
-                <p className="text-sm" style={{ color: "rgba(255,255,255,0.72)" }}>Arme su solicitud en minutos o hable con un asesor. Sin compromiso.</p>
-              </div>
-              <div className="relative flex flex-wrap gap-3">
-                <Link to="/#cotizador" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold transition-transform hover:scale-[1.03]"
-                  style={{ background: "#FFDE59", color: "#1800AD", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
-                  Solicitar cotización <Bi n="arrow-right" size={14} color="#1800AD" />
-                </Link>
-                <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold"
-                  style={{ background: "rgba(255,255,255,0.1)", color: "#fff", border: "1px solid rgba(255,255,255,0.3)", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
-                  <Bi n="whatsapp" size={14} color="#fff" /> Escribir por WhatsApp
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <CtaBand title="¿Hablamos de la gestión documental de su empresa?" text="Arme su solicitud en minutos o hable con un asesor. Sin compromiso." />
 
       <ChatBot open={chatOpen} setOpen={setChatOpen} />
     </div>

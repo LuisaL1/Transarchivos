@@ -1,3 +1,4 @@
+import { C } from "@/styles/tokens";
 
 
 // Los 9 servicios reales publicados hoy en transarchivos.com (no la lista
@@ -25,47 +26,47 @@ export const serviceItems: { icon: string; title: string; slug: string; desc: st
 export const services = [
   {
     icon: "list-columns-reverse", title: "Levantamiento de inventario", slug: "levantamiento-de-inventario",
-    tag: "Norma AGN · Ley 594", accent: "#1800AD",
+    tag: "Norma AGN · Ley 594", accent: C.indigo,
     desc: "Identificación, registro y clasificación de los documentos de un archivo para conocer su volumen, estado y ubicación.",
   },
   {
     icon: "folder2-open", title: "Programa de gestión documental", slug: "programa-de-gestion-documental",
-    tag: "PGD · Ley 594", accent: "#1800AD",
+    tag: "PGD · Ley 594", accent: C.indigo,
     desc: "Sistema para manejar los documentos durante todo su ciclo de vida: creación, uso, conservación y disposición final.",
   },
   {
     icon: "hdd-stack", title: "Custodia de medios magnéticos", slug: "custodia-de-medios-magneticos",
-    tag: "Copia aislada (air gap) · DRP", accent: "#1800AD",
+    tag: "Copia aislada (air gap) · DRP", accent: C.indigo,
     desc: "Almacenamiento especializado de cintas LTO/DAT/DLT, discos duros, CDs/DVDs y otros medios.",
   },
   {
     icon: "archive", title: "Custodia de archivos", slug: "custodia-de-archivos",
-    tag: "CCTV · vigilancia 24 h", accent: "#1800AD",
+    tag: "CCTV · vigilancia 24 h", accent: C.indigo,
     desc: "Resguardo y gestión de documentos físicos y digitales con seguridad, integridad y disponibilidad.",
   },
   {
     icon: "upc-scan", title: "Digitalización de documentos", slug: "digitalizacion-de-documentos",
-    tag: "Valor legal · OCR", accent: "#1800AD",
+    tag: "Valor legal · OCR", accent: C.indigo,
     desc: "Conversión de documentos físicos a archivos digitales con captura, indexación y OCR opcional.",
   },
   {
     icon: "file-earmark-x", title: "Destrucción de documentos", slug: "destruccion-de-documentos",
-    tag: "Certificado de destrucción", accent: "#C8960A",
+    tag: "Certificado de destrucción", accent: C.gold,
     desc: "Destrucción segura y trazable, con acta de eliminación y certificado, alineada con la Ley 594 de 2000.",
   },
   {
     icon: "film", title: "Microfilmación de archivos", slug: "microfilmacion-de-archivos",
-    tag: "Microfilme 16 / 35 mm", accent: "#1800AD",
+    tag: "Microfilme 16 / 35 mm", accent: C.indigo,
     desc: "Conversión de documentos a microfilme para su preservación segura a largo plazo.",
   },
   {
     icon: "person-badge", title: "Servicio in house", slug: "servicio-inhouse",
-    tag: "En sus instalaciones", accent: "#1800AD",
+    tag: "En sus instalaciones", accent: C.indigo,
     desc: "Personal técnico de archivo en su sede, capacitado y supervisado por Transarchivos.",
   },
   {
     icon: "lightning-charge", title: "Servicio inmediato", slug: "servicio-inmediato",
-    tag: "Respuesta prioritaria", accent: "#C8960A",
+    tag: "Respuesta prioritaria", accent: C.gold,
     desc: "Consulta, recuperación y entrega urgente de documentos, con trazabilidad en cada etapa.",
   },
 ];

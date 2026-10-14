@@ -27,6 +27,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm typecheck
       - run: pnpm lint
+      - name: Código sin uso (archivos, exportaciones, dependencias)
+        run: pnpm lint:unused
       - run: pnpm test:coverage
       - run: pnpm build
       - name: SEO del HTML pre-generado

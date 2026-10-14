@@ -6,18 +6,19 @@
 import { useEffect, useRef } from "react";
 import { trackEvent } from "@/lib/analytics";
 import { Link } from "react-router-dom";
-import { trackSearch } from "@/lib/joel";
+import { trackSearch } from "@/lib/visitor";
 import { Bi, MenuIcon } from "@/components/ui/Icons";
 import { type SearchResult } from "@/data/search";
+import { C } from "@/styles/tokens";
 
-export const SEARCH_SHORTCUTS = [
+const SEARCH_SHORTCUTS = [
   { ic: "grid", label: "Servicios", href: "#servicios" },
   { ic: "lightbulb", label: "Soluciones", href: "#soluciones" },
   { ic: "ui-checks", label: "Solicitar cotización", href: "#cotizador" },
   { ic: "question-circle", label: "Preguntas frecuentes", href: "#faq" },
 ];
 
-export const KIND_ICON: Record<SearchResult["kind"], string> = { "Servicio": "briefcase", "Artículo": "journal-text", "Sección": "signpost-2" };
+const KIND_ICON: Record<SearchResult["kind"], string> = { "Servicio": "briefcase", "Artículo": "journal-text", "Sección": "signpost-2" };
 
 export function SearchOverlay({ query, setQuery, results, hasQuery, inputRef, onClose }: {
   query: string; setQuery: (v: string) => void; results: SearchResult[]; hasQuery: boolean;
@@ -36,7 +37,7 @@ export function SearchOverlay({ query, setQuery, results, hasQuery, inputRef, on
     return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = prev; };
   }, [inputRef]);
 
-  const itemCls = "group flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors hover:bg-[#F7F8FF]";
+  const itemCls = "group flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors hover:bg-hielo";
   const pickResult = () => { trackSearch(query); trackEvent("search", { search_term: query }); onClose(); };
   return (
     <div data-search-overlay className="fixed inset-0 z-[70] flex justify-center px-4" style={{ paddingTop: "12vh" }}>
@@ -45,25 +46,25 @@ export function SearchOverlay({ query, setQuery, results, hasQuery, inputRef, on
       <div role="dialog" aria-label="Buscar en el sitio" className="relative w-full max-w-[640px] self-start rounded-3xl overflow-hidden"
         style={{ background: "#fff", boxShadow: "0 40px 90px -30px rgba(10,13,61,0.6)", animation: "searchDrop 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.1) both" }}>
         <div className="flex items-center gap-3 px-5 py-4" style={{ borderBottom: "1px solid #ECEEF6" }}>
-          <Bi n="search" size={18} color="#1800AD" />
+          <Bi n="search" size={18} color={C.indigo} />
           <input ref={inputRef} type="text" value={query} onChange={e => setQuery(e.target.value)}
             placeholder="Buscar servicios, soluciones, artículos…" aria-label="Buscar"
-            className="flex-1 min-w-0 bg-transparent outline-none text-base" style={{ color: "#1800AD", fontFamily: "Montserrat, sans-serif" }} />
+            className="flex-1 min-w-0 bg-transparent outline-none text-base" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }} />
           <span className="hidden sm:inline text-[10px] font-semibold px-2 py-1 rounded-md" style={{ background: "#F2F3FA", color: "#8A8A8A" }}>Esc</span>
-          <button type="button" onClick={onClose} aria-label="Cerrar búsqueda" className="grid place-items-center rounded-full transition-colors hover:bg-[#F2F3FA]" style={{ width: 32, height: 32 }}>
-            <Bi n="x-lg" size={14} color="#1800AD" />
+          <button type="button" onClick={onClose} aria-label="Cerrar búsqueda" className="grid place-items-center rounded-full transition-colors hover:bg-niebla" style={{ width: 32, height: 32 }}>
+            <Bi n="x-lg" size={14} color={C.indigo} />
           </button>
         </div>
 
         <div className="max-h-[56vh] overflow-y-auto p-3">
           {!hasQuery ? (
             <>
-              <p className="px-3 pt-1 pb-2 text-[10.5px] font-bold uppercase" style={{ letterSpacing: "0.12em", color: "#9B9B9B", fontFamily: "Montserrat, sans-serif" }}>Accesos rápidos</p>
+              <p className="px-3 pt-1 pb-2 text-[10.5px] font-bold uppercase" style={{ letterSpacing: "0.12em", color: C.faint, fontFamily: "Montserrat, sans-serif" }}>Accesos rápidos</p>
               <div className="grid sm:grid-cols-2 gap-1">
                 {SEARCH_SHORTCUTS.map(sc => (
                   <a key={sc.label} href={sc.href} onClick={onClose} className={itemCls} style={{ textDecoration: "none" }}>
                     <MenuIcon n={sc.ic} size={34} />
-                    <span className="text-sm font-semibold" style={{ color: "#1800AD", fontFamily: "Montserrat, sans-serif" }}>{sc.label}</span>
+                    <span className="text-sm font-semibold" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>{sc.label}</span>
                   </a>
                 ))}
               </div>
@@ -71,8 +72,8 @@ export function SearchOverlay({ query, setQuery, results, hasQuery, inputRef, on
           ) : results.length === 0 ? (
             <div className="py-10 text-center">
               <Bi n="search" size={22} color="#C3C7E8" />
-              <p className="text-sm mt-3" style={{ color: "#6B6B6B" }}>Sin resultados para "{query}".</p>
-              <p className="text-xs mt-1" style={{ color: "#9B9B9B" }}>Pruebe con otra palabra, o pregúntele a Joel en el chat.</p>
+              <p className="text-sm mt-3" style={{ color: C.muted }}>Sin resultados para "{query}".</p>
+              <p className="text-xs mt-1" style={{ color: C.faint }}>Pruebe con otra palabra, o pregúntele a Joel en el chat.</p>
             </div>
           ) : (
             <div className="flex flex-col gap-0.5">
@@ -81,10 +82,10 @@ export function SearchOverlay({ query, setQuery, results, hasQuery, inputRef, on
                   <>
                     <MenuIcon n={KIND_ICON[r.kind]} size={34} />
                     <span className="min-w-0 flex-1">
-                      <span className="block text-sm font-semibold truncate" style={{ color: "#1800AD", fontFamily: "Montserrat, sans-serif" }}>{r.title}</span>
+                      <span className="block text-sm font-semibold truncate" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>{r.title}</span>
                       <span className="block text-xs truncate" style={{ color: "#8A8A8A" }}>{r.desc}</span>
                     </span>
-                    <span className="text-[10px] font-bold uppercase shrink-0" style={{ letterSpacing: "0.08em", color: "#C8960A", fontFamily: "Montserrat, sans-serif" }}>{r.kind}</span>
+                    <span className="text-[10px] font-bold uppercase shrink-0" style={{ letterSpacing: "0.08em", color: C.gold, fontFamily: "Montserrat, sans-serif" }}>{r.kind}</span>
                   </>
                 );
                 return r.to

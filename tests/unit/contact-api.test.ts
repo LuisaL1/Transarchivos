@@ -1,14 +1,23 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { POST } from "../../api/contact";
+import { POST, resetRateLimit } from "../../api/contact";
 
 // Función /api/contact (Vercel → Brevo). No envía nada real: fetch se simula.
 const req = (body: unknown, headers: Record<string, string> = {}) =>
   new Request("https://www.transarchivos.com/api/contact", { method: "POST", headers: { "Content-Type": "application/json", host: "www.transarchivos.com", ...headers }, body: JSON.stringify(body) });
 const valid = { kind: "contacto", subject: "Contacto web — Información", fields: { Motivo: "Información sobre un servicio", Nombre: "Ana", Correo: "ana@empresa.com", Mensaje: "Hola <b>", "Autorización de datos": "Sí" }, replyTo: { email: "ana@empresa.com", name: "Ana" } };
 
-afterEach(() => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); });
+// Cada prueba parte sin envíos contados (el límite por IP es por instancia).
+afterEach(() => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); resetRateLimit(); });
 
 describe("/api/contact", () => {
+  it("limita los envíos por IP: al sexto en 10 minutos responde 429", async () => {
+    const f = vi.fn().mockResolvedValue(new Response("{}", { status: 201 })); vi.stubGlobal("fetch", f); vi.stubEnv("BREVO_API_KEY", "k");
+    const ip = { "x-forwarded-for": "203.0.113.9, 10.0.0.1" };
+    for (let i = 0; i < 5; i++) expect((await POST(req(valid, ip))).status).toBe(200);
+    expect((await POST(req(valid, ip))).status).toBe(429);
+    // Otra IP no se ve afectada
+    expect((await POST(req(valid, { "x-forwarded-for": "198.51.100.4" }))).status).toBe(200);
+  });
   it("sin clave de Brevo responde 503 (no configurado)", async () => {
     vi.stubEnv("BREVO_API_KEY", "");
     expect((await POST(req(valid))).status).toBe(503);

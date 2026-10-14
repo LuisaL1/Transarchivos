@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { FolderOutline } from "@/components/ui/SectionDecor";
+import { C } from "@/styles/tokens";
 
 // ─── Joel entre secciones ───────────────────────────────────────────────────
 // Joel (poses del kit de marca, recortadas en PNG) parado sobre la unión de
@@ -92,10 +93,10 @@ export function JoelShowcase({ src, height = 300 }: { src: string; height?: numb
     <div ref={ref} aria-hidden="true" className="relative select-none" style={{ marginTop: height - 150 }}>
       {/* Pestaña de carpeta sobre la tarjeta (mismo trazo del llamado final) */}
       <svg className="absolute left-0 bottom-full block" width="180" height="30" viewBox="0 0 280 46" preserveAspectRatio="none">
-        <path d="M0 46 V18 Q0 0 18 0 H196 Q209 0 217 10 L242 38 Q249 46 262 46 Z" fill="#1800AD" />
+        <path d="M0 46 V18 Q0 0 18 0 H196 Q209 0 217 10 L242 38 Q249 46 262 46 Z" fill={C.indigo} />
       </svg>
       {/* Tarjeta índigo: va en la sección clara de beneficios */}
-      <div className="relative h-[190px] rounded-[0_28px_28px_28px]" style={{ background: "#1800AD" }}>
+      <div className="relative h-[190px] rounded-[0_28px_28px_28px]" style={{ background: C.indigo }}>
         <div className="absolute inset-0 overflow-hidden rounded-[0_28px_28px_28px]">
           <span className="absolute" style={{ right: -40, top: -40, width: 110, height: 110, transform: "rotate(45deg)", borderRadius: 19, background: "rgba(255,222,89,0.22)" }} />
           <span className="absolute" style={{ left: 22, bottom: 22, width: 110, height: 60, backgroundImage: "radial-gradient(rgba(255,255,255,0.22) 1.3px, transparent 1.6px)", backgroundSize: "14px 14px" }} />

@@ -15,7 +15,7 @@ pnpm dev         # desarrollo en http://localhost:8443
 pnpm build       # build de producción en dist/
 pnpm preview     # ver el build localmente
 pnpm check       # tipos + lint + pruebas + build (antes de cada commit)
-pnpm check:all   # lo anterior + auditoría de seguridad + pruebas de extremo a extremo
+pnpm check:all   # lo anterior + código sin uso (knip) + auditoría de seguridad + extremo a extremo
 ```
 
 Pruebas de calidad, accesibilidad y seguridad: ver `TESTING.md`.

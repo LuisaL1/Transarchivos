@@ -1,4 +1,5 @@
 import { CLIENTS } from "@/data/clients";
+import { C } from "@/styles/tokens";
 
 // Carrusel de clientes históricos (mismo recurso de Transpack): dos filas que
 // se desplazan en sentidos opuestos, logos en escala de grises que recuperan su
@@ -21,8 +22,8 @@ const ROWS = [CLIENTS.filter((_, i) => i % 2 === 0), CLIENTS.filter((_, i) => i 
 export function ClientsMarquee() {
   return (
     <section aria-label="Empresas que han confiado en Transarchivos" className="relative pt-10 pb-8 md:pt-12 md:pb-10" style={{ background: "#FFFFFF" }}>
-      <p className="mb-2 text-center text-xs font-bold uppercase tracking-widest" style={{ color: "#C8960A", fontFamily: "Montserrat, sans-serif" }}>Nuestros clientes</p>
-      <p className="mb-8 px-6 text-center text-xl md:text-2xl font-bold" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif" }}>
+      <p className="mb-2 text-center text-xs font-bold uppercase tracking-widest" style={{ color: C.gold, fontFamily: "Montserrat, sans-serif" }}>Nuestros clientes</p>
+      <p className="mb-8 px-6 text-center text-xl md:text-2xl font-bold" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>
         Más de {Math.floor(CLIENTS.length / 10) * 10} empresas han confiado su información en nosotros
       </p>
       {/* Franja blanca (única sección clara del sitio): los logos van

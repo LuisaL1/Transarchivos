@@ -7,10 +7,8 @@
 
 import { useLayoutEffect, useRef, useState } from "react";
 import { JoelSilhouette } from "@/components/ui/Brand";
+import { C } from "@/styles/tokens";
 
-export function Divider() {
-  return <div className="border-b" style={{ borderColor: "rgba(255,255,255,0.1)" }} />;
-}
 
 // ─── Pestaña de carpeta horizontal ─────────────────────────────────────────
 // Motivo de carpeta que separa secciones: tapa redondeada a la izquierda, tramo
@@ -20,7 +18,7 @@ export function Divider() {
 // pre-generar, un ancho de referencia) y el viewBox coincide con él, así las
 // curvas no se deforman ni quedan empalmes. Geometría en unidades de 30 px,
 // escalada por "height".
-export function FolderLip({ color, line, height = 30, tail = 0.14 }: { color: string; line?: string; height?: number; tail?: number }) {
+function FolderLip({ color, line, height = 30, tail = 0.14 }: { color: string; line?: string; height?: number; tail?: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const [w, setW] = useState(1104);
   useLayoutEffect(() => {
@@ -50,7 +48,7 @@ export function FolderLip({ color, line, height = 30, tail = 0.14 }: { color: st
 export function FolderDivider({ color }: { color: string }) {
   // La línea va sobre la sección de arriba, que es del tono contrario al de
   // abajo (las secciones alternan): clara sobre índigo, índigo sobre clara.
-  const line = color.toUpperCase() === "#1800AD" ? "rgba(24,0,173,0.16)" : "rgba(255,255,255,0.25)";
+  const line = color.toUpperCase() === C.indigo ? "rgba(24,0,173,0.16)" : "rgba(255,255,255,0.25)";
   return (
     <div aria-hidden="true" className="relative h-0 z-10 pointer-events-none">
       <div className="absolute inset-x-0 bottom-0 h-px" style={{ background: line }} />
@@ -65,9 +63,9 @@ export function FolderDivider({ color }: { color: string }) {
 
 export type DecorVariant = "dark" | "light";
 
-export const DECOR_BG: Record<DecorVariant, string> = {
-  dark: "#1800AD",  // índigo vivo (manual de marca)
-  light: "#FBFBF8", // crema
+const DECOR_BG: Record<DecorVariant, string> = {
+  dark: C.indigo,  // índigo vivo (manual de marca)
+  light: C.cream, // crema
 };
 
 export function FolderOutline({ style }: { style: React.CSSProperties }) {
@@ -88,7 +86,7 @@ export function SectionDecor({ variant, flip = false, folder = true, joel = fals
     <div aria-hidden="true" className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: -1, background: DECOR_BG[variant] }}>
       <div className="absolute" style={{ width: 220, height: 160, top: 40, [side("left", "right")]: 32, backgroundImage: `radial-gradient(rgba(${ink},${dark ? 0.16 : 0.18}) 1.4px, transparent 1.6px)`, backgroundSize: "18px 18px" }} />
       {/* Junto al encabezado, donde hay aire; las piernas quedan detrás de la tarjeta. */}
-      {joel && <JoelSilhouette style={{ height: 400, top: 28, [side("left", "right")]: "max(16px, calc(50% - 610px))", opacity: dark ? 0.09 : 0.07, background: dark ? "#FFFFFF" : "#1800AD" }} />}
+      {joel && <JoelSilhouette style={{ height: 400, top: 28, [side("left", "right")]: "max(16px, calc(50% - 610px))", opacity: dark ? 0.09 : 0.07, background: dark ? "#FFFFFF" : C.indigo }} />}
       {folder && (
         <div className="hidden lg:block" style={{ color: `rgba(${ink},${dark ? 0.06 : 0.07})` }}>
           <FolderOutline style={{ width: 420, bottom: -60, [side("right", "left")]: -70, transform: `rotate(${flip ? 8 : -8}deg)` }} />

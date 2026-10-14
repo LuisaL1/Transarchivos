@@ -4,6 +4,7 @@ import { blogPosts } from "@/data/blog";
 import { nosotrosGroups } from "@/data/nosotros";
 import { serviceItems } from "@/data/services";
 import { SOLUTIONS } from "@/data/solutions";
+import { C } from "@/styles/tokens";
 
 // Solo el botón disparador. El contenido del menú ya no es un panel aparte
 // posicionado en "absolute" — vive dentro del propio pill (ver App), como una
@@ -20,8 +21,8 @@ export function NavDropdownTrigger({ label, open, setOpen }: { label: string; op
       onMouseEnter={() => setOpen(true)}
       className="flex items-center gap-1 px-3 py-2 rounded-full text-base font-bold transition-colors"
       style={{
-        color: open ? "#ffffff" : "#1800AD",
-        background: open ? "#1800AD" : "transparent",
+        color: open ? "#ffffff" : C.indigo,
+        background: open ? C.indigo : "transparent",
         fontFamily: "Montserrat, sans-serif",
       }}
     >
@@ -40,15 +41,15 @@ export function NavDropdownTrigger({ label, open, setOpen }: { label: string; op
 // texto y llamado a la acción); a la derecha las opciones, con íconos que se
 // rellenan de azul al pasar el mouse.
 
-export function MenuFeature({ kicker, title, text, cta, href, onClick }: { kicker: string; title: string; text: string; cta: string; href: string; onClick: () => void }) {
+function MenuFeature({ kicker, title, text, cta, href, onClick }: { kicker: string; title: string; text: string; cta: string; href: string; onClick: () => void }) {
   return (
-    <div className="relative flex flex-col overflow-hidden rounded-2xl p-5" style={{ background: "#1800AD" }}>
+    <div className="relative flex flex-col overflow-hidden rounded-2xl p-5" style={{ background: C.indigo }}>
       <span aria-hidden="true" className="absolute pointer-events-none" style={{ right: -36, top: -36, width: 104, height: 104, transform: "rotate(45deg)", borderRadius: 18, background: "rgba(255,222,89,0.25)" }} />
-      <p className="relative mb-2 text-[10.5px] font-bold uppercase" style={{ letterSpacing: "0.16em", color: "#FFDE59", fontFamily: "Montserrat, sans-serif" }}>{kicker}</p>
+      <p className="relative mb-2 text-[10.5px] font-bold uppercase" style={{ letterSpacing: "0.16em", color: C.yellow, fontFamily: "Montserrat, sans-serif" }}>{kicker}</p>
       <p className="relative mb-2 text-[17px] font-bold leading-snug" style={{ color: "#fff", fontFamily: "Poppins, sans-serif" }}>{title}</p>
       <p className="relative mb-5 text-[12.5px] leading-relaxed" style={{ color: "rgba(255,255,255,0.75)" }}>{text}</p>
       <a href={href} onClick={onClick} className="group relative mt-auto inline-flex items-center gap-1.5 text-[13px] font-semibold" style={{ color: "#fff", textDecoration: "none", fontFamily: "Montserrat, sans-serif" }}>
-        {cta} <Bi n="arrow-right" size={13} color="#FFDE59" className="transition-transform group-hover:translate-x-1" />
+        {cta} <Bi n="arrow-right" size={13} color={C.yellow} className="transition-transform group-hover:translate-x-1" />
       </a>
     </div>
   );
@@ -56,9 +57,9 @@ export function MenuFeature({ kicker, title, text, cta, href, onClick }: { kicke
 
 // Línea superior + aire: separa el menú de la fila del navbar (y del logo,
 // que en la barra completa queda justo encima de la columna destacada).
-export const menuShell = "grid grid-cols-[220px_minmax(0,1fr)] gap-3 px-3 pb-3 pt-3 mt-2 border-t border-[#1800AD]/10";
+const menuShell = "grid grid-cols-[220px_minmax(0,1fr)] gap-3 px-3 pb-3 pt-3 mt-2 border-t border-indigo/10";
 
-export const menuItemCls = "group flex items-start gap-3 rounded-xl p-2.5 transition-colors hover:bg-[#F7F8FF]";
+const menuItemCls = "group flex items-start gap-3 rounded-xl p-2.5 transition-colors hover:bg-hielo";
 
 export function ServicesPanelContent({ setOpen }: { setOpen: (v: boolean) => void }) {
   const close = () => setOpen(false);
@@ -73,16 +74,16 @@ export function ServicesPanelContent({ setOpen }: { setOpen: (v: boolean) => voi
             <Link key={s.title} to={`/servicios/${s.slug}`} onClick={close} className={menuItemCls} style={{ textDecoration: "none" }}>
               <MenuIcon n={s.icon} />
               <span className="min-w-0">
-                <span className="block text-[13px] font-semibold leading-tight" style={{ color: "#1800AD", fontFamily: "Montserrat, sans-serif" }}>{s.title}</span>
+                <span className="block text-[13px] font-semibold leading-tight" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>{s.title}</span>
                 <span className="block text-[11px] leading-snug mt-0.5" style={{ color: "#8A8A8A" }}>{s.desc}</span>
               </span>
             </Link>
           ))}
         </div>
         <div className="flex items-center justify-between mt-1.5 pt-2.5 px-2.5" style={{ borderTop: "1px solid #ECEEF6" }}>
-          <span className="text-[11px]" style={{ color: "#9B9B9B" }}>9 servicios bajo la Ley 594 de 2000 y la normativa del AGN</span>
-          <a href="#servicios" onClick={close} className="text-xs font-semibold inline-flex items-center gap-1" style={{ color: "#1800AD", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
-            Ver todos <Bi n="arrow-right" size={12} color="#1800AD" />
+          <span className="text-[11px]" style={{ color: C.faint }}>9 servicios bajo la Ley 594 de 2000 y la normativa del AGN</span>
+          <a href="#servicios" onClick={close} className="text-xs font-semibold inline-flex items-center gap-1" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
+            Ver todos <Bi n="arrow-right" size={12} color={C.indigo} />
           </a>
         </div>
       </div>
@@ -108,7 +109,7 @@ export function SolucionesPanelContent({ setOpen }: { setOpen: (v: boolean) => v
           <a key={sol.id} href={`#sol-${sol.id}`} onClick={close} className={menuItemCls} style={{ textDecoration: "none" }}>
             <MenuIcon n={sol.icon} />
             <span className="min-w-0">
-              <span className="block text-[13px] font-semibold leading-tight" style={{ color: "#1800AD", fontFamily: "Montserrat, sans-serif" }}>{sol.title}</span>
+              <span className="block text-[13px] font-semibold leading-tight" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>{sol.title}</span>
               <span className="block text-[11px] leading-snug mt-0.5" style={{ color: "#8A8A8A" }}>{sol.tag}</span>
             </span>
           </a>
@@ -128,12 +129,12 @@ export function NosotrosPanelContent({ setOpen }: { setOpen: (v: boolean) => voi
       <div className="grid grid-cols-3 gap-3 py-1">
         {nosotrosGroups.map(g => (
           <div key={g.heading}>
-            <p className="text-[10.5px] font-bold uppercase mb-1.5 px-2 whitespace-nowrap" style={{ letterSpacing: "0.12em", color: "#9B9B9B", fontFamily: "Montserrat, sans-serif" }}>{g.heading}</p>
+            <p className="text-[10.5px] font-bold uppercase mb-1.5 px-2 whitespace-nowrap" style={{ letterSpacing: "0.12em", color: C.faint, fontFamily: "Montserrat, sans-serif" }}>{g.heading}</p>
             <div className="flex flex-col">
               {g.items.map(item => (
-                <Link key={item.label} to={`/nosotros#${item.anchor}`} onClick={close} className="group flex items-center gap-3 rounded-xl p-2 transition-colors hover:bg-[#F7F8FF]" style={{ textDecoration: "none" }}>
+                <Link key={item.label} to={`/nosotros#${item.anchor}`} onClick={close} className="group flex items-center gap-3 rounded-xl p-2 transition-colors hover:bg-hielo" style={{ textDecoration: "none" }}>
                   <MenuIcon n={item.icon} size={34} />
-                  <span className="text-[13px] font-semibold whitespace-nowrap" style={{ color: "#1800AD", fontFamily: "Montserrat, sans-serif" }}>{item.label}</span>
+                  <span className="text-[13px] font-semibold whitespace-nowrap" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>{item.label}</span>
                 </Link>
               ))}
             </div>
@@ -159,8 +160,8 @@ export function BlogPanelContent({ setOpen }: { setOpen: (v: boolean) => void })
             <Link key={p.slug} to={`/blog/${p.slug}`} onClick={close} className={`${menuItemCls} items-center`} style={{ textDecoration: "none" }}>
               <img loading="lazy" decoding="async" src={p.cover} alt="" className="shrink-0 rounded-lg object-cover" style={{ width: 64, height: 48 }} />
               <span className="min-w-0 flex-1 pr-2">
-                <span className="block text-[10.5px] font-bold uppercase" style={{ letterSpacing: "0.1em", color: "#C8960A", fontFamily: "Montserrat, sans-serif" }}>{p.cat}</span>
-                <span className="block text-[13px] font-semibold line-clamp-2" title={p.title} style={{ color: "#1800AD", fontFamily: "Montserrat, sans-serif" }}>{p.title}</span>
+                <span className="block text-[10.5px] font-bold uppercase" style={{ letterSpacing: "0.1em", color: C.gold, fontFamily: "Montserrat, sans-serif" }}>{p.cat}</span>
+                <span className="block text-[13px] font-semibold line-clamp-2" title={p.title} style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>{p.title}</span>
               </span>
             </Link>
           ))}
@@ -168,8 +169,8 @@ export function BlogPanelContent({ setOpen }: { setOpen: (v: boolean) => void })
         <a href="https://www.youtube.com/@Transarchivosltda" target="_blank" rel="noreferrer" onClick={close}
           className={`${menuItemCls} items-center mt-1.5`} style={{ borderTop: "1px solid #ECEEF6", borderRadius: 0, textDecoration: "none" }}>
           <MenuIcon n="youtube" size={34} />
-          <span className="flex-1 text-[13px] font-semibold" style={{ color: "#1800AD", fontFamily: "Montserrat, sans-serif" }}>Véanos en nuestro canal de YouTube</span>
-          <Bi n="box-arrow-up-right" size={12} color="#9B9B9B" />
+          <span className="flex-1 text-[13px] font-semibold" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>Véanos en nuestro canal de YouTube</span>
+          <Bi n="box-arrow-up-right" size={12} color={C.faint} />
         </a>
       </div>
     </div>
