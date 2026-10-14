@@ -14,6 +14,8 @@
   --color-borde-fuerte: #DDE0F2; /* borde de campos de formulario */
   --color-gris: #6B6B6B;         /* texto secundario */
   --color-gris-claro: #9B9B9B;   /* texto terciario */
+  --color-marino: #272B7C;       /* azul marino del manual: logo, correos, paso 2 del modelo */
+  --color-marino-oscuro: #14163F; /* paso 4 del modelo */
   --font-heading: 'Poppins', sans-serif;
   --font-subheading: 'Montserrat', sans-serif;
   --font-body: 'Inter', sans-serif;

@@ -11,4 +11,6 @@ export const C = {
   border: "#E4E6F7",   // borde fino de tarjetas
   muted: "#6B6B6B",    // texto secundario
   faint: "#9B9B9B",    // texto terciario (fechas, notas)
+  navy: "#272B7C",     // azul marino del manual: logo, correos y pasos 2 del modelo "Cómo trabajamos"
+  navyDark: "#14163F", // azul marino oscuro: paso 4 del modelo "Cómo trabajamos"
 } as const;

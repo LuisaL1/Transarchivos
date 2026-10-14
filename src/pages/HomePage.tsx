@@ -296,11 +296,11 @@ export function HomePage() {
             {([
               { n: 1, t: "Diagnóstico", k: "Entrada", ic: "clipboard2-pulse-fill", c: C.gold, d: "Detectamos su necesidad y abrimos la relación entendiendo qué pasa hoy con su archivo.", g: C.gold,
                 items: [{ i: "search", l: "Diagnóstico documental", href: "#cotizador" }, { i: "list-columns-reverse", l: "Levantamiento de inventario", to: "/servicios/levantamiento-de-inventario" }] },
-              { n: 2, t: "Solución", k: "Transformación", ic: "gear-wide-connected", c: C.indigo, d: "Resolvemos el problema documental con un proyecto a la medida.", g: C.indigo,
+              { n: 2, t: "Solución", k: "Transformación", ic: "gear-wide-connected", c: C.navy, d: "Resolvemos el problema documental con un proyecto a la medida.", g: C.navy,
                 items: [{ i: "upc-scan", l: "Digitalización", to: "/servicios/digitalizacion-de-documentos" }, { i: "folder2-open", l: "Programa de gestión documental", to: "/servicios/programa-de-gestion-documental" }] },
               { n: 3, t: "Protección", k: "Recurrencia", ic: "shield-fill-check", c: C.indigo, d: "Protegemos su información y la mantenemos disponible cuando la necesite.", g: C.indigo,
                 items: [{ i: "archive", l: "Custodia de archivos", to: "/servicios/custodia-de-archivos" }, { i: "hdd-stack", l: "Custodia de medios magnéticos", to: "/servicios/custodia-de-medios-magneticos" }] },
-              { n: 4, t: "Expansión", k: "Nuevos proyectos", ic: "rocket-takeoff-fill", c: C.indigo, d: "Cerramos el ciclo de vida documental y ampliamos el valor de la relación.", g: C.indigo,
+              { n: 4, t: "Expansión", k: "Nuevos proyectos", ic: "rocket-takeoff-fill", c: C.navyDark, d: "Cerramos el ciclo de vida documental y ampliamos el valor de la relación.", g: C.navyDark,
                 items: [{ i: "file-earmark-x", l: "Destrucción legal", to: "/servicios/destruccion-de-documentos" }, { i: "lightning-charge", l: "Servicio inmediato", to: "/servicios/servicio-inmediato" }, { i: "person-badge", l: "Servicio in house", to: "/servicios/servicio-inhouse" }] },
             ] as { n: number; t: string; k: string; ic: string; c: string; d: string; g: string; items: { i: string; l: string; to?: string; href?: string }[] }[]).map((st, idx, arr) => (
               <div key={st.n} role="link" tabIndex={0}

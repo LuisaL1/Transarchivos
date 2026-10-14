@@ -110,7 +110,9 @@ RecursosTransarchivos/    Documentos fuente del cliente (contexto, no se publica
 - Paleta: índigo vivo `#1800AD` (único azul del sitio: fondos, textos sobre
   blanco, botones, menú y chat; pedido de Joel, oct. 2026), amarillo `#FFDE59`,
   dorado `#C8960A`, blanco y grises claros. El azul oscuro `#272B7C` del manual
-  queda solo en el logo y en los correos. La lista blanca de colores está en
+  queda solo en el logo, en los correos y en las tarjetas del modelo "Cómo
+  trabajamos", que conservan sus cuatro colores (dorado, marino `#272B7C`,
+  índigo y marino oscuro `#14163F`; pedido del cliente, oct. 2026). La lista blanca de colores está en
   `tests/unit/content.test.ts`.
 - Fondos (oct. 2026): las secciones **alternan** dos tonos mediante
   `<SectionDecor variant="dark" | "light">`: índigo `#1800AD` (títulos y textos

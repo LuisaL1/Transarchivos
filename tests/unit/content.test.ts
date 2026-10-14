@@ -57,7 +57,7 @@ describe("Diseño", () => {
   const ALLOWED = new Set(["#272B7C", "#1800AD", "#FFDE59", "#C8960A", "#EAEAEA", "#FFFFFF", "#FBFBF8", "#F1F3FB",
     "#E4E6F7", "#6B6B6B", "#9B9B9B", "#F7F8FF", "#ECEEF6", "#8A8A8A", "#DDE0F2", "#16A34A", "#F2F3FA", "#37352F", "#F0F1FA",
     "#E9E9E7", "#FFF6D6", "#22C55E", "#15803D", "#FF9F1C", "#FAFBFF", "#F6F7FD", "#EEF0FB", "#C9CDEE", "#B5B9D6", "#8A6D00",
-    "#FFE39A", "#F1F2F8", "#EAF7EE", "#E5AE1A", "#C3C7E8", "#B8860B", "#6B7280", "#666666", "#4B4B4B", "#1A1A2E"]);
+    "#FFE39A", "#F1F2F8", "#EAF7EE", "#E5AE1A", "#C3C7E8", "#B8860B", "#6B7280", "#666666", "#4B4B4B", "#1A1A2E", "#14163F"]);
   it("solo se usan colores de la paleta", () => {
     for (const [f, s] of all) for (const c of s.match(/#[0-9a-fA-F]{6}\b/g) ?? []) expect(ALLOWED.has(c.toUpperCase()), `${c} en ${f}`).toBe(true);
   });
