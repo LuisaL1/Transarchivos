@@ -34,12 +34,19 @@ function confirmation(base: string, kind: string, name: string, fields: Record<s
   const first = esc(name.split(" ")[0] || "");
   if (kind === "suscripcion") {
     const subject = "Suscripción confirmada · Transarchivos";
+    // Anular: las suscripciones viven en el buzón de marketing (no hay base de
+    // datos), así que el botón abre un correo listo para enviar a ese buzón.
+    const newsletterTo = process.env.LEADS_TO_NEWSLETTER || "marketing@transarchivos.com";
+    const subscriber = fields["Correo"] ?? "";
+    const unsubscribe = `mailto:${newsletterTo}?subject=${encodeURIComponent("Anular suscripción al blog")}&body=${encodeURIComponent(`Por favor anulen la suscripción al blog de Transarchivos del correo ${subscriber}.`)}`;
     const html = layout(base, "¡Gracias por suscribirse!", `
 <p style="margin:0 0 12px">Hola,</p>
 <p style="margin:0 0 12px">Su correo quedó registrado para recibir las novedades y guías sobre gestión documental de Transarchivos.</p>
-<p style="margin:0 0 18px">Si no solicitó esta suscripción o desea cancelarla, responda este correo con la palabra «Cancelar».</p>
+<p style="margin:0 0 16px">Si no solicitó esta suscripción o ya no desea recibir nuestros correos, puede anularla en cualquier momento:</p>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td bgcolor="#1800AD" style="background:#1800AD;border-radius:10px"><a href="${esc(unsubscribe)}" style="display:inline-block;padding:11px 20px;color:#ffffff;font-weight:bold;text-decoration:none;font-family:Arial,sans-serif;font-size:14px">Anular suscripción</a></td></tr></table>
+<p style="margin:14px 0 18px;color:#6B6B6B;font-size:12px">El botón abre un correo a ${esc(newsletterTo)} con la solicitud lista para enviar.</p>
 <p style="margin:0;color:#6B6B6B;font-size:12px">Tratamos sus datos según nuestra <a href="https://www.transarchivos.com/privacidad" style="color:#1800AD">política de privacidad</a>.</p>`);
-    const text = "Su correo quedó registrado para recibir las novedades y guías de Transarchivos. Para cancelar, responda este correo con la palabra «Cancelar».";
+    const text = `Su correo quedó registrado para recibir las novedades y guías de Transarchivos.\n\nPara anular la suscripción, escriba a ${newsletterTo} con el asunto «Anular suscripción al blog».`;
     return { subject, html, text };
   }
   const about = kind === "cotizacion" ? `su solicitud de cotización de <strong>${esc(fields["Servicio"] ?? "nuestros servicios")}</strong>` : `su mensaje (${esc(fields["Motivo"] ?? "contacto")})`;
