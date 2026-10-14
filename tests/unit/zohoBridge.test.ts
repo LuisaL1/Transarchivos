@@ -11,6 +11,8 @@ vi.mock("@/lib/crmChat", () => ({
   // La página aislada de Zoho: aquí, la misma ventana de prueba
   zohoWindow: () => window,
 }));
+// El puente espera 1,5 s a que el campo de Zoho esté quieto: las pruebas tardan un poco más
+vi.setConfig({ testTimeout: 12_000 });
 const { startBridge } = await import("@/lib/zohoBridge");
 const { setBridging } = await import("@/lib/crmChat");
 
@@ -132,6 +134,22 @@ describe("puente con Zoho (chat con un asesor dentro de Joel)", () => {
     b.stop();
     vi.useRealTimers();
   });
+
+  it("espera a que el campo de Zoho esté habilitado y quieto antes de escribir (al abrir queda un momento en «Por favor, espere…»)", async () => {
+    // Como el Zoho real: el campo aparece deshabilitado y se habilita después
+    const ready = doc.createElement("textarea");
+    doc.querySelector(".home-icon-optns")!.addEventListener("click", () => {
+      const ta = doc.querySelector<HTMLTextAreaElement>("textarea.siqcw-textarea")!;
+      ta.disabled = true;
+      ta.placeholder = "Por favor, espere...";
+      setTimeout(() => { ta.disabled = false; ta.placeholder = "Estamos a su disposición para ayudarle"; ready.click(); }, 1200);
+    });
+    const t0 = Date.now();
+    await startBridge("Hola", { onMessage: vi.fn(), onForm: vi.fn() });
+    expect(sent).toEqual(["Hola"]);
+    // No escribió mientras el campo estaba deshabilitado
+    expect(Date.now() - t0).toBeGreaterThanOrEqual(1200);
+  }, 15_000);
 
   it("no repite mensajes ya vistos", async () => {
     const onMessage = vi.fn();

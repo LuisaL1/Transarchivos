@@ -126,12 +126,19 @@ async function connect(question: string, h: BridgeHandlers): Promise<Bridge> {
       (el) => norm(el.querySelector('[data-zsqa="msg"]')?.textContent ?? "") === norm(text),
     ).length;
   const visitorCount = () => doc.querySelectorAll(VISITOR).length;
-  // El campo de Zoho en su estado normal (no pidiendo nombre, correo o teléfono)
-  const ta = doc.querySelector<HTMLTextAreaElement>("textarea.siqcw-textarea");
-  const normalPlaceholder = ta?.placeholder ?? "";
+  // El campo de Zoho en su estado normal (no pidiendo nombre, correo o teléfono).
+  // Al abrir la conversación, Zoho deja el campo un momento deshabilitado
+  // ("Por favor, espere…") mientras entrega el saludo: se espera a que esté
+  // habilitado y quieto antes de tomar su texto de ayuda como el normal y de
+  // escribir (probado con el Zoho real: escribir antes se pierde).
+  const field = () => doc.querySelector<HTMLTextAreaElement>("textarea.siqcw-textarea");
+  const waiting = (t: HTMLTextAreaElement) => t.disabled || /espere|wait/i.test(t.placeholder);
+  await until(() => { const t = field(); return t && !waiting(t) ? t : null; }, 20_000);
+  await wait(1500);
+  const normalPlaceholder = field()?.placeholder ?? "";
   const ready = () => {
-    const t = doc.querySelector<HTMLTextAreaElement>("textarea.siqcw-textarea");
-    return !!t && !t.disabled && (!normalPlaceholder || t.placeholder === normalPlaceholder);
+    const t = field();
+    return !!t && !waiting(t) && (!normalPlaceholder || t.placeholder === normalPlaceholder);
   };
   // Un envío no confirmado se reintenta, pero pocas veces: si Zoho lo recibió y
   // no se pudo confirmar, reintentar sin límite lo repetiría sin fin.
