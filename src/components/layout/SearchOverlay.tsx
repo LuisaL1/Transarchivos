@@ -41,17 +41,17 @@ export function SearchOverlay({ query, setQuery, results, hasQuery, inputRef, on
   return (
     <div data-search-overlay className="fixed inset-0 z-[70] flex justify-center px-4" style={{ paddingTop: "12vh" }}>
       <div role="presentation" className="absolute inset-0" onClick={onClose}
-        style={{ background: "rgba(39,43,124,0.55)", backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)", animation: "searchFade 0.25s ease both" }} />
+        style={{ background: "rgba(24,0,173,0.55)", backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)", animation: "searchFade 0.25s ease both" }} />
       <div role="dialog" aria-label="Buscar en el sitio" className="relative w-full max-w-[640px] self-start rounded-3xl overflow-hidden"
         style={{ background: "#fff", boxShadow: "0 40px 90px -30px rgba(10,13,61,0.6)", animation: "searchDrop 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.1) both" }}>
         <div className="flex items-center gap-3 px-5 py-4" style={{ borderBottom: "1px solid #ECEEF6" }}>
-          <Bi n="search" size={18} color="#272B7C" />
+          <Bi n="search" size={18} color="#1800AD" />
           <input ref={inputRef} type="text" value={query} onChange={e => setQuery(e.target.value)}
             placeholder="Buscar servicios, soluciones, artículos…" aria-label="Buscar"
-            className="flex-1 min-w-0 bg-transparent outline-none text-base" style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif" }} />
+            className="flex-1 min-w-0 bg-transparent outline-none text-base" style={{ color: "#1800AD", fontFamily: "Montserrat, sans-serif" }} />
           <span className="hidden sm:inline text-[10px] font-semibold px-2 py-1 rounded-md" style={{ background: "#F2F3FA", color: "#8A8A8A" }}>Esc</span>
           <button type="button" onClick={onClose} aria-label="Cerrar búsqueda" className="grid place-items-center rounded-full transition-colors hover:bg-[#F2F3FA]" style={{ width: 32, height: 32 }}>
-            <Bi n="x-lg" size={14} color="#272B7C" />
+            <Bi n="x-lg" size={14} color="#1800AD" />
           </button>
         </div>
 
@@ -63,7 +63,7 @@ export function SearchOverlay({ query, setQuery, results, hasQuery, inputRef, on
                 {SEARCH_SHORTCUTS.map(sc => (
                   <a key={sc.label} href={sc.href} onClick={onClose} className={itemCls} style={{ textDecoration: "none" }}>
                     <MenuIcon n={sc.ic} size={34} />
-                    <span className="text-sm font-semibold" style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif" }}>{sc.label}</span>
+                    <span className="text-sm font-semibold" style={{ color: "#1800AD", fontFamily: "Montserrat, sans-serif" }}>{sc.label}</span>
                   </a>
                 ))}
               </div>
@@ -81,7 +81,7 @@ export function SearchOverlay({ query, setQuery, results, hasQuery, inputRef, on
                   <>
                     <MenuIcon n={KIND_ICON[r.kind]} size={34} />
                     <span className="min-w-0 flex-1">
-                      <span className="block text-sm font-semibold truncate" style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif" }}>{r.title}</span>
+                      <span className="block text-sm font-semibold truncate" style={{ color: "#1800AD", fontFamily: "Montserrat, sans-serif" }}>{r.title}</span>
                       <span className="block text-xs truncate" style={{ color: "#8A8A8A" }}>{r.desc}</span>
                     </span>
                     <span className="text-[10px] font-bold uppercase shrink-0" style={{ letterSpacing: "0.08em", color: "#C8960A", fontFamily: "Montserrat, sans-serif" }}>{r.kind}</span>

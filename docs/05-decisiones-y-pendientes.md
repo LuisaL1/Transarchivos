@@ -4,7 +4,10 @@
 
 | Tema | Decisión |
 | --- | --- |
-| Hero | Pantalla dividida: panel azul con el título animado ("Sus archivos, bajo [control·custodia·orden·legalidad·resguardo·protección]") y videos a la derecha. Selector "¿Qué necesita hoy?" sin textos de relleno. |
+| Hero | Video a pantalla completa con velo azul y contenido centrado: título animado ("Sus archivos, bajo [control·custodia·orden·legalidad·resguardo·protección]"), frase y selector con Joel. Reemplazó la pantalla dividida (oct. 2026). Selector "¿Qué necesita hoy?" sin textos de relleno. |
+| Colores | Inversión de colores a pedido del cliente ("mucho blanco"): fondos en índigo vivo #1800AD del manual de marca (Joel pidió este tono: el azul oscuro se veía opaco), textos en blanco, botones de acción en amarillo y tarjetas blancas. Aplica a todo el sitio (oct. 2026). |
+| Azul único | Todo el sitio usa un solo azul, el índigo vivo #1800AD del manual (textos, botones, menú, chat, ventanas). El azul oscuro #272B7C queda solo en el logo y en los correos (oct. 2026). |
+| Contraste | Las secciones alternan índigo y crema (demasiado azul seguido cansaba): hero, mapa, cifras, servicios, modelo, blog, FAQ y pie en índigo; confianza, clientes, diagnóstico, soluciones, cotizador, videos y diferenciales claras. Páginas internas: alternan desde su hero. (oct. 2026) |
 | Pestaña de carpeta | En la división del hero, pegada al borde superior y del mismo azul del panel. Bajo el menú hay una sombra negra suave (pedida por el cliente). |
 | Joel en el hero | Junto al selector, volteado, con la mano sobre la tarjeta y sin globo de texto. Solo su cuerpo es clicable, para no bloquear la pestaña "Destruir". |
 | Mapa | La animación original del mapa se conserva. Se agregó solo la silueta de Joel en súper zoom, del color del mapa. Se descartaron rutas, camión, Joel detective y mini-Joel en el pin. |

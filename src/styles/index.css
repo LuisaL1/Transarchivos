@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 
 @theme inline {
-  --color-navy: #272B7C;
+  --color-navy: #1800AD;
   --color-indigo-vivid: #1800AD;
   --color-yellow-accent: #FFDE59;
   --color-gray-light: #EAEAEA;
@@ -41,7 +41,7 @@ html {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #272B7C40;
+  background: #1800AD40;
   border-radius: 3px;
 }
 
@@ -129,17 +129,17 @@ select:focus-visible, summary:focus-visible {
 }
 
 /* Texto seleccionado con los colores de la marca */
-::selection { background: #FFDE59; color: #272B7C; }
+::selection { background: #FFDE59; color: #1800AD; }
 
 /* Mismo movimiento y sombra que las tarjetas de servicios (ServiceCard):
    sube 4 px con un leve rebote y la sombra crece. */
 .card-lift {
-  box-shadow: 0 2px 10px rgba(39, 43, 124, 0.05);
+  box-shadow: 0 2px 10px rgba(24,0,173, 0.05);
   transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .card-lift:hover {
   transform: translateY(-4px);
-  box-shadow: 0 20px 40px -12px rgba(39, 43, 124, 0.2);
+  box-shadow: 0 20px 40px -12px rgba(24,0,173, 0.2);
 }
 
 /* Con el menú móvil abierto, el botón e invitación de Joel no tapan el menú. */
@@ -171,12 +171,14 @@ body.menu-open [data-chat-launcher] { display: none !important; }
 .marquee-track { animation: marquee 360s linear infinite; }
 .marquee-reverse { animation-direction: reverse; }
 .marquee:hover .marquee-track { animation-play-state: paused; }
+/* Logos en gris nítido; al pasar el mouse recuperan su color. */
+.client-logo { filter: grayscale(1); opacity: 0.8; transition: filter 0.3s ease, opacity 0.3s ease; }
+.client-logo:hover { filter: none; opacity: 1; }
+/* Bordes suaves de las filas (sobre blanco, sin franjas de color) */
 .marquee {
   mask-image: linear-gradient(90deg, transparent 0%, #000 8%, #000 92%, transparent 100%);
   -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 8%, #000 92%, transparent 100%);
 }
-.client-logo { filter: grayscale(1); opacity: 0.6; transition: filter 0.3s ease, opacity 0.3s ease; }
-.client-logo:hover { filter: none; opacity: 1; }
 @media (prefers-reduced-motion: reduce) {
   .marquee-track { animation: none; }
   .marquee { overflow-x: auto; }

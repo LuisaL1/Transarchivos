@@ -93,7 +93,7 @@ export function MapReveal() {
   const mapScale = 1 + reveal * 0.35;
 
   return (
-    <section ref={sectionRef} aria-label="Cobertura nacional" className="relative" style={{ height: reduced ? "auto" : "260vh", background: "#272B7C" }}>
+    <section ref={sectionRef} aria-label="Cobertura nacional" className="relative" style={{ height: reduced ? "auto" : "260vh", background: "#1800AD" }}>
       <div className={reduced ? "relative" : "sticky top-0 h-screen overflow-hidden"}>
         {/* Cuadrícula de fondo */}
         <svg aria-hidden="true" className="absolute inset-0 w-full h-full">
@@ -157,7 +157,7 @@ export function MapReveal() {
                   className="absolute" style={{ left: `${c.x * 100}%`, top: `${c.y * 100}%`, width: 26, height: 26, transform: "translate(-50%, -50%)" }}>
                   {/* Solo se muestra el nombre de la ciudad activa (discreto, sin saturar el mapa). */}
                   <span className={`absolute whitespace-nowrap text-[10px] md:text-[11px] font-bold px-2 py-0.5 rounded-full transition-all duration-500 pointer-events-none ${c.below ? "top-full mt-0.5 left-1/2 -translate-x-1/2" : c.left ? "right-full mr-1 top-1/2 -translate-y-1/2" : "left-full ml-1 top-1/2 -translate-y-1/2"} ${i === current ? "opacity-100" : "opacity-0"}`}
-                    style={{ background: i === current ? "#FFDE59" : "rgba(255,255,255,0.92)", color: "#272B7C", fontFamily: "Montserrat, sans-serif", boxShadow: "0 6px 16px -6px rgba(0,0,0,0.5)" }}>
+                    style={{ background: i === current ? "#FFDE59" : "rgba(255,255,255,0.92)", color: "#1800AD", fontFamily: "Montserrat, sans-serif", boxShadow: "0 6px 16px -6px rgba(0,0,0,0.5)" }}>
                     {c.name}
                   </span>
                 </span>
@@ -165,7 +165,7 @@ export function MapReveal() {
               <span className="absolute" style={{ left: `${BOGOTA.left * 100}%`, top: `${BOGOTA.top * 100}%`, transform: "translate(-50%, -50%)" }}>
                 <span className="absolute inset-0 rounded-full" style={{ background: "#FFDE59", animation: "mapPulse 1.8s cubic-bezier(0,0,0.2,1) infinite" }} />
                 <span className="relative block rounded-full" style={{ width: 16, height: 16, background: "#FFDE59", border: "3px solid #fff", boxShadow: "0 0 18px 4px rgba(255,222,89,0.7)" }} />
-                <span className="absolute whitespace-nowrap text-[11px] md:text-xs font-bold px-2.5 py-1 rounded-full left-1/2 -translate-x-1/2 top-6 md:left-6 md:translate-x-0 md:top-1/2 md:-translate-y-1/2" style={{ background: "#fff", color: "#272B7C", fontFamily: "Montserrat, sans-serif", opacity: mapText }}>
+                <span className="absolute whitespace-nowrap text-[11px] md:text-xs font-bold px-2.5 py-1 rounded-full left-1/2 -translate-x-1/2 top-6 md:left-6 md:translate-x-0 md:top-1/2 md:-translate-y-1/2" style={{ background: "#fff", color: "#1800AD", fontFamily: "Montserrat, sans-serif", opacity: mapText }}>
                   Bogotá · Centro de operaciones
                 </span>
               </span>
@@ -183,7 +183,7 @@ export function MapReveal() {
               <source src={VIDEO.mobile} type="video/mp4" media="(max-width: 767px)" />
               <source src={VIDEO.desktop} type="video/mp4" />
             </video>
-            <div className="absolute inset-0" style={{ background: "rgba(39,43,124,0.6)" }} />
+            <div className="absolute inset-0" style={{ background: "rgba(24,0,173,0.55)" }} />
             <div className="relative h-full max-w-6xl mx-auto px-6 flex flex-col justify-center items-center text-center"
               style={{ opacity: endText, transform: `translateY(${(1 - endText) * 24}px)` }}>
               <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#FFDE59", fontFamily: "Montserrat, sans-serif" }}>Gestión documental integral</p>
@@ -194,8 +194,8 @@ export function MapReveal() {
                 Organizamos, digitalizamos, custodiamos y destruimos sus documentos con trazabilidad y cumplimiento legal, esté donde esté su empresa.
               </p>
               <Link to="/?servicio=diagnostico#cotizador" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full text-sm font-bold transition-transform hover:scale-[1.03]"
-                style={{ background: "#FFDE59", color: "#272B7C", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
-                Solicitar cotización <Bi n="arrow-right" size={14} color="#272B7C" />
+                style={{ background: "#FFDE59", color: "#1800AD", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
+                Solicitar cotización <Bi n="arrow-right" size={14} color="#1800AD" />
               </Link>
             </div>
           </div>

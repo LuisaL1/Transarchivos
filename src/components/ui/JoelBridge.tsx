@@ -27,12 +27,12 @@ export function JoelBridge({ src, side = "right", height = 210, sink = 34, offse
       <div className="relative max-w-6xl mx-auto px-6">
         <div ref={ref} className="absolute" style={{ [side]: offset, bottom: -sink, height }}>
           {/* Elementos gráficos detrás */}
-          <div className="absolute" style={{ color: "rgba(39,43,124,0.12)", width: height * 0.95, height: height * 0.66, bottom: height * 0.12, [side === "right" ? "right" : "left"]: -height * 0.18 }}>
+          <div className="absolute" style={{ color: "rgba(255,255,255,0.1)", width: height * 0.95, height: height * 0.66, bottom: height * 0.12, [side === "right" ? "right" : "left"]: -height * 0.18 }}>
             <FolderOutline style={{ width: "100%", transform: `rotate(${dir * 6}deg)` }} />
           </div>
-          <div className="absolute rounded-full" style={{ width: 70, height: 50, top: 6, [side === "right" ? "left" : "right"]: -26, backgroundImage: "radial-gradient(rgba(39,43,124,0.22) 1.3px, transparent 1.6px)", backgroundSize: "12px 12px" }} />
+          <div className="absolute rounded-full" style={{ width: 70, height: 50, top: 6, [side === "right" ? "left" : "right"]: -26, backgroundImage: "radial-gradient(rgba(255,255,255,0.22) 1.3px, transparent 1.6px)", backgroundSize: "12px 12px" }} />
           {/* Sombra de piso */}
-          <span className="absolute left-1/2 -translate-x-1/2 rounded-full" style={{ bottom: -6, width: height * 0.55, height: 12, background: "rgba(10,13,61,0.18)", filter: "blur(6px)" }} />
+          <span className="absolute left-1/2 -translate-x-1/2 rounded-full" style={{ bottom: -6, width: height * 0.55, height: 12, background: "rgba(0,0,0,0.3)", filter: "blur(6px)" }} />
           <img loading="lazy" decoding="async" src={src} alt="" draggable={false} className="relative select-none h-full w-auto max-w-none"
             style={{
               transform: `${flip ? "scaleX(-1) " : ""}translateX(${shown ? 0 : dir * 40 * (flip ? -1 : 1)}px)`,
@@ -62,11 +62,11 @@ export function JoelFigure({ src, height = 240, flip = false, className = "" }: 
   }, []);
   return (
     <div ref={ref} aria-hidden="true" className={`relative hidden lg:inline-block ${className}`} style={{ height }}>
-      <div className="absolute" style={{ color: "rgba(39,43,124,0.12)", width: height * 1.05, height: height * 0.7, bottom: height * 0.1, left: -height * 0.18 }}>
+      <div className="absolute" style={{ color: "rgba(255,255,255,0.1)", width: height * 1.05, height: height * 0.7, bottom: height * 0.1, left: -height * 0.18 }}>
         <FolderOutline style={{ width: "100%", transform: "rotate(-6deg)" }} />
       </div>
-      <div className="absolute" style={{ width: 70, height: 50, top: 8, right: -24, backgroundImage: "radial-gradient(rgba(39,43,124,0.22) 1.3px, transparent 1.6px)", backgroundSize: "12px 12px" }} />
-      <span className="absolute left-1/2 -translate-x-1/2 rounded-full" style={{ bottom: -6, width: height * 0.6, height: 12, background: "rgba(10,13,61,0.16)", filter: "blur(6px)" }} />
+      <div className="absolute" style={{ width: 70, height: 50, top: 8, right: -24, backgroundImage: "radial-gradient(rgba(255,255,255,0.22) 1.3px, transparent 1.6px)", backgroundSize: "12px 12px" }} />
+      <span className="absolute left-1/2 -translate-x-1/2 rounded-full" style={{ bottom: -6, width: height * 0.6, height: 12, background: "rgba(0,0,0,0.3)", filter: "blur(6px)" }} />
       <img loading="lazy" decoding="async" src={src} alt="" draggable={false} className="relative select-none h-full w-auto max-w-none"
         style={{ transform: `${flip ? "scaleX(-1) " : ""}translateY(${shown ? 0 : 24}px)`, opacity: shown ? 1 : 0, transition: "transform 0.9s cubic-bezier(0.2,0.7,0.2,1), opacity 0.9s ease", filter: "drop-shadow(0 14px 18px rgba(10,13,61,0.18))" }} />
     </div>
@@ -92,9 +92,10 @@ export function JoelShowcase({ src, height = 300 }: { src: string; height?: numb
     <div ref={ref} aria-hidden="true" className="relative select-none" style={{ marginTop: height - 150 }}>
       {/* Pestaña de carpeta sobre la tarjeta (mismo trazo del llamado final) */}
       <svg className="absolute left-0 bottom-full block" width="180" height="30" viewBox="0 0 280 46" preserveAspectRatio="none">
-        <path d="M0 46 V18 Q0 0 18 0 H196 Q209 0 217 10 L242 38 Q249 46 262 46 Z" fill="#272B7C" />
+        <path d="M0 46 V18 Q0 0 18 0 H196 Q209 0 217 10 L242 38 Q249 46 262 46 Z" fill="#1800AD" />
       </svg>
-      <div className="relative h-[190px] rounded-[0_28px_28px_28px]" style={{ background: "#272B7C" }}>
+      {/* Tarjeta índigo: va en la sección clara de beneficios */}
+      <div className="relative h-[190px] rounded-[0_28px_28px_28px]" style={{ background: "#1800AD" }}>
         <div className="absolute inset-0 overflow-hidden rounded-[0_28px_28px_28px]">
           <span className="absolute" style={{ right: -40, top: -40, width: 110, height: 110, transform: "rotate(45deg)", borderRadius: 19, background: "rgba(255,222,89,0.22)" }} />
           <span className="absolute" style={{ left: 22, bottom: 22, width: 110, height: 60, backgroundImage: "radial-gradient(rgba(255,255,255,0.22) 1.3px, transparent 1.6px)", backgroundSize: "14px 14px" }} />

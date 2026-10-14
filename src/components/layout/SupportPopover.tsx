@@ -17,7 +17,7 @@ export function SupportPopover({ anchor, onClose, onChat, onHoverIn, onHoverOut 
   return (
     <div data-support-popover onMouseEnter={onHoverIn} onMouseLeave={onHoverOut} className="fixed z-[60] w-[340px] rounded-3xl overflow-hidden"
       style={{ top: anchor.bottom + 12, left: Math.max(16, Math.min(anchor.left - 8, window.innerWidth - 340 - 16)), background: "#fff", boxShadow: "0 30px 60px -20px rgba(10,13,61,0.35), 0 4px 14px rgba(10,13,61,0.08)", animation: "fadeInUp 0.2s ease both" }}>
-      <div className="relative px-6 pt-5 pb-5 overflow-hidden" style={{ background: "#272B7C" }}>
+      <div className="relative px-6 pt-5 pb-5 overflow-hidden" style={{ background: "#1800AD" }}>
         <span className="absolute pointer-events-none" style={{ top: -30, right: -30, width: 110, height: 110, background: "rgba(255,222,89,0.18)", transform: "rotate(45deg)", borderRadius: 18 }} />
         <p className="relative flex items-center gap-2 text-base font-bold" style={{ color: "#fff", fontFamily: "Poppins, sans-serif" }}>
           <Bi n="headset" size={17} color="#FFDE59" /> Soporte Transarchivos
@@ -29,10 +29,10 @@ export function SupportPopover({ anchor, onClose, onChat, onHoverIn, onHoverOut 
           const inner = (
             <>
               <span className="flex items-center justify-center rounded-xl shrink-0" style={{ width: 40, height: 40, background: "#F2F3FA" }}>
-                <Bi n={it.ic} size={17} color="#272B7C" />
+                <Bi n={it.ic} size={17} color="#1800AD" />
               </span>
               <span className="min-w-0">
-                <span className="block text-sm font-bold" style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif" }}>{it.t}</span>
+                <span className="block text-sm font-bold" style={{ color: "#1800AD", fontFamily: "Montserrat, sans-serif" }}>{it.t}</span>
                 <span className="block text-xs truncate" style={{ color: "#8A8A8A" }}>{it.d}</span>
               </span>
             </>
@@ -44,8 +44,8 @@ export function SupportPopover({ anchor, onClose, onChat, onHoverIn, onHoverOut 
         })}
       </div>
       <a href="/#faq" onClick={onClose} className="flex items-center justify-between px-6 py-4 text-sm font-bold transition-colors hover:bg-[#F7F8FF]"
-        style={{ borderTop: "1px solid #ECEEF6", color: "#272B7C", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
-        Ver preguntas frecuentes <Bi n="question-circle" size={16} color="#272B7C" />
+        style={{ borderTop: "1px solid #ECEEF6", color: "#1800AD", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
+        Ver preguntas frecuentes <Bi n="question-circle" size={16} color="#1800AD" />
       </a>
     </div>
   );

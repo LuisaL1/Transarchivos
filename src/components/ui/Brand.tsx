@@ -16,7 +16,7 @@ export function ChatAvatarFace({ size, ring, round = false }: { size: number; ri
       position: "relative", flexShrink: 0,
       background: round ? "#FFDE59" : "#EEF0FB",
       boxShadow: [
-        ring === "light" ? "0 0 0 2px rgba(255,255,255,0.85)" : ring === "navy" ? "0 0 0 2px rgba(39,43,124,0.15)" : "",
+        ring === "light" ? "0 0 0 2px rgba(255,255,255,0.85)" : ring === "navy" ? "0 0 0 2px rgba(24,0,173,0.15)" : "",
         "0 4px 10px -3px rgba(10,13,61,0.35)",
       ].filter(Boolean).join(", "),
     }}>
@@ -33,7 +33,7 @@ export function ChatAvatarFace({ size, ring, round = false }: { size: number; ri
 // también se ve alrededor de la carpeta azul de abajo. En pantallas
 // pequeñas o con "reducir movimiento" queda solo el fondo navy.
 
-export function Logo({ size = "md" }: { size?: "xs" | "sm" | "md" | "lg" }) {
+export function Logo({ size = "md", light = false }: { size?: "xs" | "sm" | "md" | "lg"; light?: boolean }) {
   // El logo nuevo trae más detalle tipográfico apilado que el wordmark anterior,
   // así que necesita algo más de alto para seguir siendo legible.
   // "xs" es para contextos muy compactos (la insignia del navbar tipo pill).
@@ -45,7 +45,7 @@ export function Logo({ size = "md" }: { size?: "xs" | "sm" | "md" | "lg" }) {
       alt="Transarchivos Ltda."
       draggable={false}
       className="select-none"
-      style={{ height: h, width: "auto", objectFit: "contain" }}
+      style={{ height: h, width: "auto", objectFit: "contain", ...(light ? { filter: "brightness(0) invert(1)" } : {}) }}
     />
   );
 }
@@ -70,7 +70,7 @@ export function HeaderLogo({ scrolled, size = 64 }: { scrolled: boolean; size?: 
 export function JoelSilhouette({ style }: { style: React.CSSProperties }) {
   return (
     <div className="absolute hidden lg:block" style={{
-      aspectRatio: "1012 / 1555", background: "#272B7C", opacity: 0.07,
+      aspectRatio: "1012 / 1555", background: "#FFFFFF", opacity: 0.06,
       maskImage: `url(${avatarImg})`, WebkitMaskImage: `url(${avatarImg})`,
       maskSize: "contain", WebkitMaskSize: "contain", maskRepeat: "no-repeat", WebkitMaskRepeat: "no-repeat",
       maskPosition: "bottom", WebkitMaskPosition: "bottom", ...style,

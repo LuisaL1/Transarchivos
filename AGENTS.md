@@ -78,19 +78,29 @@ RecursosTransarchivos/    Documentos fuente del cliente (contexto, no se publica
 
 ## Diseño
 
-- Paleta: azul marino `#272B7C`, índigo `#1800AD`, amarillo `#FFDE59`,
-  dorado `#C8960A`, crema `#FBFBF8`, lavanda `#F1F3FB`. El menú de navegación
-  usa solo el azul marino. La lista blanca de colores está en
+- Paleta: índigo vivo `#1800AD` (único azul del sitio: fondos, textos sobre
+  blanco, botones, menú y chat; pedido de Joel, oct. 2026), amarillo `#FFDE59`,
+  dorado `#C8960A`, blanco y grises claros. El azul oscuro `#272B7C` del manual
+  queda solo en el logo y en los correos. La lista blanca de colores está en
   `tests/unit/content.test.ts`.
+- Fondos (oct. 2026): las secciones **alternan** dos tonos mediante
+  `<SectionDecor variant="dark" | "light">`: índigo `#1800AD` (títulos y textos
+  en blanco, rótulos en amarillo) y crema `#FBFBF8` (títulos en índigo, rótulos
+  en dorado, textos en gris). Las tarjetas siempre son blancas con texto índigo;
+  los botones de acción, amarillos. El hero, el mapa, el modelo, el blog, las
+  preguntas frecuentes y el pie van en índigo; la franja de clientes es blanca.
+  Las secciones se separan con la pestaña de carpeta horizontal (`FolderLip`,
+  casi a todo el ancho, bajada inclinada a la derecha); `FolderDivider` recibe
+  el color de la sección de abajo.
 - Tipografías: Poppins (títulos), Montserrat (rótulos/botones), Inter (texto).
 - Íconos: Bootstrap Icons (`<Bi n="..." />`, `<BiTile />`, `<MenuIcon />`).
 - Estilo corporativo: sin caricaturas (solo Joel), sin degradados (en su lugar,
   el detalle de esquina del chat y el menú: cuadrado amarillo translúcido girado
   45° con puntas redondeadas, radio ≈ 17 % del lado), tarjetas blancas con borde fino, motivo gráfico de carpeta. Única
   excepción: la sombra negra superior del hero de inicio.
-- Hero de inicio: pantalla dividida (panel azul con el título animado
-  "Sus archivos, bajo [palabra]" y videos a la derecha), pestaña de carpeta en
-  la división y Joel junto al selector "¿Qué necesita hoy?".
+- Hero de inicio: video a pantalla completa de fondo (velo azul marino), con el
+  contenido centrado: título animado "Sus archivos, bajo [palabra]", frase y el
+  selector "¿Qué necesita hoy?" con Joel a su lado.
 
 ## Joel (asesor virtual)
 

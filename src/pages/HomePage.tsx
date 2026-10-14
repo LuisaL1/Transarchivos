@@ -22,7 +22,7 @@ import { ServiceCard } from "@/components/sections/ServiceCard";
 import { SolucionesSection } from "@/components/sections/SolucionesSection";
 import { Logo } from "@/components/ui/Brand";
 import { Bi, BiTile } from "@/components/ui/Icons";
-import { Divider, FolderDivider, FolderOutline, SectionDecor } from "@/components/ui/SectionDecor";
+import { FolderDivider, SectionDecor } from "@/components/ui/SectionDecor";
 import { services } from "@/data/services";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { WHATSAPP_LABEL, whatsappUrl } from "@/data/contact";
@@ -86,70 +86,30 @@ export function HomePage() {
       <SiteHeader onChat={() => setChatOpen(true)} />
 
       {/* ── HERO ────────────────────────────────────────────────────────────
-          Pantalla dividida (desde md): a la izquierda un panel azul marino
-          con el título animado y la frase; a la derecha los videos de
-          archivo. En celular, el video va de fondo con el texto encima. */}
-      <section className="relative overflow-hidden" style={{ background: "#272B7C" }}>
+          Video a pantalla completa de fondo (con velo azul marino para la
+          lectura) y el contenido centrado: título animado, frase y el
+          selector "¿Qué necesita hoy?" con Joel a su lado. */}
+      <section className="relative overflow-hidden" style={{ background: "#1800AD" }}>
         <HeroVideoBackground />
-        {/* Elementos gráficos del panel azul: siluetas de carpeta en contorno
-            y un parche de puntos (mismo lenguaje de las demás secciones). */}
-        <div aria-hidden="true" className="hidden md:block absolute inset-y-0 left-0 w-1/2 overflow-hidden pointer-events-none" style={{ color: "rgba(255,255,255,0.08)" }}>
-          <FolderOutline style={{ width: 460, bottom: -90, left: -110, transform: "rotate(-8deg)" }} />
-          <div className="absolute" style={{ width: 160, height: 110, top: "22%", left: 32, backgroundImage: "radial-gradient(rgba(255,255,255,0.22) 1.4px, transparent 1.6px)", backgroundSize: "18px 18px" }} />
-        </div>
-        {/* Sombra negra arriba: suaviza la unión del panel azul con el video
-            detrás del navbar. */}
+        {/* Sombra negra arriba: da contraste al navbar sobre el video. */}
         <div aria-hidden="true" className="absolute inset-x-0 top-0 h-36 pointer-events-none" style={{ zIndex: 2, background: "linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.25) 45%, transparent 100%)" }} />
-        {/* Carpeta en contorno sobre la división, recortada a la forma azul
-            (panel + pestaña): solo se ve sobre el azul, nunca sobre el video. */}
-        <svg aria-hidden="true" className="hidden md:block absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 3 }}>
-          <defs>
-            <mask id="hero-blue-area" maskUnits="userSpaceOnUse" x="0" y="0" width="100%" height="100%">
-              <rect x="0" y="0" width="50%" height="100%" fill="#fff" />
-              <g transform="translate(-4 0)">
-                <svg x="50%" y="0" width="54" height="300" viewBox="-4 0 54 300" overflow="visible">
-                  <path d="M-4 0 L46 0 L46 192 Q46 206 37 215 L14 240 Q2 253 0 272 L0 300 L-4 300 Z" fill="#fff" />
-                </svg>
-              </g>
-            </mask>
-          </defs>
-          <g mask="url(#hero-blue-area)">
-            <g transform="translate(-160 0)">
-              <svg x="50%" y="16%" width="220" height="154" viewBox="0 0 400 280" overflow="visible">
-                <g transform="rotate(10 200 140)" fill="none" stroke="rgba(255,222,89,0.4)" strokeWidth="2">
-                  <path d="M8 60 V26 Q8 8 26 8 H150 Q163 8 171 18 L190 44 Q197 52 210 52 H374 Q392 52 392 70 V254 Q392 272 374 272 H26 Q8 272 8 254 Z" />
-                  <path d="M8 84 H392" strokeDasharray="6 8" />
-                </g>
-              </svg>
-            </g>
-          </g>
-        </svg>
 
-        {/* Pestaña de carpeta en la unión del panel azul con el video: el panel
-            "se abre" como una carpeta hacia la imagen. */}
-        {/* Trazo continuo: entra y sale del borde con curvas suaves (sin
-            escalones), esquina exterior redondeada y bajada inclinada. */}
-        <svg aria-hidden="true" className="hidden md:block absolute pointer-events-none" viewBox="-4 0 54 300"
-          style={{ left: "calc(50% - 4px)", top: 0, width: 54, height: 300, zIndex: 1 }}>
-          <path d="M-4 0 L46 0 L46 192 Q46 206 37 215 L14 240 Q2 253 0 272 L0 300 L-4 300 Z" fill="#272B7C" />
-        </svg>
-
-        <div className="relative md:w-1/2 min-h-[64svh] md:min-h-[86vh] flex items-center">
-          <div className="w-full px-6 md:pl-12 lg:pl-20 xl:pl-28 md:pr-10 pt-28 pb-12 md:pt-40 md:pb-14 text-center md:text-left">
-            <h1 className="text-4xl md:text-[34px] lg:text-[44px] xl:text-5xl 2xl:text-[56px] font-bold tracking-tight mb-5" style={{ fontFamily: "Poppins, sans-serif", color: "#fff", lineHeight: 1.15 }}>
+        <div className="relative min-h-[70svh] md:min-h-[88vh] flex items-center justify-center" style={{ zIndex: 3 }}>
+          <div className="w-full max-w-3xl mx-auto px-6 pt-28 pb-14 md:pt-36 md:pb-16 text-center">
+            <h1 className="text-4xl md:text-5xl lg:text-[56px] xl:text-[62px] font-bold tracking-tight mb-5" style={{ fontFamily: "Poppins, sans-serif", color: "#fff", lineHeight: 1.12, textShadow: "0 2px 22px rgba(0,0,0,0.35)" }}>
               Sus archivos,<br />
               <span className="whitespace-nowrap">bajo <HeroRotatingWord />.</span>
             </h1>
-            <p className="text-base lg:text-lg max-w-md mx-auto md:mx-0" style={{ color: "rgba(255,255,255,0.82)", lineHeight: 1.6 }}>
+            <p className="text-base lg:text-lg max-w-xl mx-auto" style={{ color: "rgba(255,255,255,0.9)", lineHeight: 1.6, textShadow: "0 1px 12px rgba(0,0,0,0.35)" }}>
               Clasificamos, digitalizamos, custodiamos y destruimos legalmente sus documentos
             </p>
             {/* Joel (imagen de la marca en redes) junto a la tarjeta, volteado
                 para que señale el selector. Clic: abre el chat. */}
-            <div className="relative md:max-w-[440px] mx-auto md:mx-0">
+            <div className="relative max-w-[440px] mx-auto">
               <HeroQuickStart />
               {/* Solo el cuerpo (fuera de la tarjeta) recibe el clic: la mano
                   queda encima de las pestañas sin bloquearlas. */}
-              <div className="group hidden xl:flex absolute bottom-[30px] left-full -ml-[68px] items-end w-[176px] pointer-events-none" style={{ zIndex: 3 }}>
+              <div className="group hidden lg:flex absolute bottom-[30px] left-full -ml-[68px] items-end w-[176px] pointer-events-none" style={{ zIndex: 3 }}>
                 <img src={avatarImg} alt="" draggable={false} className="select-none h-[270px] w-[176px] max-w-none transition-transform duration-300 group-hover:-translate-y-1"
                   style={{ transform: "scaleX(-1)", filter: "drop-shadow(0 18px 24px rgba(0,0,0,0.35))" }} />
                 <button type="button" onClick={() => setChatOpen(true)} aria-label="Hablar con Joel"
@@ -166,7 +126,7 @@ export function HomePage() {
           <div className="max-w-6xl mx-auto px-5 md:px-8 flex flex-wrap justify-center md:justify-between items-center gap-x-4 gap-y-2 md:gap-4">
             {["Ley 594 de 2000", "Norma AGN", "Certificado de destrucción", "Custodia con vigilancia 24 h"].map(t => (
               <span key={t} className="flex items-center gap-1.5 text-xs font-medium" style={{ color: "#6B7280", fontFamily: "Montserrat, sans-serif" }}>
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6.5" stroke="#272B7C" strokeOpacity=".3"/><path d="M4 7l2 2 4-4" stroke="#272B7C" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6.5" stroke="#1800AD" strokeOpacity=".3"/><path d="M4 7l2 2 4-4" stroke="#1800AD" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 {t}
               </span>
             ))}
@@ -185,19 +145,19 @@ export function HomePage() {
           de las unidades de negocio, como punto de partida para quien no
           sabe qué servicio necesita — el "producto nuevo" de la casa. */}
       <section id="diagnostico" className="relative isolate overflow-hidden py-10 md:py-16" style={{ scrollMarginTop: 80 }}>
-        <SectionDecor variant="cream" />
+        <SectionDecor variant="light" />
         <div className="max-w-6xl mx-auto px-6 relative">
           <div className="relative overflow-hidden rounded-3xl grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]"
-            style={{ background: "#fff", border: "1.5px solid #E4E6F7", boxShadow: "0 30px 60px -34px rgba(39,43,124,0.3)" }}>
+            style={{ background: "#fff", border: "1.5px solid #E4E6F7", boxShadow: "0 30px 60px -34px rgba(0,0,0,0.5)" }}>
 
             {/* Izquierda: propuesta + proceso */}
             <div className="relative p-6 md:p-10">
               <span className="relative overflow-hidden inline-flex items-center text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full mb-4"
-                style={{ background: "#272B7C", color: "#fff", fontFamily: "Montserrat, sans-serif", boxShadow: "0 8px 16px -8px rgba(39,43,124,0.5)" }}>
+                style={{ background: "#1800AD", color: "#fff", fontFamily: "Montserrat, sans-serif", boxShadow: "0 8px 16px -8px rgba(24,0,173,0.5)" }}>
                 <span aria-hidden="true" className="absolute pointer-events-none" style={{ right: -12, top: -12, width: 24, height: 24, transform: "rotate(45deg)", borderRadius: 4, background: "rgba(255,222,89,0.3)" }} />
                 <span className="relative">Diagnóstico documental</span>
               </span>
-              <h3 className="text-2xl md:text-3xl font-bold mb-3" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif", lineHeight: 1.2 }}>
+              <h3 className="text-2xl md:text-3xl font-bold mb-3" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif", lineHeight: 1.2 }}>
                 La <span style={{ background: "linear-gradient(transparent 62%, #FFDE59 62%)" }}>radiografía completa</span> de su archivo, antes de mover un solo papel
               </h3>
               <p className="text-sm mb-8" style={{ color: "#6B6B6B", lineHeight: 1.65 }}>
@@ -216,11 +176,11 @@ export function HomePage() {
                 ].map((st, i) => (
                   <li key={st.t} className="relative flex items-start gap-4 pb-5 last:pb-0">
                     <span className="relative flex items-center justify-center rounded-full font-bold text-xs shrink-0"
-                      style={{ width: 32, height: 32, background: i === 0 ? "#272B7C" : "#fff", color: i === 0 ? "#fff" : "#272B7C", border: "2px solid #272B7C", fontFamily: "Poppins, sans-serif" }}>
+                      style={{ width: 32, height: 32, background: i === 0 ? "#1800AD" : "#fff", color: i === 0 ? "#fff" : "#1800AD", border: "2px solid #1800AD", fontFamily: "Poppins, sans-serif" }}>
                       {i + 1}
                     </span>
                     <div className="pt-1">
-                      <p className="text-sm font-bold" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif" }}>{st.t}</p>
+                      <p className="text-sm font-bold" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif" }}>{st.t}</p>
                       <p className="text-xs mt-0.5" style={{ color: "#8A8A8A" }}>{st.d}</p>
                     </div>
                   </li>
@@ -229,22 +189,22 @@ export function HomePage() {
               </div>
 
               <a href="#cotizador" className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold transition-all hover:scale-105 active:scale-95"
-                style={{ background: "#272B7C", color: "#fff", fontFamily: "Montserrat, sans-serif", textDecoration: "none", boxShadow: "0 14px 28px -10px rgba(39,43,124,0.45)" }}>
-                Solicitar diagnóstico <Bi n="arrow-right" size={15} color="#fff" />
+                style={{ background: "#FFDE59", color: "#1800AD", fontFamily: "Montserrat, sans-serif", textDecoration: "none", boxShadow: "0 14px 28px -12px rgba(255,222,89,0.55)" }}>
+                Solicitar diagnóstico <Bi n="arrow-right" size={15} color="#1800AD" />
               </a>
             </div>
 
             {/* Derecha: "informe" con lo que identifica */}
             <div className="relative p-6 md:p-10 flex items-center" style={{ background: "#F7F8FF" }}>
-              <Bi n="search" size={260} color="#272B7C"
+              <Bi n="search" size={260} color="#1800AD"
                 className="hidden md:block absolute pointer-events-none select-none"
                 style={{ top: -40, right: -40, opacity: 0.04, transform: "rotate(12deg)" }} />
-              <div className="relative w-full rounded-2xl overflow-hidden" style={{ background: "#fff", border: "1px solid #E4E6F7", boxShadow: "0 24px 48px -28px rgba(39,43,124,0.35)" }}>
+              <div className="relative w-full rounded-2xl overflow-hidden" style={{ background: "#fff", border: "1px solid #E4E6F7", boxShadow: "0 24px 48px -28px rgba(24,0,173,0.35)" }}>
                 <div className="flex items-center justify-between gap-3 px-5 py-4" style={{ borderBottom: "1px solid #ECEEF6" }}>
                   <span className="flex items-center gap-3">
                     <BiTile n="file-earmark-text" size={36} accent="#1800AD" />
                     <span>
-                      <span className="block text-sm font-bold" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif" }}>Informe de diagnóstico</span>
+                      <span className="block text-sm font-bold" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif" }}>Informe de diagnóstico</span>
                       <span className="block text-[11px]" style={{ color: "#9B9B9B" }}>Lo que identificamos en su archivo</span>
                     </span>
                   </span>
@@ -261,9 +221,9 @@ export function HomePage() {
                     { i: "exclamation-triangle", t: "Riesgos y oportunidades de mejora", d: "Vacíos normativos y puntos por optimizar" },
                   ].map((f, k) => (
                     <li key={f.t} className="flex items-center gap-3 py-2.5" style={{ borderTop: k ? "1px solid #F1F2F8" : "none" }}>
-                      <BiTile n={f.i} size={32} accent="#272B7C" />
+                      <BiTile n={f.i} size={32} accent="#1800AD" />
                       <div className="min-w-0 flex-1">
-                        <p className="text-[13px] font-semibold leading-snug" style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif" }}>{f.t}</p>
+                        <p className="text-[13px] font-semibold leading-snug" style={{ color: "#1800AD", fontFamily: "Montserrat, sans-serif" }}>{f.t}</p>
                         <p className="text-[11px] leading-snug" style={{ color: "#8A8A8A" }}>{f.d}</p>
                       </div>
                       <Bi n="check-circle-fill" size={15} color="#16a34a" />
@@ -276,16 +236,16 @@ export function HomePage() {
         </div>
       </section>
 
-      <FolderDivider color="#F1F3FB" />
+      <FolderDivider color="#1800AD" />
 
       {/* ── SERVICES ────────────────────────────────────────────────────── */}
       <section id="servicios" className="relative isolate overflow-hidden py-20" style={{ scrollMarginTop: 64 }}>
-        <SectionDecor variant="lavender" flip />
+        <SectionDecor variant="dark" flip />
         <div className="max-w-6xl mx-auto px-6">
-          <p className="text-xs font-bold uppercase tracking-widest text-center mb-3" style={{ color: "#9B9B9B", fontFamily: "Montserrat, sans-serif" }}>
+          <p className="text-xs font-bold uppercase tracking-widest text-center mb-3" style={{ color: "#FFDE59", fontFamily: "Montserrat, sans-serif" }}>
             Lo que hacemos
           </p>
-          <h2 className="text-3xl font-bold text-center mb-14" style={{ fontFamily: "Poppins, sans-serif", color: "#272B7C" }}>
+          <h2 className="text-3xl font-bold text-center mb-14" style={{ fontFamily: "Poppins, sans-serif", color: "#fff" }}>
             Soluciones documentales a la medida
           </h2>
 
@@ -296,7 +256,7 @@ export function HomePage() {
           {/* CTA */}
           <div className="mt-12 flex justify-center">
             <a href="#faq" className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all hover:scale-105"
-              style={{ background: "#272B7C", color: "#ffffff", fontFamily: "Montserrat, sans-serif", textDecoration: "none", boxShadow: "0 14px 28px -10px rgba(39,43,124,0.45)" }}>
+              style={{ background: "#FFDE59", color: "#1800AD", fontFamily: "Montserrat, sans-serif", textDecoration: "none", boxShadow: "0 14px 28px -12px rgba(255,222,89,0.55)" }}>
               Agendar diagnóstico →
             </a>
           </div>
@@ -304,16 +264,16 @@ export function HomePage() {
       </section>
 
       <JoelBridge src={JOEL.cajas} side="right" height={220} sink={30} offset={8} />
-      <FolderDivider color="#F1F3FB" />
+      <FolderDivider color="#FBFBF8" />
 
       <SolucionesSection />
 
-      <FolderDivider color="#FBFBF8" />
+      <FolderDivider color="#1800AD" />
 
       {/* ── MODELO: DIAGNÓSTICO → SOLUCIÓN → PROTECCIÓN → EXPANSIÓN ──────────
           Contenido del documento "Modelo de Negocio - Transarchivos". */}
       <section id="modelo" className="relative isolate overflow-hidden py-20" style={{ scrollMarginTop: 64 }}>
-        <SectionDecor variant="cream" folder={false} />
+        <SectionDecor variant="dark" folder={false} />
         <div className="absolute inset-0 pointer-events-none select-none overflow-hidden" aria-hidden="true" style={{ zIndex: 0 }}>
           {/* Un resplandor navy sutil (se quitó el dorado — se veía como una
               mancha amarilla pegada a la esquina). */}
@@ -322,11 +282,11 @@ export function HomePage() {
 
         <div className="relative max-w-6xl mx-auto px-6" style={{ zIndex: 1 }}>
           <div className="text-center mb-14">
-            <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#9B9B9B", fontFamily: "Montserrat, sans-serif" }}>Cómo trabajamos</p>
-            <h2 className="text-3xl md:text-4xl font-bold max-w-3xl mx-auto" style={{ fontFamily: "Poppins, sans-serif", color: "#272B7C", lineHeight: 1.2 }}>
-              Su socio integral para <span style={{ background: "linear-gradient(transparent 62%, #FFDE59 62%)" }}>todo el ciclo de vida documental</span>
+            <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#FFDE59", fontFamily: "Montserrat, sans-serif" }}>Cómo trabajamos</p>
+            <h2 className="text-3xl md:text-4xl font-bold max-w-3xl mx-auto" style={{ fontFamily: "Poppins, sans-serif", color: "#fff", lineHeight: 1.2 }}>
+              Su socio integral para <span style={{ color: "#FFDE59" }}>todo el ciclo de vida documental</span>
             </h2>
-            <p className="text-sm mt-4 max-w-2xl mx-auto" style={{ color: "#6B6B6B" }}>
+            <p className="text-sm mt-4 max-w-2xl mx-auto" style={{ color: "rgba(255,255,255,0.78)" }}>
               Le ayudamos a diagnosticar, organizar, transformar, proteger y disponer correctamente de su información documental. Cada servicio cumple una función dentro de un mismo recorrido.
             </p>
           </div>
@@ -335,11 +295,11 @@ export function HomePage() {
             {[
               { n: 1, t: "Diagnóstico", k: "Entrada", ic: "clipboard2-pulse-fill", c: "#C8960A", d: "Detectamos su necesidad y abrimos la relación entendiendo qué pasa hoy con su archivo.", g: "#C8960A",
                 items: [{ i: "search", l: "Diagnóstico documental", href: "#cotizador" }, { i: "list-columns-reverse", l: "Levantamiento de inventario", to: "/servicios/levantamiento-de-inventario" }] },
-              { n: 2, t: "Solución", k: "Transformación", ic: "gear-wide-connected", c: "#272B7C", d: "Resolvemos el problema documental con un proyecto a la medida.", g: "#272B7C",
+              { n: 2, t: "Solución", k: "Transformación", ic: "gear-wide-connected", c: "#1800AD", d: "Resolvemos el problema documental con un proyecto a la medida.", g: "#1800AD",
                 items: [{ i: "upc-scan", l: "Digitalización", to: "/servicios/digitalizacion-de-documentos" }, { i: "folder2-open", l: "Programa de gestión documental", to: "/servicios/programa-de-gestion-documental" }] },
               { n: 3, t: "Protección", k: "Recurrencia", ic: "shield-fill-check", c: "#1800AD", d: "Protegemos su información y la mantenemos disponible cuando la necesite.", g: "#1800AD",
                 items: [{ i: "archive", l: "Custodia de archivos", to: "/servicios/custodia-de-archivos" }, { i: "hdd-stack", l: "Custodia de medios magnéticos", to: "/servicios/custodia-de-medios-magneticos" }] },
-              { n: 4, t: "Expansión", k: "Nuevos proyectos", ic: "rocket-takeoff-fill", c: "#272B7C", d: "Cerramos el ciclo de vida documental y ampliamos el valor de la relación.", g: "#272B7C",
+              { n: 4, t: "Expansión", k: "Nuevos proyectos", ic: "rocket-takeoff-fill", c: "#1800AD", d: "Cerramos el ciclo de vida documental y ampliamos el valor de la relación.", g: "#1800AD",
                 items: [{ i: "file-earmark-x", l: "Destrucción legal", to: "/servicios/destruccion-de-documentos" }, { i: "lightning-charge", l: "Servicio inmediato", to: "/servicios/servicio-inmediato" }, { i: "person-badge", l: "Servicio in house", to: "/servicios/servicio-inhouse" }] },
             ].map((st, idx, arr) => (
               <div key={st.n} role="link" tabIndex={0}
@@ -371,14 +331,14 @@ export function HomePage() {
                       const inner = (
                         <>
                           <span className="flex items-center justify-center rounded-xl shrink-0" style={{ width: 38, height: 38, background: "#F7F8FF", border: "1px solid #E4E6F7" }}>
-                            <Bi n={it.i} size={17} color="#272B7C" />
+                            <Bi n={it.i} size={17} color="#1800AD" />
                           </span>
                           <span className="flex-1">{it.l}</span>
                           <Bi n="arrow-right" size={14} color="#1800AD" className="transition-transform group-hover/item:translate-x-1" />
                         </>
                       );
                       const cls = "group/item flex items-center gap-3 text-xs font-semibold rounded-2xl px-2.5 py-2 transition-colors hover:bg-[#F7F8FF]";
-                      const sty = { color: "#272B7C", fontFamily: "Montserrat, sans-serif", textDecoration: "none" } as const;
+                      const sty = { color: "#1800AD", fontFamily: "Montserrat, sans-serif", textDecoration: "none" } as const;
                       return (
                         <li key={it.l}>
                           {"to" in it && it.to
@@ -400,14 +360,14 @@ export function HomePage() {
       </section>
 
       <JoelBridge src={JOEL.telefono} side="right" height={220} sink={175} offset={30} />
-      <FolderDivider color="#F1F3FB" />
+      <FolderDivider color="#FBFBF8" />
 
       <div className="relative isolate overflow-hidden">
-        <SectionDecor variant="lavender" />
+        <SectionDecor variant="light" />
         <QuoteSimulator />
       </div>
 
-      <FolderDivider color="#FBFBF8" />
+      <FolderDivider color="#1800AD" />
 
       <BlogSection />
 
@@ -420,11 +380,11 @@ export function HomePage() {
           Las redes sociales, que antes vivían en la sección de Contacto
           (eliminada), se muestran acá debajo del canal de YouTube. */}
       <section className="relative isolate overflow-hidden">
-      <SectionDecor variant="cream" />
+      <SectionDecor variant="light" />
       <div className="max-w-6xl mx-auto px-6 py-16">
         <div className="text-center mb-8">
-          <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: "#9B9B9B", fontFamily: "Montserrat, sans-serif" }}>Conéctese con nosotros</p>
-          <h2 className="text-2xl md:text-3xl font-bold" style={{ fontFamily: "Poppins, sans-serif", color: "#272B7C" }}>
+          <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: "#C8960A", fontFamily: "Montserrat, sans-serif" }}>Conéctese con nosotros</p>
+          <h2 className="text-2xl md:text-3xl font-bold" style={{ fontFamily: "Poppins, sans-serif", color: "#1800AD" }}>
             Contenido y redes sociales de Transarchivos
           </h2>
         </div>
@@ -435,7 +395,7 @@ export function HomePage() {
             { id: "V39D_X_ip34", title: "Ley 594 de 2000 en Colombia: qué es, cómo se aplica y por qué cumplirla · #JoelTeLoCuenta" },
             { id: "7eK4K0Smbt0", title: "¿Qué es un diagnóstico documental y para qué sirve? · Servicio Transarchivos" },
           ].map(v => (
-            <div key={v.id} className="rounded-2xl overflow-hidden" style={{ border: "1px solid #E9E9E7", boxShadow: "0 20px 40px -24px rgba(39,43,124,0.25)" }}>
+            <div key={v.id} className="rounded-2xl overflow-hidden bg-white" style={{ border: "1px solid #E9E9E7", boxShadow: "0 20px 40px -24px rgba(24,0,173,0.25)" }}>
               <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
                 <iframe
                   className="absolute inset-0 w-full h-full"
@@ -446,7 +406,7 @@ export function HomePage() {
                   allowFullScreen
                 />
               </div>
-              <p className="p-4 text-sm font-semibold leading-snug" style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif" }}>{v.title}</p>
+              <p className="p-4 text-sm font-semibold leading-snug" style={{ color: "#1800AD", fontFamily: "Montserrat, sans-serif" }}>{v.title}</p>
             </div>
           ))}
         </div>
@@ -454,8 +414,8 @@ export function HomePage() {
         <div className="text-center mb-10">
           <a href="https://www.youtube.com/@Transarchivosltda" target="_blank" rel="noreferrer"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-bold transition-all hover:scale-105"
-            style={{ background: "#272B7C", color: "#fff", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
-            <Bi n="youtube" size={16} color="#fff" />
+            style={{ background: "#1800AD", color: "#fff", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
+            <Bi n="youtube" size={16} color="#FFDE59" />
             Ver más en nuestro canal
           </a>
         </div>
@@ -471,8 +431,8 @@ export function HomePage() {
               { n: "YouTube", ic: "youtube", u: "https://youtube.com/@Transarchivosltda" },
             ].map(({ n: r, ic, u }) => (
               <a key={r} href={u} target="_blank" rel="noreferrer" aria-label={r} title={r} className="flex items-center justify-center transition-all hover:-translate-y-0.5"
-                style={{ width: 40, height: 40, borderRadius: 12, background: "#272B7C14", textDecoration: "none" }}>
-                <Bi n={ic} size={19} color="#272B7C" />
+                style={{ width: 40, height: 40, borderRadius: 12, background: "#1800AD14", textDecoration: "none" }}>
+                <Bi n={ic} size={19} color="#1800AD" />
               </a>
             ))}
           </div>
@@ -480,7 +440,7 @@ export function HomePage() {
       </div>
       </section>
 
-      <FolderDivider color="#F1F3FB" />
+      <FolderDivider color="#1800AD" />
 
       <FaqSection onChat={() => setChatOpen(true)} />
 
@@ -495,7 +455,7 @@ export function HomePage() {
           de marca, pero sin el degradado fuerte. */}
       <section className="relative overflow-hidden" style={{ background: "#F7F8FF" }}>
         <div className="relative max-w-6xl mx-auto px-6 py-5">
-          <div className="grid grid-cols-2 md:grid-cols-5 divide-y md:divide-y-0 md:divide-x" style={{ borderColor: "#E4E6F7" }}>
+          <div className="grid grid-cols-2 md:grid-cols-5 divide-y md:divide-y-0 md:divide-x divide-[#E4E6F7]">
             {[
               { ic: "shield-check", t: "Cumplimiento normativo", d: "Operamos bajo la Ley 594 de 2000 y la normativa del AGN." },
               { ic: "camera-video-fill", t: "Custodia con vigilancia 24/7", d: "Centro documental con CCTV, control de acceso y monitoreo ambiental permanente." },
@@ -503,12 +463,12 @@ export function HomePage() {
               { ic: "lightning-charge-fill", t: "Ágil, en su sede e inmediato", d: "Del diagnóstico al despacho exprés, adaptados al ritmo de su operación." },
               { ic: "award-fill", t: "Trayectoria desde 1983", d: "Pioneros de la gestión documental en Colombia, con más de 40 años de experiencia." },
             ].map(f => (
-              <div key={f.t} className="flex flex-col items-center text-center gap-1.5 px-4 py-2.5 md:py-0" style={{ borderColor: "#E4E6F7" }}>
+              <div key={f.t} className="flex flex-col items-center text-center gap-1.5 px-4 py-2.5 md:py-0">
                 <span className="flex items-center justify-center rounded-full shrink-0" style={{ width: 34, height: 34, border: "1.5px solid #C8960A" }}>
                   <Bi n={f.ic} size={14} color="#C8960A" />
                 </span>
                 <div>
-                  <p className="text-xs font-bold mb-0.5" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif" }}>{f.t}</p>
+                  <p className="text-xs font-bold mb-0.5" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif" }}>{f.t}</p>
                   <p className="text-[11px] leading-snug" style={{ color: "#6B6B6B" }}>{f.d}</p>
                 </div>
               </div>
@@ -517,7 +477,7 @@ export function HomePage() {
         </div>
       </section>
 
-      <Divider />
+      <div className="border-b" style={{ borderColor: "#E4E6F7" }} />
 
       {/* ── FOOTER ───────────────────────────────────────────────────────────
           Rediseñado: fondo propio (antes se fundía con el blanco de la
@@ -526,22 +486,22 @@ export function HomePage() {
           /nosotros), columna de contacto (con los datos reales que antes
           vivían en la sección de Contacto, eliminada), e íconos de redes
           en vez de texto plano en la barra inferior. */}
-      <footer style={{ background: "#F7F8FF" }}>
+      <footer style={{ background: "#1800AD" }}>
         <div className="max-w-6xl mx-auto px-6 py-14">
           <div className="grid md:grid-cols-4 gap-10 mb-10">
             <div>
-              <Logo size="sm" />
-              <p className="mt-4 text-sm leading-relaxed max-w-xs" style={{ color: "#6B6B6B" }}>
+              <Logo size="sm" light />
+              <p className="mt-4 text-sm leading-relaxed max-w-xs" style={{ color: "rgba(255,255,255,0.72)" }}>
                 Empresa colombiana de gestión documental. Clasificación, digitalización, custodia, conservación y destrucción legal de archivos bajo normativa AGN.
               </p>
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider mb-4" style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif" }}>Servicios</p>
+              <p className="text-xs font-bold uppercase tracking-wider mb-4" style={{ color: "#FFDE59", fontFamily: "Montserrat, sans-serif" }}>Servicios</p>
               <ul className="space-y-2.5">
                 {services.map(s => (
                   <li key={s.title}>
-                    <Link to={`/servicios/${s.slug}`} className="text-sm transition-colors" style={{ color: "#6B6B6B" }}
-                      onMouseEnter={e => e.currentTarget.style.color = "#1800AD"} onMouseLeave={e => e.currentTarget.style.color = "#6B6B6B"}>
+                    <Link to={`/servicios/${s.slug}`} className="text-sm transition-colors" style={{ color: "rgba(255,255,255,0.72)" }}
+                      onMouseEnter={e => e.currentTarget.style.color = "#FFDE59"} onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.72)"}>
                       {s.title}
                     </Link>
                   </li>
@@ -549,7 +509,7 @@ export function HomePage() {
               </ul>
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider mb-4" style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif" }}>Empresa</p>
+              <p className="text-xs font-bold uppercase tracking-wider mb-4" style={{ color: "#FFDE59", fontFamily: "Montserrat, sans-serif" }}>Empresa</p>
               <ul className="space-y-2.5">
                 {[
                   { label: "Quiénes somos", to: "/nosotros#quienes-somos" },
@@ -559,8 +519,8 @@ export function HomePage() {
                   { label: "Preguntas frecuentes", to: "/#faq" },
                 ].map(item => (
                   <li key={item.label}>
-                    <Link to={item.to} className="text-sm transition-colors" style={{ color: "#6B6B6B" }}
-                      onMouseEnter={e => e.currentTarget.style.color = "#1800AD"} onMouseLeave={e => e.currentTarget.style.color = "#6B6B6B"}>
+                    <Link to={item.to} className="text-sm transition-colors" style={{ color: "rgba(255,255,255,0.72)" }}
+                      onMouseEnter={e => e.currentTarget.style.color = "#FFDE59"} onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.72)"}>
                       {item.label}
                     </Link>
                   </li>
@@ -568,23 +528,23 @@ export function HomePage() {
               </ul>
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider mb-4" style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif" }}>Contacto</p>
+              <p className="text-xs font-bold uppercase tracking-wider mb-4" style={{ color: "#FFDE59", fontFamily: "Montserrat, sans-serif" }}>Contacto</p>
               <ul className="space-y-3">
-                <li className="flex items-start gap-2.5 text-sm" style={{ color: "#6B6B6B" }}>
-                  <Bi n="geo-alt-fill" size={14} color="#C8960A" style={{ marginTop: 3, flexShrink: 0 }} />
+                <li className="flex items-start gap-2.5 text-sm" style={{ color: "rgba(255,255,255,0.72)" }}>
+                  <Bi n="geo-alt-fill" size={14} color="#FFDE59" style={{ marginTop: 3, flexShrink: 0 }} />
                   Cl. 21 # 39A-40, Bogotá, Colombia
                 </li>
                 <li>
-                  <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" className="flex items-start gap-2.5 text-sm transition-colors" style={{ color: "#6B6B6B" }}
-                    onMouseEnter={e => e.currentTarget.style.color = "#1800AD"} onMouseLeave={e => e.currentTarget.style.color = "#6B6B6B"}>
-                    <Bi n="whatsapp" size={14} color="#C8960A" style={{ marginTop: 3, flexShrink: 0 }} />
+                  <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" className="flex items-start gap-2.5 text-sm transition-colors" style={{ color: "rgba(255,255,255,0.72)" }}
+                    onMouseEnter={e => e.currentTarget.style.color = "#FFDE59"} onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.72)"}>
+                    <Bi n="whatsapp" size={14} color="#FFDE59" style={{ marginTop: 3, flexShrink: 0 }} />
                     WhatsApp {WHATSAPP_LABEL}
                   </a>
                 </li>
                 <li>
-                  <a href="#contacto" className="flex items-start gap-2.5 text-sm transition-colors break-all" style={{ color: "#6B6B6B" }}
-                    onMouseEnter={e => e.currentTarget.style.color = "#1800AD"} onMouseLeave={e => e.currentTarget.style.color = "#6B6B6B"}>
-                    <Bi n="envelope-fill" size={14} color="#C8960A" style={{ marginTop: 3, flexShrink: 0 }} />
+                  <a href="#contacto" className="flex items-start gap-2.5 text-sm transition-colors break-all" style={{ color: "rgba(255,255,255,0.72)" }}
+                    onMouseEnter={e => e.currentTarget.style.color = "#FFDE59"} onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.72)"}>
+                    <Bi n="envelope-fill" size={14} color="#FFDE59" style={{ marginTop: 3, flexShrink: 0 }} />
                     info@transarchivos.com
                   </a>
                 </li>
@@ -592,10 +552,10 @@ export function HomePage() {
             </div>
           </div>
 
-          <div className="h-px" style={{ background: "#E4E6F7" }} />
+          <div className="h-px" style={{ background: "rgba(255,255,255,0.12)" }} />
 
           <div className="pt-6 flex flex-wrap justify-between items-center gap-4">
-            <p className="text-xs" style={{ color: "#6B6B6B" }}>© {new Date().getFullYear()} Transarchivos Ltda. · Bogotá, Colombia · <Link to="/politicas" style={{ color: "#272B7C", fontWeight: 600 }}>Políticas</Link> · <Link to="/privacidad" style={{ color: "#272B7C", fontWeight: 600 }}>Privacidad y cookies</Link></p>
+            <p className="text-xs" style={{ color: "rgba(255,255,255,0.72)" }}>© {new Date().getFullYear()} Transarchivos Ltda. · Bogotá, Colombia · <Link to="/politicas" style={{ color: "#fff", fontWeight: 600 }}>Políticas</Link> · <Link to="/privacidad" style={{ color: "#fff", fontWeight: 600 }}>Privacidad y cookies</Link></p>
             <div className="flex gap-2">
               {[
                 { n: "LinkedIn", ic: "linkedin", u: "https://linkedin.com/company/transarchivos-ltda01" },
@@ -605,8 +565,8 @@ export function HomePage() {
                 { n: "YouTube", ic: "youtube", u: "https://youtube.com/@Transarchivosltda" },
               ].map(({ n: r, ic, u }) => (
                 <a key={r} href={u} target="_blank" rel="noreferrer" aria-label={r} title={r} className="flex items-center justify-center transition-all hover:-translate-y-0.5"
-                  style={{ width: 34, height: 34, borderRadius: 10, background: "#272B7C14", textDecoration: "none" }}>
-                  <Bi n={ic} size={15} color="#272B7C" />
+                  style={{ width: 34, height: 34, borderRadius: 10, background: "rgba(255,255,255,0.1)", textDecoration: "none" }}>
+                  <Bi n={ic} size={15} color="#fff" />
                 </a>
               ))}
             </div>

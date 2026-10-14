@@ -10,7 +10,7 @@ import { SiteHeader } from "@/components/layout/SiteHeader";
 import { ServiceCard } from "@/components/sections/ServiceCard";
 import { JoelSilhouette } from "@/components/ui/Brand";
 import { Bi, BiTile } from "@/components/ui/Icons";
-import { SectionDecor } from "@/components/ui/SectionDecor";
+import { FolderDivider, SectionDecor, type DecorVariant } from "@/components/ui/SectionDecor";
 import { SERVICE_DETAILS } from "@/data/serviceDetails";
 import { services } from "@/data/services";
 import { SOLUTIONS } from "@/data/solutions";
@@ -36,7 +36,7 @@ export function ServiceDetailPage() {
   if (!service || !detail) {
     return (
       <div className="min-h-full flex flex-col items-center justify-center gap-4 px-6 text-center" style={{ fontFamily: "Inter, sans-serif" }}>
-        <p className="text-2xl font-bold" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif" }}>Servicio no encontrado</p>
+        <p className="text-2xl font-bold" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif" }}>Servicio no encontrado</p>
         <Link to="/#servicios" className="text-sm font-semibold" style={{ color: "#1800AD", textDecoration: "none" }}>← Volver a servicios</Link>
       </div>
     );
@@ -49,23 +49,28 @@ export function ServiceDetailPage() {
     .map(sl => services.find(s => s.slug === sl)!)
     .filter(Boolean);
 
-  const kicker = (t: string) => (
-    <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#C8960A", fontFamily: "Montserrat, sans-serif" }}>{t}</p>
+  // Las secciones alternan tono (clara / índigo) en el orden en que existen;
+  // el llamado final siempre va claro con la tarjeta índigo.
+  const seq = ["benef", detail.steps && "steps", "why", (detail.modes || detail.audience) && "modes", "norms"].filter(Boolean) as string[];
+  const tone = Object.fromEntries(seq.map((k, i) => [k, i % 2 ? "dark" : "light"])) as Record<string, DecorVariant>;
+  const dk = (k: string) => tone[k] === "dark";
+  const kicker = (t: string, dark = false) => (
+    <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: dark ? "#FFDE59" : "#C8960A", fontFamily: "Montserrat, sans-serif" }}>{t}</p>
   );
-  const h2 = (c: React.ReactNode) => (
-    <h2 className="text-2xl md:text-3xl font-bold" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif", lineHeight: 1.2 }}>{c}</h2>
+  const h2 = (c: React.ReactNode, dark = false) => (
+    <h2 className="text-2xl md:text-3xl font-bold" style={{ color: dark ? "#fff" : "#1800AD", fontFamily: "Poppins, sans-serif", lineHeight: 1.2 }}>{c}</h2>
   );
 
   return (
-    <div ref={pageRef} className="min-h-full" style={{ background: "#fff", fontFamily: "Inter, sans-serif", color: "#37352F" }}>
+    <div ref={pageRef} className="min-h-full" style={{ background: "#FBFBF8", fontFamily: "Inter, sans-serif", color: "#37352F" }}>
       {/* El mismo navbar del sitio, en su versión de barra blanca. */}
       <SiteHeader solid onChat={() => setChatOpen(true)} />
       <div aria-hidden="true" style={{ height: 60 }} />
 
       {/* Hero: foto del archivo bajo un velo navy, con la carpeta como base */}
-      <section className="relative isolate overflow-hidden" style={{ backgroundColor: "#272B7C" }}>
+      <section className="relative isolate overflow-hidden" style={{ backgroundColor: "#1800AD" }}>
         <div aria-hidden="true" className="absolute inset-0" style={{ zIndex: -1, backgroundImage: "url(/videos/hero-poster.jpg)", backgroundSize: "cover", backgroundPosition: "center" }} />
-        <div aria-hidden="true" className="absolute inset-0" style={{ zIndex: -1, background: "rgba(39,43,124,0.88)" }} />
+        <div aria-hidden="true" className="absolute inset-0" style={{ zIndex: -1, background: "rgba(24,0,173,0.85)" }} />
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] gap-10 items-center pt-12 pb-24">
             <div>
@@ -87,8 +92,8 @@ export function ServiceDetailPage() {
               <p className="text-base max-w-xl mb-8" style={{ color: "rgba(255,255,255,0.78)", lineHeight: 1.7 }}>{detail.intro}</p>
               <div className="flex flex-wrap gap-3">
                 <Link to={`/?servicio=${service.slug}#cotizador`} className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold transition-transform hover:scale-[1.03]"
-                  style={{ background: "#FFDE59", color: "#272B7C", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
-                  Solicitar cotización <Bi n="arrow-right" size={14} color="#272B7C" />
+                  style={{ background: "#FFDE59", color: "#1800AD", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
+                  Solicitar cotización <Bi n="arrow-right" size={14} color="#1800AD" />
                 </Link>
                 <Link to="/#faq" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold"
                   style={{ background: "rgba(255,255,255,0.08)", color: "#fff", border: "1px solid rgba(255,255,255,0.3)", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
@@ -102,7 +107,7 @@ export function ServiceDetailPage() {
               <div className="rounded-3xl p-6 md:p-7" style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.16)", backdropFilter: "blur(10px)" }}>
                 <div className="flex items-center gap-3 mb-6">
                   <span className="grid place-items-center rounded-2xl" style={{ width: 56, height: 56, background: "#FFDE59" }}>
-                    <Bi n={service.icon} size={26} color="#272B7C" />
+                    <Bi n={service.icon} size={26} color="#1800AD" />
                   </span>
                   <p className="text-sm font-semibold" style={{ color: "rgba(255,255,255,0.85)", fontFamily: "Montserrat, sans-serif" }}>En cifras</p>
                 </div>
@@ -118,20 +123,13 @@ export function ServiceDetailPage() {
             </div>
           </div>
         </div>
-        {/* Borde inferior con forma de carpeta, como en la página principal */}
-        <div aria-hidden="true" className="relative max-w-6xl mx-auto px-6">
-          <div className="relative h-10">
-            <svg className="absolute left-0 bottom-full block" width="220" height="36" viewBox="0 0 280 46" preserveAspectRatio="none">
-              <path d="M0 46 V18 Q0 0 18 0 H196 Q209 0 217 10 L242 38 Q249 46 262 46 Z" fill="#FBFBF8" />
-            </svg>
-            <div className="absolute inset-0" style={{ background: "#FBFBF8", borderRadius: "0 28px 0 0" }} />
-          </div>
-        </div>
+        {/* Borde inferior: la misma pestaña de carpeta que separa las secciones */}
+        <FolderDivider color="#FBFBF8" />
       </section>
 
       {/* Qué incluye / beneficios */}
       <section className="relative isolate overflow-hidden py-16">
-        <SectionDecor variant="cream" />
+        <SectionDecor variant="light" />
         <div className="max-w-6xl mx-auto px-6 grid lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] gap-10 items-start">
           <div>
             {kicker("Lo que obtiene")}
@@ -143,11 +141,11 @@ export function ServiceDetailPage() {
           </div>
           <div className="grid sm:grid-cols-2 gap-3">
             {detail.benefits.map(b => (
-              <div key={b} className="flex items-start gap-3 rounded-2xl p-4" style={{ background: "#fff", border: "1px solid #E4E6F7", boxShadow: "0 14px 30px -26px rgba(39,43,124,0.45)" }}>
+              <div key={b} className="flex items-start gap-3 rounded-2xl p-4" style={{ background: "#fff", border: "1px solid #E4E6F7", boxShadow: "0 14px 30px -26px rgba(24,0,173,0.45)" }}>
                 <span className="grid place-items-center rounded-lg shrink-0" style={{ width: 28, height: 28, background: "#EAF7EE" }}>
                   <Bi n="check-lg" size={14} color="#16a34a" />
                 </span>
-                <span className="text-sm font-semibold" style={{ color: "#272B7C", lineHeight: 1.45 }}>{b}</span>
+                <span className="text-sm font-semibold" style={{ color: "#1800AD", lineHeight: 1.45 }}>{b}</span>
               </div>
             ))}
           </div>
@@ -157,19 +155,19 @@ export function ServiceDetailPage() {
       {/* Proceso */}
       {detail.steps && (
         <section className="relative isolate overflow-hidden py-16">
-          <SectionDecor variant="lavender" flip folder={false} />
+          <SectionDecor variant="dark" flip folder={false} />
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center mb-10">
-              {kicker("Cómo lo hacemos")}
-              {h2("Un proceso claro, paso a paso")}
+              {kicker("Cómo lo hacemos", true)}
+              {h2("Un proceso claro, paso a paso", true)}
             </div>
             <div className={`relative grid gap-4 sm:grid-cols-2 ${detail.steps.length >= 5 ? "lg:grid-cols-5" : "lg:grid-cols-4"}`}>
-              <div className="hidden lg:block absolute" style={{ top: 26, left: "8%", right: "8%", height: 2, background: "repeating-linear-gradient(90deg, #C9CDEE 0 8px, transparent 8px 14px)" }} />
+              <div className="hidden lg:block absolute" style={{ top: 26, left: "8%", right: "8%", height: 2, background: "repeating-linear-gradient(90deg, rgba(255,255,255,0.3) 0 8px, transparent 8px 14px)" }} />
               {detail.steps.map((st, i) => (
                 <div key={st.t} className="relative flex lg:flex-col items-center gap-3 lg:gap-0 text-left lg:text-center">
-                  <span className="relative grid place-items-center rounded-full font-bold lg:mb-4 shrink-0" style={{ width: 44, height: 44, background: i === 0 ? "#272B7C" : "#fff", color: i === 0 ? "#FFDE59" : "#272B7C", border: "2px solid #272B7C", fontFamily: "Poppins, sans-serif", fontSize: 18, boxShadow: "0 10px 24px -12px rgba(39,43,124,0.5)" }}>{i + 1}</span>
+                  <span className="relative grid place-items-center rounded-full font-bold lg:mb-4 shrink-0" style={{ width: 44, height: 44, background: i === 0 ? "#FFDE59" : "#fff", color: "#1800AD", border: "2px solid #FFDE59", fontFamily: "Poppins, sans-serif", fontSize: 18, boxShadow: "0 10px 24px -12px rgba(0,0,0,0.5)" }}>{i + 1}</span>
                   <div className="rounded-2xl p-4 w-full h-full" style={{ background: "#fff", border: "1px solid #E4E6F7" }}>
-                    <p className="text-sm font-bold mb-1" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif" }}>{st.t}</p>
+                    <p className="text-sm font-bold mb-1" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif" }}>{st.t}</p>
                     <p className="text-xs" style={{ color: "#6B6B6B", lineHeight: 1.55 }}>{st.d}</p>
                   </div>
                 </div>
@@ -181,21 +179,21 @@ export function ServiceDetailPage() {
 
       {/* Por qué con Transarchivos */}
       <section className="relative isolate overflow-hidden py-16">
-        <SectionDecor variant={detail.steps ? "cream" : "lavender"} />
+        <SectionDecor variant={tone.why} />
         <div className="max-w-6xl mx-auto px-6">
           <div className="max-w-2xl mb-10">
-            {kicker("Por qué con Transarchivos")}
-            {h2("Lo que nos diferencia")}
+            {kicker("Por qué con Transarchivos", dk("why"))}
+            {h2("Lo que nos diferencia", dk("why"))}
           </div>
           <div className={`grid gap-5 sm:grid-cols-2 ${detail.reasons.length === 3 ? "lg:grid-cols-3" : "lg:grid-cols-4"}`}>
             {detail.reasons.map((r, i) => (
               <div key={r.t} className="group relative rounded-3xl p-6 transition-all hover:-translate-y-1.5 overflow-hidden"
-                style={{ background: "#fff", border: "1.5px solid #E4E6F7", boxShadow: "0 18px 40px -28px rgba(39,43,124,0.45)" }}>
-                <span aria-hidden="true" className="absolute select-none pointer-events-none font-bold" style={{ right: 16, top: 10, fontSize: 44, lineHeight: 1, color: "rgba(39,43,124,0.06)", fontFamily: "Poppins, sans-serif" }}>0{i + 1}</span>
-                <span className="grid place-items-center rounded-2xl mb-4 transition-colors bg-[#272B7C]/[0.08] group-hover:bg-[#272B7C]" style={{ width: 48, height: 48 }}>
-                  <i className={`bi bi-${r.ic} text-[#272B7C] group-hover:text-[#FFDE59] transition-colors`} aria-hidden="true" style={{ fontSize: 21, lineHeight: 1 }} />
+                style={{ background: "#fff", border: "1.5px solid #E4E6F7", boxShadow: "0 18px 40px -28px rgba(24,0,173,0.45)" }}>
+                <span aria-hidden="true" className="absolute select-none pointer-events-none font-bold" style={{ right: 16, top: 10, fontSize: 44, lineHeight: 1, color: "rgba(24,0,173,0.06)", fontFamily: "Poppins, sans-serif" }}>0{i + 1}</span>
+                <span className="grid place-items-center rounded-2xl mb-4 transition-colors bg-[#1800AD]/[0.08] group-hover:bg-[#1800AD]" style={{ width: 48, height: 48 }}>
+                  <i className={`bi bi-${r.ic} text-[#1800AD] group-hover:text-[#FFDE59] transition-colors`} aria-hidden="true" style={{ fontSize: 21, lineHeight: 1 }} />
                 </span>
-                <p className="text-base font-bold mb-2" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif", lineHeight: 1.3 }}>{r.t}</p>
+                <p className="text-base font-bold mb-2" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif", lineHeight: 1.3 }}>{r.t}</p>
                 <p className="text-sm" style={{ color: "#6B6B6B", lineHeight: 1.6 }}>{r.d}</p>
               </div>
             ))}
@@ -206,20 +204,20 @@ export function ServiceDetailPage() {
       {/* Modalidades o público */}
       {(detail.modes || detail.audience) && (
         <section className="relative isolate overflow-hidden py-16">
-          <SectionDecor variant="lavender" flip folder={false} />
+          <SectionDecor variant={tone.modes} flip folder={false} />
           <div className="max-w-6xl mx-auto px-6">
             {detail.modes && (
               <>
-                <div className="text-center mb-10">{kicker("Modalidades")}{h2("Elija cómo lo necesita")}</div>
+                <div className="text-center mb-10">{kicker("Modalidades", dk("modes"))}{h2("Elija cómo lo necesita", dk("modes"))}</div>
                 <div className="grid md:grid-cols-2 gap-5">
                   {detail.modes.map((m, i) => (
                     <div key={m.t} className="relative rounded-3xl p-7 flex items-start gap-5 overflow-hidden"
-                      style={{ background: i === 0 ? "#272B7C" : "#fff", border: i === 0 ? "none" : "1.5px solid #E4E6F7", boxShadow: "0 24px 50px -32px rgba(39,43,124,0.55)" }}>
-                      <span className="grid place-items-center rounded-2xl shrink-0" style={{ width: 56, height: 56, background: i === 0 ? "#FFDE59" : "#272B7C" }}>
-                        <Bi n={m.ic} size={24} color={i === 0 ? "#272B7C" : "#FFDE59"} />
+                      style={{ background: i === 0 ? (dk("modes") ? "rgba(255,255,255,0.08)" : "#1800AD") : "#fff", border: i === 0 ? (dk("modes") ? "1.5px solid rgba(255,255,255,0.22)" : "none") : "1.5px solid #E4E6F7", boxShadow: "0 24px 50px -32px rgba(24,0,173,0.45)" }}>
+                      <span className="grid place-items-center rounded-2xl shrink-0" style={{ width: 56, height: 56, background: i === 0 ? "#FFDE59" : "#1800AD" }}>
+                        <Bi n={m.ic} size={24} color={i === 0 ? "#1800AD" : "#FFDE59"} />
                       </span>
                       <div>
-                        <p className="text-lg font-bold mb-1.5" style={{ color: i === 0 ? "#fff" : "#272B7C", fontFamily: "Poppins, sans-serif" }}>{m.t}</p>
+                        <p className="text-lg font-bold mb-1.5" style={{ color: i === 0 ? "#fff" : "#1800AD", fontFamily: "Poppins, sans-serif" }}>{m.t}</p>
                         <p className="text-sm" style={{ color: i === 0 ? "rgba(255,255,255,0.75)" : "#6B6B6B", lineHeight: 1.6 }}>{m.d}</p>
                       </div>
                     </div>
@@ -229,13 +227,13 @@ export function ServiceDetailPage() {
             )}
             {detail.audience && (
               <div className={detail.modes ? "mt-14" : ""}>
-                <div className="text-center mb-10">{kicker("Pensado para usted")}{h2(detail.audience.title)}</div>
+                <div className="text-center mb-10">{kicker("Pensado para usted", dk("modes"))}{h2(detail.audience.title, dk("modes"))}</div>
                 <div className={`grid gap-4 sm:grid-cols-2 ${detail.audience.items.length > 4 ? "lg:grid-cols-3" : "lg:grid-cols-4"}`}>
                   {detail.audience.items.map(a => (
                     <div key={a.t} className="flex items-start gap-3 rounded-2xl p-5" style={{ background: "#fff", border: "1px solid #E4E6F7" }}>
                       <BiTile n={a.ic} size={42} accent="#1800AD" />
                       <div>
-                        <p className="text-sm font-bold" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif" }}>{a.t}</p>
+                        <p className="text-sm font-bold" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif" }}>{a.t}</p>
                         {a.d && <p className="text-xs mt-1" style={{ color: "#6B6B6B", lineHeight: 1.55 }}>{a.d}</p>}
                       </div>
                     </div>
@@ -249,24 +247,24 @@ export function ServiceDetailPage() {
 
       {/* Normativa + servicios relacionados */}
       <section className="relative isolate overflow-hidden py-16">
-        <SectionDecor variant="cream" flip />
+        <SectionDecor variant={tone.norms} flip />
         <div className="max-w-6xl mx-auto px-6">
           <div className="rounded-3xl p-6 md:p-8 flex flex-col md:flex-row md:items-center gap-5 mb-14" style={{ background: "#fff", border: "1px solid #E4E6F7" }}>
             <div className="flex items-center gap-3 md:w-64 shrink-0">
               <BiTile n="patch-check" size={44} accent="#16a34a" />
-              <p className="text-base font-bold" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif", lineHeight: 1.25 }}>Respaldo normativo</p>
+              <p className="text-base font-bold" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif", lineHeight: 1.25 }}>Respaldo normativo</p>
             </div>
             <div className="flex flex-wrap gap-2">
               {detail.norms.map(n => (
-                <span key={n} className="text-xs font-semibold px-3 py-1.5 rounded-full" style={{ background: "#F2F3FA", color: "#272B7C", fontFamily: "Montserrat, sans-serif" }}>{n}</span>
+                <span key={n} className="text-xs font-semibold px-3 py-1.5 rounded-full" style={{ background: "#F2F3FA", color: "#1800AD", fontFamily: "Montserrat, sans-serif" }}>{n}</span>
               ))}
             </div>
           </div>
 
           <div className="flex items-end justify-between gap-4 mb-6">
-            <div>{kicker("Complemente su solución")}{h2("Servicios relacionados")}</div>
-            <Link to="/#servicios" className="hidden sm:inline-flex items-center gap-1.5 text-sm font-bold" style={{ color: "#1800AD", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
-              Ver todos <Bi n="arrow-right" size={13} color="#1800AD" />
+            <div>{kicker("Complemente su solución", dk("norms"))}{h2("Servicios relacionados", dk("norms"))}</div>
+            <Link to="/#servicios" className="hidden sm:inline-flex items-center gap-1.5 text-sm font-bold" style={{ color: dk("norms") ? "#FFDE59" : "#1800AD", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
+              Ver todos <Bi n="arrow-right" size={13} color={dk("norms") ? "#FFDE59" : "#1800AD"} />
             </Link>
           </div>
           <div className="grid gap-5 md:grid-cols-3">
@@ -280,18 +278,18 @@ export function ServiceDetailPage() {
         <div className="max-w-6xl mx-auto px-6">
           <div className="relative">
             <svg aria-hidden="true" className="absolute left-0 bottom-full block" width="220" height="36" viewBox="0 0 280 46" preserveAspectRatio="none">
-              <path d="M0 46 V18 Q0 0 18 0 H196 Q209 0 217 10 L242 38 Q249 46 262 46 Z" fill="#272B7C" />
+              <path d="M0 46 V18 Q0 0 18 0 H196 Q209 0 217 10 L242 38 Q249 46 262 46 Z" fill="#1800AD" />
             </svg>
-            <div className="relative overflow-hidden rounded-[0_28px_28px_28px] p-8 md:p-12 flex flex-col md:flex-row md:items-center justify-between gap-6" style={{ background: "#272B7C" }}>
-              <JoelSilhouette style={{ height: 300, bottom: -40, right: 40, opacity: 0.12, background: "#FFDE59" }} />
+            <div className="relative overflow-hidden rounded-[0_28px_28px_28px] p-8 md:p-12 flex flex-col md:flex-row md:items-center justify-between gap-6" style={{ background: "#1800AD" }}>
+              <JoelSilhouette style={{ height: 300, bottom: -40, right: 40, opacity: 0.28, background: "#FFFFFF" }} />
               <div className="relative max-w-xl">
                 <p className="text-2xl md:text-3xl font-bold mb-2" style={{ color: "#fff", fontFamily: "Poppins, sans-serif", lineHeight: 1.2 }}>¿Listo para empezar con {service.title.toLowerCase()}?</p>
                 <p className="text-sm" style={{ color: "rgba(255,255,255,0.72)" }}>Arme su solicitud en minutos o hable con un asesor. Sin compromiso.</p>
               </div>
               <div className="relative flex flex-wrap gap-3">
                 <Link to={`/?servicio=${service.slug}#cotizador`} className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold transition-transform hover:scale-[1.03]"
-                  style={{ background: "#FFDE59", color: "#272B7C", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
-                  Solicitar cotización <Bi n="arrow-right" size={14} color="#272B7C" />
+                  style={{ background: "#FFDE59", color: "#1800AD", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
+                  Solicitar cotización <Bi n="arrow-right" size={14} color="#1800AD" />
                 </Link>
                 <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold"
                   style={{ background: "rgba(255,255,255,0.1)", color: "#fff", border: "1px solid rgba(255,255,255,0.3)", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>

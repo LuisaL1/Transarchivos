@@ -14,7 +14,7 @@ export function ServiceCard({ service }: { service: typeof services[0] }) {
         textDecoration: "none",
         background: "#ffffff",
         border: `1.5px solid ${hovered ? service.accent : "#E9E9E7"}`,
-        boxShadow: hovered ? `0 20px 40px -12px ${service.accent}33` : "0 2px 10px rgba(39,43,124,0.05)",
+        boxShadow: hovered ? `0 20px 40px -12px ${service.accent}33` : "0 2px 10px rgba(24,0,173,0.05)",
         transform: hovered ? "translateY(-4px)" : "none",
         transition: "all 0.25s cubic-bezier(0.34,1.56,0.64,1)",
       }}
@@ -46,7 +46,7 @@ export function ServiceCard({ service }: { service: typeof services[0] }) {
       </div>
 
       <div>
-        <p className="font-bold text-base mb-1.5" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif" }}>
+        <p className="font-bold text-base mb-1.5" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif" }}>
           {service.title}
         </p>
         <p className="text-sm leading-relaxed" style={{ color: "#6B6B6B" }}>

@@ -13,8 +13,10 @@ decisiones tomadas con el cliente durante el prototipo (ver 05).
    hero de inicio, pedida por el cliente.
 3. **Sin caricaturas, excepto Joel**, el personaje de la marca.
 4. **El motivo gráfico es la carpeta:**
-   - pestaña de carpeta en la división del hero;
-   - borde inferior con forma de carpeta en los heroes internos;
+   - pestaña de carpeta **horizontal** (`FolderLip`: tapa redondeada a la
+     izquierda, tramo recto casi a todo el ancho y bajada inclinada a la
+     derecha) separando las secciones (`FolderDivider`) y como borde
+     inferior de los heroes internos;
    - pestaña sobre los llamados finales;
    - carpetas en contorno como marca de agua.
 5. **Un solo azul principal** (`#272B7C`) donde haya azul de marca, sobre todo en
@@ -77,16 +79,13 @@ Todo respeta `prefers-reduced-motion`.
 ## Estructura de páginas
 
 ### Inicio (`/`), en orden
-1. **Hero** (pantalla dividida 50/50 desde `md`):
-   - **Izquierda (panel azul):**
-     - título "Sus archivos, bajo [palabra]" y subtítulo;
-     - selector **"¿Qué necesita hoy?"**: 4 pestañas (Organizar, Digitalizar,
-       Custodiar, Destruir), cada una con detalle, "Ver servicio" y "Cotizar este servicio";
-     - Joel de cuerpo entero junto al selector, desde `xl`, con la mano sobre la tarjeta.
-       Solo su cuerpo recibe el clic, que abre el chat.
-   - **Derecha:** videos del archivo.
-   - **Unión:** pestaña de carpeta y carpeta en contorno recortada a la forma azul.
-   - **Celular:** una sola columna, con el video detrás bajo un velo azul.
+1. **Hero** (video a pantalla completa de fondo, con velo azul marino):
+   - contenido centrado: título "Sus archivos, bajo [palabra]" y subtítulo;
+   - selector **"¿Qué necesita hoy?"**: 4 pestañas (Organizar, Digitalizar,
+     Custodiar, Destruir), cada una con detalle, "Ver servicio" y "Cotizar este servicio";
+   - Joel de cuerpo entero junto al selector, desde `lg`, con la mano sobre la tarjeta.
+     Solo su cuerpo recibe el clic, que abre el chat;
+   - sombra negra superior para el contraste del navbar.
 2. **Barra de confianza:** Ley 594 de 2000 · Norma AGN · Certificado de destrucción · Custodia con vigilancia 24 h.
 3. **Mapa → video** (cobertura nacional): rutas desde Cartagena, Santa Marta, Cúcuta, Bucaramanga, Tunja, Medellín, Ibagué, Armenia, Cali y Neiva que convergen en Bogotá (las ciudades se resaltan una a una), silueta de Joel a la izquierda y revelado circular del video de la flota. Posiciones calibradas con coordenadas reales.
    - **Clientes** (`ClientsMarquee`, datos en `data/clients.ts`, logos en `assets/images/clientes/`): dos filas de logos en grises que se desplazan en sentidos opuestos y recuperan su color al pasar el mouse. Fuente: "Histórico de Clientes" del cliente.

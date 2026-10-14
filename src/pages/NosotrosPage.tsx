@@ -18,7 +18,7 @@ import { ChatBot } from "@/components/chat/ChatBot";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { JoelSilhouette } from "@/components/ui/Brand";
 import { JoelFigure } from "@/components/ui/JoelBridge";
-import { SectionDecor } from "@/components/ui/SectionDecor";
+import { FolderDivider, SectionDecor } from "@/components/ui/SectionDecor";
 import { JOEL } from "@/data/joelPoses";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { whatsappUrl } from "@/data/contact";
@@ -38,24 +38,25 @@ export function NosotrosPage() {
     }
   }, [hash]);
 
-  const kicker = (t: string) => (
-    <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#C8960A", fontFamily: "Montserrat, sans-serif" }}>{t}</p>
+  // Las secciones alternan tono: claras (textos índigo) e índigo (textos blancos).
+  const kicker = (t: string, dark = false) => (
+    <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: dark ? "#FFDE59" : "#C8960A", fontFamily: "Montserrat, sans-serif" }}>{t}</p>
   );
-  const h2 = (c: React.ReactNode) => (
-    <h2 className="text-2xl md:text-3xl font-bold" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif", lineHeight: 1.2 }}>{c}</h2>
+  const h2 = (c: React.ReactNode, dark = false) => (
+    <h2 className="text-2xl md:text-3xl font-bold" style={{ color: dark ? "#fff" : "#1800AD", fontFamily: "Poppins, sans-serif", lineHeight: 1.2 }}>{c}</h2>
   );
-  const mark = (t: string) => <span style={{ background: "linear-gradient(transparent 62%, #FFDE59 62%)" }}>{t}</span>;
-  const card = { background: "#fff", border: "1px solid #E4E6F7", boxShadow: "0 14px 30px -26px rgba(39,43,124,0.45)" } as const;
+  const mark = (t: string, dark = false) => <span style={dark ? { color: "#FFDE59" } : { background: "linear-gradient(transparent 62%, #FFDE59 62%)" }}>{t}</span>;
+  const card = { background: "#fff", border: "1px solid #E4E6F7", boxShadow: "0 14px 30px -26px rgba(24,0,173,0.45)" } as const;
 
   return (
-    <div ref={pageRef} className="min-h-full" style={{ background: "#fff", fontFamily: "Inter, sans-serif", color: "#37352F" }}>
+    <div ref={pageRef} className="min-h-full" style={{ background: "#FBFBF8", fontFamily: "Inter, sans-serif", color: "#37352F" }}>
       <SiteHeader solid onChat={() => setChatOpen(true)} />
       <div aria-hidden="true" style={{ height: 60 }} />
 
       {/* Hero: mismo formato de las páginas de servicio */}
-      <section id="quienes-somos" className="relative isolate overflow-hidden" style={{ backgroundColor: "#272B7C", scrollMarginTop: 70 }}>
+      <section id="quienes-somos" className="relative isolate overflow-hidden" style={{ backgroundColor: "#1800AD", scrollMarginTop: 70 }}>
         <div aria-hidden="true" className="absolute inset-0" style={{ zIndex: -1, backgroundImage: "url(/videos/hero-poster.jpg)", backgroundSize: "cover", backgroundPosition: "center" }} />
-        <div aria-hidden="true" className="absolute inset-0" style={{ zIndex: -1, background: "rgba(39,43,124,0.88)" }} />
+        <div aria-hidden="true" className="absolute inset-0" style={{ zIndex: -1, background: "rgba(24,0,173,0.85)" }} />
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] gap-10 items-center pt-12 pb-24">
             <div>
@@ -80,8 +81,8 @@ export function NosotrosPage() {
               </p>
               <div className="flex flex-wrap gap-3">
                 <Link to="/#cotizador" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold transition-transform hover:scale-[1.03]"
-                  style={{ background: "#FFDE59", color: "#272B7C", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
-                  Solicitar cotización <Bi n="arrow-right" size={14} color="#272B7C" />
+                  style={{ background: "#FFDE59", color: "#1800AD", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
+                  Solicitar cotización <Bi n="arrow-right" size={14} color="#1800AD" />
                 </Link>
                 <Link to="/#servicios" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold"
                   style={{ background: "rgba(255,255,255,0.08)", color: "#fff", border: "1px solid rgba(255,255,255,0.3)", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
@@ -93,7 +94,7 @@ export function NosotrosPage() {
             <div className="rounded-3xl p-6 md:p-7" style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.16)", backdropFilter: "blur(10px)" }}>
               <div className="flex items-center gap-3 mb-6">
                 <span className="grid place-items-center rounded-2xl" style={{ width: 56, height: 56, background: "#FFDE59" }}>
-                  <Bi n="building" size={26} color="#272B7C" />
+                  <Bi n="building" size={26} color="#1800AD" />
                 </span>
                 <p className="text-sm font-semibold" style={{ color: "rgba(255,255,255,0.85)", fontFamily: "Montserrat, sans-serif" }}>En cifras</p>
               </div>
@@ -108,19 +109,13 @@ export function NosotrosPage() {
             </div>
           </div>
         </div>
-        <div aria-hidden="true" className="relative max-w-6xl mx-auto px-6">
-          <div className="relative h-10">
-            <svg className="absolute left-0 bottom-full block" width="220" height="36" viewBox="0 0 280 46" preserveAspectRatio="none">
-              <path d="M0 46 V18 Q0 0 18 0 H196 Q209 0 217 10 L242 38 Q249 46 262 46 Z" fill="#FBFBF8" />
-            </svg>
-            <div className="absolute inset-0" style={{ background: "#FBFBF8", borderRadius: "0 28px 0 0" }} />
-          </div>
-        </div>
+        {/* Borde inferior: la misma pestaña de carpeta que separa las secciones */}
+        <FolderDivider color="#FBFBF8" />
       </section>
 
       {/* Historia */}
       <section id="historia" className="relative isolate overflow-hidden py-16" style={{ scrollMarginTop: 80 }}>
-        <SectionDecor variant="cream" />
+        <SectionDecor variant="light" />
         <div className="max-w-6xl mx-auto px-6 grid lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] gap-10 items-start">
           <div>
             {kicker("Nuestra historia")}
@@ -139,7 +134,7 @@ export function NosotrosPage() {
             ].map(x => (
               <div key={x.t} className="flex items-start gap-3 rounded-2xl p-4" style={card}>
                 <BiTile n={x.ic} size={34} accent="#1800AD" />
-                <span className="text-sm" style={{ color: "#272B7C", lineHeight: 1.5 }}>{x.t}</span>
+                <span className="text-sm" style={{ color: "#1800AD", lineHeight: 1.5 }}>{x.t}</span>
               </div>
             ))}
           </div>
@@ -148,19 +143,19 @@ export function NosotrosPage() {
 
       {/* Misión y visión */}
       <section id="mision-vision" className="relative isolate overflow-hidden py-16" style={{ scrollMarginTop: 80 }}>
-        <SectionDecor variant="lavender" flip folder={false} />
+        <SectionDecor variant="dark" flip folder={false} />
         <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-10">{kicker("Misión y visión")}{h2("Hacia dónde vamos")}</div>
+          <div className="text-center mb-10">{kicker("Misión y visión", true)}{h2("Hacia dónde vamos", true)}</div>
           <div className="grid md:grid-cols-2 gap-5">
             {[
               { t: "Misión", ic: "bullseye", x: "Somos pioneros de la gestión documental en Colombia. Ofrecemos soluciones integrales de consultoría archivística, administración, custodia física y transformación digital de la información, bajo el estricto cumplimiento legal. A través de servicios ágiles, en su sede (in house) e inmediatos, aseguramos la calidad operativa y la seguridad de los datos (confidencialidad, integridad y disponibilidad). Nos comprometemos con la mejora continua de nuestros procesos para superar las expectativas de nuestras partes interesadas y mitigar los riesgos del entorno." },
               { t: "Visión 2030", ic: "binoculars", x: "Para el año 2030, queremos consolidar nuestro liderazgo en Colombia como proveedores integrales de custodia física, consultoría archivística y transformación digital. Seremos reconocidos por la excelencia de nuestros estándares de calidad, la solidez en la seguridad de la información y la adopción de tecnologías seguras en la nube, garantizando un crecimiento sostenible que impulse el desarrollo y la estabilidad de nuestros colaboradores." },
             ].map((m, i) => (
-              <div key={m.t} className="relative rounded-3xl p-7 overflow-hidden" style={{ background: i === 0 ? "#272B7C" : "#fff", border: i === 0 ? "none" : "1.5px solid #E4E6F7", boxShadow: "0 24px 50px -32px rgba(39,43,124,0.55)" }}>
-                <span className="grid place-items-center rounded-2xl mb-4" style={{ width: 52, height: 52, background: i === 0 ? "#FFDE59" : "#272B7C" }}>
-                  <Bi n={m.ic} size={22} color={i === 0 ? "#272B7C" : "#FFDE59"} />
+              <div key={m.t} className="relative rounded-3xl p-7 overflow-hidden" style={{ background: i === 0 ? "rgba(255,255,255,0.08)" : "#fff", border: i === 0 ? "1.5px solid rgba(255,255,255,0.22)" : "1.5px solid #E4E6F7", boxShadow: "0 24px 50px -32px rgba(0,0,0,0.55)" }}>
+                <span className="grid place-items-center rounded-2xl mb-4" style={{ width: 52, height: 52, background: i === 0 ? "#FFDE59" : "#1800AD" }}>
+                  <Bi n={m.ic} size={22} color={i === 0 ? "#1800AD" : "#FFDE59"} />
                 </span>
-                <p className="text-lg font-bold mb-2" style={{ color: i === 0 ? "#fff" : "#272B7C", fontFamily: "Poppins, sans-serif" }}>{m.t}</p>
+                <p className="text-lg font-bold mb-2" style={{ color: i === 0 ? "#fff" : "#1800AD", fontFamily: "Poppins, sans-serif" }}>{m.t}</p>
                 <p className="text-sm" style={{ color: i === 0 ? "rgba(255,255,255,0.78)" : "#6B6B6B", lineHeight: 1.7 }}>{m.x}</p>
               </div>
             ))}
@@ -170,7 +165,7 @@ export function NosotrosPage() {
 
       {/* Equipo */}
       <section id="equipo" className="relative isolate overflow-hidden py-16" style={{ scrollMarginTop: 80 }}>
-        <SectionDecor variant="cream" />
+        <SectionDecor variant="light" />
         <div className="max-w-6xl mx-auto px-6 grid lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] gap-10 items-start">
           <div>
             {kicker("Nuestro equipo")}
@@ -187,12 +182,12 @@ export function NosotrosPage() {
               { ic: "clipboard-data", t: "KPIs y SLA medibles", x: "Informes mensuales de gestión y cumplimiento de acuerdos de servicio con el cliente." },
             ].map((c, i) => (
               <div key={c.t} className="group relative rounded-3xl p-6 flex items-start gap-4 overflow-hidden card-lift" style={{ background: "#fff", border: "1.5px solid #E4E6F7" }}>
-                <span aria-hidden="true" className="absolute select-none font-bold" style={{ right: 16, top: 10, fontSize: 40, lineHeight: 1, color: "rgba(39,43,124,0.06)", fontFamily: "Poppins, sans-serif" }}>0{i + 1}</span>
-                <span className="grid place-items-center rounded-2xl shrink-0 transition-colors bg-[#272B7C]/[0.08] group-hover:bg-[#272B7C]" style={{ width: 48, height: 48 }}>
-                  <i className={`bi bi-${c.ic} text-[#272B7C] group-hover:text-[#FFDE59] transition-colors`} aria-hidden="true" style={{ fontSize: 21, lineHeight: 1 }} />
+                <span aria-hidden="true" className="absolute select-none font-bold" style={{ right: 16, top: 10, fontSize: 40, lineHeight: 1, color: "rgba(24,0,173,0.06)", fontFamily: "Poppins, sans-serif" }}>0{i + 1}</span>
+                <span className="grid place-items-center rounded-2xl shrink-0 transition-colors bg-[#1800AD]/[0.08] group-hover:bg-[#1800AD]" style={{ width: 48, height: 48 }}>
+                  <i className={`bi bi-${c.ic} text-[#1800AD] group-hover:text-[#FFDE59] transition-colors`} aria-hidden="true" style={{ fontSize: 21, lineHeight: 1 }} />
                 </span>
                 <div>
-                  <p className="text-base font-bold mb-1" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif" }}>{c.t}</p>
+                  <p className="text-base font-bold mb-1" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif" }}>{c.t}</p>
                   <p className="text-sm" style={{ color: "#6B6B6B", lineHeight: 1.6 }}>{c.x}</p>
                 </div>
               </div>
@@ -203,9 +198,9 @@ export function NosotrosPage() {
 
       {/* Cultura */}
       <section id="cultura" className="relative isolate overflow-hidden py-16" style={{ scrollMarginTop: 80 }}>
-        <SectionDecor variant="lavender" flip folder={false} />
+        <SectionDecor variant="dark" flip folder={false} />
         <div className="max-w-6xl mx-auto px-6">
-          <div className="max-w-2xl mb-10">{kicker("Cultura organizacional")}{h2("Los valores que nos guían")}</div>
+          <div className="max-w-2xl mb-10">{kicker("Cultura organizacional", true)}{h2("Los valores que nos guían", true)}</div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {[
               { t: "Compromiso", ic: "hand-thumbs-up", x: "Cumplimos de manera oportuna y eficiente los requerimientos de nuestros clientes internos y externos." },
@@ -214,11 +209,11 @@ export function NosotrosPage() {
               { t: "Sensibilidad humana", ic: "heart", x: "Interactuamos con clientes, compañeros, proveedores y visitantes como queremos ser tratados." },
             ].map((v, i) => (
               <div key={v.t} className="group relative rounded-3xl p-6 overflow-hidden card-lift" style={{ background: "#fff", border: "1.5px solid #E4E6F7" }}>
-                <span aria-hidden="true" className="absolute select-none font-bold" style={{ right: 16, top: 10, fontSize: 44, lineHeight: 1, color: "rgba(39,43,124,0.06)", fontFamily: "Poppins, sans-serif" }}>0{i + 1}</span>
-                <span className="grid place-items-center rounded-2xl mb-4 transition-colors bg-[#272B7C]/[0.08] group-hover:bg-[#272B7C]" style={{ width: 48, height: 48 }}>
-                  <i className={`bi bi-${v.ic} text-[#272B7C] group-hover:text-[#FFDE59] transition-colors`} aria-hidden="true" style={{ fontSize: 21, lineHeight: 1 }} />
+                <span aria-hidden="true" className="absolute select-none font-bold" style={{ right: 16, top: 10, fontSize: 44, lineHeight: 1, color: "rgba(24,0,173,0.06)", fontFamily: "Poppins, sans-serif" }}>0{i + 1}</span>
+                <span className="grid place-items-center rounded-2xl mb-4 transition-colors bg-[#1800AD]/[0.08] group-hover:bg-[#1800AD]" style={{ width: 48, height: 48 }}>
+                  <i className={`bi bi-${v.ic} text-[#1800AD] group-hover:text-[#FFDE59] transition-colors`} aria-hidden="true" style={{ fontSize: 21, lineHeight: 1 }} />
                 </span>
-                <p className="text-base font-bold mb-2" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif" }}>{v.t}</p>
+                <p className="text-base font-bold mb-2" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif" }}>{v.t}</p>
                 <p className="text-sm" style={{ color: "#6B6B6B", lineHeight: 1.6 }}>{v.x}</p>
               </div>
             ))}
@@ -228,7 +223,7 @@ export function NosotrosPage() {
 
       {/* Clientes */}
       <section id="clientes" className="relative isolate overflow-hidden py-16" style={{ scrollMarginTop: 80 }}>
-        <SectionDecor variant="cream" />
+        <SectionDecor variant="light" />
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-10">
             {kicker("Nuestros clientes")}{h2(<>Experiencia en {mark("múltiples sectores")}</>)}
@@ -241,10 +236,10 @@ export function NosotrosPage() {
               { ic: "bricks", l: "Construcción" }, { ic: "airplane", l: "Líneas aéreas" },
             ].map(x => (
               <div key={x.l} className="group flex items-center gap-3 rounded-2xl p-4 card-lift" style={{ background: "#fff", border: "1.5px solid #E4E6F7" }}>
-                <span className="grid place-items-center rounded-xl shrink-0 transition-colors bg-[#272B7C]/[0.08] group-hover:bg-[#272B7C]" style={{ width: 42, height: 42 }}>
-                  <i className={`bi bi-${x.ic} text-[#272B7C] group-hover:text-[#FFDE59] transition-colors`} aria-hidden="true" style={{ fontSize: 18, lineHeight: 1 }} />
+                <span className="grid place-items-center rounded-xl shrink-0 transition-colors bg-[#1800AD]/[0.08] group-hover:bg-[#1800AD]" style={{ width: 42, height: 42 }}>
+                  <i className={`bi bi-${x.ic} text-[#1800AD] group-hover:text-[#FFDE59] transition-colors`} aria-hidden="true" style={{ fontSize: 18, lineHeight: 1 }} />
                 </span>
-                <span className="text-sm font-semibold" style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif" }}>{x.l}</span>
+                <span className="text-sm font-semibold" style={{ color: "#1800AD", fontFamily: "Montserrat, sans-serif" }}>{x.l}</span>
               </div>
             ))}
           </div>
@@ -253,12 +248,12 @@ export function NosotrosPage() {
 
       {/* Tecnología y seguridad */}
       <section id="aliados" className="relative isolate overflow-hidden py-16" style={{ scrollMarginTop: 80 }}>
-        <SectionDecor variant="lavender" flip folder={false} />
+        <SectionDecor variant="dark" flip folder={false} />
         <div className="max-w-6xl mx-auto px-6 grid lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] gap-10 items-start">
           <div>
-            {kicker("Tecnología y seguridad")}
-            {h2(<>Infraestructura que {mark("protege")} su información</>)}
-            <p className="text-sm mt-4" style={{ color: "#6B6B6B", lineHeight: 1.7 }}>La infraestructura y los protocolos con los que cuidamos cada documento, físico o digital, con trazabilidad en nuestro software propio Mido.</p>
+            {kicker("Tecnología y seguridad", true)}
+            {h2(<>Infraestructura que {mark("protege", true)} su información</>, true)}
+            <p className="text-sm mt-4" style={{ color: "rgba(255,255,255,0.78)", lineHeight: 1.7 }}>La infraestructura y los protocolos con los que cuidamos cada documento, físico o digital, con trazabilidad en nuestro software propio Mido.</p>
             <div className="mt-10 pl-6"><JoelFigure src={JOEL.digitalizando} height={230} /></div>
           </div>
           <div className="grid sm:grid-cols-2 gap-3">
@@ -273,7 +268,7 @@ export function NosotrosPage() {
               <div key={c.t} className="flex items-start gap-3 rounded-2xl p-4" style={card}>
                 <BiTile n={c.ic} size={34} accent="#1800AD" />
                 <div>
-                  <p className="text-sm font-bold" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif" }}>{c.t}</p>
+                  <p className="text-sm font-bold" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif" }}>{c.t}</p>
                   <p className="text-xs mt-0.5" style={{ color: "#6B6B6B", lineHeight: 1.5 }}>{c.x}</p>
                 </div>
               </div>
@@ -284,7 +279,7 @@ export function NosotrosPage() {
 
       {/* Cumplimiento normativo */}
       <section id="certificados" className="relative isolate overflow-hidden py-16" style={{ scrollMarginTop: 80 }}>
-        <SectionDecor variant="cream" flip />
+        <SectionDecor variant="light" flip />
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex items-end justify-between gap-6 mb-8">
             <div className="max-w-2xl">{kicker("Cumplimiento normativo")}{h2("Marco normativo con el que operamos")}</div>
@@ -293,7 +288,7 @@ export function NosotrosPage() {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {norms.map(n => (
               <div key={n.code} className="rounded-2xl p-4 card-lift" style={{ background: "#fff", border: "1.5px solid #E4E6F7" }}>
-                <p className="text-sm font-bold" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif" }}>{n.code}</p>
+                <p className="text-sm font-bold" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif" }}>{n.code}</p>
                 <p className="text-[11px] leading-snug mt-1" style={{ color: "#6B6B6B" }}>{n.name}</p>
               </div>
             ))}
@@ -306,18 +301,18 @@ export function NosotrosPage() {
         <div className="max-w-6xl mx-auto px-6">
           <div className="relative">
             <svg aria-hidden="true" className="absolute left-0 bottom-full block" width="220" height="36" viewBox="0 0 280 46" preserveAspectRatio="none">
-              <path d="M0 46 V18 Q0 0 18 0 H196 Q209 0 217 10 L242 38 Q249 46 262 46 Z" fill="#272B7C" />
+              <path d="M0 46 V18 Q0 0 18 0 H196 Q209 0 217 10 L242 38 Q249 46 262 46 Z" fill="#1800AD" />
             </svg>
-            <div className="relative overflow-hidden rounded-[0_28px_28px_28px] p-8 md:p-12 flex flex-col md:flex-row md:items-center justify-between gap-6" style={{ background: "#272B7C" }}>
-              <JoelSilhouette style={{ height: 300, bottom: -40, right: 40, opacity: 0.12, background: "#FFDE59" }} />
+            <div className="relative overflow-hidden rounded-[0_28px_28px_28px] p-8 md:p-12 flex flex-col md:flex-row md:items-center justify-between gap-6" style={{ background: "#1800AD" }}>
+              <JoelSilhouette style={{ height: 300, bottom: -40, right: 40, opacity: 0.28, background: "#FFFFFF" }} />
               <div className="relative max-w-xl">
                 <p className="text-2xl md:text-3xl font-bold mb-2" style={{ color: "#fff", fontFamily: "Poppins, sans-serif", lineHeight: 1.2 }}>¿Hablamos de la gestión documental de su empresa?</p>
                 <p className="text-sm" style={{ color: "rgba(255,255,255,0.72)" }}>Arme su solicitud en minutos o hable con un asesor. Sin compromiso.</p>
               </div>
               <div className="relative flex flex-wrap gap-3">
                 <Link to="/#cotizador" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold transition-transform hover:scale-[1.03]"
-                  style={{ background: "#FFDE59", color: "#272B7C", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
-                  Solicitar cotización <Bi n="arrow-right" size={14} color="#272B7C" />
+                  style={{ background: "#FFDE59", color: "#1800AD", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
+                  Solicitar cotización <Bi n="arrow-right" size={14} color="#1800AD" />
                 </Link>
                 <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold"
                   style={{ background: "rgba(255,255,255,0.1)", color: "#fff", border: "1px solid rgba(255,255,255,0.3)", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>

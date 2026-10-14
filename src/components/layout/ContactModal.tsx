@@ -62,17 +62,17 @@ export function ContactModal() {
     if (r.ok) trackEvent("generate_lead", { method: "formulario", motivo: form.motivo });
   };
 
-  const input = "w-full px-3.5 py-2.5 rounded-xl text-sm outline-none transition-colors focus:border-[#272B7C] focus:ring-4 focus:ring-[#272B7C]/10";
-  const inputStyle = { backgroundColor: "#fff", border: "1.5px solid #DDE0F2", color: "#272B7C" } as const;
+  const input = "w-full px-3.5 py-2.5 rounded-xl text-sm outline-none transition-colors focus:border-[#1800AD] focus:ring-4 focus:ring-[#1800AD]/10";
+  const inputStyle = { backgroundColor: "#fff", border: "1.5px solid #DDE0F2", color: "#1800AD" } as const;
   const label = "block text-xs font-semibold mb-1.5";
-  const labelStyle = { color: "#272B7C", fontFamily: "Montserrat, sans-serif" } as const;
+  const labelStyle = { color: "#1800AD", fontFamily: "Montserrat, sans-serif" } as const;
 
   return (
     <div className="fixed inset-0 z-[80] flex items-end sm:items-center justify-center p-0 sm:p-4">
-      <div role="presentation" className="absolute inset-0" onClick={() => setOpen(false)} style={{ background: "rgba(39,43,124,0.55)", backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)", animation: "searchFade 0.25s ease both" }} />
+      <div role="presentation" className="absolute inset-0" onClick={() => setOpen(false)} style={{ background: "rgba(24,0,173,0.55)", backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)", animation: "searchFade 0.25s ease both" }} />
       <div role="dialog" aria-modal="true" aria-labelledby="contact-title" className="relative w-full sm:max-w-[560px] max-h-[100dvh] sm:max-h-[92vh] overflow-y-auto rounded-t-3xl sm:rounded-3xl"
         style={{ background: "#fff", boxShadow: "0 40px 90px -30px rgba(10,13,61,0.6)", animation: "searchDrop 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.1) both" }}>
-        <div className="relative px-6 pt-5 pb-5 overflow-hidden" style={{ background: "#272B7C" }}>
+        <div className="relative px-6 pt-5 pb-5 overflow-hidden" style={{ background: "#1800AD" }}>
           <span aria-hidden="true" className="absolute pointer-events-none" style={{ top: -36, right: -36, width: 110, height: 110, background: "rgba(255,222,89,0.22)", transform: "rotate(45deg)", borderRadius: 19 }} />
           <p id="contact-title" className="relative flex items-center gap-2 text-lg font-bold" style={{ color: "#fff", fontFamily: "Poppins, sans-serif" }}>
             <Bi n="envelope-paper" size={18} color="#FFDE59" /> Escríbanos
@@ -86,9 +86,9 @@ export function ContactModal() {
         {status === "sent" ? (
           <div className="px-6 py-10 text-center">
             <span className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-full" style={{ background: "#EAF7EE" }}><Bi n="check-lg" size={26} color="#16a34a" /></span>
-            <p className="text-lg font-bold mb-1" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif" }}>¡Mensaje enviado!</p>
+            <p className="text-lg font-bold mb-1" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif" }}>¡Mensaje enviado!</p>
             <p className="text-sm mb-6" style={{ color: "#6B6B6B" }}>Recibimos su solicitud. Un asesor le responderá a {form.email}.</p>
-            <button type="button" onClick={() => setOpen(false)} className="px-6 py-3 rounded-xl text-sm font-bold" style={{ background: "#272B7C", color: "#fff", fontFamily: "Montserrat, sans-serif" }}>Cerrar</button>
+            <button type="button" onClick={() => setOpen(false)} className="px-6 py-3 rounded-xl text-sm font-bold" style={{ background: "#1800AD", color: "#fff", fontFamily: "Montserrat, sans-serif" }}>Cerrar</button>
           </div>
         ) : (
           <form onSubmit={submit} className="px-6 py-5">
@@ -123,17 +123,17 @@ export function ContactModal() {
             {/* Campo trampa para bots (oculto a personas) */}
             <input type="text" name="website" tabIndex={-1} autoComplete="off" value={form.website} onChange={e => set("website", e.target.value)} aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 opacity-0" />
             <label htmlFor="ct-autorizacion" className="mt-4 flex items-start gap-2.5 text-xs cursor-pointer" style={{ color: "#4B4B4B", lineHeight: 1.55 }}>
-              <input id="ct-autorizacion" type="checkbox" required checked={form.autorizacion} onChange={e => set("autorizacion", e.target.checked)} className="mt-0.5 h-4 w-4 shrink-0 accent-[#272B7C]" />
+              <input id="ct-autorizacion" type="checkbox" required checked={form.autorizacion} onChange={e => set("autorizacion", e.target.checked)} className="mt-0.5 h-4 w-4 shrink-0 accent-[#1800AD]" />
               <span>Autorizo a Transarchivos Ltda. a tratar mis datos personales para responder esta solicitud, según su <Link to="/privacidad" target="_blank" style={{ color: "#1800AD", fontWeight: 600 }}>política de privacidad y tratamiento de datos</Link>.</span>
             </label>
             {status === "error" && (
               <p role="alert" className="mt-4 rounded-xl px-3.5 py-3 text-xs" style={{ background: "#FFF6D6", color: "#8A6D00", lineHeight: 1.55 }}>
-                No pudimos enviar su mensaje en este momento. Intente de nuevo o escríbanos por <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" style={{ color: "#272B7C", fontWeight: 700 }}>WhatsApp</a>.
+                No pudimos enviar su mensaje en este momento. Intente de nuevo o escríbanos por <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" style={{ color: "#1800AD", fontWeight: 700 }}>WhatsApp</a>.
                 {errCode && <span className="block mt-1.5 opacity-70" style={{ fontSize: 10 }}>Código: {errCode}</span>}
               </p>
             )}
             <button type="submit" disabled={status === "sending"} className="mt-5 w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-bold transition-opacity disabled:opacity-60"
-              style={{ background: "#272B7C", color: "#fff", fontFamily: "Montserrat, sans-serif" }}>
+              style={{ background: "#1800AD", color: "#fff", fontFamily: "Montserrat, sans-serif" }}>
               {status === "sending" ? "Enviando…" : <>Enviar mensaje <Bi n="send" size={14} color="#FFDE59" /></>}
             </button>
           </form>

@@ -25,16 +25,16 @@ export function BlogSection() {
 
   return (
     <section id="blog" className="relative isolate overflow-hidden" style={{ scrollMarginTop: 64 }}>
-      <SectionDecor variant="cream" folder={false} />
+      <SectionDecor variant="dark" folder={false} />
 
       <div className="relative max-w-6xl mx-auto px-6 py-20">
         {/* Encabezado: solo título, centrado. */}
         <div className="mb-12 pb-8 flex flex-col items-center justify-center" style={{ borderBottom: "1.5px solid #E4E6F7" }}>
           <div className="text-center">
-          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#C8960A", fontFamily: "Montserrat, sans-serif" }}>Blog y novedades</p>
-          <h2 className="text-3xl md:text-[44px] font-bold max-w-2xl mx-auto" style={{ fontFamily: "Poppins, sans-serif", color: "#272B7C", lineHeight: 1.15 }}>
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#FFDE59", fontFamily: "Montserrat, sans-serif" }}>Blog y novedades</p>
+          <h2 className="text-3xl md:text-[44px] font-bold max-w-2xl mx-auto" style={{ fontFamily: "Poppins, sans-serif", color: "#fff", lineHeight: 1.15 }}>
             Conocimiento que protege<br />
-            <span style={{ background: "linear-gradient(transparent 62%, #FFDE59 62%)" }}>la memoria de su empresa</span>
+            <span style={{ color: "#FFDE59" }}>la memoria de su empresa</span>
           </h2>
           </div>
         </div>
@@ -56,7 +56,7 @@ export function BlogSection() {
                 </span>
               </div>
               <div className="flex flex-col flex-1 p-7 md:p-8">
-                <h3 className="text-2xl font-bold mb-3 transition-colors" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif", lineHeight: 1.25 }}>{featured.title}</h3>
+                <h3 className="text-2xl font-bold mb-3 transition-colors" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif", lineHeight: 1.25 }}>{featured.title}</h3>
                 <p className="text-sm mb-6" style={{ color: "#6B6B6B", lineHeight: 1.65 }}>{featured.excerpt}</p>
                 <div className="mt-auto pt-5 flex items-center justify-between text-xs" style={{ borderTop: "1px solid #F0F1FA", color: "#9B9B9B" }}>
                   <span>{featured.date} · {readMinutes(featured)} min</span>
@@ -85,7 +85,7 @@ export function BlogSection() {
                   </div>
                   <div className="flex-1 min-w-0 flex flex-col justify-center py-0.5">
                     <span className="text-[10px] font-bold uppercase tracking-wider mb-1.5" style={{ color: pc, fontFamily: "Montserrat, sans-serif" }}>{p.cat}</span>
-                    <h4 className="text-sm font-bold mb-1.5 line-clamp-2" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif", lineHeight: 1.3 }}>{p.title}</h4>
+                    <h4 className="text-sm font-bold mb-1.5 line-clamp-2" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif", lineHeight: 1.3 }}>{p.title}</h4>
                     <span className="text-[11px]" style={{ color: "#9B9B9B" }}>{p.date} · {readMinutes(p)} min</span>
                   </div>
                 </Link>
@@ -97,14 +97,14 @@ export function BlogSection() {
         {/* Suscripción, también como tarjeta — igual lenguaje que el resto
             de la sección. */}
         <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-5 rounded-3xl p-7 md:px-9"
-          style={{ background: "#fff", border: "1.5px solid #E4E6F7", boxShadow: "0 14px 34px -24px rgba(39,43,124,0.25)" }}>
+          style={{ background: "#fff", border: "1.5px solid #E4E6F7", boxShadow: "0 14px 34px -24px rgba(24,0,173,0.25)" }}>
           <div className="flex items-center gap-4">
-            <span className="relative overflow-hidden flex items-center justify-center rounded-2xl shrink-0" style={{ width: 44, height: 44, background: "#272B7C" }}>
+            <span className="relative overflow-hidden flex items-center justify-center rounded-2xl shrink-0" style={{ width: 44, height: 44, background: "#1800AD" }}>
               <span aria-hidden="true" className="absolute pointer-events-none" style={{ right: -16, top: -16, width: 30, height: 30, transform: "rotate(45deg)", borderRadius: 5, background: "rgba(255,222,89,0.3)" }} />
               <Bi n="envelope-paper" size={19} color="#FFDE59" className="relative" />
             </span>
             <div>
-              <p className="font-bold text-base" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif" }}>Reciba novedades y guías en su correo</p>
+              <p className="font-bold text-base" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif" }}>Reciba novedades y guías en su correo</p>
               <p className="text-xs mt-0.5" style={{ color: "#9B9B9B" }}>Contenido sobre gestión documental y novedades de Transarchivos.</p>
             </div>
           </div>
@@ -117,12 +117,12 @@ export function BlogSection() {
               <div className="flex gap-3">
               <input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="su@correo.com"
                 className="flex-1 min-w-0 px-4 py-2.5 rounded-full text-sm outline-none"
-                style={{ background: "#fff", border: "1.5px solid #E4E6F7", color: "#272B7C" }} />
+                style={{ background: "#fff", border: "1.5px solid #E4E6F7", color: "#1800AD" }} />
               <button type="submit" className="px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all hover:opacity-85 cursor-pointer"
-                disabled={subState === "sending"} style={{ background: "#272B7C", color: "#fff", fontFamily: "Montserrat, sans-serif" }}>{subState === "sending" ? "Enviando…" : "Suscribirme"}</button>
+                disabled={subState === "sending"} style={{ background: "#FFDE59", color: "#1800AD", fontFamily: "Montserrat, sans-serif" }}>{subState === "sending" ? "Enviando…" : "Suscribirme"}</button>
               </div>
               <label htmlFor="sub-autorizacion" className="mt-2.5 flex items-start gap-2 text-[11px] cursor-pointer" style={{ color: "#6B6B6B", lineHeight: 1.5 }}>
-                <input id="sub-autorizacion" type="checkbox" required className="mt-0.5 h-3.5 w-3.5 shrink-0 accent-[#272B7C]" />
+                <input id="sub-autorizacion" type="checkbox" required className="mt-0.5 h-3.5 w-3.5 shrink-0 accent-[#1800AD]" />
                 <span>Autorizo el tratamiento de mi correo para recibir novedades, según la <Link to="/privacidad" style={{ color: "#1800AD", fontWeight: 600 }}>política de privacidad</Link>.</span>
               </label>
               {subState === "error" && <p role="alert" className="mt-2 text-[11px]" style={{ color: "#8A6D00" }}>No pudimos registrar su correo. Intente de nuevo en unos minutos.</p>}

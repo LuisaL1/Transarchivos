@@ -362,4 +362,4 @@ export const BLOG_CAT_COLOR: Record<string, string> = {
   "Inteligencia documental": "#C8960A",
 };
 
-export const blogCatColor = (c: string) => BLOG_CAT_COLOR[c] ?? "#272B7C";
+export const blogCatColor = (c: string) => BLOG_CAT_COLOR[c] ?? "#1800AD";

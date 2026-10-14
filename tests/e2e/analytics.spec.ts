@@ -24,3 +24,16 @@ test("GA4: respeta el consentimiento y envía datos al aceptar", async ({ page }
   await expect.poll(() => hits.length, { timeout: 15_000 }).toBeGreaterThan(0);
   expect(hits.some(u => u.includes(`tid=${gaId}`))).toBe(true);
 });
+
+test("GA4: desde la política de privacidad se puede cambiar la decisión", async ({ page }) => {
+  await page.goto("/privacidad");
+  const gaId = await page.evaluate(() => (document.querySelector('script[src*="googletagmanager.com/gtag/js"]') as HTMLScriptElement | null)?.src.split("id=")[1]);
+  test.skip(!gaId, "Build sin VITE_GA_MEASUREMENT_ID");
+  const banner = page.getByRole("dialog", { name: "Aviso de cookies" });
+  await banner.getByRole("button", { name: "Rechazar" }).click();
+  await expect(banner).toBeHidden();
+  await page.getByRole("button", { name: /Cambiar mi decisión sobre cookies/ }).click();
+  await expect(banner).toBeVisible();
+  await expect(page.getByRole("status")).toContainText(/volvió a aparecer/);
+  expect(await page.evaluate(() => localStorage.getItem("ta-analytics-consent"))).toBeNull();
+});

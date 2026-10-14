@@ -98,10 +98,10 @@ export function QuoteSimulator() {
     if (r.ok) trackEvent("generate_lead", { method: "cotizador", service: selected, solution: solution ?? undefined });
   };
 
-  const inputCls = "w-full px-3.5 py-3 rounded-xl text-sm outline-none transition-colors focus:border-[#272B7C] focus:ring-4 focus:ring-[#272B7C]/10";
-  const inputStyle = { backgroundColor: "#fff", border: "1.5px solid #DDE0F2", color: "#272B7C" } as const;
+  const inputCls = "w-full px-3.5 py-3 rounded-xl text-sm outline-none transition-colors focus:border-[#1800AD] focus:ring-4 focus:ring-[#1800AD]/10";
+  const inputStyle = { backgroundColor: "#fff", border: "1.5px solid #DDE0F2", color: "#1800AD" } as const;
   const labelCls = "block text-xs font-semibold mb-1.5";
-  const labelStyle = { color: "#272B7C", fontFamily: "Montserrat, sans-serif" } as const;
+  const labelStyle = { color: "#1800AD", fontFamily: "Montserrat, sans-serif" } as const;
 
   const units = [
     { slug: "diagnostico", icon: "search", title: "Diagnóstico documental", desc: "¿No sabe qué servicio necesita? Empiece por entender qué está pasando con su archivo.", accent: "#C8960A" },
@@ -114,17 +114,17 @@ export function QuoteSimulator() {
 
   return (
     <section id="cotizador" className="relative max-w-6xl mx-auto px-6 py-16" style={{ scrollMarginTop: 80 }}>
-      <p className="text-xs font-bold uppercase tracking-widest text-center mb-3" style={{ color: "#9B9B9B", fontFamily: "Montserrat, sans-serif" }}>
+      <p className="text-xs font-bold uppercase tracking-widest text-center mb-3" style={{ color: "#C8960A", fontFamily: "Montserrat, sans-serif" }}>
         Solicite su cotización
       </p>
-      <h2 className="text-3xl font-bold text-center mb-4" style={{ fontFamily: "Poppins, sans-serif", color: "#272B7C" }}>
+      <h2 className="text-3xl font-bold text-center mb-4" style={{ fontFamily: "Poppins, sans-serif", color: "#1800AD" }}>
         Cuéntenos qué necesita y prepare su solicitud
       </h2>
       <p className="text-sm text-center max-w-xl mx-auto mb-10" style={{ color: "#6B6B6B" }}>
         Cuatro pasos cortos. Verá cómo se arma su solicitud antes de enviarla a nuestro equipo comercial.
       </p>
 
-      <div className="rounded-3xl overflow-hidden" style={{ background: "#fff", border: "1.5px solid #E4E6F7", boxShadow: "0 30px 60px -34px rgba(39,43,124,0.3)" }}>
+      <div className="rounded-3xl overflow-hidden" style={{ background: "#fff", border: "1.5px solid #E4E6F7", boxShadow: "0 30px 60px -34px rgba(24,0,173,0.3)" }}>
         {/* Pasos */}
         <div className="px-5 md:px-8 py-5" style={{ borderBottom: "1px solid #ECEEF6", background: "#FAFBFF" }}>
           <ol className="grid grid-cols-4 gap-2">
@@ -136,13 +136,13 @@ export function QuoteSimulator() {
                     className="w-full flex flex-col sm:flex-row items-center gap-2 text-left disabled:cursor-default">
                     <span className="flex items-center justify-center rounded-full font-bold shrink-0" style={{
                       width: 30, height: 30, fontSize: 12, fontFamily: "Poppins, sans-serif",
-                      background: done || on ? "#272B7C" : "#fff", color: done || on ? "#fff" : "#B5B9D6",
-                      border: `2px solid ${done || on ? "#272B7C" : "#E4E6F7"}`,
+                      background: done || on ? "#1800AD" : "#fff", color: done || on ? "#fff" : "#B5B9D6",
+                      border: `2px solid ${done || on ? "#1800AD" : "#E4E6F7"}`,
                     }}>
                       {done ? <Bi n="check-lg" size={13} color="#fff" /> : i + 1}
                     </span>
-                    <span className="text-[11px] sm:text-xs font-semibold" style={{ color: on ? "#272B7C" : done ? "#6B6B6B" : "#B5B9D6", fontFamily: "Montserrat, sans-serif" }}>{n}</span>
-                    {i < STEPS.length - 1 && <span className="hidden sm:block flex-1 h-0.5 rounded-full" style={{ background: done ? "#272B7C" : "#E4E6F7" }} />}
+                    <span className="text-[11px] sm:text-xs font-semibold" style={{ color: on ? "#1800AD" : done ? "#6B6B6B" : "#B5B9D6", fontFamily: "Montserrat, sans-serif" }}>{n}</span>
+                    {i < STEPS.length - 1 && <span className="hidden sm:block flex-1 h-0.5 rounded-full" style={{ background: done ? "#1800AD" : "#E4E6F7" }} />}
                   </button>
                 </li>
               );
@@ -155,7 +155,7 @@ export function QuoteSimulator() {
           <div className="p-5 md:p-8" key={step} style={{ animation: "fadeInUp 0.3s ease both" }}>
             {step === 0 && (
               <>
-                <p className="text-lg font-bold mb-1" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif" }}>¿Qué servicio necesita?</p>
+                <p className="text-lg font-bold mb-1" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif" }}>¿Qué servicio necesita?</p>
                 <p className="text-sm mb-5" style={{ color: "#8A8A8A" }}>Si no está seguro, elija el diagnóstico documental.</p>
                 <div className="grid sm:grid-cols-2 gap-3">
                   {units.map(u => {
@@ -168,7 +168,7 @@ export function QuoteSimulator() {
                           <Bi n={u.icon} size={17} color={on ? "#fff" : u.accent} />
                         </span>
                         <span className="min-w-0 pr-5">
-                          <span className="block text-sm font-semibold leading-tight mb-0.5" style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif" }}>{u.title}</span>
+                          <span className="block text-sm font-semibold leading-tight mb-0.5" style={{ color: "#1800AD", fontFamily: "Montserrat, sans-serif" }}>{u.title}</span>
                           <span className="block text-[11px] leading-snug line-clamp-2" style={{ color: "#8A8A8A" }}>{u.desc}</span>
                         </span>
                         {on && <Bi n="check-circle-fill" size={16} color={u.accent} className="absolute top-3 right-3" />}
@@ -177,8 +177,8 @@ export function QuoteSimulator() {
                   })}
                 </div>
                 <div className="flex justify-end mt-6">
-                  <button type="button" onClick={() => setStep(1)} className={primaryBtn} style={{ background: "#272B7C", color: "#fff", fontFamily: "Montserrat, sans-serif" }}>
-                    Continuar <Bi n="arrow-right" size={15} color="#fff" />
+                  <button type="button" onClick={() => setStep(1)} className={primaryBtn} style={{ background: "#FFDE59", color: "#1800AD", fontFamily: "Montserrat, sans-serif" }}>
+                    Continuar <Bi n="arrow-right" size={15} color="#1800AD" />
                   </button>
                 </div>
               </>
@@ -200,7 +200,7 @@ export function QuoteSimulator() {
                             const o = services.find(x => x.slug === sl); const on = sl === selected;
                             return o ? (
                               <button key={sl} type="button" onClick={() => pick(sl, 1)} className="text-[11px] font-semibold px-2.5 py-1 rounded-full transition-colors"
-                                style={{ background: on ? "#272B7C" : "#fff", color: on ? "#fff" : "#272B7C", border: "1px solid #DDE0F2", fontFamily: "Montserrat, sans-serif" }}>{o.title}</button>
+                                style={{ background: on ? "#1800AD" : "#fff", color: on ? "#fff" : "#1800AD", border: "1px solid #DDE0F2", fontFamily: "Montserrat, sans-serif" }}>{o.title}</button>
                             ) : null;
                           })}
                         </div>
@@ -208,7 +208,7 @@ export function QuoteSimulator() {
                     </div>
                   </div>
                 )}
-                <p className="text-lg font-bold mb-1" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif" }}>Cuéntenos sobre su archivo</p>
+                <p className="text-lg font-bold mb-1" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif" }}>Cuéntenos sobre su archivo</p>
                 <p className="text-sm mb-5" style={{ color: "#8A8A8A" }}>Si no conoce algún dato, elija "No lo sé": un asesor le ayudará a completarlo.</p>
                 <div className="grid sm:grid-cols-2 gap-x-4 gap-y-4">
                   <div className="sm:col-span-2">
@@ -236,7 +236,7 @@ export function QuoteSimulator() {
                         return (
                           <button key={o} type="button" onClick={() => setA("urgencia", o)}
                             className="px-2 py-2.5 rounded-xl text-[11px] font-semibold leading-tight transition-colors"
-                            style={{ border: `1.5px solid ${on ? "#272B7C" : "#DDE0F2"}`, background: on ? "#272B7C" : "#fff", color: on ? "#fff" : "#272B7C", fontFamily: "Montserrat, sans-serif" }}>{o}</button>
+                            style={{ border: `1.5px solid ${on ? "#1800AD" : "#DDE0F2"}`, background: on ? "#1800AD" : "#fff", color: on ? "#fff" : "#1800AD", fontFamily: "Montserrat, sans-serif" }}>{o}</button>
                         );
                       })}
                     </div>
@@ -247,11 +247,11 @@ export function QuoteSimulator() {
                   </div>
                 </div>
                 <div className="flex justify-between gap-3 mt-6">
-                  <button type="button" onClick={() => setStep(0)} className={secondaryBtn} style={{ background: "#fff", color: "#272B7C", border: "1.5px solid #DDE0F2", fontFamily: "Montserrat, sans-serif" }}>
-                    <Bi n="arrow-left" size={14} color="#272B7C" /> Atrás
+                  <button type="button" onClick={() => setStep(0)} className={secondaryBtn} style={{ background: "#fff", color: "#1800AD", border: "1.5px solid #DDE0F2", fontFamily: "Montserrat, sans-serif" }}>
+                    <Bi n="arrow-left" size={14} color="#1800AD" /> Atrás
                   </button>
-                  <button type="submit" className={primaryBtn} style={{ background: "#272B7C", color: "#fff", fontFamily: "Montserrat, sans-serif" }}>
-                    Continuar <Bi n="arrow-right" size={15} color="#fff" />
+                  <button type="submit" className={primaryBtn} style={{ background: "#FFDE59", color: "#1800AD", fontFamily: "Montserrat, sans-serif" }}>
+                    Continuar <Bi n="arrow-right" size={15} color="#1800AD" />
                   </button>
                 </div>
               </form>
@@ -259,7 +259,7 @@ export function QuoteSimulator() {
 
             {step === 2 && (
               <form onSubmit={e => { e.preventDefault(); setStep(3); }}>
-                <p className="text-lg font-bold mb-1" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif" }}>¿A quién contactamos?</p>
+                <p className="text-lg font-bold mb-1" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif" }}>¿A quién contactamos?</p>
                 <p className="text-sm mb-5" style={{ color: "#6B6B6B" }}>Usaremos estos datos solo para responder su solicitud.</p>
                 <div className="grid sm:grid-cols-2 gap-x-4 gap-y-4">
                   <div>
@@ -292,15 +292,15 @@ export function QuoteSimulator() {
                 </div>
                 {/* Autorización de tratamiento de datos (Ley 1581 de 2012): obligatoria, sin marcar por defecto */}
                 <label htmlFor="cot-autorizacion" className="mt-5 flex items-start gap-2.5 text-xs cursor-pointer" style={{ color: "#4B4B4B", lineHeight: 1.55 }}>
-                  <input id="cot-autorizacion" type="checkbox" required checked={contact.autorizacion === "si"} onChange={e => setC("autorizacion", e.target.checked ? "si" : "")} className="mt-0.5 h-4 w-4 shrink-0 accent-[#272B7C]" />
+                  <input id="cot-autorizacion" type="checkbox" required checked={contact.autorizacion === "si"} onChange={e => setC("autorizacion", e.target.checked ? "si" : "")} className="mt-0.5 h-4 w-4 shrink-0 accent-[#1800AD]" />
                   <span>Autorizo a Transarchivos Ltda. a tratar mis datos personales para responder esta solicitud, según su <Link to="/privacidad" target="_blank" style={{ color: "#1800AD", fontWeight: 600 }}>política de privacidad y tratamiento de datos</Link>.</span>
                 </label>
                 <div className="flex justify-between gap-3 mt-6">
-                  <button type="button" onClick={() => setStep(1)} className={secondaryBtn} style={{ background: "#fff", color: "#272B7C", border: "1.5px solid #DDE0F2", fontFamily: "Montserrat, sans-serif" }}>
-                    <Bi n="arrow-left" size={14} color="#272B7C" /> Atrás
+                  <button type="button" onClick={() => setStep(1)} className={secondaryBtn} style={{ background: "#fff", color: "#1800AD", border: "1.5px solid #DDE0F2", fontFamily: "Montserrat, sans-serif" }}>
+                    <Bi n="arrow-left" size={14} color="#1800AD" /> Atrás
                   </button>
-                  <button type="submit" className={primaryBtn} style={{ background: "#272B7C", color: "#fff", fontFamily: "Montserrat, sans-serif" }}>
-                    Ver resumen <Bi n="arrow-right" size={15} color="#fff" />
+                  <button type="submit" className={primaryBtn} style={{ background: "#FFDE59", color: "#1800AD", fontFamily: "Montserrat, sans-serif" }}>
+                    Ver resumen <Bi n="arrow-right" size={15} color="#1800AD" />
                   </button>
                 </div>
               </form>
@@ -308,12 +308,12 @@ export function QuoteSimulator() {
 
             {step === 3 && (
               <div>
-                <p className="text-lg font-bold mb-1" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif" }}>Revise y envíe su solicitud</p>
+                <p className="text-lg font-bold mb-1" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif" }}>Revise y envíe su solicitud</p>
                 <p className="text-sm mb-5" style={{ color: "#6B6B6B" }}>Envíela por correo o por WhatsApp: llega directamente a nuestro equipo comercial.</p>
                 <div className="flex items-start gap-3 rounded-2xl p-4 mb-5" style={{ background: `${nextStep.c}10`, border: `1px solid ${nextStep.c}33` }}>
                   <Bi n={nextStep.ic} size={20} color={nextStep.c} style={{ marginTop: 2, flexShrink: 0 }} />
                   <div>
-                    <p className="text-sm font-bold" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif" }}>Siguiente paso: {nextStep.t}</p>
+                    <p className="text-sm font-bold" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif" }}>Siguiente paso: {nextStep.t}</p>
                     <p className="text-xs mt-0.5" style={{ color: "#6B6B6B", lineHeight: 1.55 }}>{nextStep.d}</p>
                   </div>
                 </div>
@@ -321,7 +321,7 @@ export function QuoteSimulator() {
                   {contactRows.map(([k, v]) => (
                     <div key={k} className="text-xs">
                       <span className="block" style={{ color: "#9B9B9B" }}>{k}</span>
-                      <span className="block font-semibold" style={{ color: "#272B7C" }}>{v}</span>
+                      <span className="block font-semibold" style={{ color: "#1800AD" }}>{v}</span>
                     </div>
                   ))}
                 </div>
@@ -333,7 +333,7 @@ export function QuoteSimulator() {
                         const o = services.find(x => x.slug === n);
                         return o ? (
                           <button key={n} type="button" onClick={() => pick(n, 1)} className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full cursor-pointer"
-                            style={{ background: "#fff", color: "#272B7C", border: "1px solid #DDE0F2", fontFamily: "Montserrat, sans-serif" }}>
+                            style={{ background: "#fff", color: "#1800AD", border: "1px solid #DDE0F2", fontFamily: "Montserrat, sans-serif" }}>
                             <Bi n={o.icon} size={12} color={o.accent} />{o.title}
                           </button>
                         ) : null;
@@ -342,16 +342,16 @@ export function QuoteSimulator() {
                   </div>
                 )}
                 <div className="flex flex-col-reverse sm:flex-row justify-between gap-3">
-                  <button type="button" onClick={() => setStep(2)} className={secondaryBtn} style={{ background: "#fff", color: "#272B7C", border: "1.5px solid #DDE0F2", fontFamily: "Montserrat, sans-serif" }}>
-                    <Bi n="arrow-left" size={14} color="#272B7C" /> Modificar datos
+                  <button type="button" onClick={() => setStep(2)} className={secondaryBtn} style={{ background: "#fff", color: "#1800AD", border: "1.5px solid #DDE0F2", fontFamily: "Montserrat, sans-serif" }}>
+                    <Bi n="arrow-left" size={14} color="#1800AD" /> Modificar datos
                   </button>
                   <div className="flex flex-col sm:flex-row gap-3">
                     <a href={whatsappQuote()} target="_blank" rel="noopener noreferrer" onClick={() => trackEvent("generate_lead", { method: "whatsapp", service: selected, solution: solution ?? undefined })}
-                      className={primaryBtn} style={{ background: "#fff", color: "#272B7C", border: "1.5px solid #272B7C", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
+                      className={primaryBtn} style={{ background: "#fff", color: "#1800AD", border: "1.5px solid #1800AD", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
                       <Bi n="whatsapp" size={16} color="#16a34a" /> Enviar por WhatsApp
                     </a>
-                    <button type="button" onClick={sendQuote} disabled={sendState === "sending" || sendState === "sent"} className={`${primaryBtn} disabled:opacity-70`} style={{ background: sendState === "sent" ? "#16a34a" : "#272B7C", color: "#fff", fontFamily: "Montserrat, sans-serif" }}>
-                      {sendState === "sent" ? <><Bi n="check-lg" size={16} color="#fff" /> Solicitud enviada</> : sendState === "sending" ? "Enviando…" : <><Bi n="envelope-arrow-up" size={15} color="#FFDE59" /> Enviar por correo</>}
+                    <button type="button" onClick={sendQuote} disabled={sendState === "sending" || sendState === "sent"} className={`${primaryBtn} disabled:opacity-70`} style={{ background: sendState === "sent" ? "#16a34a" : "#FFDE59", color: sendState === "sent" ? "#fff" : "#1800AD", fontFamily: "Montserrat, sans-serif" }}>
+                      {sendState === "sent" ? <><Bi n="check-lg" size={16} color="#fff" /> Solicitud enviada</> : sendState === "sending" ? "Enviando…" : <><Bi n="envelope-arrow-up" size={15} color="#1800AD" /> Enviar por correo</>}
                     </button>
                   </div>
                 </div>
@@ -362,7 +362,7 @@ export function QuoteSimulator() {
                 )}
                 {sendState === "error" && (
                   <p role="alert" className="mt-4 rounded-xl px-3.5 py-3 text-xs" style={{ background: "#FFF6D6", color: "#8A6D00", lineHeight: 1.55 }}>
-                    No pudimos enviar la solicitud en este momento. Intente de nuevo o escríbanos por <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" style={{ color: "#272B7C", fontWeight: 700 }}>WhatsApp</a>.
+                    No pudimos enviar la solicitud en este momento. Intente de nuevo o escríbanos por <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" style={{ color: "#1800AD", fontWeight: 700 }}>WhatsApp</a>.
                   </p>
                 )}
               </div>
@@ -377,7 +377,7 @@ export function QuoteSimulator() {
                 <Bi n={icon} size={19} color="#fff" />
               </span>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-bold leading-tight" style={{ color: "#272B7C", fontFamily: "Poppins, sans-serif" }}>{title}</p>
+                <p className="text-sm font-bold leading-tight" style={{ color: "#1800AD", fontFamily: "Poppins, sans-serif" }}>{title}</p>
                 {cfg.level && <p className="text-[11px]" style={{ color: "#9B9B9B" }}>{cfg.level}</p>}
               </div>
               {step > 0 && (
@@ -387,8 +387,8 @@ export function QuoteSimulator() {
 
             <div className="mb-4">
               <div className="flex items-center justify-between mb-1.5">
-                <span className="text-xs font-semibold" style={{ color: "#272B7C", fontFamily: "Montserrat, sans-serif" }}>Información completa</span>
-                <span className="text-xs font-bold" style={{ color: completPct === 100 ? "#16a34a" : "#272B7C" }}>{completPct}%</span>
+                <span className="text-xs font-semibold" style={{ color: "#1800AD", fontFamily: "Montserrat, sans-serif" }}>Información completa</span>
+                <span className="text-xs font-bold" style={{ color: completPct === 100 ? "#16a34a" : "#1800AD" }}>{completPct}%</span>
               </div>
               <div className="h-2 rounded-full overflow-hidden" style={{ background: "#E4E6F7" }}>
                 <div className="h-full rounded-full" style={{ width: `${completPct}%`, background: completPct === 100 ? "#16a34a" : "#C8960A", transition: "width 0.3s ease" }} />
@@ -400,7 +400,7 @@ export function QuoteSimulator() {
                 {answeredRows.map(([k, v]) => (
                   <li key={k} className="flex items-start gap-2 text-xs">
                     <Bi n="check-circle-fill" size={12} color="#16a34a" style={{ marginTop: 2, flexShrink: 0 }} />
-                    <span><span style={{ color: "#9B9B9B" }}>{k}: </span><span className="font-semibold" style={{ color: "#272B7C" }}>{v}</span></span>
+                    <span><span style={{ color: "#9B9B9B" }}>{k}: </span><span className="font-semibold" style={{ color: "#1800AD" }}>{v}</span></span>
                   </li>
                 ))}
               </ul>

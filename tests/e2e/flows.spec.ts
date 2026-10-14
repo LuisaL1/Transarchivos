@@ -126,3 +126,11 @@ test("suscripción al blog: exige autorización y envía", async ({ page }) => {
   await expect(page.getByText(/Le enviamos la confirmación/)).toBeVisible();
   expect(sent!.kind).toBe("suscripcion");
 });
+
+test("privacidad: el botón de cookies siempre responde (sin analítica explica que no hay cookies)", async ({ page }) => {
+  await page.goto("/privacidad");
+  const gaId = await page.evaluate(() => (document.querySelector('script[src*="googletagmanager.com/gtag/js"]') as HTMLScriptElement | null)?.src);
+  test.skip(!!gaId, "Build con Google Analytics: lo cubre analytics.spec.ts");
+  await page.getByRole("button", { name: /Cambiar mi decisión sobre cookies/ }).click();
+  await expect(page.getByRole("status")).toContainText(/no tiene activas cookies/);
+});

@@ -25,7 +25,7 @@ export const serviceItems: { icon: string; title: string; slug: string; desc: st
 export const services = [
   {
     icon: "list-columns-reverse", title: "Levantamiento de inventario", slug: "levantamiento-de-inventario",
-    tag: "Norma AGN · Ley 594", accent: "#272B7C",
+    tag: "Norma AGN · Ley 594", accent: "#1800AD",
     desc: "Identificación, registro y clasificación de los documentos de un archivo para conocer su volumen, estado y ubicación.",
   },
   {
@@ -35,7 +35,7 @@ export const services = [
   },
   {
     icon: "hdd-stack", title: "Custodia de medios magnéticos", slug: "custodia-de-medios-magneticos",
-    tag: "Copia aislada (air gap) · DRP", accent: "#272B7C",
+    tag: "Copia aislada (air gap) · DRP", accent: "#1800AD",
     desc: "Almacenamiento especializado de cintas LTO/DAT/DLT, discos duros, CDs/DVDs y otros medios.",
   },
   {
@@ -45,7 +45,7 @@ export const services = [
   },
   {
     icon: "upc-scan", title: "Digitalización de documentos", slug: "digitalizacion-de-documentos",
-    tag: "Valor legal · OCR", accent: "#272B7C",
+    tag: "Valor legal · OCR", accent: "#1800AD",
     desc: "Conversión de documentos físicos a archivos digitales con captura, indexación y OCR opcional.",
   },
   {
@@ -55,7 +55,7 @@ export const services = [
   },
   {
     icon: "film", title: "Microfilmación de archivos", slug: "microfilmacion-de-archivos",
-    tag: "Microfilme 16 / 35 mm", accent: "#272B7C",
+    tag: "Microfilme 16 / 35 mm", accent: "#1800AD",
     desc: "Conversión de documentos a microfilme para su preservación segura a largo plazo.",
   },
   {
