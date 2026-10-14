@@ -25,7 +25,7 @@
 
 | Prioridad | Pendiente | Detalle |
 | --- | --- | --- |
-| Alta | **Chat con un asesor: puesta en marcha** | Pegar el código del widget de SalesIQ de Transarchivos en `SALESIQ_WIDGET` (`src/lib/crmChat.ts`), autorizar el dominio en Zoho, apagar el bot de Zoho y probar con mensajes «PRUEBA técnica (ignorar)». Modo API: pendiente del permiso de organización de Zoho (ver `docs/08-chat-asesor.md`). |
+| Alta | **Chat con un asesor: puesta en marcha** | Código del widget ya puesto en `SALESIQ_WIDGET`. Falta: autorizar el dominio en Zoho, apagar el bot de Zoho y probar con mensajes «PRUEBA técnica (ignorar)». Modo API: pendiente del permiso de organización de Zoho (ver `docs/08-chat-asesor.md`). |
 | Alta | **Google Analytics** | ID `G-PNPFD16QSZ` ya integrado y verificado (`pnpm test:ga`). Falta: crear la variable en Vercel (Production), marcar los eventos clave en GA4 y agregar `quote_step` y `chat_message` (ver 03). |
 | Alta | **Publicación** | SEO técnico listo. Falta seguir el checklist de `docs/06-seo.md`: dominio, `VITE_SITE_INDEXABLE=true`, Search Console, Google Business Profile y redirecciones 301 del sitio anterior. |
 | Media | **Suscripción del blog** | Conectarla a la herramienta de correo que elija la empresa. |

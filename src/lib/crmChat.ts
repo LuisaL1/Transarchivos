@@ -19,9 +19,8 @@ import chatCss from "@/styles/zoho-chat.css?raw";
 import hostCss from "@/styles/zoho-host.css?raw";
 import { CRM_CHAT_EVENT } from "@/lib/advisorEvents";
 
-/** Código del widget de SalesIQ de Transarchivos (Zoho → Configuración → Canales → Sitio web).
- *  PENDIENTE: pegar aquí el código "wc" del widget de Transarchivos (el de Transpack no sirve). */
-export const SALESIQ_WIDGET = "";
+/** Código del widget de SalesIQ de Transarchivos (Zoho → Configuración → Marcas → Transarchivos → Código de instalación). No es secreto. */
+export const SALESIQ_WIDGET = "siqeaaa826a3795e844e6740651f160fdd894fe2b84c3b32f737334473fe85fbb32";
 export const SALESIQ_SRC = `https://salesiq.zohopublic.com/widget?wc=${SALESIQ_WIDGET}`;
 /** Página aislada donde vive Zoho y el iframe que la contiene */
 export const HOST_SRC = "/chat-asesor.html";

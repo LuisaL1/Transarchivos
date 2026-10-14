@@ -21,10 +21,9 @@ panel de SalesIQ como cualquier chat:
 
 ## Puesta en marcha (pendiente)
 
-1. **Código del widget:** pegar el código `wc` del widget de SalesIQ de
-   Transarchivos en `SALESIQ_WIDGET` (`src/lib/crmChat.ts`). Hoy está vacío:
-   hasta entonces "Hablar con un asesor" termina ofreciendo WhatsApp y el
-   formulario. El de Transpack no sirve. No es secreto.
+1. **Código del widget:** ya está en `SALESIQ_WIDGET` (`src/lib/crmChat.ts`),
+   tomado de Zoho → Configuración → Marcas → Transarchivos → Código de
+   instalación. Si se cambia de marca en Zoho, actualizarlo ahí. No es secreto.
 2. En Zoho (Configuración → Canales → Sitio web): autorizar
    `www.transarchivos.com` y el dominio de Vercel; idioma español.
 3. **Apagar el bot de Zoho** (SalesIQ → Bot → Zobot): Joel cumple ese papel en
