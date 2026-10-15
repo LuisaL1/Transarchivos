@@ -4,39 +4,46 @@ import { Bi } from "@/components/ui/Icons";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { C } from "@/styles/tokens";
 
-// Video del hero: montaje institucional (archivo, digitalización, Mido y
-// vehículos), sin audio; el navegador elige la versión con el atributo
-// "media" de <source>.
-// Montaje cinematográfico: planos largos con movimiento de cámara lento,
-// fundidos cruzados de 1 s y bucle sin salto (sin filtros de color: imagen limpia).
-// Se reproduce al 70 % (ajustable en HERO_VIDEO_RATE).
-const HERO_VIDEO = { mobile: "/videos/transarchivos-hero-movil.mp4", desktop: "/videos/transarchivos-hero.mp4", hd: "/videos/transarchivos-hero-4k.mp4" };
-const HERO_VIDEO_RATE = 0.7;
+// Fondo del hero: secuencia de fotos de la operación (bodegas, digitalización,
+// microfilmación, flota), entregadas por Transarchivos ("Secuencia de imágenes
+// home", oct. 2026) y guardadas en public/hero-fotos/ (WebP de 1920 px). Pasan
+// una a una con un fundido largo cada SLIDE_MS, sin acercamiento ni otro
+// movimiento (el título ya se anima: el fondo debe quedarse quieto); la primera
+// se precarga en index.html para que aparezca de inmediato. Con "reducir
+// movimiento" se queda en la primera foto. Para cambiar las fotos, reemplace
+// los archivos (01.webp…) y ajuste HERO_PHOTO_COUNT.
+const HERO_PHOTO_COUNT = 16;
+const HERO_PHOTOS = Array.from({ length: HERO_PHOTO_COUNT }, (_, i) => `/hero-fotos/${String(i + 1).padStart(2, "0")}.webp`);
+const SLIDE_MS = 12000;
+const FADE_MS = 2500;
 
-export function HeroVideoBackground() {
+export function HeroPhotos() {
   const reduced = useReducedMotion();
+  const [idx, setIdx] = useState(0);
+  // Cuántas fotos ya están en el DOM: la actual y la siguiente (que se carga
+  // escondida para que el fundido no espere la descarga). Al dar la vuelta ya
+  // están todas.
+  const [mounted, setMounted] = useState(2);
+  useEffect(() => {
+    if (reduced) return;
+    const t = window.setInterval(() => setIdx(i => (i + 1) % HERO_PHOTOS.length), SLIDE_MS);
+    return () => clearInterval(t);
+  }, [reduced]);
+  useEffect(() => { setMounted(m => Math.max(m, Math.min(HERO_PHOTOS.length, idx + 2))); }, [idx]);
   return (
-    // Fondo inmediato: el primer cuadro del video (hero-poster.jpg,
-    // precargado en index.html), para que al recargar no se vea el azul
-    // de base mientras el video carga (en celular y computador).
-    <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true"
-      style={{ backgroundColor: C.indigo, backgroundImage: "url(/videos/hero-poster.jpg)", backgroundSize: "cover", backgroundPosition: "center" }}>
-      {!reduced && (
-        <video
-          // React no escribe "muted" como atributo HTML: sin esto iPhone y
-          // Android bloquean la reproducción automática.
-          ref={el => { if (el) { el.muted = true; el.defaultMuted = true; el.setAttribute("muted", ""); el.defaultPlaybackRate = HERO_VIDEO_RATE; el.playbackRate = HERO_VIDEO_RATE; el.play().catch(() => {}); } }}
-          // Algunos navegadores reinician la velocidad al cargar la fuente.
-          onLoadedMetadata={e => { e.currentTarget.playbackRate = HERO_VIDEO_RATE; }}
-          muted playsInline autoPlay loop preload="auto" poster="/videos/hero-poster.jpg"
-          className="absolute inset-0 w-full h-full" style={{ objectFit: "cover" }}>
-          <source src={HERO_VIDEO.mobile} type="video/mp4" media="(max-width: 767px)" />
-          <source src={HERO_VIDEO.hd} type="video/mp4" media="(min-width: 768px) and (min-resolution: 1.5dppx), (min-width: 2200px)" />
-          <source src={HERO_VIDEO.desktop} type="video/mp4" />
-        </video>
-      )}
-      {/* Velo índigo: el texto va encima del video. */}
-      <div className="absolute inset-0" style={{ background: "rgba(24,0,173,0.5)" }} />
+    <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true" style={{ backgroundColor: C.indigo }}>
+      {HERO_PHOTOS.slice(0, mounted).map((src, i) => {
+        const on = i === idx;
+        return (
+          <img key={src} src={src} alt="" decoding="async" fetchPriority={i === 0 ? "high" : "low"}
+            className="absolute inset-0 w-full h-full"
+            style={{ objectFit: "cover", opacity: on ? 1 : 0, transition: `opacity ${FADE_MS}ms ease-in-out` }} />
+        );
+      })}
+      {/* Velo índigo: el texto va encima de la foto. Más cerrado que antes
+          (0,8) para que las fotos apenas se insinúen y el contraste sea mejor
+          (pedido del cliente, oct. 2026). */}
+      <div className="absolute inset-0" style={{ background: "rgba(24,0,173,0.8)" }} />
     </div>
   );
 }
@@ -97,8 +104,8 @@ export function HeroQuickStart() {
   const [sel, setSel] = useState(0);
   const q = QUICK[sel];
   return (
-    <div className="mt-9 max-w-[440px] mx-auto">
-    <p className="text-center text-sm font-semibold mb-3" style={{ color: "#fff", fontFamily: "Montserrat, sans-serif" }}>¿Qué necesita hoy?</p>
+    <div className="mt-9 max-w-[440px] mx-auto lg:mx-0">
+    <p className="text-center lg:text-left text-sm font-semibold mb-3" style={{ color: "#fff", fontFamily: "Montserrat, sans-serif" }}>¿Qué necesita hoy?</p>
     <div className="text-left rounded-3xl p-2"
       style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.14)", backdropFilter: "blur(10px)", boxShadow: "0 30px 60px -30px rgba(0,0,0,0.55)" }}>
       {/* Pestañas: indicador amarillo que se desliza; foco de teclado interno

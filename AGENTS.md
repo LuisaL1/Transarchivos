@@ -129,9 +129,12 @@ RecursosTransarchivos/    Documentos fuente del cliente (contexto, no se publica
   el detalle de esquina del chat y el menú: cuadrado amarillo translúcido girado
   45° con puntas redondeadas, radio ≈ 17 % del lado), tarjetas blancas con borde fino, motivo gráfico de carpeta. Única
   excepción: la sombra negra superior del hero de inicio.
-- Hero de inicio: video a pantalla completa de fondo (velo azul marino), con el
-  contenido centrado: título animado "Sus archivos, bajo [palabra]", frase y el
-  selector "¿Qué necesita hoy?" con Joel a su lado.
+- Hero de inicio: secuencia de fotos de la operación de fondo (`public/hero-fotos/`,
+  fundido lento cada 12 s, sin otro movimiento, velo índigo); el video de la bodega va en la sección del mapa.
+  En computador, dos columnas: a la izquierda el título animado "Sus archivos,
+  bajo [palabra]", la frase y el selector "¿Qué necesita hoy?"; a la derecha,
+  Joel con la caja y los documentos volando (`assets/images/joel-avalancha.webp`,
+  imagen del cliente). En celular todo centrado y sin Joel (oct. 2026).
 
 ## Joel (asesor virtual)
 

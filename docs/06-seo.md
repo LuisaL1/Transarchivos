@@ -106,4 +106,4 @@ pnpm build
 - **Imágenes:**
   - `joel.webp` (126 KB; antes `joel.png` de 1,1 MB) y las poses ya van en WebP; falta AVIF si se quiere apurar más;
   - agregar `width`/`height` para evitar saltos de diseño.
-- **Video del hero:** versiones para celular (6,2 MB), computador (9,1 MB) y Retina/4K (18,2 MB); cada pantalla descarga solo la suya. Si se necesita aún más liviano, recortar su duración (43 s) o usar `preload="metadata"`.
+- **Fotos del hero:** 16 WebP de 1920 px en `public/hero-fotos/` (~150–250 KB cada una); solo se descargan la actual y la siguiente. **Video del mapa:** versiones para celular (1,8 MB) y computador (2,5 MB); cada pantalla descarga solo la suya. Si se necesita aún más liviano, recortar su resolución o usar `preload="metadata"`.

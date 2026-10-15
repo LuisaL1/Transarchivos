@@ -6,11 +6,11 @@
 import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { JoelBridge } from "@/components/ui/JoelBridge";
 import { JOEL } from "@/data/joelPoses";
-import avatarImg from "@/assets/images/joel.webp";
+import heroJoelImg from "@/assets/images/joel-avalancha.webp";
 import { Link, useLocation, useNavigate, useNavigationType } from "react-router-dom";
 import { track } from "@/lib/visitor";
 import { ChatBot } from "@/components/chat/LazyChatBot";
-import { HeroQuickStart, HeroRotatingWord, HeroVideoBackground } from "@/components/home/Hero";
+import { HeroQuickStart, HeroRotatingWord, HeroPhotos } from "@/components/home/Hero";
 import { MapReveal } from "@/components/home/MapReveal";
 import { Stats } from "@/components/home/Stats";
 import { ClientsMarquee } from "@/components/home/ClientsMarquee";
@@ -87,35 +87,40 @@ export function HomePage() {
       <SiteHeader onChat={() => setChatOpen(true)} />
 
       {/* ── HERO ────────────────────────────────────────────────────────────
-          Video a pantalla completa de fondo (con velo azul marino para la
-          lectura) y el contenido centrado: título animado, frase y el
-          selector "¿Qué necesita hoy?" con Joel a su lado. */}
+          Secuencia de fotos de la operación a pantalla completa de fondo
+          (con velo índigo para la lectura). En computador, dos columnas: a la izquierda el título
+          animado, la frase y el selector "¿Qué necesita hoy?"; a la derecha,
+          Joel en grande (pedido del cliente, oct. 2026). En celular y tableta
+          todo va centrado y Joel se oculta. */}
       <section className="relative overflow-hidden" style={{ background: C.indigo }}>
-        <HeroVideoBackground />
+        <HeroPhotos />
         {/* Sombra negra arriba: da contraste al navbar sobre el video. */}
         <div aria-hidden="true" className="absolute inset-x-0 top-0 h-36 pointer-events-none" style={{ zIndex: 2, background: "linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.25) 45%, transparent 100%)" }} />
 
-        <div className="relative min-h-[70svh] md:min-h-[88vh] flex items-center justify-center" style={{ zIndex: 3 }}>
-          <div className="w-full max-w-3xl mx-auto px-6 pt-28 pb-14 md:pt-36 md:pb-16 text-center">
+        <div className="relative min-h-[70svh] md:min-h-[88vh] flex items-center" style={{ zIndex: 3 }}>
+          <div className="w-full max-w-6xl mx-auto px-6 md:px-8 pt-28 pb-14 md:pt-36 md:pb-16 grid lg:grid-cols-[minmax(0,520px)_minmax(0,1fr)] gap-8 xl:gap-12 items-center">
+            <div className="text-center lg:text-left relative z-10 lg:-ml-3 xl:-ml-14">
             <h1 className="text-4xl md:text-5xl lg:text-[56px] xl:text-[62px] font-bold tracking-tight mb-5" style={{ fontFamily: "Poppins, sans-serif", color: "#fff", lineHeight: 1.12, textShadow: "0 2px 22px rgba(0,0,0,0.35)" }}>
               Sus archivos,<br />
               <span className="whitespace-nowrap">bajo <HeroRotatingWord />.</span>
             </h1>
-            <p className="text-base lg:text-lg max-w-xl mx-auto" style={{ color: "rgba(255,255,255,0.9)", lineHeight: 1.6, textShadow: "0 1px 12px rgba(0,0,0,0.35)" }}>
+            <p className="text-base lg:text-lg max-w-xl mx-auto lg:mx-0" style={{ color: "rgba(255,255,255,0.9)", lineHeight: 1.6, textShadow: "0 1px 12px rgba(0,0,0,0.35)" }}>
               Clasificamos, digitalizamos, custodiamos y destruimos legalmente sus documentos
             </p>
-            {/* Joel (imagen de la marca en redes) junto a la tarjeta, volteado
-                para que señale el selector. Clic: abre el chat. */}
-            <div className="relative max-w-[440px] mx-auto">
+            <div className="max-w-[440px] mx-auto lg:mx-0">
               <HeroQuickStart />
-              {/* Solo el cuerpo (fuera de la tarjeta) recibe el clic: la mano
-                  queda encima de las pestañas sin bloquearlas. */}
-              <div className="group hidden lg:flex absolute bottom-[30px] left-full -ml-[68px] items-end w-[176px] pointer-events-none" style={{ zIndex: 3 }}>
-                <img src={avatarImg} alt="" draggable={false} className="select-none h-[270px] w-[176px] max-w-none transition-transform duration-300 group-hover:-translate-y-1"
-                  style={{ transform: "scaleX(-1)", filter: "drop-shadow(0 18px 24px rgba(0,0,0,0.35))" }} />
-                <button type="button" onClick={() => setChatOpen(true)} aria-label="Hablar con Joel"
-                  className="absolute inset-y-0 right-0 left-[76px] pointer-events-auto rounded-2xl" />
-              </div>
+            </div>
+            </div>
+            {/* Joel con la caja de Transarchivos y los documentos volando hacia
+                él (imagen entregada por el cliente, oct. 2026). La imagen va
+                completa y más grande que su columna: los papeles del lado
+                izquierdo llevan un desvanecido progresivo (en la propia imagen)
+                para que se diluyan al acercarse al texto. Solo Joel y la caja
+                reciben el clic (abre el chat); sin efecto al pasar el cursor. */}
+            <div className="hidden lg:flex justify-end self-end relative lg:-mr-10 xl:-mr-20">
+              <img src={heroJoelImg} alt="" draggable={false} className="select-none h-[560px] xl:h-[640px] max-w-none pointer-events-none" />
+              <button type="button" onClick={() => setChatOpen(true)} aria-label="Hablar con Joel"
+                className="absolute right-0 bottom-0 top-[18%] w-[250px] cursor-pointer rounded-3xl focus:outline-none focus-visible:ring-4 focus-visible:ring-amarillo/70" />
             </div>
           </div>
         </div>

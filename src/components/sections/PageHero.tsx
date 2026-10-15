@@ -5,7 +5,7 @@ import { C } from "@/styles/tokens";
 // Encabezado de las páginas internas (servicio, Nosotros, artículo, políticas):
 // imagen de fondo bajo un velo índigo y, como base, la pestaña de carpeta que
 // separa las secciones. El contenido (migas, título, tarjeta…) lo pone cada página.
-export function PageHero({ children, image = "/videos/hero-poster.jpg", id, scrollMarginTop }: {
+export function PageHero({ children, image = "/videos/page-hero.jpg", id, scrollMarginTop }: {
   children: ReactNode; image?: string; id?: string; scrollMarginTop?: number;
 }) {
   return (

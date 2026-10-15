@@ -40,9 +40,10 @@ const route = (c: { x: number; y: number }) => {
   const nx = -(y2 - y1) / d, ny = (x2 - x1) / d;
   return `M${x1.toFixed(1)} ${y1.toFixed(1)} Q${(mx + nx * d * 0.22).toFixed(1)} ${(my + ny * d * 0.22).toFixed(1)} ${x2.toFixed(1)} ${y2.toFixed(1)}`;
 };
-// Flota de Transarchivos (toma del video institucional), en bucle con
-// movimiento de cámara lento; versión vertical para celular.
-const VIDEO = { desktop: "/videos/transarchivos-flota.mp4", mobile: "/videos/transarchivos-flota-movil.mp4" };
+// Recorrido por la bodega de custodia (video entregado por Transarchivos en
+// 4K, oct. 2026; reemplazó la toma de la flota), sin audio, en bucle al 70 %;
+// versión vertical para celular. Nombres nuevos al cambiarlo (caché).
+const VIDEO = { desktop: "/videos/transarchivos-bodega.mp4", mobile: "/videos/transarchivos-bodega-movil.mp4" };
 
 const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 // Entra lento (se ve nacer el círculo en Bogotá) y acelera al final.
