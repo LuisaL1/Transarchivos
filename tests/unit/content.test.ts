@@ -3,6 +3,7 @@ import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { services, serviceItems } from "@/data/services";
 import { SERVICE_DETAILS } from "@/data/serviceDetails";
+import { SERVICE_FAQS } from "@/data/serviceFaqs";
 import { SERVICE_JOEL } from "@/data/joelPoses";
 import { quoteConfig } from "@/data/quote";
 import { SOLUTIONS } from "@/data/solutions";
@@ -22,6 +23,17 @@ describe("Servicios", () => {
       expect(SERVICE_DETAILS[s], `detalle de ${s}`).toBeDefined();
       expect(SERVICE_JOEL[s], `Joel de ${s}`).toBeDefined();
       expect(quoteConfig[s], `cotizador de ${s}`).toBeDefined();
+    }
+  });
+  it("cada servicio tiene al menos 3 preguntas frecuentes completas", () => {
+    for (const s of slugs) {
+      const fs = SERVICE_FAQS[s] ?? [];
+      expect(fs.length, `preguntas de ${s}`).toBeGreaterThanOrEqual(3);
+      for (const f of fs) {
+        expect(f.q.endsWith("?"), `pregunta "${f.q.slice(0, 40)}…" de ${s}`).toBe(true);
+        expect(f.a.length, `respuesta de "${f.q.slice(0, 40)}…"`).toBeGreaterThan(0);
+        for (const p of f.a) expect(p.trim().length).toBeGreaterThan(20);
+      }
     }
   });
   it("el menú apunta a servicios existentes", () => {

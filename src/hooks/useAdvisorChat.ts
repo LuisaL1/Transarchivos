@@ -17,6 +17,7 @@ import { advisorAvailable, loadSaved, pollAdvisor, POLL_MS, save, sendToAdvisor,
 import { contactHref, whatsappUrl } from "@/data/contact";
 import { blogPosts } from "@/data/blog";
 import { FAQS } from "@/data/faqs";
+import { SERVICE_FAQS } from "@/data/serviceFaqs";
 import { QUOTE_UNIT, quoteConfig } from "@/data/quote";
 import { SERVICE_DETAILS } from "@/data/serviceDetails";
 import { services } from "@/data/services";
@@ -26,7 +27,7 @@ import { SOLUTIONS } from "@/data/solutions";
 // todos los datos del sitio como conocimiento (una sola fuente de verdad).
 let joelBrain: ReturnType<typeof createJoel> | null = null;
 const getJoel = () => joelBrain ??= createJoel({
-  services, details: SERVICE_DETAILS, faqs: FAQS, solutions: SOLUTIONS,
+  services, details: SERVICE_DETAILS, faqs: FAQS, serviceFaqs: SERVICE_FAQS, solutions: SOLUTIONS,
   posts: blogPosts, quote: quoteConfig, quoteUnit: QUOTE_UNIT,
 });
 

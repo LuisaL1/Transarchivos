@@ -42,7 +42,8 @@ src/
 │   ├── services.ts           Los 9 servicios
 │   ├── serviceDetails.ts     Contenido de la página de cada servicio
 │   ├── solutions.ts          Soluciones por necesidad del cliente
-│   ├── faqs.ts               Preguntas frecuentes
+│   ├── faqs.ts               Preguntas frecuentes (portada y Joel)
+│   ├── serviceFaqs.ts        Preguntas frecuentes de cada servicio (página del servicio, Joel y buscador)
 │   ├── chat.ts               Pasos, textos e íconos del chat de Joel (cotización guiada, asesor)
 │   ├── policies.ts           Políticas institucionales oficiales (/politicas; PDF en public/documentos)
 │   ├── quote.ts              Preguntas y unidades del cotizador

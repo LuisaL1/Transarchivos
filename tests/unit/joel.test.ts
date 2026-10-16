@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { createJoel, newMemory, norm } from "@/lib/joel";
 import { services } from "@/data/services";
 import { SERVICE_DETAILS } from "@/data/serviceDetails";
+import { SERVICE_FAQS } from "@/data/serviceFaqs";
 import { FAQS } from "@/data/faqs";
 import { SOLUTIONS } from "@/data/solutions";
 import { blogPosts } from "@/data/blog";
@@ -9,12 +10,22 @@ import { quoteConfig, QUOTE_UNIT } from "@/data/quote";
 import { CLIENTS } from "@/data/clients";
 
 // Cerebro del asesor virtual: entiende texto libre, no inventa y se defiende.
-const joel = () => createJoel({ services, details: SERVICE_DETAILS, faqs: FAQS, solutions: SOLUTIONS, posts: blogPosts, quote: quoteConfig, quoteUnit: QUOTE_UNIT });
+const joel = () => createJoel({ services, details: SERVICE_DETAILS, faqs: FAQS, serviceFaqs: SERVICE_FAQS, solutions: SOLUTIONS, posts: blogPosts, quote: quoteConfig, quoteUnit: QUOTE_UNIT });
 const ask = (text: string) => joel().respond(text, newMemory());
 
 describe("Joel · normalización", () => {
   it("quita tildes, mayúsculas y signos", () => {
     expect(norm("¿DIGITALIZACIÓN, por favor?")).toBe("digitalizacion por favor");
+  });
+});
+
+describe("Joel · preguntas frecuentes de un servicio", () => {
+  it("responde con el primer párrafo y enlaza la respuesta completa del servicio", () => {
+    const r = ask("¿los documentos microfilmados tienen validez jurídica ante un juzgado?");
+    expect(r.intent).toBe("faq");
+    expect(r.service).toBe("microfilmacion-de-archivos");
+    expect(r.say[0]).toBe(SERVICE_FAQS["microfilmacion-de-archivos"][1].a[0]);
+    expect(r.actions?.[0].to).toBe("/servicios/microfilmacion-de-archivos#preguntas");
   });
 });
 

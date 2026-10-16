@@ -91,6 +91,9 @@ Se puede entrar directo al paso 2 con `?servicio=<slug>&solucion=<id>#cotizador`
 - La conversión real ocurre en el cliente de correo del visitante. Con un
   backend se podría medir el envío efectivo.
 
+## Preguntas frecuentes por servicio
+- Cada página de servicio cierra con 4 preguntas frecuentes propias (`src/data/serviceFaqs.ts`, fuente: documento del cliente, oct. 2026). Joel las responde cuando el visitante nombra el servicio y pregunta (primer párrafo + enlace a la respuesta completa) y el buscador las indexa como «Pregunta».
+
 ## Señales de confianza usadas
 - Normativa real (Ley 594 de 2000, AGN, Ley 1581, Ley 527).
 - Más de 40 años de trayectoria (desde 1983).

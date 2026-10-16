@@ -22,6 +22,8 @@ export type JoelKB = {
   services: { slug: string; title: string; desc: string; tag: string }[];
   details: Record<string, { tagline: string; intro: string; stats: { v: string; l: string }[]; benefits: string[]; reasons: { t: string; d: string }[]; modes?: { t: string; d: string }[]; norms: string[]; steps?: { t: string; d: string }[] }>;
   faqs: { q: string; a: string }[];
+  /** Preguntas frecuentes de cada servicio (slug → preguntas); Joel responde con el primer párrafo y enlaza la página. */
+  serviceFaqs?: Record<string, { q: string; a: string[] }[]>;
   solutions: { id: string; title: string; problem: string; desc: string; slugs: string[] }[];
   posts: { slug: string; title: string; cat: string; excerpt: string }[];
   quote: Record<string, { volumeLabel: string; fields: { label: string }[] }>;
@@ -300,6 +302,27 @@ export function createJoel(kb: JoelKB) {
   };
 
   /** Responde a un texto libre del visitante (y recuerda el servicio en contexto). */
+  // Pregunta frecuente de un servicio (src/data/serviceFaqs.ts) que mejor
+  // coincide con el texto; `slugs` restringe a esos servicios (null = todos).
+  // Joel responde con el primer párrafo y enlaza la respuesta completa.
+  function serviceFaqAnswer(text: string, slugs: string[] | null, minScore: number): JoelReply | null {
+    const kw = keywordsOf(text);
+    let best: { slug: string; f: { q: string; a: string[] } } | null = null, bestScore = 0;
+    for (const [slug, fs] of Object.entries(kb.serviceFaqs ?? {})) {
+      if (slugs && !slugs.includes(slug)) continue;
+      for (const f of fs) {
+        const fk = keywordsOf(f.q + " " + f.a.join(" "));
+        const sc = kw.filter(w => fk.some(x => stem(x) === stem(w))).length;
+        if (sc > bestScore) { bestScore = sc; best = { slug, f }; }
+      }
+    }
+    if (!best || bestScore < minScore) return null;
+    const s = svc(best.slug);
+    return { intent: "faq", service: best.slug, say: [best.f.a[0]],
+      actions: [{ label: `Leer la respuesta completa${s ? ` · ${s.title}` : ""}`, icon: "question-circle", to: `/servicios/${best.slug}#preguntas` }],
+      options: [{ label: "Cotizar este servicio", next: "q_volume", set: { service: best.slug } }, { label: "Otra pregunta", next: "faq_list" }] };
+  }
+
   function respond(text: string, mem: Memory): JoelReply {
     const r = think(text, mem);
     if (r.service) mem.lastService = r.service;
@@ -346,6 +369,15 @@ export function createJoel(kb: JoelKB) {
     // El dolor gana salvo que nombre el servicio explícitamente (puntaje alto).
     if (topPain && (!topSvc[0] || topSvc[0][1] < 4) && !scores.precio) return solutionAnswer(topPain[0]);
 
+    // Pregunta frecuente del servicio que nombra ("¿el microfilm tiene validez
+    // jurídica?"): si el texto es una pregunta y coincide con una de las
+    // preguntas de ese servicio, gana sobre la ficha del servicio.
+    const isQuestion = /\?/.test(text) || /^(que|como|cual|cuales|cuanto|cuanta|cuantos|por que|puedo|pueden|tienen|tiene|hay|debo|debemos|es|son)\b/.test(t);
+    if (topSvc[0] && topSvc[0][1] >= 1.4 && isQuestion) {
+      const r = serviceFaqAnswer(text, [topSvc[0][0]], 3);
+      if (r) return r;
+    }
+
     // Servicio(s) mencionados
     if (topSvc[0] && topSvc[0][1] >= 1.4) {
       const second = topSvc[1] && topSvc[1][1] >= topSvc[0][1] * 0.8 ? topSvc[1][0] : null;
@@ -369,6 +401,10 @@ export function createJoel(kb: JoelKB) {
     const kw = keywordsOf(text);
     let bestFaq = -1, bestFaqScore = 0;
     kb.faqs.forEach((f, i) => { const fk = keywordsOf(f.q + " " + f.a); const sc = kw.filter(w => fk.some(x => stem(x) === stem(w))).length; if (sc > bestFaqScore) { bestFaqScore = sc; bestFaq = i; } });
+    // Preguntas frecuentes de cualquier servicio: ganan solo si coinciden más
+    // que las generales (sus textos son largos y coinciden con más palabras).
+    const svcFaq = serviceFaqAnswer(text, null, Math.max(3, bestFaqScore + 1));
+    if (svcFaq) return svcFaq;
     if (bestFaq >= 0 && bestFaqScore >= 2) return { intent: "faq", say: [kb.faqs[bestFaq].a], actions: [{ label: "Ver todas las preguntas", icon: "question-circle", href: "#faq" }], options: [{ label: "Otra pregunta", next: "faq_list" }, { label: "Cotizar un servicio", next: "q_service" }] };
 
     // Blog

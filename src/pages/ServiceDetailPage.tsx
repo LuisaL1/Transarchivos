@@ -13,6 +13,8 @@ import { SectionDecor, type DecorVariant } from "@/components/ui/SectionDecor";
 import { h2, kicker } from "@/components/ui/SectionHead";
 import { CtaBand } from "@/components/sections/CtaBand";
 import { PageHero } from "@/components/sections/PageHero";
+import { ServiceFaqs } from "@/components/sections/ServiceFaqs";
+import { SERVICE_FAQS } from "@/data/serviceFaqs";
 import { SERVICE_DETAILS } from "@/data/serviceDetails";
 import { services } from "@/data/services";
 import { SOLUTIONS } from "@/data/solutions";
@@ -53,7 +55,7 @@ export function ServiceDetailPage() {
 
   // Las secciones alternan tono (clara / índigo) en el orden en que existen;
   // el llamado final siempre va claro con la tarjeta índigo.
-  const seq = ["benef", detail.steps && "steps", "why", (detail.modes || detail.audience) && "modes", "norms"].filter(Boolean) as string[];
+  const seq = ["benef", detail.steps && "steps", "why", (detail.modes || detail.audience) && "modes", "norms", "faq"].filter(Boolean) as string[];
   const tone = Object.fromEntries(seq.map((k, i) => [k, i % 2 ? "dark" : "light"])) as Record<string, DecorVariant>;
   const dk = (k: string) => tone[k] === "dark";
 
@@ -263,6 +265,12 @@ export function ServiceDetailPage() {
             {related.map(r => <ServiceCard key={r.slug} service={r} />)}
           </div>
         </div>
+      </section>
+
+      {/* Preguntas frecuentes del servicio (src/data/serviceFaqs.ts) */}
+      <section id="preguntas" className="relative isolate overflow-hidden py-16" style={{ scrollMarginTop: 80 }}>
+        <SectionDecor variant={tone.faq} flip={tone.faq === "light"} />
+        <ServiceFaqs faqs={SERVICE_FAQS[service.slug] ?? []} serviceTitle={service.title} dark={dk("faq")} />
       </section>
 
       {/* Llamado final */}

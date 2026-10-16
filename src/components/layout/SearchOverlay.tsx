@@ -18,7 +18,7 @@ const SEARCH_SHORTCUTS = [
   { ic: "question-circle", label: "Preguntas frecuentes", href: "#faq" },
 ];
 
-const KIND_ICON: Record<SearchResult["kind"], string> = { "Servicio": "briefcase", "Artículo": "journal-text", "Sección": "signpost-2" };
+const KIND_ICON: Record<SearchResult["kind"], string> = { "Servicio": "briefcase", "Artículo": "journal-text", "Sección": "signpost-2", "Pregunta": "question-circle" };
 
 export function SearchOverlay({ query, setQuery, results, hasQuery, inputRef, onClose }: {
   query: string; setQuery: (v: string) => void; results: SearchResult[]; hasQuery: boolean;

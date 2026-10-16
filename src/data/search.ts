@@ -1,11 +1,12 @@
 import { blogPosts } from "@/data/blog";
 import { services } from "@/data/services";
+import { SERVICE_FAQS } from "@/data/serviceFaqs";
 
 // ─── Búsqueda del header ────────────────────────────────────────────────────
 // Índice combinado de servicios, artículos del blog y secciones de la propia
 // landing, para que la lupa del navbar busque sobre contenido real del sitio
 // en vez de ser un campo decorativo sin función.
-export type SearchResult = { kind: "Servicio" | "Artículo" | "Sección"; title: string; desc: string; to?: string; href?: string };
+export type SearchResult = { kind: "Servicio" | "Artículo" | "Sección" | "Pregunta"; title: string; desc: string; to?: string; href?: string };
 
 const searchIndex: SearchResult[] = [
   { kind: "Sección", title: "Diagnóstico documental", desc: "Empiece por saber qué está pasando con su archivo, antes de mover un solo papel", href: "#cotizador" },
@@ -16,6 +17,8 @@ const searchIndex: SearchResult[] = [
   { kind: "Sección", title: "Solicitar cotización", desc: "Elija su servicio y responda unas preguntas para armar su solicitud", href: "#cotizador" },
   ...services.map(s => ({ kind: "Servicio" as const, title: s.title, desc: s.desc, to: `/servicios/${s.slug}` })),
   ...blogPosts.map(p => ({ kind: "Artículo" as const, title: p.title, desc: p.excerpt, to: `/blog/${p.slug}` })),
+  // Preguntas frecuentes de cada servicio: llevan a la sección de preguntas de su página.
+  ...services.flatMap(s => (SERVICE_FAQS[s.slug] ?? []).map(f => ({ kind: "Pregunta" as const, title: f.q, desc: s.title, to: `/servicios/${s.slug}#preguntas` }))),
 ];
 
 // Sin tildes ni diéresis: quien escribe rápido en un buscador casi nunca
@@ -27,5 +30,8 @@ export function searchContent(query: string): SearchResult[] {
   // Con 1 sola letra casi cualquier palabra matchea (demasiado ruido para ser
   // útil) — se pide un mínimo de 2 caracteres antes de mostrar resultados.
   if (q.length < 2) return [];
-  return searchIndex.filter(r => foldAccents(r.title.toLowerCase()).includes(q) || foldAccents(r.desc.toLowerCase()).includes(q)).slice(0, 7);
+  // Cada palabra debe aparecer (en el título o la descripción), en cualquier
+  // orden: "microfilm validez" encuentra la pregunta sobre validez del microfilm.
+  const words = q.split(" ").filter(Boolean);
+  return searchIndex.filter(r => { const t = foldAccents((r.title + " " + r.desc).toLowerCase()); return words.every(w => t.includes(w)); }).slice(0, 7);
 }

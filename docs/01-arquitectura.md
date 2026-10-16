@@ -29,7 +29,7 @@ src/
 │   ├── layout/         SiteHeader (navbar), NavMenus (megamenús), SearchOverlay,
 │   │                   SupportPopover, Analytics (seguimiento + aviso de cookies)
 │   ├── sections/       Secciones reutilizables: ServiceCard, SolucionesSection,
-│   │                   QuoteSimulator (cotizador), BlogSection, FaqSection
+│   │                   QuoteSimulator (cotizador), BlogSection, FaqSection, ServiceFaqs
 │   ├── home/           Hero (videos, palabra rotativa, selector), MapReveal
 │   ├── chat/           ChatBot (interfaz + guion del chat)
 │   └── ui/             Icons, Brand (logo, avatar, silueta), SectionDecor,
@@ -62,7 +62,7 @@ tests/                  unit/, security/, e2e/  (ver 04)
 | --- | --- | --- |
 | `/` | `HomePage` | Landing completa (ver 02) |
 | `/nosotros` | `NosotrosPage` | Anclas: `#quienes-somos`, `#historia`, `#mision-vision`, `#equipo`, `#cultura`, `#clientes`, `#aliados`, `#certificados` |
-| `/servicios/:slug` | `ServiceDetailPage` | 9 servicios (slugs en `src/data/services.ts`) |
+| `/servicios/:slug` | `ServiceDetailPage` | 9 servicios (slugs en `src/data/services.ts`); al final, las preguntas frecuentes del servicio (`src/data/serviceFaqs.ts`, sección `#preguntas`, componente `ServiceFaqs`) |
 | `/blog/:slug` | `ArticlePage` | Artículos de `src/data/blog.ts` |
 
 Las rutas inexistentes de servicio o artículo muestran un aviso con enlace de
