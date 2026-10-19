@@ -33,8 +33,8 @@ export function BlogSection() {
         <div className="mb-12 pb-8 flex flex-col items-center justify-center" style={{ borderBottom: "1.5px solid #E4E6F7" }}>
           <div className="text-center">
           <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: C.yellow, fontFamily: "Montserrat, sans-serif" }}>Blog y novedades</p>
-          <h2 className="text-3xl md:text-[44px] font-bold max-w-2xl mx-auto" style={{ fontFamily: "Poppins, sans-serif", color: "#fff", lineHeight: 1.15 }}>
-            Conocimiento que protege<br />
+          <h2 className="text-3xl md:text-[44px] font-bold max-w-3xl mx-auto" style={{ fontFamily: "Poppins, sans-serif", color: "#fff", lineHeight: 1.15 }}>
+            Conocimiento especializado que protege<br />
             <span style={{ color: C.yellow }}>la memoria de su empresa</span>
           </h2>
           </div>

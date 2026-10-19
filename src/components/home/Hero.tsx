@@ -1,4 +1,4 @@
-import { useState, useEffect, useLayoutEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Bi } from "@/components/ui/Icons";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
@@ -48,42 +48,35 @@ export function HeroPhotos() {
   );
 }
 
-// ─── Palabra animada del título ────────────────────────────────────────────
-// "Sus archivos, bajo [palabra]." — las 6 palabras del título original, que
-// remiten a los distintos servicios (gestión documental integral). Cambia
-// cada 2,6 s dentro de la pastilla amarilla; el ancho se ajusta con
-// transición. Con "reducir movimiento" se queda en la primera palabra.
+// ─── Título animado ────────────────────────────────────────────────────────
+// Tres frases que se alternan cada 4,5 s (documento "Correcciones en página web
+// de Transarchivos - Home", oct. 2026), con la parte clave en la pastilla
+// amarilla. Las tres frases ocupan la misma celda de la cuadrícula: el alto es
+// el de la más larga y el contenido de abajo no salta al cambiar (cada frase
+// se apoya abajo, junto al subtítulo). Solo la
+// visible se lee en voz alta. Con "reducir movimiento" se queda en la primera.
 
-const HERO_WORDS = ["control", "custodia", "orden", "legalidad", "resguardo", "protección"];
+const HERO_TITLES: [string, string, string][] = [
+  ["Protegemos la ", "memoria", " de su empresa."],
+  ["Gestión documental ", "inteligente", "."],
+  ["La memoria física de su empresa en nuestro ", "centro documental", "."],
+];
 
-export function HeroRotatingWord() {
+export function HeroRotatingTitle() {
+  const reduced = useReducedMotion();
   const [idx, setIdx] = useState(0);
-  const ghost = useRef<HTMLSpanElement>(null);
-  const [w, setW] = useState<number | null>(null);
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const t = window.setInterval(() => setIdx(i => (i + 1) % HERO_WORDS.length), 2600);
+    if (reduced) return;
+    const t = window.setInterval(() => setIdx(i => (i + 1) % HERO_TITLES.length), 4500);
     return () => clearInterval(t);
-  }, []);
-  useLayoutEffect(() => {
-    const el = ghost.current; if (!el) return;
-    const measure = () => setW(el.getBoundingClientRect().width);
-    measure();
-    // La fuente del título carga después: se vuelve a medir al cambiar de
-    // tamaño (el fantasma es inline-block: ResizeObserver no ve los inline)
-    // y cuando terminan de cargar las fuentes.
-    const ro = new ResizeObserver(measure); ro.observe(el);
-    let alive = true;
-    document.fonts?.ready.then(() => { if (alive) measure(); });
-    return () => { alive = false; ro.disconnect(); };
-  }, [idx]);
-  const word = HERO_WORDS[idx];
+  }, [reduced]);
   return (
-    <span className="inline-flex align-middle rounded-xl md:rounded-2xl px-3 md:px-4" style={{ background: C.yellow, color: C.indigo, textShadow: "none" }}>
-      <span className="relative inline-block overflow-hidden" style={{ width: w ?? "auto", height: "1.22em", transition: "width 0.35s cubic-bezier(0.4,0,0.2,1)" }}>
-        <span ref={ghost} className="invisible inline-block whitespace-nowrap">{word}</span>
-        <span key={word} className="absolute left-0 top-0 whitespace-nowrap hero-word-in">{word}</span>
-      </span>
+    <span className="grid items-end">
+      {HERO_TITLES.map(([a, mark, b], i) => (
+        <span key={mark} aria-hidden={i !== idx} className={`[grid-area:1/1] ${i === idx ? "hero-word-in" : "invisible"}`}>
+          {a}<span className="whitespace-nowrap rounded-xl md:rounded-2xl px-2 md:px-3 [box-decoration-break:clone]" style={{ background: C.yellow, color: C.indigo, textShadow: "none" }}>{mark}</span>{b}
+        </span>
+      ))}
     </span>
   );
 }
@@ -94,10 +87,10 @@ export function HeroRotatingWord() {
 // elegido en el cotizador) o a conocerlo.
 
 const QUICK = [
-  { label: "Organizar", icon: "list-columns-reverse", title: "Inventario y organización", text: "Clasificamos y ordenamos su archivo según la norma AGN.", slug: "levantamiento-de-inventario" },
-  { label: "Digitalizar", icon: "upc-scan", title: "Digitalización con valor legal", text: "Escaneo, OCR e indexación para encontrarlo todo en segundos.", slug: "digitalizacion-de-documentos" },
-  { label: "Custodiar", icon: "archive", title: "Custodia de archivos", text: "Centro documental con vigilancia 24 h y consulta cuando la necesite.", slug: "custodia-de-archivos" },
-  { label: "Destruir", icon: "file-earmark-x", title: "Destrucción certificada", text: "Eliminación segura con acta y certificado, según la Ley 594.", slug: "destruccion-de-documentos" },
+  { label: "Organizar", icon: "list-columns-reverse", title: "Inventario documental", text: "Organizamos y clasificamos su archivo bajo la normativa del Archivo General de la Nación (AGN).", slug: "levantamiento-de-inventario" },
+  { label: "Digitalizar", icon: "upc-scan", title: "Digitalización", text: "Convertimos sus archivos físicos en documentos digitales interactivos mediante OCR (Reconocimiento Óptico de Caracteres).", slug: "digitalizacion-de-documentos" },
+  { label: "Custodiar", icon: "archive", title: "Custodia de archivos", text: "Resguardamos sus documentos en instalaciones de alta seguridad, garantizando su conservación, trazabilidad y acceso a la información.", slug: "custodia-de-archivos" },
+  { label: "Destruir", icon: "file-earmark-x", title: "Destrucción legal", text: "Eliminamos sus documentos bajo estrictos protocolos ambientales y normativos, entregando un certificado de destrucción con total validez legal.", slug: "destruccion-de-documentos" },
 ];
 
 export function HeroQuickStart() {
@@ -125,16 +118,22 @@ export function HeroQuickStart() {
         })}
       </div>
 
-      {/* Detalle: alto fijo, texto centrado en vertical (sin huecos) */}
+      {/* Detalle del servicio elegido */}
       <div role="tabpanel" className="mt-2 rounded-2xl" style={{ background: "#fff" }}>
-        <div key={q.slug} className="hero-word-in flex items-center gap-3.5 px-4 h-[84px]">
-          <span className="grid place-items-center rounded-xl shrink-0" style={{ width: 44, height: 44, background: C.indigo }}>
-            <Bi n={q.icon} size={19} color={C.yellow} />
-          </span>
-          <div className="min-w-0 flex-1">
-            <p className="text-sm font-bold leading-tight truncate" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>{q.title}</p>
-            <p className="text-xs mt-1 line-clamp-2" style={{ color: C.muted, lineHeight: 1.45 }}>{q.text}</p>
-          </div>
+        {/* Los cuatro textos ocupan la misma celda: el alto es el del más
+            largo y la tarjeta no cambia de tamaño al cambiar de pestaña. */}
+        <div className="grid">
+          {QUICK.map((o, i) => (
+            <div key={o.slug} aria-hidden={i !== sel} className={`[grid-area:1/1] flex items-center gap-3.5 px-4 py-4 ${i === sel ? "hero-word-in" : "invisible"}`}>
+              <span className="grid place-items-center rounded-xl shrink-0" style={{ width: 44, height: 44, background: C.indigo }}>
+                <Bi n={o.icon} size={19} color={C.yellow} />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-bold leading-tight" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>{o.title}</p>
+                <p className="text-xs mt-1" style={{ color: C.muted, lineHeight: 1.45 }}>{o.text}</p>
+              </div>
+            </div>
+          ))}
         </div>
         <div className="flex items-center justify-between gap-3 px-4 py-3" style={{ borderTop: "1px solid #F0F1FA" }}>
           <Link to={`/servicios/${q.slug}`} className="group inline-flex items-center gap-1 text-xs font-semibold" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>

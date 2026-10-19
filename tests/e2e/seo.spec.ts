@@ -4,7 +4,7 @@ import { expect, test } from "@playwright/test";
 // simple o una red social) y etiquetas que se actualizan al navegar.
 test.describe("sin JavaScript", () => {
   test.use({ javaScriptEnabled: false });
-  for (const [route, h1] of [["/", /Sus archivos/], ["/nosotros", /Pioneros/], ["/servicios/custodia-de-archivos", /Custodia de archivos/], ["/blog/mido-software-gestion-documental", /Mido/]] as const) {
+  for (const [route, h1] of [["/", /Protegemos la memoria/], ["/nosotros", /Pioneros/], ["/servicios/custodia-de-archivos", /Custodia de archivos/], ["/blog/mido-software-gestion-documental", /Mido/]] as const) {
     test(`${route} trae título, H1 y canónica en el HTML`, async ({ page }) => {
       await page.goto(route);
       await expect(page.locator("h1")).toHaveText(h1);

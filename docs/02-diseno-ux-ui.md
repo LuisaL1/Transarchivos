@@ -80,7 +80,7 @@ Todo respeta `prefers-reduced-motion`.
 
 ### Inicio (`/`), en orden
 1. **Hero** (video a pantalla completa de fondo, con velo azul marino):
-   - contenido centrado: título "Sus archivos, bajo [palabra]" y subtítulo;
+   - contenido centrado: título animado (tres frases del cliente: "Protegemos la memoria de su empresa." · "Gestión documental inteligente." · "La memoria física de su empresa en nuestro centro documental.") y subtítulo fijo;
    - selector **"¿Qué necesita hoy?"**: 4 pestañas (Organizar, Digitalizar,
      Custodiar, Destruir), cada una con detalle, "Ver servicio" y "Cotizar este servicio";
    - Joel de cuerpo entero junto al selector, desde `lg`, con la mano sobre la tarjeta.

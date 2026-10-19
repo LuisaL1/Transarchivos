@@ -1,53 +1,51 @@
 
 
-export const SOLUTIONS: { id: string; icon: string; tag: string; title: string; problem: string; desc: string; points: string[]; slugs: string[] }[] = [
+// Las 4 soluciones más recurrentes (documento "Correcciones en página web de
+// Transarchivos - Home", oct. 2026: se retiraron "Respaldo y recuperación ante
+// desastres" y "Auditorías y requerimientos urgentes" para optimizar el
+// espacio; esos casos los cubren Custodia de medios magnéticos y Servicio
+// inmediato). "problem": la frase de beneficio bajo el título. "labels": cómo
+// se nombran los servicios integrados en la tarjeta (mismo orden que "slugs";
+// si falta, se usa el nombre del servicio). "cta": texto del enlace a cotizar.
+export const SOLUTIONS: { id: string; icon: string; tag: string; title: string; problem: string; desc: string; points: string[]; slugs: string[]; labels?: string[]; cta: string }[] = [
   {
     id: "cumplimiento", icon: "shield-check", tag: "Riesgo legal",
-    title: "Cumplimiento normativo",
-    problem: "Su empresa debe cumplir la Ley 594 y no tiene su archivo organizado.",
-    desc: "Diseñamos e implementamos el Programa de gestión documental y las Tablas de Retención a la medida, para evitar sanciones e investigaciones del AGN.",
-    points: ["PGD obligatorio por ley (Decreto 1080 de 2015)", "Tablas de Retención y Valoración Documental", "Inventario y organización según norma AGN"],
+    title: "Cumplimiento de la Ley 594 de 2000",
+    problem: "Asegure la validez probatoria de sus archivos y evite requerimientos de entes de control.",
+    desc: "Diseñamos e implementamos los instrumentos archivísticos obligatorios (Programa de Gestión Documental PGD y Tablas de Retención Documental TRD) garantizando el estricto cumplimiento normativo y previniendo investigaciones, hallazgos de auditoría o sanciones por parte de entes reguladores.",
+    points: ["PGD institucional: instrumento de carácter obligatorio según el Decreto 1080 de 2015", "Tablas de Retención y Valoración Documental para la gestión del ciclo de vida documental", "Inventario normativo: clasificación estandarizada bajo parámetros vigentes del Archivo General de la Nación (AGN)"],
     slugs: ["programa-de-gestion-documental", "levantamiento-de-inventario"],
+    cta: "Solicitar valoración de cumplimiento legal",
   },
   {
-    id: "continuidad", icon: "hdd-stack", tag: "Continuidad del negocio",
-    title: "Respaldo y recuperación ante desastres",
-    problem: "Sus copias de seguridad están en la misma oficina o solo en la nube.",
-    desc: "Custodiamos sus medios fuera de la red: una copia de seguridad aislada (air gap) que fortalece su plan de recuperación ante desastres ante ataques de ransomware o incidentes físicos.",
-    points: ["Cintas LTO/DAT/DLT, discos y otros medios", "Control de temperatura y humedad 24 h", "Transporte con sellos numerados y trazabilidad"],
-    slugs: ["custodia-de-medios-magneticos"],
+    id: "espacio", icon: "box-seam", tag: "Costos y espacio",
+    title: "Libere espacio en sus instalaciones",
+    problem: "Recupere áreas de trabajo clave y elimine los gastos de almacenamiento.",
+    desc: "Transferimos la custodia de su fondo documental a nuestro centro logístico de alta seguridad y ejecutamos la depuración certificada de los expedientes que ya cumplieron su ciclo de vida.",
+    points: ["Medición exacta en metros lineales y cúbicos para eliminar la capacidad ociosa", "Protección industrial continua con control de humedad", "Acta de destrucción con validez legal para dar de baja definitiva expedientes caducos"],
+    slugs: ["custodia-de-archivos", "destruccion-de-documentos"],
+    labels: ["Custodia e infraestructura especializada", "Destrucción segura y trazable de archivos"],
+    cta: "Cotizar proyecto de custodia y depuración",
   },
   {
     id: "digital", icon: "upc-scan", tag: "Transformación digital",
     title: "Oficina cero papel",
-    problem: "Encontrar un documento toma horas y el papel no deja de crecer.",
-    desc: "Digitalizamos con valor legal y definimos el ciclo de vida del documento electrónico, para que su información esté disponible en segundos.",
-    points: ["Captura, indexación y OCR", "Validez legal (Ley 527 de 1999)", "Metadatos y esquemas de preservación"],
+    problem: "Acelere la toma de decisiones eliminando el flujo de papel físico y la fragmentación de archivos.",
+    desc: "Convertimos su archivo físico en un ecosistema digital inteligente, estructurado y de consulta inmediata. Implementamos procesos de digitalización con validez probatoria (Ley 527 de 1999), tecnología OCR y la definición técnica del ciclo de vida del documento electrónico para eliminar tiempos muertos en la gestión de su información.",
+    points: ["Búsqueda inteligente (OCR): localización instantánea de documentos e información clave mediante indexación avanzada", "Resguardo con valor legal: procesos alineados con la Ley 527 de 1999 para garantizar la autenticidad e integridad jurídica"],
     slugs: ["digitalizacion-de-documentos", "programa-de-gestion-documental", "microfilmacion-de-archivos"],
-  },
-  {
-    id: "espacio", icon: "box-seam", tag: "Costos y espacio",
-    title: "Liberar espacio y reducir costos",
-    problem: "El archivo ocupa metros valiosos de su sede y sigue creciendo.",
-    desc: "Trasladamos su archivo a nuestro centro de custodia y eliminamos de forma segura lo que ya cumplió su tiempo de retención.",
-    points: ["Pago por el volumen que custodia", "Consulta y recuperación cuando la necesite", "Destrucción certificada de lo que ya no se requiere"],
-    slugs: ["custodia-de-archivos", "destruccion-de-documentos"],
-  },
-  {
-    id: "auditorias", icon: "lightning-charge", tag: "Respuesta inmediata",
-    title: "Auditorías y requerimientos urgentes",
-    problem: "Un ente de control o un proceso legal le pide un documento ya.",
-    desc: "Localizamos el expediente y se lo entregamos digitalizado o en físico con despacho prioritario, con trazabilidad en cada etapa.",
-    points: ["Digitalización prioritaria bajo demanda", "Despacho físico exprés del original", "Cadena de custodia controlada"],
-    slugs: ["servicio-inmediato"],
+    labels: ["Digitalización de documentos (valor legal · OCR)", "Programa de Gestión Documental (PGD)", "Digitalización y conversión de microfilmes (16 / 35 mm)"],
+    cta: "Solicitar plan de digitalización e integración digital",
   },
   {
     id: "operacion", icon: "people", tag: "Operación documental",
-    title: "Archivo gestionado en su sede",
-    problem: "Necesita que su archivo funcione día a día sin cargar a su equipo.",
-    desc: "Ubicamos personal técnico de archivo en sus instalaciones, capacitado y supervisado por Transarchivos.",
-    points: ["Personal especializado en sitio", "Supervisión y estándares de Transarchivos", "Ideal para Recursos Humanos, Compras y Servicios Generales"],
+    title: "Administración y gestión del archivo en sus instalaciones",
+    problem: "Elimine los cuellos de botella en la administración física de expedientes dentro de su empresa.",
+    desc: "Desplegamos un equipo técnico capacitado en sus propias instalaciones para asumir la administración, organización y trámite del flujo documental. Transarchivos asume la contratación, capacitación continua y supervisión metodológica del personal, garantizando continuidad operativa y altos estándares de cumplimiento.",
+    points: ["Especialización in situ: técnicos en archivística integrados directamente a sus procesos diarios", "Gobierno y metodología: supervisión constante y aplicación de estándares de calidad respaldados por Transarchivos", "Continuidad sin riesgo laboral: alivio de carga para Gestión Humana, Compras y Servicios Generales en la administración de personal especializado"],
     slugs: ["servicio-inhouse"],
+    labels: ["Gestión documental in-house (personal técnico especializado)"],
+    cta: "Solicitar proyecto operativo in-house",
   },
 ];
 

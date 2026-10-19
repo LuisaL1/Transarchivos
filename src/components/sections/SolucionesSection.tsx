@@ -14,14 +14,14 @@ export function SolucionesSection() {
         <div className="text-center mb-12">
           <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: C.gold, fontFamily: "Montserrat, sans-serif" }}>Soluciones</p>
           <h2 className="text-3xl md:text-4xl font-bold max-w-3xl mx-auto" style={{ fontFamily: "Poppins, sans-serif", color: C.indigo, lineHeight: 1.2 }}>
-            Soluciones para <span style={{ background: "linear-gradient(transparent 62%, #FFDE59 62%)" }}>cada reto documental</span> de su empresa
+            Arquitectura de soluciones según su <span style={{ background: "linear-gradient(transparent 62%, #FFDE59 62%)" }}>escenario documental</span>
           </h2>
           <p className="text-sm mt-4 max-w-2xl mx-auto" style={{ color: C.muted }}>
-            Empiece por lo que necesita resolver. Cada solución combina los servicios que la hacen posible.
+            Combinamos infraestructura, tecnología OCR e instrumentos archivísticos para resolver problemáticas complejas de espacio, cumplimiento, digitalización y seguridad.
           </p>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid md:grid-cols-2 gap-5 max-w-5xl mx-auto">
           {SOLUTIONS.map(sol => (
             // Toda la tarjeta lleva a cotizar la solución (como las tarjetas de
             // servicios); los enlaces de adentro conservan su propio destino.
@@ -37,7 +37,7 @@ export function SolucionesSection() {
                 <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full" style={{ background: "#FFF6D6", color: "#8a6d00", fontFamily: "Montserrat, sans-serif" }}>{sol.tag}</span>
               </div>
               <h3 className="text-lg font-bold mb-2" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif", lineHeight: 1.25 }}>{sol.title}</h3>
-              <p className="text-[13px] italic mb-3 pl-3" style={{ color: C.muted, borderLeft: "3px solid #FFDE59" }}>“{sol.problem}”</p>
+              <p className="text-[13px] font-semibold mb-3 pl-3" style={{ color: C.indigo, borderLeft: "3px solid #FFDE59" }}>{sol.problem}</p>
               <p className="text-sm mb-4" style={{ color: C.muted, lineHeight: 1.6 }}>{sol.desc}</p>
               <ul className="space-y-1.5 mb-5">
                 {sol.points.map(pt => (
@@ -47,20 +47,20 @@ export function SolucionesSection() {
                 ))}
               </ul>
               <div className="mt-auto pt-4" style={{ borderTop: "1px solid #F0F1FA" }}>
-                <p className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: C.faint, fontFamily: "Montserrat, sans-serif" }}>Servicios que la componen</p>
+                <p className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: C.faint, fontFamily: "Montserrat, sans-serif" }}>Servicios integrados</p>
                 <div className="flex flex-wrap gap-1.5 mb-4">
-                  {sol.slugs.map(sl => {
+                  {sol.slugs.map((sl, k) => {
                     const sv = services.find(x => x.slug === sl);
                     return sv ? (
                       <Link key={sl} to={`/servicios/${sl}`} className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full transition-colors hover:bg-indigo hover:text-white"
                         style={{ background: "#F2F3FA", color: C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
-                        {sv.title}
+                        {sol.labels?.[k] ?? sv.title}
                       </Link>
                     ) : null;
                   })}
                 </div>
                 <Link to={`/?servicio=${sol.slugs[0]}&solucion=${sol.id}#cotizador`} className="inline-flex items-center gap-1.5 text-sm font-bold transition-transform group-hover:translate-x-0.5" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
-                  Cotizar esta solución <Bi n="arrow-right" size={14} color={C.indigo} />
+                  {sol.cta} <Bi n="arrow-right" size={14} color={C.indigo} className="shrink-0" />
                 </Link>
               </div>
             </div>

@@ -10,7 +10,7 @@ import heroJoelImg from "@/assets/images/joel-avalancha.webp";
 import { Link, useLocation, useNavigate, useNavigationType } from "react-router-dom";
 import { track } from "@/lib/visitor";
 import { ChatBot } from "@/components/chat/LazyChatBot";
-import { HeroQuickStart, HeroRotatingWord, HeroPhotos } from "@/components/home/Hero";
+import { HeroQuickStart, HeroRotatingTitle, HeroPhotos } from "@/components/home/Hero";
 import { MapReveal } from "@/components/home/MapReveal";
 import { Stats } from "@/components/home/Stats";
 import { ClientsMarquee } from "@/components/home/ClientsMarquee";
@@ -89,7 +89,7 @@ export function HomePage() {
       {/* ── HERO ────────────────────────────────────────────────────────────
           Secuencia de fotos de la operación a pantalla completa de fondo
           (con velo índigo para la lectura). En computador, dos columnas: a la izquierda el título
-          animado, la frase y el selector "¿Qué necesita hoy?"; a la derecha,
+          animado (tres frases), la frase fija y el selector "¿Qué necesita hoy?"; a la derecha,
           Joel en grande (pedido del cliente, oct. 2026). En celular y tableta
           todo va centrado y Joel se oculta. */}
       <section className="relative overflow-hidden" style={{ background: C.indigo }}>
@@ -98,14 +98,13 @@ export function HomePage() {
         <div aria-hidden="true" className="absolute inset-x-0 top-0 h-36 pointer-events-none" style={{ zIndex: 2, background: "linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.25) 45%, transparent 100%)" }} />
 
         <div className="relative min-h-[70svh] md:min-h-[88vh] flex items-center" style={{ zIndex: 3 }}>
-          <div className="w-full max-w-6xl mx-auto px-6 md:px-8 pt-28 pb-14 md:pt-36 md:pb-16 grid lg:grid-cols-[minmax(0,520px)_minmax(0,1fr)] gap-8 xl:gap-12 items-center">
+          <div className="w-full max-w-6xl mx-auto px-6 md:px-8 pt-28 pb-14 md:pt-36 md:pb-16 grid lg:grid-cols-[minmax(0,560px)_minmax(0,1fr)] gap-8 xl:gap-12 items-center">
             <div className="text-center lg:text-left relative z-10 lg:-ml-3 xl:-ml-14">
-            <h1 className="text-4xl md:text-5xl lg:text-[56px] xl:text-[62px] font-bold tracking-tight mb-5" style={{ fontFamily: "Poppins, sans-serif", color: "#fff", lineHeight: 1.12, textShadow: "0 2px 22px rgba(0,0,0,0.35)" }}>
-              Sus archivos,<br />
-              <span className="whitespace-nowrap">bajo <HeroRotatingWord />.</span>
+            <h1 className="text-[32px] md:text-[42px] xl:text-[48px] font-bold tracking-tight mb-5" style={{ fontFamily: "Poppins, sans-serif", color: "#fff", lineHeight: 1.18, textShadow: "0 2px 22px rgba(0,0,0,0.35)" }}>
+              <HeroRotatingTitle />
             </h1>
             <p className="text-base lg:text-lg max-w-xl mx-auto lg:mx-0" style={{ color: "rgba(255,255,255,0.9)", lineHeight: 1.6, textShadow: "0 1px 12px rgba(0,0,0,0.35)" }}>
-              Clasificamos, digitalizamos, custodiamos y destruimos legalmente sus documentos
+              Clasificamos, digitalizamos, custodiamos y destruimos sus documentos bajo la norma del Archivo General de la Nación (AGN) y la Ley 594. Cero riesgos, total acceso.
             </p>
             <div className="max-w-[440px] mx-auto lg:mx-0">
               <HeroQuickStart />
@@ -164,10 +163,10 @@ export function HomePage() {
                 <span className="relative">Diagnóstico documental</span>
               </span>
               <h3 className="text-2xl md:text-3xl font-bold mb-3" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif", lineHeight: 1.2 }}>
-                La <span style={{ background: "linear-gradient(transparent 62%, #FFDE59 62%)" }}>radiografía completa</span> de su archivo, antes de mover un solo papel
+                La <span style={{ background: "linear-gradient(transparent 62%, #FFDE59 62%)" }}>evaluación estratégica</span> de su archivo antes de cualquier intervención
               </h3>
               <p className="text-sm mb-8" style={{ color: C.muted, lineHeight: 1.65 }}>
-                Antes de recomendarle un servicio, analizamos el estado de su archivo. Así podrá tomar decisiones informadas, basadas en hallazgos reales y no en suposiciones.
+                Antes de ejecutar cualquier proceso, evaluamos técnicamente el estado actual de su archivo documental. Le entregamos un panorama objetivo y fundamentado para tomar decisiones financieras y normativas basadas en evidencias reales, no en estimaciones.
               </p>
 
               {/* Proceso en 4 pasos (línea de tiempo vertical) */}
@@ -175,15 +174,15 @@ export function HomePage() {
                 <span aria-hidden="true" className="absolute w-0.5 rounded-full" style={{ left: 15, top: 16, bottom: 16, background: C.border }} />
                 <ol className="relative">
                 {[
-                  { t: "Diagnóstico", d: "Revisamos su archivo tal como está hoy." },
-                  { t: "Hallazgos", d: "Identificamos volumen, estado, riesgos y oportunidades." },
-                  { t: "Plan de acción", d: "Priorizamos qué hacer primero y con qué servicios." },
-                  { t: "Propuesta", d: "Recibirá una propuesta clara, con alcance y plazos definidos." },
+                  { t: "Auditoría inicial", d: "Revisamos y evaluamos el estado actual de su fondo documental en sus instalaciones." },
+                  { t: "Análisis de hallazgos y riesgos", d: "Determinamos el volumen exacto (metros lineales), nivel de deterioro, riesgos legales y oportunidades de optimización." },
+                  { t: "Plan de acción", d: "Estructuración de un plan priorizado para organizar, digitalizar, custodiar o eliminar de forma segura." },
+                  { t: "Propuesta técnica", d: "Presentación de una solución integral con entregables medibles, plazos de cumplimiento y presupuesto optimizado." },
                 ].map((st, i) => (
                   <li key={st.t} className="relative flex items-start gap-4 pb-5 last:pb-0">
                     <span className="relative flex items-center justify-center rounded-full font-bold text-xs shrink-0"
                       style={{ width: 32, height: 32, background: i === 0 ? C.indigo : "#fff", color: i === 0 ? "#fff" : C.indigo, border: "2px solid #1800AD", fontFamily: "Poppins, sans-serif" }}>
-                      {i + 1}
+                      {String(i + 1).padStart(2, "0")}
                     </span>
                     <div className="pt-1">
                       <p className="text-sm font-bold" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>{st.t}</p>
@@ -200,12 +199,16 @@ export function HomePage() {
               </a>
             </div>
 
-            {/* Derecha: "informe" con lo que identifica */}
-            <div className="relative p-6 md:p-10 flex items-center" style={{ background: "#F7F8FF" }}>
-              <Bi n="search" size={260} color={C.indigo}
+            {/* Derecha: "informe" con lo que identifica, sobre fondo índigo con
+                lupas en azul claro (pedido del cliente, oct. 2026). */}
+            <div className="relative overflow-hidden p-6 md:p-10 flex items-center" style={{ background: C.indigo }}>
+              <Bi n="search" size={260} color={C.lavender}
                 className="hidden md:block absolute pointer-events-none select-none"
-                style={{ top: -40, right: -40, opacity: 0.04, transform: "rotate(12deg)" }} />
-              <div className="relative w-full rounded-2xl overflow-hidden" style={{ background: "#fff", border: "1px solid #E4E6F7", boxShadow: "0 24px 48px -28px rgba(24,0,173,0.35)" }}>
+                style={{ top: -40, right: -40, opacity: 0.16, transform: "rotate(12deg)" }} />
+              <Bi n="search" size={170} color={C.lavender}
+                className="hidden md:block absolute pointer-events-none select-none"
+                style={{ bottom: -36, left: -30, opacity: 0.12, transform: "rotate(-14deg)" }} />
+              <div className="relative w-full rounded-2xl overflow-hidden" style={{ background: "#fff", border: "1px solid #E4E6F7", boxShadow: "0 24px 48px -24px rgba(0,0,0,0.45)" }}>
                 <div className="flex items-center justify-between gap-3 px-5 py-4" style={{ borderBottom: "1px solid #ECEEF6" }}>
                   <span className="flex items-center gap-3">
                     <BiTile n="file-earmark-text" size={36} accent={C.indigo} />
@@ -218,13 +221,13 @@ export function HomePage() {
                 </div>
                 <ul className="px-5 py-1.5">
                   {[
-                    { i: "stack", t: "Volumen y estado documental", d: "Cuántos documentos tiene y en qué condición se encuentran" },
-                    { i: "rulers", t: "Espacio ocupado", d: "Metros lineales o cúbicos que ocupa su archivo hoy" },
-                    { i: "list-check", t: "Inventario y organización", d: "Cómo están clasificados y si siguen la TRD vigente" },
-                    { i: "upc-scan", t: "Oportunidades de digitalización", d: "Qué series pueden pasar a un flujo digital" },
-                    { i: "shield-check", t: "Necesidades de custodia", d: "Qué debe resguardarse bajo condiciones controladas" },
-                    { i: "hourglass-bottom", t: "Disposición final", d: "Qué documentos ya cumplieron su tiempo de retención" },
-                    { i: "exclamation-triangle", t: "Riesgos y oportunidades de mejora", d: "Vacíos normativos y puntos por optimizar" },
+                    { i: "stack", t: "Volumen y diagnóstico físico", d: "Evaluación cuantitativa y cualitativa de las unidades documentales y su estado de conservación." },
+                    { i: "rulers", t: "Cálculo de espacio y ocupación", d: "Medición precisa en metros lineales del área física utilizada por su archivo actual." },
+                    { i: "list-check", t: "Nivel de clasificación y control TRD", d: "Auditoría de inventario existente y su grado de alineación con las Tablas de Retención Documental (TRD) vigentes." },
+                    { i: "upc-scan", t: "Factibilidad de digitalización y captura OCR", d: "Identificación de series documentales de alta consulta aptas para migrar a flujos de trabajo 100 % digitales." },
+                    { i: "shield-check", t: "Requerimientos de custodia especializada", d: "Determinación de información crítica que exige resguardo en nuestras instalaciones de alta seguridad." },
+                    { i: "hourglass-bottom", t: "Análisis de disposición final y tiempos de retención", d: "Identificación documental que ha cumplido su ciclo de vida legal y es candidata para destrucción certificada." },
+                    { i: "exclamation-triangle", t: "Evaluación de riesgos y matriz de cumplimiento", d: "Detección de brechas normativas, vulnerabilidades de acceso y oportunidades inmediatas de optimización." },
                   ].map((f, k) => (
                     <li key={f.t} className="flex items-center gap-3 py-2.5" style={{ borderTop: k ? "1px solid #F1F2F8" : "none" }}>
                       <BiTile n={f.i} size={32} accent={C.indigo} />
@@ -252,7 +255,7 @@ export function HomePage() {
             Lo que hacemos
           </p>
           <h2 className="text-3xl font-bold text-center mb-14" style={{ fontFamily: "Poppins, sans-serif", color: "#fff" }}>
-            Soluciones documentales a la medida
+            Soluciones a la medida para la gestión de sus archivos
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" style={{ marginTop: 40 }}>
@@ -261,9 +264,9 @@ export function HomePage() {
 
           {/* CTA */}
           <div className="mt-12 flex justify-center">
-            <a href="#faq" className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all hover:scale-105"
+            <a href="#cotizador" className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold text-center transition-all hover:scale-105"
               style={{ background: C.yellow, color: C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none", boxShadow: "0 14px 28px -12px rgba(255,222,89,0.55)" }}>
-              Agendar diagnóstico →
+              Cotizar solución de gestión documental integral <Bi n="arrow-right" size={15} color={C.indigo} />
             </a>
           </div>
         </div>
@@ -276,8 +279,9 @@ export function HomePage() {
 
       <FolderDivider color={C.indigo} />
 
-      {/* ── MODELO: DIAGNÓSTICO → SOLUCIÓN → PROTECCIÓN → EXPANSIÓN ──────────
-          Contenido del documento "Modelo de Negocio - Transarchivos". */}
+      {/* ── MODELO: ENTRADA → ORGANIZACIÓN → ALMACENAMIENTO → NUEVOS PROYECTOS ─
+          Basado en el "Modelo de Negocio - Transarchivos"; textos del documento
+          de correcciones del inicio (oct. 2026). */}
       <section id="modelo" className="relative isolate overflow-hidden py-20" style={{ scrollMarginTop: 64 }}>
         <SectionDecor variant="dark" folder={false} />
         <div className="absolute inset-0 pointer-events-none select-none overflow-hidden" aria-hidden="true" style={{ zIndex: 0 }}>
@@ -289,25 +293,30 @@ export function HomePage() {
         <div className="relative max-w-6xl mx-auto px-6" style={{ zIndex: 1 }}>
           <div className="text-center mb-14">
             <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: C.yellow, fontFamily: "Montserrat, sans-serif" }}>Cómo trabajamos</p>
-            <h2 className="text-3xl md:text-4xl font-bold max-w-3xl mx-auto" style={{ fontFamily: "Poppins, sans-serif", color: "#fff", lineHeight: 1.2 }}>
-              Su socio integral para <span style={{ color: C.yellow }}>todo el ciclo de vida documental</span>
+            <h2 className="text-3xl md:text-4xl font-bold max-w-4xl mx-auto" style={{ fontFamily: "Poppins, sans-serif", color: "#fff", lineHeight: 1.2 }}>
+              Nuestra metodología de trabajo<br />
+              <span style={{ color: C.yellow }}>El camino hacia un archivo eficiente y seguro</span>
             </h2>
             <p className="text-sm mt-4 max-w-2xl mx-auto" style={{ color: "rgba(255,255,255,0.78)" }}>
-              Le ayudamos a diagnosticar, organizar, transformar, proteger y disponer correctamente de su información documental. Cada servicio cumple una función dentro de un mismo recorrido.
+              Le guiamos en cada fase del proceso: desde la valoración técnica inicial y la organización bajo norma AGN, hasta la transformación digital con OCR, la custodia búnker de alta seguridad y la destrucción final certificada.
             </p>
           </div>
 
           <div className="relative grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {([
-              { n: 1, t: "Diagnóstico", k: "Entrada", ic: "clipboard2-pulse-fill", c: C.gold, d: "Detectamos su necesidad y abrimos la relación entendiendo qué pasa hoy con su archivo.", g: C.gold,
-                items: [{ i: "search", l: "Diagnóstico documental", href: "#cotizador" }, { i: "list-columns-reverse", l: "Levantamiento de inventario", to: "/servicios/levantamiento-de-inventario" }] },
-              { n: 2, t: "Solución", k: "Transformación", ic: "gear-wide-connected", c: C.navy, d: "Resolvemos el problema documental con un proyecto a la medida.", g: C.navy,
-                items: [{ i: "upc-scan", l: "Digitalización", to: "/servicios/digitalizacion-de-documentos" }, { i: "folder2-open", l: "Programa de gestión documental", to: "/servicios/programa-de-gestion-documental" }] },
-              { n: 3, t: "Protección", k: "Recurrencia", ic: "shield-fill-check", c: C.indigo, d: "Protegemos su información y la mantenemos disponible cuando la necesite.", g: C.indigo,
-                items: [{ i: "archive", l: "Custodia de archivos", to: "/servicios/custodia-de-archivos" }, { i: "hdd-stack", l: "Custodia de medios magnéticos", to: "/servicios/custodia-de-medios-magneticos" }] },
-              { n: 4, t: "Expansión", k: "Nuevos proyectos", ic: "rocket-takeoff-fill", c: C.navyDark, d: "Cerramos el ciclo de vida documental y ampliamos el valor de la relación.", g: C.navyDark,
-                items: [{ i: "file-earmark-x", l: "Destrucción legal", to: "/servicios/destruccion-de-documentos" }, { i: "lightning-charge", l: "Servicio inmediato", to: "/servicios/servicio-inmediato" }, { i: "person-badge", l: "Servicio in house", to: "/servicios/servicio-inhouse" }] },
-            ] as { n: number; t: string; k: string; ic: string; c: string; d: string; g: string; items: { i: string; l: string; to?: string; href?: string }[] }[]).map((st, idx, arr) => (
+              { n: 1, t: "Diagnóstico de estado actual", k: "Entrada", ic: "clipboard2-pulse-fill", c: C.gold, g: C.gold,
+                d: "Identificamos brechas de cumplimiento normativo, riesgos operativos y oportunidades de optimización. Establecemos una línea base precisa mediante el levantamiento de inventarios y el análisis del volumen real para estructurar un plan de acción a la medida.",
+                items: [{ i: "search", l: "Diagnóstico técnico y normativo de archivo", to: "/?servicio=diagnostico#cotizador" }, { i: "list-columns-reverse", l: "Levantamiento e inventario", to: "/servicios/levantamiento-de-inventario" }] },
+              { n: 2, t: "Normalización y gobierno archivístico", k: "Organización", ic: "gear-wide-connected", c: C.navy, g: C.navy,
+                d: "Diseñamos los instrumentos de control y clasificamos su fondo documental bajo los lineamientos del Archivo General de la Nación (AGN). Establecemos las reglas de retención, acceso y disposición legal para transformar archivos desorganizados en un sistema normativo, eficiente y auditable.",
+                items: [{ i: "folder2-open", l: "Diseño e implementación de Programa de Gestión Documental (PGD)", to: "/servicios/programa-de-gestion-documental" }, { i: "table", l: "Estructuración de Tablas de Retención (TRD) y Valoración Documental (TVD)", to: "/servicios/programa-de-gestion-documental" }, { i: "list-check", l: "Organización, depuración y foliación física bajo norma AGN", to: "/servicios/levantamiento-de-inventario" }] },
+              { n: 3, t: "Custodia especializada y continuidad operativa", k: "Almacenamiento", ic: "shield-fill-check", c: C.indigo, g: C.indigo,
+                d: "Resguardamos su patrimonio documental y medios magnéticos en infraestructura de alta seguridad con monitoreo continuo. Mantenemos su información blindada, organizada y disponible con tiempos de respuesta garantizados (SLA) para asegurar la continuidad de sus operaciones.",
+                items: [{ i: "archive", l: "Custodia de archivos físicos en búnker de alta seguridad", s: "CCTV 24/7 y control biométrico", to: "/servicios/custodia-de-archivos" }, { i: "hdd-stack", l: "Custodia de medios magnéticos y respaldos DRP", s: "Air Gap fuera de línea", to: "/servicios/custodia-de-medios-magneticos" }] },
+              { n: 4, t: "Disposición final y escalabilidad operativa", k: "Nuevos proyectos", ic: "rocket-takeoff-fill", c: C.navyDark, g: C.navyDark,
+                d: "Cerramos el ciclo de vida de los documentos que cumplen su tiempo de retención legal y escalamos la capacidad operativa de su compañía. Expandimos el valor del servicio integrando atención prioritaria para contingencias y despliegue de personal técnico directamente en sus sedes.",
+                items: [{ i: "file-earmark-x", l: "Destrucción segura y certificada de documentos", s: "Conforme a Ley 594 de 2000 y Habeas Data", to: "/servicios/destruccion-de-documentos" }, { i: "lightning-charge", l: "Respuesta prioritaria y atención de requerimientos urgentes", s: "Servicio inmediato", to: "/servicios/servicio-inmediato" }, { i: "person-badge", l: "Gestión y administración documental in-house", s: "Personal técnico especializado en sus instalaciones", to: "/servicios/servicio-inhouse" }] },
+            ] as { n: number; t: string; k: string; ic: string; c: string; d: string; g: string; items: { i: string; l: string; s?: string; to?: string; href?: string }[] }[]).map((st, idx, arr) => (
               <div key={st.n} role="link" tabIndex={0}
                 // Toda la tarjeta lleva a su primer servicio (los enlaces de
                 // adentro conservan su propio destino). Mismo efecto de las
@@ -320,30 +329,32 @@ export function HomePage() {
                 // de la tarjeta de al lado) siempre se ve completa, incluso al
                 // pasar el mouse.
                 style={{ background: "#fff", border: "1.5px solid #E4E6F7", zIndex: arr.length - idx }}>
-                <div className="relative px-6 pt-6 pb-7 overflow-hidden" style={{ background: st.g, borderRadius: "22px 22px 0 0", minHeight: 150 }}>
+                <div className="relative px-6 pt-6 pb-7 overflow-hidden" style={{ background: st.g, borderRadius: "22px 22px 0 0", minHeight: 200 }}>
                   <span aria-hidden="true" className="absolute select-none pointer-events-none font-bold" style={{ right: -6, top: -22, fontSize: 130, lineHeight: 1, color: "rgba(255,255,255,0.14)", fontFamily: "Poppins, sans-serif" }}>{st.n}</span>
                   <div className="relative">
                     <span className="inline-flex items-center justify-center mb-3" style={{ width: 46, height: 46, borderRadius: 14, background: "rgba(255,255,255,0.18)", border: "1px solid rgba(255,255,255,0.35)", backdropFilter: "blur(4px)" }}>
                       <Bi n={st.ic} size={23} color="#fff" />
                     </span>
                     <p className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: "rgba(255,255,255,0.8)", fontFamily: "Montserrat, sans-serif" }}>Paso {st.n} · {st.k}</p>
-                    <p className="text-2xl font-bold" style={{ color: "#fff", fontFamily: "Poppins, sans-serif" }}>{st.t}</p>
+                    <p className="text-lg font-bold" style={{ color: "#fff", fontFamily: "Poppins, sans-serif", lineHeight: 1.25 }}>{st.t}</p>
                   </div>
                 </div>
-                <div className="flex flex-col flex-1 p-6">
+                <div className="flex flex-col flex-1 p-5 xl:p-6">
                   <p className="text-sm mb-5" style={{ color: C.muted, lineHeight: 1.6 }}>{st.d}</p>
                   <ul className="space-y-2 mt-auto">
                     {st.items.map(it => {
                       const inner = (
                         <>
-                          <span className="flex items-center justify-center rounded-xl shrink-0" style={{ width: 38, height: 38, background: "#F7F8FF", border: "1px solid #E4E6F7" }}>
-                            <Bi n={it.i} size={17} color={C.indigo} />
+                          <span className="flex items-center justify-center rounded-xl shrink-0" style={{ width: 32, height: 32, background: "#F7F8FF", border: "1px solid #E4E6F7" }}>
+                            <Bi n={it.i} size={15} color={C.indigo} />
                           </span>
-                          <span className="flex-1">{it.l}</span>
-                          <Bi n="arrow-right" size={14} color={C.indigo} className="transition-transform group-hover/item:translate-x-1" />
+                          <span className="flex-1 min-w-0">
+                            {it.l}
+                            {it.s && <span className="block text-[11px] font-medium mt-0.5" style={{ color: C.muted }}>{it.s}</span>}
+                          </span>
                         </>
                       );
-                      const cls = "group/item flex items-center gap-3 text-xs font-semibold rounded-2xl px-2.5 py-2 transition-colors hover:bg-hielo";
+                      const cls = "flex items-start gap-2.5 text-xs font-semibold leading-snug rounded-2xl px-2 py-2 transition-colors hover:bg-hielo";
                       const sty = { color: C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none" } as const;
                       return (
                         <li key={it.l}>

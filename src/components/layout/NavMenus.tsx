@@ -102,15 +102,17 @@ export function SolucionesPanelContent({ setOpen }: { setOpen: (v: boolean) => v
   return (
     <div className={menuShell} style={{ animation: "fadeInUp 0.25s ease both" }}>
       <MenuFeature kicker="Soluciones" title="Parta de su necesidad, no del servicio"
-        text="Combinamos nuestros servicios según el reto de su empresa: cumplimiento, continuidad, digitalización, espacio o urgencias."
+        text="Combinamos nuestros servicios según el reto de su empresa: cumplimiento legal, espacio, oficina cero papel o gestión del archivo en su sede."
         cta="Ver todas las soluciones" href="#soluciones" onClick={close} />
-      <div className="grid grid-cols-2 gap-0.5 py-1">
+      {/* content-center: con 4 soluciones las filas no se estiran al alto de la
+          tarjeta índigo (quedaban huecos grandes entre filas). */}
+      <div className="grid grid-cols-2 content-center gap-x-0.5 gap-y-1 py-1">
         {SOLUTIONS.map(sol => (
           <a key={sol.id} href={`#sol-${sol.id}`} onClick={close} className={menuItemCls} style={{ textDecoration: "none" }}>
             <MenuIcon n={sol.icon} />
             <span className="min-w-0">
               <span className="block text-[13px] font-semibold leading-tight" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>{sol.title}</span>
-              <span className="block text-[11px] leading-snug mt-0.5" style={{ color: "#8A8A8A" }}>{sol.tag}</span>
+              <span className="block text-[11px] leading-snug mt-1 line-clamp-2" style={{ color: "#8A8A8A" }}>{sol.problem}</span>
             </span>
           </a>
         ))}
@@ -151,7 +153,7 @@ export function BlogPanelContent({ setOpen }: { setOpen: (v: boolean) => void })
   const recent = blogPosts.slice(0, 3);
   return (
     <div className={menuShell} style={{ animation: "fadeInUp 0.25s ease both" }}>
-      <MenuFeature kicker="Blog y novedades" title="Conocimiento que protege la memoria de su empresa"
+      <MenuFeature kicker="Blog y novedades" title="Conocimiento especializado que protege la memoria de su empresa"
         text="Guías sobre gestión documental, normativa, tecnología y sostenibilidad."
         cta="Ver todos los artículos" href="#blog" onClick={close} />
       <div className="py-1 pr-2 min-w-0">

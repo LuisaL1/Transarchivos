@@ -120,10 +120,8 @@ const RULES: Rule[] = [
 // Problemas del cliente → solución (asesoría a partir del dolor que describe).
 const PAINS: { kws: string[]; solution: string }[] = [
   { kws: ["sancion", "multa", "investigacion", "agn", "visita de control", "superintendencia", "no cumplimos", "incumplimiento"], solution: "cumplimiento" },
-  { kws: ["ransomware", "hackeo", "virus", "ciberataque", "perdimos informacion", "backup", "copias de seguridad"], solution: "continuidad" },
   { kws: ["no encuentro", "no encontramos", "perdemos tiempo", "buscar documentos", "mucho papel", "papeleo", "cero papel"], solution: "digital" },
   { kws: ["no hay espacio", "sin espacio", "ocupa mucho", "bodega llena", "oficina llena", "arriendo", "trasteo", "mudanza", "muchas cajas"], solution: "espacio" },
-  { kws: ["auditoria", "requerimiento", "juzgado", "demanda", "lo necesito ya", "urgente"], solution: "auditorias" },
   { kws: ["no tenemos personal", "nadie maneja", "recursos humanos", "hojas de vida", "historias laborales", "personal de archivo"], solution: "operacion" },
 ];
 

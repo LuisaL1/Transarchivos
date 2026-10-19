@@ -4,8 +4,6 @@ type QField = { key: string; label: string; options: string[] };
 
 export type QConfig = { volumeLabel: string; volumePlaceholder: string; fields: QField[]; level?: string; next: string[] };
 
-export const QUOTE_URGENCY = ["Sin urgencia", "En las próximas semanas", "Urgente"];
-
 export const QUOTE_SECTORS = [
   "Salud", "Aseguradoras", "Petróleo", "Ingeniería e infraestructura", "Construcción",
   "Líneas aéreas", "Laboratorios", "Financiero", "Minería", "Compañía en liquidación o reestructuración", "Otro",
@@ -80,13 +78,15 @@ export const quoteConfig: Record<string, QConfig> = {
     ],
   },
   "microfilmacion-de-archivos": {
-    volumeLabel: "Volumen a microfilmar", volumePlaceholder: "Ej.: 100.000 imágenes o 300 cajas",
+    // En el cotizador del inicio se ofrece como "Digitalización de microfilms"
+    // (rollos de 16/35 mm a PDF; documento de correcciones, oct. 2026).
+    volumeLabel: "Volumen de microfilme a digitalizar", volumePlaceholder: "Ej.: 40 rollos o 100.000 imágenes",
     next: [],
     fields: [
       { key: "tipo", label: "Tipo de documentos", options: ["Historias clínicas", "Registros notariales", "Expedientes judiciales", "Contables, legales o financieros", "Históricos o patrimoniales", "Otros"] },
       { key: "formato", label: "Formato de microfilme", options: ["16 mm", "35 mm", "No lo sé"] },
-      { key: "originales", label: "Destino de los originales", options: ["Restituirlos al cliente", "Trasladarlos a custodia", "No lo sé"] },
-      { key: "paralelo", label: "¿Digitalizar en paralelo?", options: ["Sí", "No", "No lo sé"] },
+      { key: "entrega", label: "Formato de entrega", options: ["PDF", "PDF con OCR e indexación", "No lo sé"] },
+      { key: "rollos", label: "Destino de los rollos", options: ["Restituirlos al cliente", "Trasladarlos a custodia", "No lo sé"] },
     ],
   },
   "servicio-inhouse": {

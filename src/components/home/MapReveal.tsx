@@ -6,7 +6,7 @@ import colombiaMap from "@/assets/images/colombia.svg";
 import joelImg from "@/assets/images/joel.webp"; // silueta en súper zoom
 import { C } from "@/styles/tokens";
 
-// ─── Desde Bogotá, para toda Colombia (efecto al hacer scroll) ─────────────
+// ─── Cobertura desde Bogotá para toda Colombia (efecto al hacer scroll) ────
 // Inspirado en el recurso de Audi que pidió el cliente: la sección queda fija
 // mientras se baja y el desplazamiento controla la animación.
 //   1. Mapa de Colombia con rutas desde 10 ciudades que llegan a Bogotá (centro
@@ -40,10 +40,11 @@ const route = (c: { x: number; y: number }) => {
   const nx = -(y2 - y1) / d, ny = (x2 - x1) / d;
   return `M${x1.toFixed(1)} ${y1.toFixed(1)} Q${(mx + nx * d * 0.22).toFixed(1)} ${(my + ny * d * 0.22).toFixed(1)} ${x2.toFixed(1)} ${y2.toFixed(1)}`;
 };
-// Recorrido por la bodega de custodia (video entregado por Transarchivos en
-// 4K, oct. 2026; reemplazó la toma de la flota), sin audio, en bucle al 70 %;
-// versión vertical para celular. Nombres nuevos al cambiarlo (caché).
-const VIDEO = { desktop: "/videos/transarchivos-bodega.mp4", mobile: "/videos/transarchivos-bodega-movil.mp4" };
+// Recorrido por los pasillos del centro documental (video entregado por
+// Transarchivos en 4K en el documento de correcciones del inicio, oct. 2026;
+// reemplazó la toma de la bodega), sin audio, en bucle al 70 %; versión
+// vertical para celular. Nombres nuevos al cambiarlo (caché).
+const VIDEO = { desktop: "/videos/transarchivos-centro-documental.mp4", mobile: "/videos/transarchivos-centro-documental-movil.mp4" };
 
 const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 // Entra lento (se ve nacer el círculo en Bogotá) y acelera al final.
@@ -119,11 +120,11 @@ export function MapReveal() {
           {/* Texto del mapa */}
           <div style={{ opacity: mapText, transform: `translateY(${(1 - mapText) * -20}px)` }} className="text-center md:text-left order-2 md:order-1">
             <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: C.yellow, fontFamily: "Montserrat, sans-serif" }}>Cobertura nacional</p>
-            <h2 className="text-3xl md:text-5xl font-bold mb-4" style={{ color: "#fff", fontFamily: "Poppins, sans-serif", lineHeight: 1.12 }}>
-              Desde Bogotá,<br />para toda Colombia
+            <h2 className="text-3xl md:text-[40px] font-bold mb-4" style={{ color: "#fff", fontFamily: "Poppins, sans-serif", lineHeight: 1.15 }}>
+              Cobertura estratégica desde la capital para toda Colombia
             </h2>
-            <p className="text-sm md:text-base max-w-md mx-auto md:mx-0" style={{ color: "rgba(255,255,255,0.75)", lineHeight: 1.7 }}>
-              Nuestro centro de operaciones y bodegas están en Bogotá. Desde aquí atendemos empresas de distintas ciudades del país, también en servicios que no se pueden realizar legalmente en cualquier lugar, como la destrucción certificada de documentos.
+            <p className="text-sm md:text-[15px] max-w-md mx-auto md:mx-0" style={{ color: "rgba(255,255,255,0.75)", lineHeight: 1.7 }}>
+              Nuestra sede de operación y bodegas especializadas en Bogotá listas para responder a las demandas de gestión documental de empresas a nivel nacional. Desde nuestra infraestructura central garantizamos la ejecución de procesos críticos con plena validez legal, incluyendo la eliminación definitiva y trazable de archivos bajo los más estrictos lineamientos normativos y ambientales que exige la ley.
             </p>
           </div>
 
@@ -190,10 +191,10 @@ export function MapReveal() {
               style={{ opacity: endText, transform: `translateY(${(1 - endText) * 24}px)` }}>
               <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: C.yellow, fontFamily: "Montserrat, sans-serif" }}>Gestión documental integral</p>
               <h2 className="text-3xl md:text-5xl font-bold mb-4 max-w-3xl" style={{ color: "#fff", fontFamily: "Poppins, sans-serif", lineHeight: 1.12 }}>
-                Más de 40 años cuidando la información de las empresas colombianas
+                Más de cuatro décadas liderando la protección de la información empresarial de Colombia
               </h2>
-              <p className="text-sm md:text-base max-w-xl mb-7" style={{ color: "rgba(255,255,255,0.8)", lineHeight: 1.7 }}>
-                Organizamos, digitalizamos, custodiamos y destruimos sus documentos con trazabilidad y cumplimiento legal, esté donde esté su empresa.
+              <p className="text-sm md:text-base max-w-2xl mb-7" style={{ color: "rgba(255,255,255,0.8)", lineHeight: 1.7 }}>
+                Gestionando el ciclo total de sus archivos bajo los estándares de la normativa colombiana. Nos encargamos de la clasificación, digitalización con OCR, custodia de alta seguridad y destrucción trazable, brindando respaldo legal a su empresa.
               </p>
               <Link to="/?servicio=diagnostico#cotizador" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full text-sm font-bold transition-transform hover:scale-[1.03]"
                 style={{ background: C.yellow, color: C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>

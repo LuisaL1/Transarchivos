@@ -92,7 +92,7 @@ pnpm build
   documental Bogotá", "custodia de archivos", "digitalización de documentos",
   "destrucción de documentos certificada", "programa de gestión documental",
   "microfilmación", "Ley 594 de 2000".
-- **El H1 de inicio** ("Sus archivos, bajo control") es de marca. La palabra
+- **El H1 de inicio** (tres frases que se alternan; la primera, "Protegemos la memoria de su empresa", es la que se lee) es de marca. La palabra
   clave principal está en el título, la meta descripción y el subtítulo.
   Considerar un H2 visible con "gestión documental en Bogotá" en la siguiente
   revisión de contenido.

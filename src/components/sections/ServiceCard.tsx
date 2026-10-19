@@ -22,7 +22,7 @@ export function ServiceCard({ service }: { service: typeof services[0] }) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between gap-3">
         {/* Icon badge */}
         <div
           style={{
@@ -39,24 +39,24 @@ export function ServiceCard({ service }: { service: typeof services[0] }) {
           style={{
             fontSize: 10, fontFamily: "Montserrat, sans-serif", fontWeight: 600,
             color: service.accent, background: `${service.accent}14`,
-            borderRadius: 99, padding: "3px 9px", whiteSpace: "nowrap",
+            borderRadius: 99, padding: "3px 9px", textAlign: "right", lineHeight: 1.35,
           }}
         >
-          {service.tag}
+          {service.card.tag}
         </span>
       </div>
 
       <div>
         <p className="font-bold text-base mb-1.5" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>
-          {service.title}
+          {service.card.title}
         </p>
         <p className="text-sm leading-relaxed" style={{ color: C.muted }}>
-          {service.desc}
+          {service.card.desc}
         </p>
       </div>
 
       <p className="text-xs font-semibold mt-auto pt-1 flex items-center gap-1" style={{ color: service.accent, fontFamily: "Montserrat, sans-serif" }}>
-        Más información
+        {service.card.cta}
         <span style={{ transition: "transform 0.2s", transform: hovered ? "translateX(3px)" : "none" }}>→</span>
       </p>
     </Link>

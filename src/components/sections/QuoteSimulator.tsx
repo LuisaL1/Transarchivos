@@ -13,7 +13,7 @@ import { track } from "@/lib/visitor";
 import { sendLead } from "@/lib/leads";
 import { whatsappUrl } from "@/data/contact";
 import { Bi, MenuIcon } from "@/components/ui/Icons";
-import { QUOTE_SECTORS, QUOTE_URGENCY, quoteConfig } from "@/data/quote";
+import { QUOTE_SECTORS, quoteConfig } from "@/data/quote";
 import { services } from "@/data/services";
 import { SOLUTIONS, SOLUTIONS_ICON } from "@/data/solutions";
 import { C } from "@/styles/tokens";
@@ -40,7 +40,7 @@ export function QuoteSimulator() {
 
   const cfg = quoteConfig[selected];
   const svc = services.find(s => s.slug === selected);
-  const title = svc ? svc.title : "Diagnóstico documental";
+  const title = svc ? svc.quote?.title ?? svc.title : "Diagnóstico documental";
   const accent = svc ? svc.accent : C.gold;
   const icon = svc ? svc.icon : "search";
 
@@ -52,7 +52,7 @@ export function QuoteSimulator() {
 
   const unknownCount = cfg.fields.filter(f => (answers[f.key] ?? "").toLowerCase().startsWith("no l") || (answers[f.key] ?? "").toLowerCase().startsWith("no estoy")).length;
   const missingVolume = !(answers.volume ?? "").trim();
-  const special = answers.urgencia === "Urgente" || (answers.especiales ?? "").trim().length > 0;
+  const special = (answers.especiales ?? "").trim().length > 0;
   const nextStep = missingVolume || unknownCount >= 2
     ? { t: "Completar la información", d: "Faltan variables críticas. Un asesor le pedirá los datos restantes o programará una visita o levantamiento antes de cotizar.", ic: "question-circle-fill", c: C.gold }
     : special
@@ -60,10 +60,11 @@ export function QuoteSimulator() {
       : { t: "Cotización según parámetros", d: "La información es suficiente. Comercial elaborará la cotización con el alcance y las condiciones definidas.", ic: "check-circle-fill", c: "#16a34a" };
 
   // Completitud "en vivo": cuántas de las variables que el documento marca
-  // como mínimas (volumen + campos del servicio + ubicación + urgencia) ya
+  // como mínimas (volumen + campos del servicio + ubicación) ya
   // tiene el cliente respondidas — no es un precio, es transparencia sobre
   // qué tan lista está la solicitud para cotizarse, sin esperar a un asesor.
-  const requiredKeys = ["volume", ...cfg.fields.map(f => f.key), "ubicacion", "urgencia"];
+  // (El nivel de urgencia se retiró del formulario: pedido del cliente, oct. 2026.)
+  const requiredKeys = ["volume", ...cfg.fields.map(f => f.key), "ubicacion"];
   const answeredCount = requiredKeys.filter(k => (answers[k] ?? "").trim()).length;
   const completPct = Math.round((answeredCount / requiredKeys.length) * 100);
 
@@ -71,7 +72,6 @@ export function QuoteSimulator() {
     [cfg.volumeLabel, answers.volume || "—"],
     ...cfg.fields.map(f => [f.label, answers[f.key] || "—"] as [string, string]),
     ["Ubicación", answers.ubicacion || "—"],
-    ["Urgencia", answers.urgencia || "—"],
     ["Requerimientos especiales", answers.especiales || "Ninguno"],
   ];
   const contactRows: [string, string][] = [
@@ -104,9 +104,11 @@ export function QuoteSimulator() {
   const labelCls = "block text-xs font-semibold mb-1.5";
   const labelStyle = { color: C.indigo, fontFamily: "Montserrat, sans-serif" } as const;
 
+  // Opciones del paso 1 (textos del cotizador en services.ts; Servicio
+  // inmediato no se ofrece aquí: pedido del cliente, oct. 2026).
   const units = [
-    { slug: "diagnostico", icon: "search", title: "Diagnóstico documental", desc: "¿No sabe qué servicio necesita? Empiece por entender qué está pasando con su archivo.", accent: C.gold },
-    ...services,
+    { slug: "diagnostico", icon: "search", title: "Diagnóstico documental", desc: "Identifique brechas normativas, físicas y operativas en su archivo. Diseñamos la ruta técnica adecuada antes de iniciar cualquier intervención.", accent: C.gold },
+    ...services.flatMap(sv => sv.quote ? [{ slug: sv.slug, icon: sv.icon, title: sv.quote.title, desc: sv.quote.desc, accent: sv.accent }] : []),
   ];
   const STEPS = ["Servicio", "Detalles", "Contacto", "Resumen"];
   const primaryBtn = "inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all hover:opacity-90 cursor-pointer";
@@ -116,13 +118,13 @@ export function QuoteSimulator() {
   return (
     <section id="cotizador" className="relative max-w-6xl mx-auto px-6 py-16" style={{ scrollMarginTop: 80 }}>
       <p className="text-xs font-bold uppercase tracking-widest text-center mb-3" style={{ color: C.gold, fontFamily: "Montserrat, sans-serif" }}>
-        Solicite su cotización
+        Cotización a la medida
       </p>
       <h2 className="text-3xl font-bold text-center mb-4" style={{ fontFamily: "Poppins, sans-serif", color: C.indigo }}>
-        Cuéntenos qué necesita y prepare su solicitud
+        Defina su necesidad y prepare su solicitud comercial
       </h2>
       <p className="text-sm text-center max-w-xl mx-auto mb-10" style={{ color: C.muted }}>
-        Cuatro pasos cortos. Verá cómo se arma su solicitud antes de enviarla a nuestro equipo comercial.
+        4 pasos simples. Visualice la composición técnica de su requerimiento en tiempo real antes de conectarse con nuestro equipo comercial.
       </p>
 
       <div className="rounded-3xl overflow-hidden" style={{ background: "#fff", border: "1.5px solid #E4E6F7", boxShadow: "0 30px 60px -34px rgba(24,0,173,0.3)" }}>
@@ -157,7 +159,7 @@ export function QuoteSimulator() {
             {step === 0 && (
               <>
                 <p className="text-lg font-bold mb-1" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>¿Qué servicio necesita?</p>
-                <p className="text-sm mb-5" style={{ color: "#8A8A8A" }}>Si no está seguro, elija el diagnóstico documental.</p>
+                <p className="text-sm mb-5" style={{ color: "#8A8A8A" }}>¿No tiene certeza sobre el alcance técnico? Inicie con un Diagnóstico Documental para evaluar el estado actual de su archivo.</p>
                 <div className="grid sm:grid-cols-2 gap-3">
                   {units.map(u => {
                     const on = u.slug === selected;
@@ -170,7 +172,7 @@ export function QuoteSimulator() {
                         </span>
                         <span className="min-w-0 pr-5">
                           <span className="block text-sm font-semibold leading-tight mb-0.5" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>{u.title}</span>
-                          <span className="block text-[11px] leading-snug line-clamp-2" style={{ color: "#8A8A8A" }}>{u.desc}</span>
+                          <span className="block text-[11px] leading-snug" style={{ color: "#8A8A8A" }}>{u.desc}</span>
                         </span>
                         {on && <Bi n="check-circle-fill" size={16} color={u.accent} className="absolute top-3 right-3" />}
                       </button>
@@ -198,7 +200,7 @@ export function QuoteSimulator() {
                       {solutionInfo.slugs.length > 1 && (
                         <div className="flex flex-wrap gap-1.5 mt-2">
                           {solutionInfo.slugs.map(sl => {
-                            const o = services.find(x => x.slug === sl); const on = sl === selected;
+                            const o = units.find(x => x.slug === sl); const on = sl === selected;
                             return o ? (
                               <button key={sl} type="button" onClick={() => pick(sl, 1)} className="text-[11px] font-semibold px-2.5 py-1 rounded-full transition-colors"
                                 style={{ background: on ? C.indigo : "#fff", color: on ? "#fff" : C.indigo, border: "1px solid #DDE0F2", fontFamily: "Montserrat, sans-serif" }}>{o.title}</button>
@@ -225,22 +227,9 @@ export function QuoteSimulator() {
                       </select>
                     </div>
                   ))}
-                  <div>
+                  <div className="sm:col-span-2">
                     <label htmlFor="cot-ubicacion" className={labelCls} style={labelStyle}>Ubicación (ciudad y sede)</label>
                     <input id="cot-ubicacion" value={answers.ubicacion ?? ""} onChange={e => setA("ubicacion", e.target.value)} placeholder="Ej.: Bogotá, sede principal" className={inputCls} style={inputStyle} />
-                  </div>
-                  <div>
-                    <p id="cot-urgencia" className={labelCls} style={labelStyle}>Nivel de urgencia</p>
-                    <div role="group" aria-labelledby="cot-urgencia" className="grid grid-cols-3 gap-2">
-                      {QUOTE_URGENCY.map(o => {
-                        const on = answers.urgencia === o;
-                        return (
-                          <button key={o} type="button" onClick={() => setA("urgencia", o)}
-                            className="px-2 py-2.5 rounded-xl text-[11px] font-semibold leading-tight transition-colors"
-                            style={{ border: `1.5px solid ${on ? C.indigo : "#DDE0F2"}`, background: on ? C.indigo : "#fff", color: on ? "#fff" : C.indigo, fontFamily: "Montserrat, sans-serif" }}>{o}</button>
-                        );
-                      })}
-                    </div>
                   </div>
                   <div className="sm:col-span-2">
                     <label htmlFor="cot-especiales" className={labelCls} style={labelStyle}>Requerimientos especiales <span style={{ color: C.faint, fontWeight: 400 }}>(opcional)</span></label>
@@ -331,7 +320,7 @@ export function QuoteSimulator() {
                     <p className="text-[11px] font-bold uppercase tracking-wider mb-2" style={{ color: C.faint, fontFamily: "Montserrat, sans-serif" }}>También podría necesitar</p>
                     <div className="flex flex-wrap gap-2">
                       {cfg.next.map(n => {
-                        const o = services.find(x => x.slug === n);
+                        const o = units.find(x => x.slug === n);
                         return o ? (
                           <button key={n} type="button" onClick={() => pick(n, 1)} className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full cursor-pointer"
                             style={{ background: "#fff", color: C.indigo, border: "1px solid #DDE0F2", fontFamily: "Montserrat, sans-serif" }}>
@@ -407,7 +396,7 @@ export function QuoteSimulator() {
               </ul>
             ) : (
               <p className="text-xs leading-relaxed" style={{ color: C.faint }}>
-                {selected === "diagnostico" ? units[0].desc : svc?.desc}
+                {units.find(u => u.slug === selected)?.desc ?? svc?.desc}
               </p>
             )}
 
