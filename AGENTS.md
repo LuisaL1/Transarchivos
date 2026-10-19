@@ -40,7 +40,7 @@ src/
 │                         (SectionDecor), rótulo/título de sección (SectionHead)
 ├── data/                 CONTENIDO del sitio (fuente única de verdad)
 │   ├── services.ts           Los 9 servicios
-│   ├── serviceDetails.ts     Contenido de la página de cada servicio
+│   ├── serviceDetails.ts     Contenido de la página de cada servicio (fotos: assets/images/servicios)
 │   ├── solutions.ts          Soluciones por necesidad del cliente
 │   ├── faqs.ts               Preguntas frecuentes (portada y Joel)
 │   ├── serviceFaqs.ts        Preguntas frecuentes de cada servicio (página del servicio, Joel y buscador)

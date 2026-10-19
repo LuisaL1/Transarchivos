@@ -113,17 +113,18 @@ function serviceMeta(slug: string): PageMeta | null {
   const d = SERVICE_DETAILS[slug];
   if (!s || !d) return null;
   const path = `/servicios/${slug}`;
-  const title = `${s.title} en Bogotá | Transarchivos`;
-  const description = clip(`${s.title}: ${d.intro}`);
+  const name = d.title ?? s.title;
+  const title = `${name} en Bogotá | Transarchivos`;
+  const description = clip(`${name}: ${d.intro}`);
   return {
     ...base(path), title, description, priority: 0.9,
     jsonLd: [graph(
       webPage(path, title, description),
       {
-        "@type": "Service", "@id": abs(path) + "#servicio", name: s.title, serviceType: s.title, description: d.intro,
+        "@type": "Service", "@id": abs(path) + "#servicio", name, serviceType: name, description: d.intro,
         provider: { "@id": ORG_ID }, areaServed: [{ "@type": "City", name: "Bogotá" }, { "@type": "Country", name: "Colombia" }], url: abs(path),
       },
-      breadcrumb([["Inicio", "/"], ["Servicios", "/#servicios"], [s.title, path]]),
+      breadcrumb([["Inicio", "/"], ["Servicios", "/#servicios"], [name, path]]),
     )],
   };
 }

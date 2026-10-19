@@ -20,7 +20,7 @@ export type JoelReply = { say: string[]; actions?: JoelAction[]; options?: JoelO
 
 export type JoelKB = {
   services: { slug: string; title: string; desc: string; tag: string }[];
-  details: Record<string, { tagline: string; intro: string; stats: { v: string; l: string }[]; benefits: string[]; reasons: { t: string; d: string }[]; modes?: { t: string; d: string }[]; norms: string[]; steps?: { t: string; d: string }[] }>;
+  details: Record<string, { tagline: string; intro: string; about?: string; stats: { v: string; l: string }[]; benefits: string[]; reasons: { t: string; d: string }[]; modes?: { t: string; d: string }[]; norms: string[]; steps?: { t: string; d: string }[] }>;
   faqs: { q: string; a: string }[];
   /** Preguntas frecuentes de cada servicio (slug → preguntas); Joel responde con el primer párrafo y enlaza la página. */
   serviceFaqs?: Record<string, { q: string; a: string[] }[]>;
@@ -141,11 +141,11 @@ export function createJoel(kb: JoelKB) {
     if (asked.has("precio") || asked.has("cotizar")) return priceAnswer(slug);
     if (asked.has("tiempo")) return timeAnswer(slug);
     if (asked.has("normativa")) {
-      return { intent: "normativa", service: slug, say: [`${s.title} se respalda en: ${d.norms.join(", ")}.`, d.reasons.find(r => /legal|cumpl|jur/i.test(r.t))?.d ?? d.reasons[0].d], actions: svcActions(slug), options: cotizarOpts(slug) };
+      return { intent: "normativa", service: slug, say: [`${s.title} se respalda en: ${d.norms.join(", ")}.`, d.reasons.find(r => r.d && /legal|cumpl|jur/i.test(r.t))?.d || d.about || d.intro], actions: svcActions(slug), options: cotizarOpts(slug) };
     }
     if (asked.has("seguridad")) {
       const r = d.reasons.find(r => /segur|custodia|protec|datos/i.test(r.t + r.d)) ?? d.reasons[0];
-      return { intent: "seguridad", service: slug, say: [`Sobre seguridad en ${lc(s.title)}: ${r.d}`], actions: svcActions(slug), options: cotizarOpts(slug) };
+      return { intent: "seguridad", service: slug, say: [`Sobre seguridad en ${lc(s.title)}: ${r.d || r.t}`], actions: svcActions(slug), options: cotizarOpts(slug) };
     }
     const say = [`${s.title}: ${d.tagline}`, d.intro, `Algunos datos: ${d.stats.map(x => `${x.v} ${x.l}`).join(" · ")}.`];
     if (d.modes) say.push(`Lo ofrecemos en dos modalidades: ${d.modes.map(m => lc(m.t)).join(" o ")}.`);

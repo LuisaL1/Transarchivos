@@ -66,8 +66,8 @@ export function ServicesPanelContent({ setOpen }: { setOpen: (v: boolean) => voi
   return (
     <div className={menuShell} style={{ animation: "fadeInUp 0.25s ease both" }}>
       <MenuFeature kicker="Diagnóstico documental" title="¿No sabe por dónde empezar?"
-        text="Le mostramos qué está pasando hoy con su archivo antes de mover un solo papel. O pregúntele a Joel, nuestro asesor virtual."
-        cta="Solicitar diagnóstico" href="#diagnostico" onClick={close} />
+        text="Le mostramos el diagnóstico técnico y normativo de su información antes de mover un solo folio. ¿Dudas inmediatas? Pregúntele a Joel, nuestro consultor virtual disponible 24/7."
+        cta="Agendar diagnóstico inicial" href="#diagnostico" onClick={close} />
       <div className="py-1">
         <div className="grid grid-cols-3 gap-0.5">
           {serviceItems.map(s => (
@@ -75,7 +75,7 @@ export function ServicesPanelContent({ setOpen }: { setOpen: (v: boolean) => voi
               <MenuIcon n={s.icon} />
               <span className="min-w-0">
                 <span className="block text-[13px] font-semibold leading-tight" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>{s.title}</span>
-                <span className="block text-[11px] leading-snug mt-0.5" style={{ color: "#8A8A8A" }}>{s.desc}</span>
+                <span className="block text-[11px] leading-snug mt-0.5 line-clamp-3" style={{ color: "#8A8A8A" }}>{s.desc}</span>
               </span>
             </Link>
           ))}

@@ -1,7 +1,8 @@
 // ─── Service detail page ───────────────────────────────────────────────────────
-// Contenido de cada servicio tomado del "Informe Documento maestro"
-// (definición, objetivos/beneficios, etapas, argumentos de venta, modalidades
-// y normativa). Solo cifras que aparecen en ese documento.
+// Contenido de cada servicio en src/data/serviceDetails.ts ("Informe Documento
+// maestro" + documento de correcciones de las páginas de servicios, oct. 2026).
+// En el encabezado van dos fotos del servicio (pedido del cliente: reemplazan
+// la tarjeta "En cifras").
 
 import { useState, useEffect, useRef } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
@@ -22,6 +23,17 @@ import { SERVICE_JOEL } from "@/data/joelPoses";
 import { JoelShowcase } from "@/components/ui/JoelBridge";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { C } from "@/styles/tokens";
+
+// Fotos de cada servicio: assets/images/servicios/<slug>-1.webp y -2.webp
+// (entregadas por el cliente); el PGD tiene además la del software.
+const PHOTOS = import.meta.glob<string>("@/assets/images/servicios/*.webp", { eager: true, import: "default" });
+const photo = (name: string): string | undefined => PHOTOS[`/src/assets/images/servicios/${name}.webp`];
+
+// "Título: descripción" → título en negrita y descripción debajo.
+function splitBenefit(b: string) {
+  const i = b.indexOf(": ");
+  return i > 0 && i < 70 ? { t: b.slice(0, i), d: b.slice(i + 2) } : { t: b, d: "" };
+}
 
 export function ServiceDetailPage() {
   const { slug } = useParams();
@@ -55,9 +67,12 @@ export function ServiceDetailPage() {
 
   // Las secciones alternan tono (clara / índigo) en el orden en que existen;
   // el llamado final siempre va claro con la tarjeta índigo.
-  const seq = ["benef", detail.steps && "steps", "why", (detail.modes || detail.audience) && "modes", "norms", "faq"].filter(Boolean) as string[];
+  const seq = ["benef", detail.steps && "steps", "why", detail.extra && "extra", (detail.modes || detail.audience) && "modes", "norms", "faq"].filter(Boolean) as string[];
   const tone = Object.fromEntries(seq.map((k, i) => [k, i % 2 ? "dark" : "light"])) as Record<string, DecorVariant>;
   const dk = (k: string) => tone[k] === "dark";
+  const pageTitle = detail.title ?? service.title;
+  const [photo1, photo2] = [photo(`${service.slug}-1`), photo(`${service.slug}-2`)];
+  const shortReasons = detail.reasons.every(r => !r.d);
 
   return (
     <div ref={pageRef} className="min-h-full" style={{ background: C.cream, fontFamily: "Inter, sans-serif", color: "#37352F" }}>
@@ -77,13 +92,13 @@ export function ServiceDetailPage() {
                   <Bi n="arrow-left" size={15} color="#fff" />
                 </button>
                 <p className="text-xs" style={{ color: "rgba(255,255,255,0.6)", fontFamily: "Montserrat, sans-serif" }}>
-                  <Link to="/" style={{ color: "inherit", textDecoration: "none" }}>Inicio</Link> / <button type="button" onClick={goBack} style={{ color: "inherit" }}>Servicios</button> / <span style={{ color: C.yellow }}>{service.title}</span>
+                  <Link to="/" style={{ color: "inherit", textDecoration: "none" }}>Inicio</Link> / <button type="button" onClick={goBack} style={{ color: "inherit" }}>Servicios</button> / <span style={{ color: C.yellow }}>{pageTitle}</span>
                 </p>
               </div>
               <span className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full mb-5" style={{ background: "rgba(255,255,255,0.1)", color: C.yellow, border: "1px solid rgba(255,222,89,0.35)", fontFamily: "Montserrat, sans-serif" }}>
                 <Bi n={service.icon} size={13} color={C.yellow} /> {service.tag}
               </span>
-              <h1 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: "#fff", fontFamily: "Poppins, sans-serif", lineHeight: 1.1 }}>{service.title}</h1>
+              <h1 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: "#fff", fontFamily: "Poppins, sans-serif", lineHeight: 1.1 }}>{pageTitle}</h1>
               <p className="text-lg md:text-xl font-semibold mb-4" style={{ color: C.yellow, fontFamily: "Poppins, sans-serif", lineHeight: 1.35 }}>{detail.tagline}</p>
               <p className="text-base max-w-xl mb-8" style={{ color: "rgba(255,255,255,0.78)", lineHeight: 1.7 }}>{detail.intro}</p>
               <div className="flex flex-wrap gap-3">
@@ -98,25 +113,23 @@ export function ServiceDetailPage() {
               </div>
             </div>
 
-            {/* Tarjeta con las cifras clave */}
-            <div className="relative">
-              <div className="rounded-3xl p-6 md:p-7" style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.16)", backdropFilter: "blur(10px)" }}>
-                <div className="flex items-center gap-3 mb-6">
-                  <span className="grid place-items-center rounded-2xl" style={{ width: 56, height: 56, background: C.yellow }}>
-                    <Bi n={service.icon} size={26} color={C.indigo} />
-                  </span>
-                  <p className="text-sm font-semibold" style={{ color: "rgba(255,255,255,0.85)", fontFamily: "Montserrat, sans-serif" }}>En cifras</p>
-                </div>
-                <div className="space-y-4">
-                  {detail.stats.map(st => (
-                    <div key={st.v} className="flex items-baseline gap-4 pb-4" style={{ borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
-                      <span className="text-2xl md:text-3xl font-bold shrink-0" style={{ color: "#fff", fontFamily: "Poppins, sans-serif", minWidth: 120 }}>{st.v}</span>
-                      <span className="text-sm" style={{ color: "rgba(255,255,255,0.68)" }}>{st.l}</span>
-                    </div>
-                  ))}
-                </div>
+            {/* Fotos del servicio: la principal grande y la segunda encima,
+                abajo a la izquierda (en celular solo la principal). */}
+            {photo1 && (
+              <div className="relative lg:pb-14 lg:pl-10">
+                <img src={photo1} alt={`${pageTitle} en Transarchivos`} decoding="async" fetchPriority="high"
+                  className="w-full aspect-[4/3] rounded-3xl"
+                  style={{ objectFit: "cover", border: "1px solid rgba(255,255,255,0.2)", boxShadow: "0 30px 60px -30px rgba(0,0,0,0.7)" }} />
+                {photo2 && (
+                  <img src={photo2} alt="" loading="lazy" decoding="async"
+                    className="hidden lg:block absolute left-0 bottom-0 w-[46%] aspect-[4/3] rounded-2xl"
+                    style={{ objectFit: "cover", border: "4px solid #fff", boxShadow: "0 24px 48px -20px rgba(0,0,0,0.6)" }} />
+                )}
+                <span className="absolute grid place-items-center rounded-2xl right-4 top-4 lg:right-[-12px] lg:top-[-12px]" style={{ width: 52, height: 52, background: C.yellow, boxShadow: "0 12px 24px -10px rgba(0,0,0,0.5)" }}>
+                  <Bi n={service.icon} size={24} color={C.indigo} />
+                </span>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </PageHero>
@@ -127,21 +140,39 @@ export function ServiceDetailPage() {
         <div className="max-w-6xl mx-auto px-6 grid lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] gap-10 items-start">
           <div>
             {kicker("Lo que obtiene")}
-            {h2(<>Beneficios para <span style={{ background: "linear-gradient(transparent 62%, #FFDE59 62%)" }}>su empresa</span></>)}
-            <p className="text-sm mt-4" style={{ color: C.muted, lineHeight: 1.7 }}>{service.desc}</p>
+            {h2(detail.benefitsTitle ?? <>Beneficios para <span style={{ background: "linear-gradient(transparent 62%, #FFDE59 62%)" }}>su empresa</span></>)}
+            <p className="text-sm mt-4" style={{ color: C.muted, lineHeight: 1.7 }}>{detail.about ?? service.desc}</p>
+            {detail.includes && (
+              <div className="mt-6">
+                <p className="text-sm font-bold mb-3" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>¿Qué incluye este servicio?</p>
+                <ul className="flex flex-wrap gap-2">
+                  {detail.includes.map(x => (
+                    <li key={x} className="inline-flex items-center gap-1.5 text-sm font-semibold px-3.5 py-2 rounded-full" style={{ background: "#fff", color: C.indigo, border: "1px solid #E4E6F7", fontFamily: "Montserrat, sans-serif" }}>
+                      <Bi n="check2" size={14} color="#16a34a" />{x}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
             {SERVICE_JOEL[service.slug] && (
               <JoelShowcase src={SERVICE_JOEL[service.slug].src} height={SERVICE_JOEL[service.slug].height} />
             )}
           </div>
           <div className="grid sm:grid-cols-2 gap-3">
-            {detail.benefits.map(b => (
-              <div key={b} className="flex items-start gap-3 rounded-2xl p-4" style={{ background: "#fff", border: "1px solid #E4E6F7", boxShadow: "0 14px 30px -26px rgba(24,0,173,0.45)" }}>
-                <span className="grid place-items-center rounded-lg shrink-0" style={{ width: 28, height: 28, background: "#EAF7EE" }}>
-                  <Bi n="check-lg" size={14} color="#16a34a" />
-                </span>
-                <span className="text-sm font-semibold" style={{ color: C.indigo, lineHeight: 1.45 }}>{b}</span>
-              </div>
-            ))}
+            {detail.benefits.map(b => {
+              const { t, d } = splitBenefit(b);
+              return (
+                <div key={b} className="flex items-start gap-3 rounded-2xl p-4" style={{ background: "#fff", border: "1px solid #E4E6F7", boxShadow: "0 14px 30px -26px rgba(24,0,173,0.45)" }}>
+                  <span className="grid place-items-center rounded-lg shrink-0" style={{ width: 28, height: 28, background: "#EAF7EE" }}>
+                    <Bi n="check-lg" size={14} color="#16a34a" />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block text-sm font-semibold" style={{ color: C.indigo, lineHeight: 1.45 }}>{t}</span>
+                    {d && <span className="block text-[13px] mt-1" style={{ color: C.muted, lineHeight: 1.55 }}>{d}</span>}
+                  </span>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -152,8 +183,9 @@ export function ServiceDetailPage() {
           <SectionDecor variant="dark" flip folder={false} />
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center mb-10">
-              {kicker("Cómo lo hacemos", true)}
-              {h2("Un proceso claro, paso a paso", true)}
+              {kicker(detail.stepsKicker ?? "Cómo lo hacemos", true)}
+              {h2(detail.stepsTitle ?? "Un proceso claro, paso a paso", true)}
+              {detail.stepsIntro && <p className="text-sm mt-4 max-w-2xl mx-auto" style={{ color: "rgba(255,255,255,0.78)", lineHeight: 1.7 }}>{detail.stepsIntro}</p>}
             </div>
             <div className={`relative grid gap-4 sm:grid-cols-2 ${detail.steps.length >= 5 ? "lg:grid-cols-5" : "lg:grid-cols-4"}`}>
               <div className="hidden lg:block absolute" style={{ top: 26, left: "8%", right: "8%", height: 2, background: "repeating-linear-gradient(90deg, rgba(255,255,255,0.3) 0 8px, transparent 8px 14px)" }} />
@@ -177,10 +209,15 @@ export function ServiceDetailPage() {
         <div className="max-w-6xl mx-auto px-6">
           <div className="max-w-2xl mb-10">
             {kicker("Por qué con Transarchivos", dk("why"))}
-            {h2("Lo que nos diferencia", dk("why"))}
+            {h2(detail.reasonsTitle ?? "Lo que nos diferencia", dk("why"))}
           </div>
-          <div className={`grid gap-5 sm:grid-cols-2 ${detail.reasons.length === 3 ? "lg:grid-cols-3" : "lg:grid-cols-4"}`}>
-            {detail.reasons.map((r, i) => (
+          <div className={`grid gap-5 sm:grid-cols-2 ${detail.reasons.length === 3 ? "lg:grid-cols-3" : detail.reasons.length === 5 ? "lg:grid-cols-5" : "lg:grid-cols-4"}`}>
+            {detail.reasons.map((r, i) => shortReasons ? (
+              <div key={r.t} className="flex flex-col gap-3 rounded-3xl p-5" style={{ background: "#fff", border: "1.5px solid #E4E6F7", boxShadow: "0 18px 40px -28px rgba(24,0,173,0.45)" }}>
+                <BiTile n={r.ic} size={44} accent={C.indigo} />
+                <p className="text-sm font-bold" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif", lineHeight: 1.35 }}>{r.t}</p>
+              </div>
+            ) : (
               <div key={r.t} className="group relative rounded-3xl p-6 transition-all hover:-translate-y-1.5 overflow-hidden"
                 style={{ background: "#fff", border: "1.5px solid #E4E6F7", boxShadow: "0 18px 40px -28px rgba(24,0,173,0.45)" }}>
                 <span aria-hidden="true" className="absolute select-none pointer-events-none font-bold" style={{ right: 16, top: 10, fontSize: 44, lineHeight: 1, color: "rgba(24,0,173,0.06)", fontFamily: "Poppins, sans-serif" }}>0{i + 1}</span>
@@ -194,6 +231,25 @@ export function ServiceDetailPage() {
           </div>
         </div>
       </section>
+
+      {/* Banner adicional del servicio (p. ej. el software del PGD) */}
+      {detail.extra && (
+        <section className="relative isolate overflow-hidden py-16">
+          <SectionDecor variant={tone.extra} folder={false} />
+          <div className="max-w-6xl mx-auto px-6 grid lg:grid-cols-2 gap-10 items-center">
+            {photo(`${service.slug}-software`) && (
+              <img src={photo(`${service.slug}-software`)} alt={detail.extra.title} loading="lazy" decoding="async"
+                className="w-full aspect-[4/3] rounded-3xl" style={{ objectFit: "cover", boxShadow: "0 30px 60px -30px rgba(0,0,0,0.6)" }} />
+            )}
+            <div>
+              {kicker("Valor agregado", dk("extra"))}
+              {h2(detail.extra.title, dk("extra"))}
+              <p className="text-sm mt-4 mb-6" style={{ color: dk("extra") ? "rgba(255,255,255,0.8)" : C.muted, lineHeight: 1.7 }}>{detail.extra.text}</p>
+              <p className="text-base font-semibold pl-4" style={{ color: dk("extra") ? "#fff" : C.indigo, borderLeft: "3px solid #FFDE59", lineHeight: 1.6, fontFamily: "Poppins, sans-serif" }}>{detail.extra.note}</p>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Modalidades o público */}
       {(detail.modes || detail.audience) && (
@@ -250,7 +306,7 @@ export function ServiceDetailPage() {
             </div>
             <div className="flex flex-wrap gap-2">
               {detail.norms.map(n => (
-                <span key={n} className="text-xs font-semibold px-3 py-1.5 rounded-full" style={{ background: "#F2F3FA", color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>{n}</span>
+                <span key={n} className="text-sm md:text-[15px] font-semibold px-4 py-2 rounded-full" style={{ background: "#F2F3FA", color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>{n}</span>
               ))}
             </div>
           </div>
@@ -274,7 +330,7 @@ export function ServiceDetailPage() {
       </section>
 
       {/* Llamado final */}
-      <CtaBand title={`¿Listo para empezar con ${service.title.toLowerCase()}?`} text="Arme su solicitud en minutos o hable con un asesor. Sin compromiso." to={`/?servicio=${service.slug}#cotizador`} />
+      <CtaBand title={detail.ctaTitle ?? `¿Listo para empezar con ${pageTitle.toLowerCase()}?`} text="Arme su solicitud en minutos o hable con un asesor. Sin compromiso." to={`/?servicio=${service.slug}#cotizador`} />
       <ChatBot open={chatOpen} setOpen={setChatOpen} />
     </div>
   );

@@ -7,16 +7,18 @@ import { C } from "@/styles/tokens";
 // servicio) para que alguien que no conoce el nombre formal del servicio pero
 // sí un término técnico (OCR, TRD, backup...) lo reconozca igual.
 // "icon": nombre del ícono de Bootstrap Icons (bi-<nombre>).
+// "title" y "desc": nombre y texto del menú Servicios (documento de
+// correcciones de las páginas de servicios, oct. 2026).
 export const serviceItems: { icon: string; title: string; slug: string; desc: string; keywords: string[] }[] = [
-  { icon: "list-columns-reverse", title: "Levantamiento de inventario", slug: "levantamiento-de-inventario", desc: "Diagnóstico y organización según norma AGN", keywords: ["Inventario documental", "Diagnóstico"] },
-  { icon: "folder2-open", title: "Programa de gestión documental", slug: "programa-de-gestion-documental", desc: "PGD · Cumplimiento Ley 594", keywords: ["TRD", "Tablas de retención"] },
-  { icon: "hdd-stack", title: "Custodia de medios magnéticos", slug: "custodia-de-medios-magneticos", desc: "Cintas, discos y medios con control ambiental", keywords: ["Copia aislada (air gap)", "Cintas LTO"] },
-  { icon: "archive", title: "Custodia de archivos", slug: "custodia-de-archivos", desc: "Centro documental con vigilancia 24 h", keywords: ["Centro documental", "Consulta y recuperación"] },
-  { icon: "upc-scan", title: "Digitalización de documentos", slug: "digitalizacion-de-documentos", desc: "Escaneo, OCR e indexación", keywords: ["OCR", "DMS / ECM"] },
-  { icon: "file-earmark-x", title: "Destrucción de documentos", slug: "destruccion-de-documentos", desc: "Destrucción con certificado y trazabilidad", keywords: ["Trituración industrial", "Certificado de destrucción"] },
-  { icon: "film", title: "Microfilmación de archivos", slug: "microfilmacion-de-archivos", desc: "Preservación a más de 100 años", keywords: ["Microfilm", "Historias clínicas"] },
-  { icon: "person-badge", title: "Servicio in house", slug: "servicio-inhouse", desc: "Personal de archivo en su sede", keywords: ["Tercerización documental", "Personal en sitio"] },
-  { icon: "lightning-charge", title: "Servicio inmediato", slug: "servicio-inmediato", desc: "Entrega urgente con trazabilidad", keywords: ["Entrega urgente", "Despacho exprés"] },
+  { icon: "list-columns-reverse", title: "Inventario documental", slug: "levantamiento-de-inventario", desc: "Diagnóstico y clasificación de su archivo bajo estándares del Archivo General de la Nación (AGN).", keywords: ["Inventario documental", "Diagnóstico"] },
+  { icon: "folder2-open", title: "Programa de Gestión Documental (PGD)", slug: "programa-de-gestion-documental", desc: "Instrumento estratégico para el control del ciclo de vida documental bajo cumplimiento de la Ley 594.", keywords: ["TRD", "Tablas de retención"] },
+  { icon: "hdd-stack", title: "Custodia de medios magnéticos", slug: "custodia-de-medios-magneticos", desc: "Almacenamiento de cintas LTO, discos duros y soportes ópticos bajo estricto control de temperatura y humedad.", keywords: ["Copia aislada (air gap)", "Cintas LTO"] },
+  { icon: "archive", title: "Custodia de archivos", slug: "custodia-de-archivos", desc: "Resguardo de su archivo en instalaciones con vigilancia 24/7 y estricto control de acceso.", keywords: ["Centro documental", "Consulta y recuperación"] },
+  { icon: "upc-scan", title: "Digitalización de documentos", slug: "digitalizacion-de-documentos", desc: "Escaneo masivo, reconocimiento OCR e indexación para el control total de su información.", keywords: ["OCR", "DMS / ECM"] },
+  { icon: "file-earmark-x", title: "Destrucción de documentos", slug: "destruccion-de-documentos", desc: "Trituración confidencial irrecuperable con certificado de destrucción, registro en video y trazabilidad total.", keywords: ["Trituración industrial", "Certificado de destrucción"] },
+  { icon: "film", title: "Digitalización de microfilms", slug: "microfilmacion-de-archivos", desc: "Transformación de microfilms históricos en archivos digitales indexados para rápida consulta.", keywords: ["Microfilm", "Historias clínicas"] },
+  { icon: "person-badge", title: "Servicio in-house", slug: "servicio-inhouse", desc: "Personal especializado de archivo en su sede, capacitado y supervisado directamente por Transarchivos.", keywords: ["Tercerización documental", "Personal en sitio"] },
+  { icon: "lightning-charge", title: "Servicio de consulta inmediata", slug: "servicio-inmediato", desc: "Consulte sus documentos almacenados bajo la custodia de Transarchivos.", keywords: ["Entrega urgente", "Despacho exprés"] },
 ];
 
 // "slug" arma la URL propia de cada servicio (/servicios/<slug>) — coinciden
@@ -80,9 +82,9 @@ export const services: { icon: string; title: string; slug: string; tag: string;
     quote: { title: "Destrucción certificada de documentos", desc: "Trituración confidencial de archivos para evitar filtraciones de información sensible y sanciones de Habeas Data. Trazabilidad completa garantizada con soporte probatorio." },
   },
   {
-    icon: "film", title: "Microfilmación de archivos", slug: "microfilmacion-de-archivos",
+    icon: "film", title: "Digitalización de microfilms", slug: "microfilmacion-de-archivos",
     tag: "Microfilme 16 / 35 mm", accent: C.indigo,
-    desc: "Conversión de documentos a microfilme para su preservación segura a largo plazo.",
+    desc: "Transformación de microfilms históricos en archivos digitales indexados para rápida consulta.",
     card: { title: "De microfilms a formatos digitales PDF", tag: "De 16 / 35 mm a PDF", cta: "Ver proceso de conversión a PDF",
       desc: "Transformamos sus soportes análogos de microfilmación (16 y 35 mm) en documentos digitales PDF totalmente legibles y organizados. Eliminamos la dependencia de visores tradicionales, permitiendo la consulta remota, el procesamiento masivo y el respaldo seguro de su fondo histórico en la nube o en sus servidores." },
     quote: { title: "Digitalización de microfilms", desc: "Conversión de rollos (16/35 mm) a formatos digitales de alta definición. Recuperación de archivos históricos con indexación y OCR para consulta instantánea." },
