@@ -13,7 +13,7 @@
 | Contraste | Las secciones alternan índigo y crema (demasiado azul seguido cansaba): hero, mapa, cifras, servicios, modelo, blog, FAQ y pie en índigo; confianza, clientes, diagnóstico, soluciones, cotizador, videos y diferenciales claras. Páginas internas: alternan desde su hero. (oct. 2026) |
 | Pestaña de carpeta | En la división del hero, pegada al borde superior y del mismo azul del panel. Bajo el menú hay una sombra negra suave (pedida por el cliente). |
 | Joel en el hero | Junto al selector, volteado, con la mano sobre la tarjeta y sin globo de texto. Solo su cuerpo es clicable, para no bloquear la pestaña "Destruir". |
-| Mapa | La animación original del mapa se conserva. Se agregó solo la silueta de Joel en súper zoom, del color del mapa. Se descartaron rutas, camión, Joel detective y mini-Joel en el pin. |
+| Mapa | Ubicación: entre el cotizador y el blog (pedido del cliente, oct. 2026; antes iba después del hero). La animación original del mapa se conserva. Se agregó solo la silueta de Joel en súper zoom, del color del mapa. Se descartaron rutas, camión, Joel detective y mini-Joel en el pin. |
 | Secciones de inicio | Estilo claro original (crema/lavanda). Se descartaron fondos de colores y el "bento" de servicios. |
 | Colores | Solo la paleta del manual. El menú usa solo `#272B7C`. Fuera del menú se conserva el índigo donde ya estaba. |
 | Degradados | Ninguno. Se reemplazan por el detalle de esquina del menú y el chat. |

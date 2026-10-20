@@ -13,7 +13,9 @@ import { C } from "@/styles/tokens";
 //      de operaciones): la información de todo el país se centraliza allí.
 //   2. Desde Bogotá se abre un círculo que revela el video de archivo hasta
 //      cubrir toda la pantalla, con el mensaje final.
-// Con "reducir movimiento" se muestra el mapa sin animación.
+// Con "reducir movimiento" se muestra el mapa sin animación. En celular el mapa
+// y el texto se reducen para que todo quepa en la pantalla fija (más aún en
+// pantallas bajas, como el iPhone SE).
 
 // Posiciones calibradas con coordenadas geográficas reales (lon/lat → mapa,
 // ajuste con Punta Gallinas, Leticia, Cabo Manglares y Puerto Carreño).
@@ -116,21 +118,21 @@ export function MapReveal() {
             maskPosition: "bottom left", WebkitMaskPosition: "bottom left",
           }} />
 
-        <div className="relative h-full max-w-6xl mx-auto px-6 grid md:grid-cols-2 items-center gap-8 py-16 md:py-0">
+        <div className="relative h-full max-w-6xl mx-auto px-6 grid md:grid-cols-2 content-center md:items-center gap-4 md:gap-8 pt-20 [@media(max-height:720px)]:pt-16 pb-6 md:py-0">
           {/* Texto del mapa */}
           <div style={{ opacity: mapText, transform: `translateY(${(1 - mapText) * -20}px)` }} className="text-center md:text-left order-2 md:order-1">
             <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: C.yellow, fontFamily: "Montserrat, sans-serif" }}>Cobertura nacional</p>
-            <h2 className="text-3xl md:text-[40px] font-bold mb-4" style={{ color: "#fff", fontFamily: "Poppins, sans-serif", lineHeight: 1.15 }}>
+            <h2 className="text-[26px] [@media(max-height:720px)]:text-[22px] md:text-[40px] md:[@media(max-height:720px)]:text-[40px] font-bold mb-3 md:mb-4" style={{ color: "#fff", fontFamily: "Poppins, sans-serif", lineHeight: 1.15 }}>
               Cobertura estratégica desde la capital para toda Colombia
             </h2>
-            <p className="text-sm md:text-[15px] max-w-md mx-auto md:mx-0" style={{ color: "rgba(255,255,255,0.75)", lineHeight: 1.7 }}>
+            <p className="text-[13px] [@media(max-height:720px)]:text-[12px] md:text-[15px] md:[@media(max-height:720px)]:text-[15px] max-w-md mx-auto md:mx-0" style={{ color: "rgba(255,255,255,0.75)", lineHeight: 1.6 }}>
               Nuestra sede de operación y bodegas especializadas en Bogotá listas para responder a las demandas de gestión documental de empresas a nivel nacional. Desde nuestra infraestructura central garantizamos la ejecución de procesos críticos con plena validez legal, incluyendo la eliminación definitiva y trazable de archivos bajo los más estrictos lineamientos normativos y ambientales que exige la ley.
             </p>
           </div>
 
           {/* Mapa con Bogotá */}
           <div className="relative order-1 md:order-2 flex justify-center">
-            <div ref={mapRef} className="relative h-[46vh] md:h-[78vh]" style={{ aspectRatio: "1006 / 1370", transform: `scale(${mapScale})`, transformOrigin: `${BOGOTA.left * 100}% ${BOGOTA.top * 100}%` }}>
+            <div ref={mapRef} className="relative h-[30vh] [@media(max-height:720px)]:h-[20vh] md:h-[78vh] md:[@media(max-height:720px)]:h-[70vh]" style={{ aspectRatio: "1006 / 1370", transform: `scale(${mapScale})`, transformOrigin: `${BOGOTA.left * 100}% ${BOGOTA.top * 100}%` }}>
               <img loading="lazy" decoding="async" src={colombiaMap} alt="Mapa de Colombia con Bogotá resaltada" draggable={false} className="w-full h-full select-none" style={{ objectFit: "contain", filter: "drop-shadow(0 18px 30px rgba(0,0,0,0.4))" }} />
               {/* Rutas: de cada ciudad hacia Bogotá (los trazos y puntos viajan hacia el centro) */}
               <svg aria-hidden="true" viewBox={`0 0 ${MW} ${MH}`} className="absolute inset-0 w-full h-full overflow-visible">
@@ -206,7 +208,7 @@ export function MapReveal() {
 
         {/* Indicador de scroll */}
         {!reduced && (
-          <div aria-hidden="true" className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1" style={{ opacity: 1 - clamp(p / 0.15) }}>
+          <div aria-hidden="true" className="absolute bottom-6 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-1" style={{ opacity: 1 - clamp(p / 0.15) }}>
             <span className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.6)", fontFamily: "Montserrat, sans-serif" }}>Desplácese</span>
             <Bi n="chevron-down" size={14} color="rgba(255,255,255,0.6)" className="hero-word-in" />
           </div>

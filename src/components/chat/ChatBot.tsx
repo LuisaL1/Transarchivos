@@ -117,32 +117,34 @@ export function ChatBot({ open, setOpen, seed, heroJoel = false }: { open: boole
           className="fixed inset-0 sm:inset-auto sm:right-6 sm:bottom-[92px] sm:w-[400px] sm:max-h-[calc(100vh-130px)] z-[70] flex flex-col overflow-hidden rounded-none sm:rounded-[24px] bg-white sm:border sm:border-indigo/10"
           style={{ minHeight: 0, boxShadow: "0 40px 80px -30px rgba(24,0,173,0.5)", animation: "fadeInUp 0.3s ease both" }}>
           <div className="h-[100dvh] sm:h-[min(620px,calc(100vh-130px))] flex flex-col min-h-0 flex-1">
-            <header className="relative flex items-center gap-3 overflow-hidden px-5 py-4" style={{ background: C.indigo, paddingTop: "max(16px, env(safe-area-inset-top))" }}>
+            {/* shrink-0 en encabezado, aviso y barra de escritura: con una
+                conversación larga (p. ej. el resumen de la cotización) solo
+                se desplaza la lista de mensajes; antes el encabezado se
+                aplastaba. */}
+            <header className="relative shrink-0 flex items-center gap-3.5 overflow-hidden px-5 py-4 min-h-[76px]" style={{ background: C.indigo, paddingTop: "max(16px, env(safe-area-inset-top))" }}>
               <span aria-hidden="true" className="pointer-events-none absolute" style={{ right: -48, top: -48, width: 90, height: 90, transform: "rotate(45deg)", borderRadius: 15, background: "rgba(255,222,89,0.22)" }} />
               <span className="relative">
-                <ChatAvatarFace size={42} round />
+                <ChatAvatarFace size={46} round />
                 <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full border-2" style={{ background: "#22c55e", borderColor: C.indigo }} />
               </span>
               <div className="relative flex-1 min-w-0">
-                <p className="flex items-center gap-2 font-semibold" style={{ color: "#fff", fontFamily: "Poppins, sans-serif" }}>
-                  {NAME}
-                  <span className="rounded-full px-2 py-px text-[10px] font-semibold uppercase tracking-wider" style={{ background: "rgba(255,255,255,0.15)", color: C.yellow }}>{T.role}</span>
-                </p>
-                <p className="flex items-center gap-1.5 text-[12px]" style={{ color: "rgba(255,255,255,0.7)" }}>
+                <p className="text-[10px] font-bold uppercase leading-none mb-1" style={{ color: C.yellow, letterSpacing: "0.16em", fontFamily: "Montserrat, sans-serif" }}>{T.role}</p>
+                <p className="text-[17px] font-semibold leading-tight" style={{ color: "#fff", fontFamily: "Poppins, sans-serif" }}>{NAME}</p>
+                <p className="flex items-center gap-1.5 text-[12px] mt-0.5 truncate" style={{ color: "rgba(255,255,255,0.7)" }}>
                   <span className="w-1.5 h-1.5 rounded-full" style={{ background: "#22c55e" }} /> {T.status}
                 </p>
               </div>
-              <button onClick={restart} className="relative grid h-8 w-8 place-items-center rounded-full transition-colors hover:bg-white/15" aria-label={T.restart} title={T.restart}>
+              <button onClick={restart} className="relative grid h-9 w-9 shrink-0 place-items-center rounded-xl transition-colors bg-white/10 hover:bg-white/20" aria-label={T.restart} title={T.restart}>
                 <Bi n="arrow-counterclockwise" size={15} color="rgba(255,255,255,0.85)" />
               </button>
-              <button onClick={() => setOpen(false)} className="relative grid h-8 w-8 place-items-center rounded-full transition-colors hover:bg-white/15" aria-label={T.closeChat}>
+              <button onClick={() => setOpen(false)} className="relative grid h-9 w-9 shrink-0 place-items-center rounded-xl transition-colors bg-white/10 hover:bg-white/20" aria-label={T.closeChat}>
                 <Bi n="x-lg" size={14} color="rgba(255,255,255,0.85)" />
               </button>
             </header>
 
             {/* Chat con un asesor dentro de Joel */}
             {live !== "off" && (
-              <div className="flex items-center gap-2 px-4 py-2 text-[12.5px] font-semibold" style={{ background: "#FBFBF8", borderBottom: "1px solid #E4E6F7", color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>
+              <div className="shrink-0 flex items-center gap-2 px-4 py-2 text-[12.5px] font-semibold" style={{ background: "#FBFBF8", borderBottom: "1px solid #E4E6F7", color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>
                 <Bi n="headset" size={14} color={C.gold} />
                 <span className="flex-1">{T.advisorBanner}</span>
                 <button type="button" onClick={endAdvisor} className="rounded-lg px-2 py-1 underline-offset-2 hover:underline" style={{ color: C.indigo }}>{T.advisorEnd}</button>
@@ -173,7 +175,7 @@ export function ChatBot({ open, setOpen, seed, heroJoel = false }: { open: boole
               <div ref={endRef} />
             </div>
 
-            <form onSubmit={e => { e.preventDefault(); send(); }} className="flex items-center gap-2 bg-white p-3" style={{ borderTop: "1px solid #ECEEF6", paddingBottom: "max(12px, env(safe-area-inset-bottom))" }}>
+            <form onSubmit={e => { e.preventDefault(); send(); }} className="shrink-0 flex items-center gap-2 bg-white p-3" style={{ borderTop: "1px solid #ECEEF6", paddingBottom: "max(12px, env(safe-area-inset-bottom))" }}>
               <input ref={inputRef} value={text} onChange={e => setText(e.target.value)}
                 placeholder={live !== "off" ? T.advisorPlaceholder : (step.input?.placeholder ?? T.placeholder)} aria-label={T.message}
                 className="min-w-0 flex-1 rounded-full px-4 py-2.5 text-[14px] outline-none transition focus:bg-white"

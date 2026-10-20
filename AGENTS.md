@@ -134,7 +134,7 @@ RecursosTransarchivos/    Documentos fuente del cliente (contexto, no se publica
   fundido lento cada 12 s, sin otro movimiento, velo índigo); el video del centro documental va en la sección del mapa.
   En computador, dos columnas: a la izquierda el título animado (tres frases que
   se alternan), la frase fija y el selector "¿Qué necesita hoy?"; a la derecha,
-  Joel con la caja y los documentos volando (`assets/images/joel-avalancha.webp`,
+  Joel con la caja y el flujo de documentos (`assets/images/joel-flujo.webp`,
   imagen del cliente). En celular todo centrado y sin Joel (oct. 2026).
 
 ## Joel (asesor virtual)

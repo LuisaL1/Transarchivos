@@ -6,7 +6,7 @@
 import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { JoelBridge } from "@/components/ui/JoelBridge";
 import { JOEL } from "@/data/joelPoses";
-import heroJoelImg from "@/assets/images/joel-avalancha.webp";
+import heroJoelImg from "@/assets/images/joel-flujo.webp";
 import { Link, useLocation, useNavigate, useNavigationType } from "react-router-dom";
 import { track } from "@/lib/visitor";
 import { ChatBot } from "@/components/chat/LazyChatBot";
@@ -110,16 +110,18 @@ export function HomePage() {
               <HeroQuickStart />
             </div>
             </div>
-            {/* Joel con la caja de Transarchivos y los documentos volando hacia
-                él (imagen entregada por el cliente, oct. 2026). La imagen va
-                completa y más grande que su columna: los papeles del lado
-                izquierdo llevan un desvanecido progresivo (en la propia imagen)
-                para que se diluyan al acercarse al texto. Solo Joel y la caja
-                reciben el clic (abre el chat); sin efecto al pasar el cursor. */}
+            {/* Joel con la caja de Transarchivos y el flujo de documentos hacia
+                él ("Archivos en flujo hacia la organización", imagen entregada
+                por el cliente, oct. 2026; el destello azul se suavizó y difuminó en la
+                propia imagen para que no se vea el corte). La imagen va completa y más grande
+                que su columna; el borde izquierdo se desvanece (máscara) para
+                que los papeles se diluyan al acercarse al texto. Solo Joel y la
+                caja reciben el clic (abre el chat); sin efecto al pasar el cursor. */}
             <div className="hidden lg:flex justify-end self-end relative lg:-mr-10 xl:-mr-20">
-              <img src={heroJoelImg} alt="" draggable={false} className="select-none h-[560px] xl:h-[640px] max-w-none pointer-events-none" />
+              <img src={heroJoelImg} alt="" draggable={false} className="select-none h-[520px] xl:h-[600px] max-w-none pointer-events-none"
+                style={{ maskImage: "linear-gradient(90deg, transparent 4%, #000 42%)", WebkitMaskImage: "linear-gradient(90deg, transparent 4%, #000 42%)" }} />
               <button type="button" onClick={() => setChatOpen(true)} aria-label="Hablar con Joel"
-                className="absolute right-0 bottom-0 top-[18%] w-[250px] cursor-pointer rounded-3xl focus:outline-none focus-visible:ring-4 focus-visible:ring-amarillo/70" />
+                className="absolute right-[3%] bottom-0 top-[14%] w-[26%] cursor-pointer rounded-3xl focus:outline-none focus-visible:ring-4 focus-visible:ring-amarillo/70" />
             </div>
           </div>
         </div>
@@ -138,8 +140,6 @@ export function HomePage() {
           </div>
         </div>
       </section>
-
-      <MapReveal />
 
       <ClientsMarquee />
 
@@ -385,6 +385,11 @@ export function HomePage() {
       </div>
 
       <FolderDivider color={C.indigo} />
+
+      {/* Cobertura desde Bogotá + video del centro documental: va entre el
+          cotizador y el blog (pedido del cliente, oct. 2026; antes iba justo
+          después del hero). */}
+      <MapReveal />
 
       <BlogSection />
 
