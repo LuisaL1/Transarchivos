@@ -111,7 +111,7 @@ export const norms = [
   { code: "Ley 594 / 2000", name: "Ley General de Archivos (AGN)" },
   { code: "Decreto 1080 / 2015", name: "PGD y ciclo de vida del documento electrónico" },
   { code: "Res. 8934 / 2014", name: "Superintendencia de Industria y Comercio" },
-  { code: "Decreto 962 · art. 28", name: "Ley Antitrámites" },
+  { code: "Ley 962 de 2005 · art. 28", name: "Ley Antitrámites: conservación de documentos en medios técnicos" },
   { code: "Ley 1581 / 2012", name: "Protección de datos personales" },
   { code: "Ley 527 / 1999", name: "Comercio electrónico: validez legal de la digitalización" },
   { code: "Decreto 2527 / 1950", name: "Validez jurídica de la microfilmación" },

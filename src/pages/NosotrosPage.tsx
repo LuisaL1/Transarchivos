@@ -118,7 +118,7 @@ export function NosotrosPage() {
           <div className="grid sm:grid-cols-2 gap-3">
             {[
               { ic: "shield-check", t: "Mantenido los estándares archivísticos de seguridad, accesibilidad, eficiencia, integridad, autenticidad y fiabilidad." },
-              { ic: "journal-check", t: "Permanecido alineados con la Ley 594 de 2000, la Resolución 8934 de 2014 y el Decreto 962 (Ley Antitrámites)." },
+              { ic: "journal-check", t: "Permanecido alineados con la Ley 594 de 2000, la Resolución 8934 de 2014 y la Ley 962 de 2005, artículo 28 (Ley Antitrámites)." },
               { ic: "building", t: "Atendido multinacionales, pymes, microempresas y compañías en liquidación o reestructuración." },
               { ic: "tools", t: "Desarrollado TVD, TRD, digitalización, microfilmación y custodia física, digital y en la nube." },
             ].map(x => (

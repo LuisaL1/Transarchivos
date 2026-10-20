@@ -135,7 +135,7 @@ export const SERVICE_DETAILS: Record<string, SvcDetail> = {
       { ic: "lightning-charge", t: "Recuperación y consulta", d: "Eliminamos los tiempos muertos en la gestión de su información. Atendemos sus solicitudes de préstamo de documentos en tiempo récord (Servicio Inmediato), respaldados por Acuerdos de Nivel de Servicio (SLA) rigurosos que garantizan la continuidad operativa de su empresa ante emergencias o auditorías." },
       { ic: "rulers", t: "Optimización eficiente de metros cuadrados", d: "Liberamos áreas costosas en sus instalaciones al trasladar sus documentos a nuestras instalaciones de alta densidad. Le ayudamos a reducir costos fijos de infraestructura y a eliminar riesgos por almacenamiento inadecuado." },
     ],
-    norms: ["Ley 594 de 2000", "Norma Icontec (estantería)", "Tablas de Retención Documental"],
+    norms: ["Ley 594 de 2000", "Ley 962 de 2005, art. 28 (Ley Antitrámites)", "Norma Icontec (estantería)", "Tablas de Retención Documental"],
   },
   "digitalizacion-de-documentos": {
     tagline: "Su archivo físico, digital y con valor legal.",
@@ -160,7 +160,7 @@ export const SERVICE_DETAILS: Record<string, SvcDetail> = {
       { ic: "building", t: "En nuestro centro de operación", d: "Con atención prioritaria para documentos urgentes." },
       { ic: "house-door", t: "En su empresa (in house)", d: "El documento no sale de sus instalaciones." },
     ],
-    norms: ["Ley 527 de 1999", "Decreto 1080 de 2015", "Normas del AGN"],
+    norms: ["Ley 527 de 1999", "Ley 962 de 2005, art. 28 (Ley Antitrámites)", "Decreto 1080 de 2015", "Normas del AGN"],
   },
   "destruccion-de-documentos": {
     title: "Destrucción legal de documentos",
@@ -184,7 +184,7 @@ export const SERVICE_DETAILS: Record<string, SvcDetail> = {
       { ic: "file-earmark-check", t: "Certificación legal y cumplimiento normativo (Hábeas Data)", d: "Entregamos un Certificado de Destrucción Segura con validez jurídica ante entes de control (Superintendencias, DIAN, AGN), asegurando que su compañía quede totalmente blindada ante sanciones por vulneración de la Ley de Protección de Datos Personales." },
       { ic: "recycle", t: "Compromiso ambiental y economía circular certificada", d: "Garantizamos la disposición verde del 100% del material destruido. Convertimos sus desechos de papel en insumos reciclados para la industria." },
     ],
-    norms: ["Ley 594 de 2000", "Ley 1581 de 2012", "Normas del AGN"],
+    norms: ["Ley 594 de 2000", "Ley 962 de 2005, art. 28 (Ley Antitrámites)", "Ley 1581 de 2012", "Normas del AGN"],
   },
   "microfilmacion-de-archivos": {
     title: "Digitalización de microfilms y microfichas",

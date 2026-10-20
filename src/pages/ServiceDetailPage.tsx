@@ -304,7 +304,8 @@ export function ServiceDetailPage() {
               <BiTile n="patch-check" size={44} accent="#16a34a" />
               <p className="text-base font-bold" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif", lineHeight: 1.25 }}>Respaldo normativo</p>
             </div>
-            <div className="flex flex-wrap gap-2">
+            {/* Centradas: cuando pasan a una segunda fila no queda un hueco a la derecha. */}
+            <div className="flex-1 flex flex-wrap justify-center gap-2">
               {detail.norms.map(n => (
                 <span key={n} className="text-sm md:text-[15px] font-semibold px-4 py-2 rounded-full" style={{ background: "#F2F3FA", color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>{n}</span>
               ))}
