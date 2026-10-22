@@ -194,8 +194,8 @@ export function ServiceDetailPage() {
                   <span className="relative grid place-items-center rounded-full font-bold lg:mb-4 shrink-0" style={{ width: 44, height: 44, background: i === 0 ? C.yellow : "#fff", color: C.indigo, border: "2px solid #FFDE59", fontFamily: "Poppins, sans-serif", fontSize: 18, boxShadow: "0 10px 24px -12px rgba(0,0,0,0.5)" }}>{i + 1}</span>
                   {st.d ? (
                     <div className="rounded-2xl p-4 w-full h-full" style={{ background: "#fff", border: "1px solid #E4E6F7" }}>
-                      <p className="text-sm font-bold mb-1" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>{st.t}</p>
-                      <p className="text-xs" style={{ color: C.muted, lineHeight: 1.55 }}>{st.d}</p>
+                      <p className="text-base font-bold mb-1.5" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif", lineHeight: 1.3 }}>{st.t}</p>
+                      <p className="text-sm" style={{ color: C.muted, lineHeight: 1.6 }}>{st.d}</p>
                     </div>
                   ) : (
                     // Solo título: un gráfico del paso en lugar del texto
@@ -205,7 +205,7 @@ export function ServiceDetailPage() {
                         <span aria-hidden="true" className="absolute rounded-md" style={{ right: 8, top: 8, width: 14, height: 14, transform: "rotate(45deg)", background: "rgba(255,222,89,0.85)" }} />
                         <Bi n={st.ic ?? "check2-circle"} size={40} color={C.indigo} className="lg:scale-125" />
                       </span>
-                      <p className="text-sm font-bold" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif", lineHeight: 1.35 }}>{st.t}</p>
+                      <p className="text-base lg:text-lg font-bold" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif", lineHeight: 1.3 }}>{st.t}</p>
                     </div>
                   )}
                 </div>
@@ -227,7 +227,7 @@ export function ServiceDetailPage() {
             {detail.reasons.map((r, i) => shortReasons ? (
               <div key={r.t} className="flex flex-col gap-3 rounded-3xl p-5" style={{ background: "#fff", border: "1.5px solid #E4E6F7", boxShadow: "0 18px 40px -28px rgba(24,0,173,0.45)" }}>
                 <BiTile n={r.ic} size={44} accent={C.indigo} />
-                <p className="text-sm font-bold" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif", lineHeight: 1.35 }}>{r.t}</p>
+                <p className="text-base font-bold" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif", lineHeight: 1.3 }}>{r.t}</p>
               </div>
             ) : (
               <div key={r.t} className="group relative rounded-3xl p-6 transition-all hover:-translate-y-1.5 overflow-hidden"
@@ -236,8 +236,8 @@ export function ServiceDetailPage() {
                 <span className="grid place-items-center rounded-2xl mb-4 transition-colors bg-indigo/[0.08] group-hover:bg-indigo" style={{ width: 48, height: 48 }}>
                   <i className={`bi bi-${r.ic} text-indigo group-hover:text-amarillo transition-colors`} aria-hidden="true" style={{ fontSize: 21, lineHeight: 1 }} />
                 </span>
-                <p className="text-base font-bold mb-2" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif", lineHeight: 1.3 }}>{r.t}</p>
-                <p className="text-sm" style={{ color: C.muted, lineHeight: 1.6 }}>{r.d}</p>
+                <p className="text-lg font-bold mb-2" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif", lineHeight: 1.3 }}>{r.t}</p>
+                <p className="text-[15px]" style={{ color: C.muted, lineHeight: 1.65 }}>{r.d}</p>
               </div>
             ))}
           </div>
