@@ -8,6 +8,7 @@ import microfilmando from "@/assets/images/joel/joel-microfilmando.webp";
 import digitalizando from "@/assets/images/joel/joel-digitalizando.webp";
 import triturando from "@/assets/images/joel/joel-triturando.webp";
 import telefono from "@/assets/images/joel/joel-telefono.webp";
+import estanteria from "@/assets/images/joel/joel-estanteria.webp";
 import levantandoCajas from "@/assets/images/joel/joel-levantando-cajas.webp";
 import bata from "@/assets/images/joel/joel-bata.webp";
 import notas from "@/assets/images/joel/joel-notas.webp";
@@ -26,5 +27,6 @@ export const SERVICE_JOEL: Record<string, { src: string; height: number }> = {
   "destruccion-de-documentos": { src: triturando, height: 300 },
   "microfilmacion-de-archivos": { src: microfilmando, height: 270 },
   "servicio-inhouse": { src: apuntes, height: 300 },
-  "servicio-inmediato": { src: telefono, height: 310 },
+  // Joel al teléfono junto a la estantería con cajas (imagen del cliente, oct. 2026): escena ancha, un poco más baja
+  "servicio-inmediato": { src: estanteria, height: 280 },
 };

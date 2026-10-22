@@ -148,7 +148,7 @@ export function createJoel(kb: JoelKB) {
       return { intent: "seguridad", service: slug, say: [`Sobre seguridad en ${lc(s.title)}: ${r.d || r.t}`], actions: svcActions(slug), options: cotizarOpts(slug) };
     }
     const say = [`${s.title}: ${d.tagline}`, d.intro, `Algunos datos: ${d.stats.map(x => `${x.v} ${x.l}`).join(" · ")}.`];
-    if (d.modes) say.push(`Lo ofrecemos en dos modalidades: ${d.modes.map(m => lc(m.t)).join(" o ")}.`);
+    if (d.modes) say.push(`Lo ofrecemos en ${d.modes.length === 3 ? "tres" : "dos"} modalidades: ${d.modes.map(m => lc(m.t)).join(" o ")}.`);
     return { intent: `svc-${slug}`, service: slug, say, actions: svcActions(slug), options: [{ label: "Cotizar este servicio", next: "q_volume", set: { service: slug } }, { label: "¿Por qué con ustedes?", next: "brain:por que ustedes " + s.title }, { label: "Ver otro servicio", next: "info_list" }] };
   }
 
@@ -164,7 +164,7 @@ export function createJoel(kb: JoelKB) {
   }
 
   function timeAnswer(slug?: string): JoelReply {
-    if (slug === "servicio-inmediato") return { intent: "tiempo", service: slug, say: ["Con el Servicio inmediato, si la solicitud se radica dentro del horario de atención, la entrega puede ser el mismo día.", "Puede ser digital (escaneo prioritario y envío cifrado) o física (despacho exprés del original)."], options: cotizarOpts(slug) };
+    if (slug === "servicio-inmediato") return { intent: "tiempo", service: slug, say: ["Con el Servicio inmediato, si la solicitud se radica dentro del horario de atención, la entrega puede ser el mismo día.", "Puede ser digital (documento PDF), física (despacho del original por mensajería) o una visita de consulta a nuestras instalaciones."], options: cotizarOpts(slug) };
     return { intent: "tiempo", service: slug, say: [`Los tiempos${slug ? ` de ${lc(svc(slug)!.title)}` : ""} dependen del volumen y del estado del archivo, por eso los define el asesor en la propuesta.`, "Si es urgente, contamos con el Servicio inmediato para consultas y entregas prioritarias."], options: [...(slug ? [{ label: "Cotizar este servicio", next: "q_volume", set: { service: slug } }] : []), { label: "Ver Servicio inmediato", next: "info_detail", set: { service: "servicio-inmediato" } }, { label: "Hablar con un asesor", next: "human" }] };
   }
 

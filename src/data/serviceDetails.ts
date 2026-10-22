@@ -22,7 +22,9 @@ export type SvcDetail = {
   stepsKicker?: string;
   stepsTitle?: string;
   stepsIntro?: string;
-  steps?: { t: string; d: string }[];
+  // Pasos con "d" vacío: solo título, con un gráfico (ícono "ic") en su lugar.
+  steps?: { ic?: string; t: string; d: string }[];
+  reasonsKicker?: string;
   reasonsTitle?: string;
   reasons: { ic: string; t: string; d: string }[];
   extra?: { title: string; text: string; note: string };
@@ -34,58 +36,60 @@ export type SvcDetail = {
 
 export const SERVICE_DETAILS: Record<string, SvcDetail> = {
   "levantamiento-de-inventario": {
-    tagline: "La base de un buen control de la información.",
-    intro: "Identificamos, registramos y clasificamos los documentos o expedientes que conforman su archivo, con el objetivo de conocer su volumen, estado de conservación, ubicación y valor documental.",
+    tagline: "El instrumento para un buen control de la información.",
+    intro: "Identificamos, clasificamos y registramos los documentos que conforman su archivo, con el fin de determinar su volumen, estado de conservación, ubicación y valor documental, para su posterior registro en una base de datos y la elaboración del inventario documental.",
+    about: "",
     stats: [{ v: "20%", l: "del tiempo que se pierde buscando información puede recuperarse" }, { v: "Ley 594", l: "y normas del AGN como marco" }, { v: "Paso 1", l: "obligatorio antes de digitalizar" }],
     benefits: [
-      "Identificación precisa del volumen, características físicas y valor de su fondo documental.",
+      "Identificación precisa del volumen, características físicas y valor de su fondo documental para determinar su disposición final (custodia, digitalización o destrucción).",
       "Clasificación alineada a los estándares del Archivo General de la Nación (AGN).",
       "Búsqueda y recuperación inmediata de expedientes mediante bases de datos estructuradas.",
-      "Detección oportuna de deterioro para planes de restauración o digitalización.",
-      "Identificación de series documentales aptas para transferencia al archivo central o eliminación segura (TRD/TVD).",
+      "Detección oportuna de fallas en la conservación de los documentos, orientada a su posterior custodia o digitalización.",
     ],
     stepsTitle: "Proceso de levantamiento",
     stepsIntro: "La clasificación documental es el primer paso para poner orden en los archivos de una empresa: según su naturaleza, función y valor, aplicando las normativas archivísticas vigentes (Tablas de Retención y Valoración Documental).",
     steps: [
-      { t: "Diagnóstico inicial", d: "Analizamos la situación actual del archivo (volumen, ubicación, estado y tipo de documentos). Transarchivos se encarga de la recolección de estos documentos." },
-      { t: "Identificación y codificación", d: "Cada unidad documental se clasifica y etiqueta con un código único, facilitando su control y ubicación dentro del archivo." },
-      { t: "Registro en base de datos", d: "Toda la información se registra en un sistema de inventario, lo que permite generar el control total de la información." },
-      { t: "Entrega de informe final", d: "Se entrega un informe consolidado del inventario documental, acompañado del resumen detallado de los documentos identificados." },
+      { ic: "clipboard2-pulse", t: "Diagnóstico inicial", d: "" },
+      { ic: "upc-scan", t: "Identificación y codificación", d: "" },
+      { ic: "database", t: "Registro en base de datos", d: "" },
+      { ic: "file-earmark-text", t: "Entrega de informe final", d: "" },
     ],
+    reasonsKicker: "¿Por qué elegir a Transarchivos?",
     reasons: [
-      { ic: "bank", t: "Validez jurídica", d: "Garantizamos la conformidad legal de su archivo bajo la Ley 594 de 2000, la Ley 527 y los lineamientos del AGN. Cada intervención, desde la custodia hasta la eliminación, cuenta con trazabilidad auditable y soporte legal para proteger a su organización ante cualquier requerimiento regulatorio." },
-      { ic: "shield-lock", t: "Infraestructura búnker y recuperación crítica", d: "Protegemos sus documentos en bóvedas especializadas con monitoreo 24/7. Aseguramos la continuidad de su operación con la entrega urgente de expedientes bajo estrictos Acuerdos de Nivel de Servicio (SLA)." },
-      { ic: "clipboard2-pulse", t: "Consultoría diagnóstica", d: "Realizamos una evaluación técnica y operativa de su archivo. Estructuramos el ciclo de vida documental mediante Tablas de Retención (TRD/TVD) e implementamos el Programa de Gestión Documental (PGD) para ordenar su información con criterio." },
-      { ic: "cpu", t: "Innovación e integración tecnológica", d: "Convertimos archivos físicos en activos digitales mediante escaneo de alta velocidad y reconocimiento óptico de caracteres (OCR)." },
+      { ic: "bank", t: "Validez jurídica", d: "" },
+      { ic: "shield-lock", t: "Centro documental seguro y acceso inmediato a la información", d: "" },
+      { ic: "search", t: "Agilidad en la búsqueda de documentos", d: "" },
+      { ic: "cpu", t: "Innovación e integración tecnológica", d: "" },
     ],
-    norms: ["Ley 594 de 2000", "Normas del AGN", "Tablas de Retención Documental"],
+    norms: ["Ley 594 de 2000", "Normativa del Archivo General de la Nación", "Tablas de Retención Documental"],
   },
+
   "programa-de-gestion-documental": {
-    tagline: "Gobierno de información, cumplimiento normativo y eficiencia operativa para su empresa.",
-    intro: "El Programa de Gestión Documental (PGD) de Transarchivos es un servicio de consultoría e intervención integral diseñado para estructurar y administrar todo el ciclo de vida de la información de su compañía.",
-    about: "A través de este modelo, definimos y ejecutamos las políticas, procesos e instrumentos archivísticos (Tablas de Retención Documental TRD) que regulan la creación, organización, custodia, consulta y disposición final de los documentos físicos de un archivo, garantizando un control total del patrimonio documental bajo los estándares exigidos por el Archivo General de la Nación (AGN) y la Ley 594 de 2000.",
+    tagline: "La gestión documental de su empresa en un proceso organizado, eficiente y seguro, alineado con el Archivo General de la Nación.",
+    intro: "El Programa de Gestión Documental de Transarchivos permite planificar, organizar y controlar los documentos durante todo su ciclo de vida, desde su creación hasta su disposición final, optimizando su gestión, facilitando el acceso a la información y garantizando su seguridad.",
+    about: "A través de este modelo, definimos y ejecutamos las Tablas de Retención Documental (TRD) que regulan la creación, organización, custodia y disposición final de los documentos físicos de un archivo, garantizando un control del patrimonio documental bajo los estándares exigidos por el Archivo General de la Nación (AGN) y la Ley 594 de 2000.",
     stats: [{ v: "Obligatorio", l: "para entidades públicas y privadas con funciones públicas" }, { v: "Decreto 1080", l: "de 2015 como respaldo" }, { v: "Cero papel", l: "jurídicamente válido" }],
     benefits: [
-      "Blindaje jurídico y normativo: reduce el riesgo de sanciones financieras y legales al asegurar el cumplimiento estricto de los requerimientos de entes reguladores (Superintendencias, DIAN, AGN, MinTIC) y normativas de Hábeas Data.",
-      "Reducción de costos fijos: depura el archivo documental vencido, optimizando el uso de metros cuadrados operativos y eliminando el pago de custodia por archivos sin valor legal o administrativo.",
-      "Productividad y agilidad operativa: sustituye la búsqueda manual de carpetas por estructuras estandarizadas de clasificación e indexación, permitiendo que su equipo localice información crítica en cuestión de segundos.",
-      "Continuidad del negocio y control de riesgos: protege la memoria corporativa contra pérdidas, accesos no autorizados o contingencias, asegurando la disponibilidad de los activos de información en todo momento.",
+      "Cumplimiento normativo: reduce los riesgos mediante una gestión documental alineada con la normativa vigente y los requerimientos de entidades reguladoras como la DIAN y el Archivo General de la Nación.",
+      "Reducción de costos: optimice el espacio físico mediante la organización documental y evite gastos en la conservación de documentos que ya cumplieron su tiempo de retención y pueden eliminarse legalmente.",
+      "Productividad y agilidad operativa: agilice la búsqueda de documentos mediante sistemas de clasificación e indexación.",
     ],
-    reasonsTitle: "Lo que nos diferencia de la competencia",
+    reasonsKicker: "¿Por qué elegir a Transarchivos?",
     reasons: [
-      { ic: "speedometer2", t: "Control total y en tiempo real de su información", d: "" },
-      { ic: "clock-history", t: "Historial de movimientos y cambios siempre disponible", d: "" },
-      { ic: "shield-check", t: "Mayor seguridad y respaldo de la información", d: "" },
-      { ic: "check2-circle", t: "Optimización de tiempos y reducción de errores", d: "" },
-      { ic: "sliders", t: "Herramienta adaptable a las necesidades de cada cliente", d: "" },
+      { ic: "speedometer2", t: "Control en tiempo real", d: "Supervisión de sus unidades documentales 24/7." },
+      { ic: "clock-history", t: "Trazabilidad documental", d: "Historial de movimientos y consultas." },
+      { ic: "shield-check", t: "Seguridad y respaldo", d: "Protección y conservación de la información." },
+      { ic: "lightning-charge", t: "Eficiencia operativa", d: "Reducción de tiempos de búsqueda de documentos." },
+      { ic: "tag", t: "Precios competitivos", d: "Soluciones ajustadas a las necesidades de su empresa, con una excelente relación entre costo, calidad y valor del servicio." },
     ],
     extra: {
       title: "Software de gestión documental",
-      text: "En Transarchivos contamos con un software especializado en el manejo documental. Centraliza y controla la trazabilidad de miles de documentos: contratos, registros y movimientos. Esta herramienta optimiza los procesos, mejora la experiencia y le da velocidad a la consulta documental, permitiendo una gestión más ágil, segura y eficiente.",
+      text: "En Transarchivos contamos con una herramienta de gestión documental que centraliza y controla la trazabilidad de miles de documentos, desde su creación hasta su disposición final. Esta herramienta optimiza los procesos, mejora la experiencia y brinda rapidez al momento de consulta de documentos.",
       note: "En Transarchivos evolucionamos con usted, ofreciendo no solo experiencia en la gestión física de documentos, sino también soluciones tecnológicas que fortalecen la seguridad y modernización de su empresa.",
     },
     norms: ["Ley 594 de 2000", "Decreto 1080 de 2015", "Normas del AGN"],
   },
+
   "custodia-de-medios-magneticos": {
     tagline: "Protección, control y continuidad del negocio para sus activos digitales.",
     intro: "Un servicio especializado de almacenamiento en búnkeres de alta seguridad, diseñado para resguardar soportes magnéticos y ópticos de información.",
@@ -115,28 +119,35 @@ export const SERVICE_DETAILS: Record<string, SvcDetail> = {
     norms: ["Ley 1581 de 2012", "plan de recuperación ante desastres (DRP)"],
   },
   "custodia-de-archivos": {
-    tagline: "Su archivo protegido, disponible cuando lo necesite.",
-    intro: "La custodia de archivos es un servicio especializado que consiste en el resguardo, protección y gestión física de los documentos y archivos de una organización.",
-    about: "Este servicio se encarga de garantizar la seguridad, integridad, disponibilidad y el acceso inmediato de los archivos a lo largo de su ciclo de vida documental.",
+    tagline: "Protegemos y conservamos sus documentos con seguridad, organización y trazabilidad.",
+    intro: "El servicio de custodia documental de Transarchivos consiste en el almacenamiento, protección y conservación segura de los documentos físicos de las empresas en instalaciones especializadas, bajo condiciones controladas y con procesos que garantizan su organización, trazabilidad y confidencialidad.",
+    about: "Transarchivos cuenta con centros documentales independientes que permiten distribuir los archivos en diferentes ubicaciones, reduciendo el riesgo de pérdida masiva de información ante desastres y garantizando mayor seguridad para los documentos de nuestros clientes.",
     stats: [{ v: "24/7", l: "monitoreo y vigilancia con CCTV" }, { v: "Icontec", l: "estantería de carga pesada" }, { v: "Variable", l: "pague por el volumen que custodia" }],
-    benefits: ["Accesibilidad a la información", "Seguridad 24/7", "Privacidad y confidencialidad", "Recuperación profesional de la información", "Optimización de espacio"],
-    stepsKicker: "Nuestra fórmula del éxito",
+    benefits: [
+      "Accesibilidad a la información: consulta y localización rápida de documentos.",
+      "Control en tiempo real: seguimiento y trazabilidad de la información.",
+      "Seguridad 24/7: protección permanente de sus documentos.",
+      "Optimización del espacio: libere áreas de sus instalaciones al trasladar sus archivos a nuestros centros documentales.",
+    ],
+    stepsKicker: "Así funciona nuestro servicio de custodia documental",
     stepsTitle: "Un método simple y transparente para llevarlo al siguiente nivel",
     steps: [
-      { t: "Identificación y diagnóstico", d: "Analizamos y clasificamos su fondo documental según su tipología y naturaleza jurídica (contratos, facturas, expedientes de personal, correspondencia). Definimos la estructura lógica antes de cualquier movimiento físico." },
-      { t: "Indexación y clasificación", d: "Registramos cada documento en bases de datos estructuradas asociando metadatos clave (nombres, fechas, folios, códigos de expediente). Esto garantiza una búsqueda ágil y un control documental preciso." },
-      { t: "Embalaje y rotulado técnico", d: "Guardamos la información en cajas documentales X300 de alta resistencia, debidamente codificadas y rotuladas bajo estándares del Archivo General de la Nación (AGN) para asegurar su preservación." },
-      { t: "Almacenamiento e infraestructura búnker", d: "Resguardamos su archivo en instalaciones especializadas con control riguroso y sistemas automatizados de protección con control biométrico." },
-      { t: "Consulta, despacho y trazabilidad", d: "Suministramos sus expedientes en formato físico o digitalizado bajo estrictos Acuerdos de Nivel de Servicio (SLA). Mantenemos registro de auditoría y trazabilidad total sobre cada solicitud." },
+      { ic: "clipboard2-pulse", t: "Identificación y diagnóstico", d: "" },
+      { ic: "tags", t: "Clasificación e indexación", d: "" },
+      { ic: "box-seam", t: "Almacenamiento y rotulado técnico en la unidad documental", d: "" },
+      { ic: "building-check", t: "Ingreso al centro documental", d: "" },
+      { ic: "truck", t: "Consultas, despacho y trazabilidad", d: "" },
     ],
     reasons: [
-      { ic: "shield-lock", t: "Bóvedas búnker con control ambiental y protección activa", d: "Ofrecemos instalaciones de almacenamiento industrial diseñadas bajo estándares internacionales de seguridad física y control de acceso para preservar sus archivos por años." },
-      { ic: "upc-scan", t: "Trazabilidad total y cadena de custodia ininterrumpida", d: "Cada caja, carpeta y documento cuenta con codificación y seguimiento en tiempo real desde el momento de la recolección hasta su consulta final. Mantenemos una bitácora de auditoría digital que garantiza la máxima confidencialidad, el cumplimiento de Hábeas Data y la seguridad jurídica de su patrimonio documental." },
-      { ic: "lightning-charge", t: "Recuperación y consulta", d: "Eliminamos los tiempos muertos en la gestión de su información. Atendemos sus solicitudes de préstamo de documentos en tiempo récord (Servicio Inmediato), respaldados por Acuerdos de Nivel de Servicio (SLA) rigurosos que garantizan la continuidad operativa de su empresa ante emergencias o auditorías." },
-      { ic: "rulers", t: "Optimización eficiente de metros cuadrados", d: "Liberamos áreas costosas en sus instalaciones al trasladar sus documentos a nuestras instalaciones de alta densidad. Le ayudamos a reducir costos fijos de infraestructura y a eliminar riesgos por almacenamiento inadecuado." },
+      { ic: "search", t: "Búsqueda ágil", d: "Consulte su información cuando la necesite." },
+      { ic: "award", t: "Más de 40 años de experiencia", d: "Trayectoria y conocimiento en gestión documental." },
+      { ic: "patch-check", t: "Ética y transparencia", d: "Procesos responsables y confiables." },
+      { ic: "shield-lock", t: "Respaldo de la información", d: "Protección y control de sus documentos." },
+      { ic: "tag", t: "Precios competitivos", d: "Soluciones ajustadas a las necesidades de su empresa." },
     ],
     norms: ["Ley 594 de 2000", "Ley 962 de 2005, art. 28 (Ley Antitrámites)", "Norma Icontec (estantería)", "Tablas de Retención Documental"],
   },
+
   "digitalizacion-de-documentos": {
     tagline: "Su archivo físico, digital y con valor legal.",
     intro: "La digitalización de documentos es el proceso técnico mediante el cual se convierten documentos físicos en archivos digitales, mediante el uso de escáneres profesionales y software de procesamiento de imágenes. Incluye la captura, optimización, indexación y el reconocimiento óptico de caracteres (OCR) para generar archivos digitales con capacidad de búsqueda.",
@@ -240,24 +251,22 @@ export const SERVICE_DETAILS: Record<string, SvcDetail> = {
     norms: ["Ley 594 de 2000", "Tablas de Retención y Valoración Documental"],
   },
   "servicio-inmediato": {
-    tagline: "Acceso y respuesta prioritaria para la información crítica de sus expedientes.",
-    intro: "Es la solución de atención rápida para clientes corporativos de Transarchivos que requieren consultar un documento custodiado en momentos de contingencia, requerimientos judiciales, auditorías imprevistas o cierres de negocios urgentes.",
-    about: "A través de este servicio, activamos protocolos de búsqueda acelerada en nuestras bóvedas para entregar la información en dos modalidades: digitalización inmediata (consulta exprés en PDF) o despacho físico de emergencia mediante mensajería prioritaria.",
-    stats: [{ v: "Mismo día", l: "si se radica dentro del horario de atención" }, { v: "2", l: "modalidades: digital o física" }, { v: "100%", l: "trazable en cada etapa" }],
-    benefitsTitle: "Beneficios para clientes activos de Transarchivos",
+    tagline: "Control, seguridad y acceso a su información.",
+    intro: "El Servicio Inmediato de Transarchivos permite a nuestros clientes solicitar la entrega de expedientes o documentos bajo nuestra custodia. Localizamos y gestionamos la entrega de sus archivos (en formato físico o digital), garantizando la trazabilidad y el control de la cadena de custodia en cada requerimiento.",
+    about: "A través de este servicio, activamos protocolos de búsqueda en nuestro centro documental para entregar la información en tres modalidades: documento PDF digital, despacho físico mediante mensajería o visita de consulta a nuestras instalaciones.",
+    stats: [{ v: "Mismo día", l: "si se radica dentro del horario de atención" }, { v: "3", l: "modalidades: digital, física o visita de consulta" }, { v: "100%", l: "trazable en cada etapa" }],
+    benefitsTitle: "Beneficios para clientes de Transarchivos",
     benefits: [
-      "Respuesta inmediata ante contingencias y auditorías: evita sanciones, multas o pérdidas de términos legales al obtener en minutos o pocas horas los documentos solicitados por entes de control (DIAN, Superintendencias, juzgados).",
-      "Continuidad operativa sin interrupciones: su equipo no detiene sus procesos comerciales o jurídicos esperando el flujo habitual de préstamos; accede a la información de forma prioritaria.",
-      "Flexibilidad de entrega (física o digital): permite elegir entre un envío digital seguro para consulta instantánea desde el sistema web, o el traslado del expediente original físico.",
-      "Trazabilidad y control total: toda solicitud prioritaria requiere autorización de los usuarios delegados de su empresa, manteniendo un registro auditable de quién pidió el archivo, la razón y el tiempo de consulta.",
+      "Respuesta ante auditorías: evite sanciones, multas o pérdidas de términos legales al obtener los documentos solicitados por entes de control (DIAN, Superintendencias, juzgados).",
+      "Flexibilidad de entrega (física o digital): permite elegir entre un envío digital para la consulta desde el sistema web, el traslado del expediente original o la programación de una visita de consulta.",
+      "Trazabilidad y control total: toda solicitud requiere autorización de los usuarios delegados de su empresa, manteniendo un registro auditable de quién pidió el archivo, la razón y el tiempo de consulta.",
     ],
-    stepsTitle: "Proceso del servicio inmediato en 5 pasos",
+    stepsTitle: "Proceso del servicio inmediato en 4 pasos",
     steps: [
-      { t: "Solicitud exprés por canal prioritario", d: "El usuario autorizado de su empresa radica la solicitud de consulta urgente a través de nuestro correo corporativo servicio@transarchivos.com, indicando el expediente que necesita." },
-      { t: "Ubicación acelerada en bóveda búnker", d: "Nuestro sistema de gestión de depósitos ubica de manera inmediata la posición exacta de la caja y carpeta mediante código de barras/RFID, activando al equipo de extracción rápida." },
-      { t: "Procesamiento prioritario (digital o físico)", d: "Modo digital (OCR exprés): digitalizamos el documento solicitado en alta resolución con OCR y lo subimos a su portal seguro en tiempo récord. Modo físico: asignamos un mensajero o vehículo de la flota de Transarchivos en ruta prioritaria exclusiva directo a la sede de su empresa o punto de requerimiento." },
-      { t: "Entrega segura y cierre de SLA", d: "Entregamos el expediente físico en sus instalaciones bajo estrictos Acuerdos de Nivel de Servicio (SLA de emergencia), registrando la confirmación de recibido." },
-      { t: "Registro de salida y cadena de custodia", d: "Registramos el movimiento en el sistema de gestión documental para abrir la bitácora de trazabilidad. El documento queda asociado a un manifiesto digital que registra el usuario solicitante, fecha, hora exacta y responsable del traslado." },
+      { t: "Solicitud por parte del cliente", d: "El usuario autorizado de su empresa radica la solicitud de consulta a través de nuestros canales de atención, indicando el expediente que necesita." },
+      { t: "Ubicación en centro documental", d: "Nuestro sistema de gestión ubica la unidad documental donde está almacenado el documento." },
+      { t: "Procesamiento (digital o físico)", d: "Modo digital (PDF): digitalizamos el documento solicitado en alta resolución con OCR y lo subimos a su portal seguro para la consulta. Modo físico: asignamos un mensajero o vehículo de la flota de Transarchivos directo a la sede de su empresa o punto de requerimiento. Visita de consulta: usted puede agendar una visita a nuestras instalaciones para consultar sus expedientes." },
+      { t: "Registro de salida y cadena de custodia", d: "Registramos el movimiento en el sistema de gestión documental para abrir la bitácora de trazabilidad. El documento queda asociado a un manifiesto que registra el usuario solicitante, fecha, hora y responsable del traslado." },
     ],
     reasons: [
       { ic: "lightning-charge", t: "Respuesta ante emergencias", d: "Un canal tipo «recuperación ante desastres logística»: localizamos el expediente y lo despachamos en tiempo récord." },
@@ -265,9 +274,11 @@ export const SERVICE_DETAILS: Record<string, SvcDetail> = {
       { ic: "signpost-split", t: "Cadena de custodia", d: "Registro, entrega y devolución documentados, con personal capacitado en el manejo y transporte." },
     ],
     modes: [
-      { ic: "cloud-arrow-down", t: "Digitalización prioritaria bajo demanda", d: "La más rápida: escaneo en alta resolución y entrega electrónica cifrada." },
-      { ic: "truck", t: "Despacho físico exprés", d: "Transporte prioritario del original, con firmas y sellos húmedos, bajo estrictas condiciones de seguridad." },
+      { ic: "file-earmark-pdf", t: "Documento PDF digital", d: "Digitalizamos el documento en alta resolución con OCR y lo subimos a su portal seguro." },
+      { ic: "truck", t: "Despacho físico", d: "Un mensajero o vehículo de la flota de Transarchivos lleva el original a su sede." },
+      { ic: "building", t: "Visita de consulta", d: "Agende una visita a nuestras instalaciones para consultar sus expedientes." },
     ],
     norms: ["Ley 594 de 2000", "Ley 1581 de 2012", "Normas del AGN"],
   },
+
 };

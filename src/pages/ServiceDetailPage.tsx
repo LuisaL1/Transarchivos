@@ -141,7 +141,7 @@ export function ServiceDetailPage() {
           <div>
             {kicker("Lo que obtiene")}
             {h2(detail.benefitsTitle ?? <>Beneficios para <span style={{ background: "linear-gradient(transparent 62%, #FFDE59 62%)" }}>su empresa</span></>)}
-            <p className="text-sm mt-4" style={{ color: C.muted, lineHeight: 1.7 }}>{detail.about ?? service.desc}</p>
+            {(detail.about ?? service.desc) && <p className="text-sm mt-4" style={{ color: C.muted, lineHeight: 1.7 }}>{detail.about ?? service.desc}</p>}
             {detail.includes && (
               <div className="mt-6">
                 <p className="text-sm font-bold mb-3" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>¿Qué incluye este servicio?</p>
@@ -192,10 +192,22 @@ export function ServiceDetailPage() {
               {detail.steps.map((st, i) => (
                 <div key={st.t} className="relative flex lg:flex-col items-center gap-3 lg:gap-0 text-left lg:text-center">
                   <span className="relative grid place-items-center rounded-full font-bold lg:mb-4 shrink-0" style={{ width: 44, height: 44, background: i === 0 ? C.yellow : "#fff", color: C.indigo, border: "2px solid #FFDE59", fontFamily: "Poppins, sans-serif", fontSize: 18, boxShadow: "0 10px 24px -12px rgba(0,0,0,0.5)" }}>{i + 1}</span>
-                  <div className="rounded-2xl p-4 w-full h-full" style={{ background: "#fff", border: "1px solid #E4E6F7" }}>
-                    <p className="text-sm font-bold mb-1" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>{st.t}</p>
-                    <p className="text-xs" style={{ color: C.muted, lineHeight: 1.55 }}>{st.d}</p>
-                  </div>
+                  {st.d ? (
+                    <div className="rounded-2xl p-4 w-full h-full" style={{ background: "#fff", border: "1px solid #E4E6F7" }}>
+                      <p className="text-sm font-bold mb-1" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>{st.t}</p>
+                      <p className="text-xs" style={{ color: C.muted, lineHeight: 1.55 }}>{st.d}</p>
+                    </div>
+                  ) : (
+                    // Solo título: un gráfico del paso en lugar del texto
+                    // (pedido del cliente, oct. 2026).
+                    <div className="rounded-2xl p-4 lg:p-5 w-full h-full flex items-center lg:flex-col gap-4 lg:gap-3 lg:text-center" style={{ background: "#fff", border: "1px solid #E4E6F7" }}>
+                      <span className="relative grid place-items-center shrink-0 rounded-[22px] w-16 h-16 lg:w-24 lg:h-24" style={{ background: "#F1F3FB" }}>
+                        <span aria-hidden="true" className="absolute rounded-md" style={{ right: 8, top: 8, width: 14, height: 14, transform: "rotate(45deg)", background: "rgba(255,222,89,0.85)" }} />
+                        <Bi n={st.ic ?? "check2-circle"} size={40} color={C.indigo} className="lg:scale-125" />
+                      </span>
+                      <p className="text-sm font-bold" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif", lineHeight: 1.35 }}>{st.t}</p>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -208,7 +220,7 @@ export function ServiceDetailPage() {
         <SectionDecor variant={tone.why} />
         <div className="max-w-6xl mx-auto px-6">
           <div className="max-w-2xl mb-10">
-            {kicker("Por qué con Transarchivos", dk("why"))}
+            {kicker(detail.reasonsKicker ?? "Por qué con Transarchivos", dk("why"))}
             {h2(detail.reasonsTitle ?? "Lo que nos diferencia", dk("why"))}
           </div>
           <div className={`grid gap-5 sm:grid-cols-2 ${detail.reasons.length === 3 ? "lg:grid-cols-3" : detail.reasons.length === 5 ? "lg:grid-cols-5" : "lg:grid-cols-4"}`}>
@@ -242,7 +254,6 @@ export function ServiceDetailPage() {
                 className="w-full aspect-[4/3] rounded-3xl" style={{ objectFit: "cover", boxShadow: "0 30px 60px -30px rgba(0,0,0,0.6)" }} />
             )}
             <div>
-              {kicker("Valor agregado", dk("extra"))}
               {h2(detail.extra.title, dk("extra"))}
               <p className="text-sm mt-4 mb-6" style={{ color: dk("extra") ? "rgba(255,255,255,0.8)" : C.muted, lineHeight: 1.7 }}>{detail.extra.text}</p>
               <p className="text-base font-semibold pl-4" style={{ color: dk("extra") ? "#fff" : C.indigo, borderLeft: "3px solid #FFDE59", lineHeight: 1.6, fontFamily: "Poppins, sans-serif" }}>{detail.extra.note}</p>
@@ -259,7 +270,7 @@ export function ServiceDetailPage() {
             {detail.modes && (
               <>
                 <div className="text-center mb-10">{kicker("Modalidades", dk("modes"))}{h2("Elija cómo lo necesita", dk("modes"))}</div>
-                <div className="grid md:grid-cols-2 gap-5">
+                <div className={`grid gap-5 ${detail.modes.length === 3 ? "md:grid-cols-3" : "md:grid-cols-2"}`}>
                   {detail.modes.map((m, i) => (
                     <div key={m.t} className="relative rounded-3xl p-7 flex items-start gap-5 overflow-hidden"
                       style={{ background: i === 0 ? (dk("modes") ? "rgba(255,255,255,0.08)" : C.indigo) : "#fff", border: i === 0 ? (dk("modes") ? "1.5px solid rgba(255,255,255,0.22)" : "none") : "1.5px solid #E4E6F7", boxShadow: "0 24px 50px -32px rgba(24,0,173,0.45)" }}>

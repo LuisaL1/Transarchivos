@@ -96,7 +96,7 @@ export function JoelShowcase({ src, height = 300 }: { src: string; height?: numb
         <path d="M0 46 V18 Q0 0 18 0 H196 Q209 0 217 10 L242 38 Q249 46 262 46 Z" fill={C.indigo} />
       </svg>
       {/* Tarjeta índigo: va en la sección clara de beneficios */}
-      <div className="relative h-[190px] rounded-[0_28px_28px_28px]" style={{ background: C.indigo }}>
+      <div className="relative rounded-[0_28px_28px_28px]" style={{ background: C.indigo, height: 190 }}>
         <div className="absolute inset-0 overflow-hidden rounded-[0_28px_28px_28px]">
           <span className="absolute" style={{ right: -40, top: -40, width: 110, height: 110, transform: "rotate(45deg)", borderRadius: 19, background: "rgba(255,222,89,0.22)" }} />
           <span className="absolute" style={{ left: 22, bottom: 22, width: 110, height: 60, backgroundImage: "radial-gradient(rgba(255,255,255,0.22) 1.3px, transparent 1.6px)", backgroundSize: "14px 14px" }} />
