@@ -86,10 +86,10 @@ Todo respeta `prefers-reduced-motion`.
    - Joel de cuerpo entero junto al selector, desde `lg`, con la mano sobre la tarjeta.
      Solo su cuerpo recibe el clic, que abre el chat;
    - sombra negra superior para el contraste del navbar.
-2. **Barra de confianza:** Ley 594 de 2000 · Norma AGN · Certificado de destrucción · Custodia con vigilancia 24 h.
-3. **Mapa → video** (cobertura nacional): rutas desde Cartagena, Santa Marta, Cúcuta, Bucaramanga, Tunja, Medellín, Ibagué, Armenia, Cali y Neiva que convergen en Bogotá (las ciudades se resaltan una a una), silueta de Joel a la izquierda y revelado circular del video de la bodega. Posiciones calibradas con coordenadas reales.
+2. **Barra de normativas:** Ley 594 de 2000 (Ley General de Archivos) · Ley 2106 de 2019 (Ley Antitrámites) · Programa de Gestión Documental (PGD) · Ley 527 de 1999 (Comercio Electrónico).
+3. **Mapa → video** (central de operaciones): mapa de Cundinamarca con Bogotá D.C. resaltada y rutas desde los municipios vecinos (Zipaquirá, Chía, Cajicá, Tocancipá, La Calera, Facatativá, Madrid, Mosquera, Soacha, Fusagasugá, Girardot, Villeta, Ubaté) que convergen en la capital; silueta de Joel a la izquierda y revelado circular del video del centro documental. Límites de Natural Earth 1:10m (dominio público) proyectados en `assets/images/cundinamarca.svg`; posiciones con coordenadas reales. El cliente descartó el mapa de Colombia (documento del 20 de octubre de 2026).
    - **Clientes** (`ClientsMarquee`, datos en `data/clients.ts`, logos en `assets/images/clientes/`): dos filas de logos en grises que se desplazan en sentidos opuestos y recuperan su color al pasar el mouse. Fuente: "Histórico de Clientes" del cliente.
-   - **Indicadores** (`Stats`, datos en `data/stats.ts`): +40 años de experiencia · +3.200 contratos comerciales · +32.000 millones de folios custodiados. Mismo formato que Transpack.
+   - **Indicadores** (`Stats`, datos en `data/stats.ts`): +40 años de experiencia · +38.000 contratos comerciales · +900 millones de folios custodiados. Mismo formato que Transpack.
 4. **Diagnóstico documental** (producto de entrada): propuesta, 4 pasos e "informe" de hallazgos.
 5. **Servicios:** grilla de 9 tarjetas, luego la pose de Joel con cajas.
 6. **Soluciones:** por necesidad del cliente; cada tarjeta lleva al cotizador con contexto.

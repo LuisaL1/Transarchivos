@@ -98,7 +98,7 @@ export function HomePage() {
         <div aria-hidden="true" className="absolute inset-x-0 top-0 h-36 pointer-events-none" style={{ zIndex: 2, background: "linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.25) 45%, transparent 100%)" }} />
 
         <div className="relative min-h-[70svh] md:min-h-[88vh] flex items-center" style={{ zIndex: 3 }}>
-          <div className="w-full max-w-6xl mx-auto px-6 md:px-8 pt-28 pb-14 md:pt-36 md:pb-16 grid lg:grid-cols-[minmax(0,560px)_minmax(0,1fr)] gap-8 xl:gap-12 items-center">
+          <div className="w-full max-w-6xl mx-auto px-6 md:px-8 pt-28 pb-14 md:pt-36 md:pb-16 grid lg:grid-cols-[minmax(0,640px)_minmax(0,1fr)] gap-6 xl:gap-10 items-center">
             <div className="text-center lg:text-left relative z-10 lg:-ml-3 xl:-ml-14">
             <h1 className="text-[32px] md:text-[42px] xl:text-[48px] font-bold tracking-tight mb-5" style={{ fontFamily: "Poppins, sans-serif", color: "#fff", lineHeight: 1.18, textShadow: "0 2px 22px rgba(0,0,0,0.35)" }}>
               <HeroRotatingTitle />
@@ -106,7 +106,7 @@ export function HomePage() {
             <p className="text-base lg:text-lg max-w-xl mx-auto lg:mx-0" style={{ color: "rgba(255,255,255,0.9)", lineHeight: 1.6, textShadow: "0 1px 12px rgba(0,0,0,0.35)" }}>
               Clasificamos, digitalizamos, custodiamos y destruimos sus documentos bajo la norma del Archivo General de la Nación (AGN) y la Ley 594. Cero riesgos, total acceso.
             </p>
-            <div className="max-w-[440px] mx-auto lg:mx-0">
+            <div className="max-w-[600px] mx-auto lg:mx-0">
               <HeroQuickStart />
             </div>
             </div>
@@ -131,7 +131,7 @@ export function HomePage() {
         {/* Bottom trust bar */}
         <div className="relative border-t py-3 md:py-4" style={{ borderColor: "#E9E9E7", background: "#fff" }}>
           <div className="max-w-6xl mx-auto px-5 md:px-8 flex flex-wrap justify-center md:justify-between items-center gap-x-4 gap-y-2 md:gap-4">
-            {["Ley 594 de 2000", "Norma AGN", "Certificado de destrucción", "Custodia con vigilancia 24 h"].map(t => (
+            {["Ley 594 de 2000 (Ley General de Archivos)", "Ley 2106 de 2019 (Ley Antitrámites)", "Programa de Gestión Documental (PGD)", "Ley 527 de 1999 (Comercio Electrónico)"].map(t => (
               <span key={t} className="flex items-center gap-1.5 text-xs font-medium" style={{ color: "#6B7280", fontFamily: "Montserrat, sans-serif" }}>
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6.5" stroke={C.indigo} strokeOpacity=".3"/><path d="M4 7l2 2 4-4" stroke={C.indigo} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 {t}
@@ -160,10 +160,10 @@ export function HomePage() {
               <span className="relative overflow-hidden inline-flex items-center text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full mb-4"
                 style={{ background: C.indigo, color: "#fff", fontFamily: "Montserrat, sans-serif", boxShadow: "0 8px 16px -8px rgba(24,0,173,0.5)" }}>
                 <span aria-hidden="true" className="absolute pointer-events-none" style={{ right: -12, top: -12, width: 24, height: 24, transform: "rotate(45deg)", borderRadius: 4, background: "rgba(255,222,89,0.3)" }} />
-                <span className="relative">Diagnóstico documental</span>
+                <span className="relative">Inspección técnica</span>
               </span>
               <h3 className="text-2xl md:text-3xl font-bold mb-3" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif", lineHeight: 1.2 }}>
-                La <span style={{ background: "linear-gradient(transparent 62%, #FFDE59 62%)" }}>evaluación estratégica</span> de su archivo antes de cualquier intervención
+                La <span style={{ background: "linear-gradient(transparent 62%, #FFDE59 62%)" }}>visita de diagnóstico</span> a su archivo antes de cualquier intervención
               </h3>
               <p className="text-sm mb-8" style={{ color: C.muted, lineHeight: 1.65 }}>
                 Antes de ejecutar cualquier proceso, evaluamos técnicamente el estado actual de su archivo documental. Le entregamos un panorama objetivo y fundamentado para tomar decisiones financieras y normativas basadas en evidencias reales, no en estimaciones.
@@ -195,7 +195,7 @@ export function HomePage() {
 
               <a href="#cotizador" className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl text-sm font-bold transition-all hover:scale-105 active:scale-95"
                 style={{ background: C.yellow, color: C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none", boxShadow: "0 14px 28px -12px rgba(255,222,89,0.55)" }}>
-                Solicitar diagnóstico <Bi n="arrow-right" size={15} color={C.indigo} />
+                Solicite una visita de diagnóstico para su archivo <Bi n="arrow-right" size={15} color={C.indigo} />
               </a>
             </div>
 

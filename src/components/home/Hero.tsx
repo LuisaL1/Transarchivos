@@ -97,8 +97,8 @@ export function HeroQuickStart() {
   const [sel, setSel] = useState(0);
   const q = QUICK[sel];
   return (
-    <div className="mt-9 max-w-[440px] mx-auto lg:mx-0">
-    <p className="text-center lg:text-left text-sm font-semibold mb-3" style={{ color: "#fff", fontFamily: "Montserrat, sans-serif" }}>¿Qué necesita hoy?</p>
+    <div className="mt-9 max-w-[560px] lg:max-w-[600px] mx-auto lg:mx-0">
+    <p className="text-center lg:text-left text-base font-semibold mb-3" style={{ color: "#fff", fontFamily: "Montserrat, sans-serif" }}>¿Qué necesita hoy?</p>
     <div className="text-left rounded-3xl p-2"
       style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.14)", backdropFilter: "blur(10px)", boxShadow: "0 30px 60px -30px rgba(0,0,0,0.55)" }}>
       {/* Pestañas: indicador amarillo que se desliza; foco de teclado interno
@@ -110,9 +110,9 @@ export function HeroQuickStart() {
           const on = i === sel;
           return (
             <button key={o.label} type="button" role="tab" aria-selected={on} onClick={() => setSel(i)}
-              className={`qs-tab relative flex flex-col items-center gap-1 py-2.5 rounded-2xl transition-colors ${on ? "" : "hover:bg-white/[0.07]"}`}>
-              <Bi n={o.icon} size={16} color={on ? C.indigo : "rgba(255,255,255,0.72)"} style={{ transition: "color 0.25s" }} />
-              <span className="text-[11px] font-bold" style={{ color: on ? C.indigo : "rgba(255,255,255,0.78)", fontFamily: "Montserrat, sans-serif", transition: "color 0.25s" }}>{o.label}</span>
+              className={`qs-tab relative flex flex-col items-center gap-1.5 py-3 rounded-2xl transition-colors ${on ? "" : "hover:bg-white/[0.07]"}`}>
+              <Bi n={o.icon} size={20} color={on ? C.indigo : "rgba(255,255,255,0.72)"} style={{ transition: "color 0.25s" }} />
+              <span className="text-[13px] lg:text-sm font-bold" style={{ color: on ? C.indigo : "rgba(255,255,255,0.78)", fontFamily: "Montserrat, sans-serif", transition: "color 0.25s" }}>{o.label}</span>
             </button>
           );
         })}
@@ -124,26 +124,26 @@ export function HeroQuickStart() {
             largo y la tarjeta no cambia de tamaño al cambiar de pestaña. */}
         <div className="grid">
           {QUICK.map((o, i) => (
-            <div key={o.slug} aria-hidden={i !== sel} className={`[grid-area:1/1] flex items-center gap-3.5 px-4 py-4 ${i === sel ? "hero-word-in" : "invisible"}`}>
-              <span className="grid place-items-center rounded-xl shrink-0" style={{ width: 44, height: 44, background: C.indigo }}>
-                <Bi n={o.icon} size={19} color={C.yellow} />
+            <div key={o.slug} aria-hidden={i !== sel} className={`[grid-area:1/1] flex items-center gap-4 px-5 py-5 ${i === sel ? "hero-word-in" : "invisible"}`}>
+              <span className="grid place-items-center rounded-xl shrink-0" style={{ width: 52, height: 52, background: C.indigo }}>
+                <Bi n={o.icon} size={23} color={C.yellow} />
               </span>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-bold leading-tight" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>{o.title}</p>
-                <p className="text-xs mt-1" style={{ color: C.muted, lineHeight: 1.45 }}>{o.text}</p>
+                <p className="text-base lg:text-lg font-bold leading-tight" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>{o.title}</p>
+                <p className="text-sm lg:text-[15px] mt-1.5" style={{ color: C.muted, lineHeight: 1.5 }}>{o.text}</p>
               </div>
             </div>
           ))}
         </div>
-        <div className="flex items-center justify-between gap-3 px-4 py-3" style={{ borderTop: "1px solid #F0F1FA" }}>
-          <Link to={`/servicios/${q.slug}`} className="group inline-flex items-center gap-1 text-xs font-semibold" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
-            Ver servicio <Bi n="chevron-right" size={10} color={C.indigo} className="transition-transform group-hover:translate-x-0.5" />
+        <div className="flex items-center justify-between gap-3 px-5 py-3.5" style={{ borderTop: "1px solid #F0F1FA" }}>
+          <Link to={`/servicios/${q.slug}`} className="group inline-flex items-center gap-1 text-sm font-semibold" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
+            Ver servicio <Bi n="chevron-right" size={12} color={C.indigo} className="transition-transform group-hover:translate-x-0.5" />
           </Link>
-          <Link to={`/?servicio=${q.slug}#cotizador`} className="group inline-flex items-center gap-2 pl-4 pr-1.5 py-1.5 rounded-full text-xs font-bold transition-colors hover:bg-indigo"
+          <Link to={`/?servicio=${q.slug}#cotizador`} className="group inline-flex items-center gap-2.5 pl-5 pr-2 py-2 rounded-full text-sm font-bold transition-colors hover:bg-indigo"
             style={{ background: C.indigo, color: "#fff", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
             Cotizar este servicio
-            <span className="grid place-items-center rounded-full transition-transform group-hover:translate-x-0.5" style={{ width: 24, height: 24, background: C.yellow }}>
-              <Bi n="arrow-right" size={11} color={C.indigo} />
+            <span className="grid place-items-center rounded-full transition-transform group-hover:translate-x-0.5" style={{ width: 28, height: 28, background: C.yellow }}>
+              <Bi n="arrow-right" size={13} color={C.indigo} />
             </span>
           </Link>
         </div>

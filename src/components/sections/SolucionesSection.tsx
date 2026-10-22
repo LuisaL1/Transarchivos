@@ -14,7 +14,7 @@ export function SolucionesSection() {
         <div className="text-center mb-12">
           <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: C.gold, fontFamily: "Montserrat, sans-serif" }}>Soluciones</p>
           <h2 className="text-3xl md:text-4xl font-bold max-w-3xl mx-auto" style={{ fontFamily: "Poppins, sans-serif", color: C.indigo, lineHeight: 1.2 }}>
-            Arquitectura de soluciones según su <span style={{ background: "linear-gradient(transparent 62%, #FFDE59 62%)" }}>escenario documental</span>
+            Soluciones de acuerdo con la <span style={{ background: "linear-gradient(transparent 62%, #FFDE59 62%)" }}>necesidad de su empresa</span>
           </h2>
           <p className="text-sm mt-4 max-w-2xl mx-auto" style={{ color: C.muted }}>
             Combinamos infraestructura, tecnología OCR e instrumentos archivísticos para resolver problemáticas complejas de espacio, cumplimiento, digitalización y seguridad.

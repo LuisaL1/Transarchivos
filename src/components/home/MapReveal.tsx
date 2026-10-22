@@ -2,38 +2,44 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Bi } from "@/components/ui/Icons";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
-import colombiaMap from "@/assets/images/colombia.svg";
+import cundinamarcaMap from "@/assets/images/cundinamarca.svg";
 import joelImg from "@/assets/images/joel.webp"; // silueta en súper zoom
 import { C } from "@/styles/tokens";
 
-// ─── Cobertura desde Bogotá para toda Colombia (efecto al hacer scroll) ────
+// ─── Central de operaciones en Bogotá (efecto al hacer scroll) ─────────────
 // Inspirado en el recurso de Audi que pidió el cliente: la sección queda fija
 // mientras se baja y el desplazamiento controla la animación.
-//   1. Mapa de Colombia con rutas desde 10 ciudades que llegan a Bogotá (centro
-//      de operaciones): la información de todo el país se centraliza allí.
+//   1. Mapa de Cundinamarca con Bogotá D.C. resaltada (centro de operaciones)
+//      y rutas desde los municipios vecinos que llegan a la capital (el
+//      cliente descartó el mapa de Colombia, documento del 20 de octubre de
+//      2026). Límites: Natural Earth 1:10m (dominio público), ver
+//      assets/images/cundinamarca.svg.
 //   2. Desde Bogotá se abre un círculo que revela el video de archivo hasta
 //      cubrir toda la pantalla, con el mensaje final.
 // Con "reducir movimiento" se muestra el mapa sin animación. En celular el mapa
 // y el texto se reducen para que todo quepa en la pantalla fija (más aún en
 // pantallas bajas, como el iPhone SE).
 
-// Posiciones calibradas con coordenadas geográficas reales (lon/lat → mapa,
-// ajuste con Punta Gallinas, Leticia, Cabo Manglares y Puerto Carreño).
-const BOGOTA = { left: 0.4296, top: 0.5013 };
-// Ciudades desde las que la información llega al centro de Bogotá.
+// Posiciones con coordenadas geográficas reales (lon/lat) proyectadas igual
+// que el SVG (equirectangular sobre el encuadre de Cundinamarca).
+const BOGOTA = { left: 0.4499, top: 0.5174 };
+// Municipios vecinos desde los que la información llega al centro de Bogotá.
 const CITIES: { name: string; x: number; y: number; left?: boolean; below?: boolean }[] = [
-  { name: "Cartagena", x: 0.3237, y: 0.1906 },
-  { name: "Santa Marta", x: 0.4200, y: 0.1437 },
-  { name: "Cúcuta", x: 0.5472, y: 0.3277 },
-  { name: "Bucaramanga", x: 0.5010, y: 0.3700 },
-  { name: "Tunja", x: 0.4826, y: 0.4564 },
-  { name: "Medellín", x: 0.3160, y: 0.4178, left: true },
-  { name: "Neiva", x: 0.3385, y: 0.5982 },
-  { name: "Cali", x: 0.2445, y: 0.5697 },
-  { name: "Armenia", x: 0.3085, y: 0.5109, left: true },
-  { name: "Ibagué", x: 0.3423, y: 0.5161, below: true },
+  { name: "Zipaquirá", x: 0.4838, y: 0.3827 },
+  { name: "Tocancipá", x: 0.5295, y: 0.4073 },
+  { name: "Cajicá", x: 0.4721, y: 0.4276, left: true },
+  { name: "Chía", x: 0.4565, y: 0.4522, left: true },
+  { name: "La Calera", x: 0.5013, y: 0.5130 },
+  { name: "Facatativá", x: 0.3082, y: 0.4727, left: true },
+  { name: "Madrid", x: 0.3537, y: 0.5077, left: true },
+  { name: "Mosquera", x: 0.3706, y: 0.5195, below: true },
+  { name: "Soacha", x: 0.3776, y: 0.5744, below: true },
+  { name: "Fusagasugá", x: 0.3036, y: 0.6792, below: true },
+  { name: "Girardot", x: 0.0834, y: 0.6939, below: true },
+  { name: "Villeta", x: 0.2490, y: 0.3869, left: true },
+  { name: "Ubaté", x: 0.5790, y: 0.2593 },
 ];
-const MW = 1006, MH = 1370; // proporción del mapa (viewBox del SVG)
+const MW = 1000, MH = 1160; // proporción del mapa (viewBox del SVG)
 // Curva desde la ciudad hasta Bogotá (el recorrido termina en Bogotá).
 const route = (c: { x: number; y: number }) => {
   const x1 = c.x * MW, y1 = c.y * MH, x2 = BOGOTA.left * MW, y2 = BOGOTA.top * MH;
@@ -98,7 +104,7 @@ export function MapReveal() {
   const mapScale = 1 + reveal * 0.35;
 
   return (
-    <section ref={sectionRef} aria-label="Cobertura nacional" className="relative" style={{ height: reduced ? "auto" : "260vh", background: C.indigo }}>
+    <section ref={sectionRef} aria-label="Central de operaciones en Bogotá" className="relative" style={{ height: reduced ? "auto" : "260vh", background: C.indigo }}>
       <div className={reduced ? "relative" : "sticky top-0 h-screen overflow-hidden"}>
         {/* Cuadrícula de fondo */}
         <svg aria-hidden="true" className="absolute inset-0 w-full h-full">
@@ -121,19 +127,20 @@ export function MapReveal() {
         <div className="relative h-full max-w-6xl mx-auto px-6 grid md:grid-cols-2 content-center md:items-center gap-4 md:gap-8 pt-20 [@media(max-height:720px)]:pt-16 pb-6 md:py-0">
           {/* Texto del mapa */}
           <div style={{ opacity: mapText, transform: `translateY(${(1 - mapText) * -20}px)` }} className="text-center md:text-left order-2 md:order-1">
-            <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: C.yellow, fontFamily: "Montserrat, sans-serif" }}>Cobertura nacional</p>
+            <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: C.yellow, fontFamily: "Montserrat, sans-serif" }}>Centro de operaciones · Bogotá</p>
             <h2 className="text-[26px] [@media(max-height:720px)]:text-[22px] md:text-[40px] md:[@media(max-height:720px)]:text-[40px] font-bold mb-3 md:mb-4" style={{ color: "#fff", fontFamily: "Poppins, sans-serif", lineHeight: 1.15 }}>
-              Cobertura estratégica desde la capital para toda Colombia
+              La Central de Operaciones Documentales de Transarchivos (respaldos multi-sede)
             </h2>
             <p className="text-[13px] [@media(max-height:720px)]:text-[12px] md:text-[15px] md:[@media(max-height:720px)]:text-[15px] max-w-md mx-auto md:mx-0" style={{ color: "rgba(255,255,255,0.75)", lineHeight: 1.6 }}>
-              Nuestra sede de operación y bodegas especializadas en Bogotá listas para responder a las demandas de gestión documental de empresas a nivel nacional. Desde nuestra infraestructura central garantizamos la ejecución de procesos críticos con plena validez legal, incluyendo la eliminación definitiva y trazable de archivos bajo los más estrictos lineamientos normativos y ambientales que exige la ley.
+              Desde Bogotá lideramos soluciones de custodia, digitalización y destrucción documental. Disponemos de múltiples centros documentales estratégicamente distribuidos en la ciudad para prevenir la pérdida masiva de información ante desastres o contingencias.
+              <br /><br />Nuestras sedes cuentan con laboratorios y sistemas de seguridad para proteger, procesar y administrar activos de información sensible. Garantizamos la ejecución de procesos críticos y la destrucción segura de archivos bajo estricto cumplimiento legal, ambiental y de Hábeas Data.
             </p>
           </div>
 
           {/* Mapa con Bogotá */}
           <div className="relative order-1 md:order-2 flex justify-center">
-            <div ref={mapRef} className="relative h-[30vh] [@media(max-height:720px)]:h-[20vh] md:h-[78vh] md:[@media(max-height:720px)]:h-[70vh]" style={{ aspectRatio: "1006 / 1370", transform: `scale(${mapScale})`, transformOrigin: `${BOGOTA.left * 100}% ${BOGOTA.top * 100}%` }}>
-              <img loading="lazy" decoding="async" src={colombiaMap} alt="Mapa de Colombia con Bogotá resaltada" draggable={false} className="w-full h-full select-none" style={{ objectFit: "contain", filter: "drop-shadow(0 18px 30px rgba(0,0,0,0.4))" }} />
+            <div ref={mapRef} className="relative h-[30vh] [@media(max-height:720px)]:h-[20vh] md:h-[78vh] md:[@media(max-height:720px)]:h-[70vh]" style={{ aspectRatio: "1000 / 1160", transform: `scale(${mapScale})`, transformOrigin: `${BOGOTA.left * 100}% ${BOGOTA.top * 100}%` }}>
+              <img loading="lazy" decoding="async" src={cundinamarcaMap} alt="Mapa de Cundinamarca con Bogotá resaltada y los municipios vecinos" draggable={false} className="w-full h-full select-none" style={{ objectFit: "contain", filter: "drop-shadow(0 18px 30px rgba(0,0,0,0.4))" }} />
               {/* Rutas: de cada ciudad hacia Bogotá (los trazos y puntos viajan hacia el centro) */}
               <svg aria-hidden="true" viewBox={`0 0 ${MW} ${MH}`} className="absolute inset-0 w-full h-full overflow-visible">
                 {CITIES.map((c, i) => {

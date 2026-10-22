@@ -24,7 +24,7 @@ export function ClientsMarquee() {
     <section aria-label="Empresas que han confiado en Transarchivos" className="relative pt-10 pb-8 md:pt-12 md:pb-10" style={{ background: "#FFFFFF" }}>
       <p className="mb-2 text-center text-xs font-bold uppercase tracking-widest" style={{ color: C.gold, fontFamily: "Montserrat, sans-serif" }}>Nuestros clientes</p>
       <p className="mb-8 px-6 mx-auto max-w-4xl text-center text-xl md:text-2xl font-bold" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>
-        Más de 4.000 compañías garantizan su cumplimiento normativo y seguridad documental con Transarchivos
+        Más de 4.000 compañías garantizan nuestro cumplimiento
       </p>
       {/* Franja blanca (única sección clara del sitio): los logos van
           directamente sobre el fondo, en gris, y recuperan su color al pasar

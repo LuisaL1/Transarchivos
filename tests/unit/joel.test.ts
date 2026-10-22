@@ -68,7 +68,7 @@ describe("Joel · defensa", () => {
 describe("Joel · indicadores", () => {
   it("responde con las cifras oficiales de la empresa", () => {
     const r = ask("cuántos folios custodian");
-    expect(r.say.join(" ")).toMatch(/32\.000 millones de folios/);
+    expect(r.say.join(" ")).toMatch(/900 millones de folios/);
   });
 });
 
