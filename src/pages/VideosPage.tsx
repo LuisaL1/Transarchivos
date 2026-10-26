@@ -20,11 +20,10 @@ const mmss = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, 
 
 function VideoCard({ v }: { v: Video }) {
   const [playing, setPlaying] = useState(false);
-  // Miniatura grande (16:9); si YouTube no la tiene devuelve un marcador gris
-  // de 120×90 (no un error), así que se detecta por el tamaño y se pasa a la
-  // estándar (4:3; el recorte quita las franjas).
-  const [thumb, setThumb] = useState(`https://i.ytimg.com/vi/${v.id}/maxresdefault.jpg`);
-  const fallback = () => setThumb(t => t.includes("maxresdefault") ? `https://i.ytimg.com/vi/${v.id}/hqdefault.jpg` : t);
+  // Miniatura estándar de YouTube (480×360, siempre existe; las de mayor
+  // resolución responden 404 en varios videos y ese error ensuciaba la
+  // consola). Es 4:3 con franjas negras: el recorte 16:9 las elimina.
+  const thumb = `https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`;
   return (
     <article className="rounded-2xl overflow-hidden bg-white flex flex-col" style={{ border: "1px solid #E4E6F7", boxShadow: "0 20px 40px -24px rgba(24,0,173,0.25)" }}>
       <div className="relative w-full" style={{ paddingTop: "56.25%", background: C.indigo }}>
@@ -33,8 +32,7 @@ function VideoCard({ v }: { v: Video }) {
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen />
         ) : (
           <button type="button" onClick={() => setPlaying(true)} aria-label={`Reproducir: ${v.title}`} className="group absolute inset-0 w-full h-full">
-            <img src={thumb} alt="" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover"
-              onError={fallback} onLoad={e => { if (e.currentTarget.naturalWidth <= 120) fallback(); }} />
+            <img src={thumb} alt="" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover" />
             <span aria-hidden="true" className="absolute inset-0 transition-colors" style={{ background: "rgba(0,0,0,0.22)" }} />
             <span aria-hidden="true" className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 grid place-items-center rounded-full transition-transform group-hover:scale-110"
               style={{ width: 64, height: 64, background: C.yellow, boxShadow: "0 14px 28px -10px rgba(0,0,0,0.55)" }}>
