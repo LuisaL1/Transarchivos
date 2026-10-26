@@ -27,6 +27,7 @@ src/
 │   ├── NosotrosPage.tsx      "/nosotros"
 │   ├── ArticlePage.tsx       "/blog/:slug"
 │   ├── PoliciesPage.tsx      "/politicas" (7 políticas oficiales)
+│   ├── VideosPage.tsx        "/videos" ("Da play al conocimiento": los videos del canal de YouTube)
 │   └── PrivacyPage.tsx       "/privacidad" (aviso del sitio y cookies)
 ├── components/
 │   ├── layout/           Navbar compartido (SiteHeader), menús desplegables,
@@ -48,6 +49,7 @@ src/
 │   ├── policies.ts           Políticas institucionales oficiales (/politicas; PDF en public/documentos)
 │   ├── quote.ts              Preguntas y unidades del cotizador
 │   ├── blog.ts               Artículos del blog
+│   ├── videos.ts             Videos horizontales del canal de YouTube (página /videos)
 │   ├── nosotros.ts           Menú de Nosotros
 │   ├── stats.ts              Indicadores de la portada (años, contratos, folios)
 │   ├── contact.ts            Número y enlace de WhatsApp (whatsappUrl)

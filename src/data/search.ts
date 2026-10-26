@@ -14,6 +14,7 @@ const searchIndex: SearchResult[] = [
   { kind: "Sección", title: "Cómo trabajamos", desc: "Nuestro modelo de 4 pasos: diagnóstico, solución, protección y expansión", href: "#modelo" },
   { kind: "Sección", title: "Preguntas frecuentes", desc: "Cotización, costos, cobertura, normativa, custodia y más", href: "#faq" },
   { kind: "Sección", title: "Blog", desc: "Artículos y guías sobre gestión documental, tecnología y sostenibilidad", href: "#blog" },
+  { kind: "Sección", title: "Da play al conocimiento", desc: "Todos los videos del canal de YouTube de Transarchivos: guías, normativa y servicios", to: "/videos" },
   { kind: "Sección", title: "Solicitar cotización", desc: "Elija su servicio y responda unas preguntas para armar su solicitud", href: "#cotizador" },
   ...services.map(s => ({ kind: "Servicio" as const, title: s.title, desc: s.desc, to: `/servicios/${s.slug}` })),
   ...blogPosts.map(p => ({ kind: "Artículo" as const, title: p.title, desc: p.excerpt, to: `/blog/${p.slug}` })),

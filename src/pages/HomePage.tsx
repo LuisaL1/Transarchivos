@@ -433,12 +433,18 @@ export function HomePage() {
           ))}
         </div>
 
-        <div className="text-center mb-10">
-          <a href="https://www.youtube.com/@Transarchivosltda" target="_blank" rel="noreferrer"
+        <div className="flex flex-wrap justify-center gap-3 mb-10">
+          <Link to="/videos"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-bold transition-all hover:scale-105"
             style={{ background: C.indigo, color: "#fff", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
-            <Bi n="youtube" size={16} color={C.yellow} />
-            Ver más en nuestro canal
+            <Bi n="play-circle" size={16} color={C.yellow} />
+            Da play al conocimiento: ver todos los videos
+          </Link>
+          <a href="https://www.youtube.com/@Transarchivosltda" target="_blank" rel="noreferrer"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-bold transition-all hover:scale-105"
+            style={{ background: "#fff", color: C.indigo, border: "1.5px solid #E4E6F7", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
+            <Bi n="youtube" size={16} color={C.indigo} />
+            Ir al canal de YouTube
           </a>
         </div>
 
@@ -538,6 +544,7 @@ export function HomePage() {
                   { label: "Nuestra historia", to: "/nosotros#historia" },
                   { label: "Normativa y certificados", to: "/nosotros#certificados" },
                   { label: "Nuestros clientes", to: "/nosotros#clientes" },
+                  { label: "Da play al conocimiento (videos)", to: "/videos" },
                   { label: "Preguntas frecuentes", to: "/#faq" },
                 ].map(item => (
                   <li key={item.label}>

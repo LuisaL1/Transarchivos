@@ -62,6 +62,7 @@ tests/                  unit/, security/, e2e/  (ver 04)
 | --- | --- | --- |
 | `/` | `HomePage` | Landing completa (ver 02) |
 | `/nosotros` | `NosotrosPage` | Anclas: `#quienes-somos`, `#historia`, `#mision-vision`, `#equipo`, `#cultura`, `#clientes`, `#aliados`, `#certificados` |
+| `/videos` | `VideosPage` | "Da play al conocimiento": los 28 videos horizontales del canal de YouTube (`src/data/videos.ts`); miniatura de YouTube y reproductor youtube-nocookie solo al pulsar play |
 | `/servicios/:slug` | `ServiceDetailPage` | 9 servicios (slugs en `src/data/services.ts`); al final, las preguntas frecuentes del servicio (`src/data/serviceFaqs.ts`, sección `#preguntas`, componente `ServiceFaqs`) |
 | `/blog/:slug` | `ArticlePage` | Artículos de `src/data/blog.ts` |
 

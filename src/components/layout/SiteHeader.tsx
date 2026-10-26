@@ -192,9 +192,15 @@ export function SiteHeader({ solid = false, onChat }: { solid?: boolean; onChat:
         <div
           ref={pillRef}
           onMouseLeave={() => setOpenMenu(null)}
-          className="hidden xl:flex relative flex-col"
+          // --pl / --pr: espacio reservado al logo (izquierda) y a los íconos
+          // (derecha); cambian con el margen del logo en 2xl.
+          className="hidden xl:flex relative flex-col [--pl:256px] [--pr:150px] 2xl:[--pl:320px] 2xl:[--pr:214px]"
           style={{
             zIndex: 1,
+            // Centrada cuando hay sitio; si al centrarla pisaría el logo, se
+            // corre a la derecha lo justo (hasta 1440 px el menú no cabe centrado
+            // con la entrada "Da play al conocimiento").
+            left: "max(0px, calc(var(--pl) - (100vw - min(1040px, calc(100vw - var(--pl) - var(--pr)))) / 2))",
             // Ancho FIJO (no depende de openMenu): antes el pill se angostaba al
             // cerrar y se ensanchaba al abrir cada dropdown, y como la fila 1 usa
             // "mx-auto" para centrarse, ese cambio de ancho hacía que el texto
@@ -205,8 +211,10 @@ export function SiteHeader({ solid = false, onChat }: { solid?: boolean; onChat:
             // En ambos estados el pill se queda entre el logo y los íconos
             // (nunca pasa por debajo de la lupa/soporte), así la transición al
             // hacer scroll en cualquier dirección no los superpone.
-            // Con el menú a 16 px en negrita necesita algo más de ancho.
-            width: "min(900px, calc(100vw - 460px))",
+            // Con el menú a 16 px en negrita y la entrada "Da play al
+            // conocimiento" necesita algo más de ancho (hasta 1535 px el menú
+            // va a 15 px para que quepa).
+            width: "min(1040px, calc(100vw - var(--pl) - var(--pr)))",
             // Un radio de 9999px NO se recorta a "tarjeta redondeada" al crecer:
             // en CSS, un radio uniforme en las 4 esquinas siempre se limita a
             // min(ancho, alto)/2 — con el pill más ancho que alto se veía como un
@@ -251,9 +259,17 @@ export function SiteHeader({ solid = false, onChat }: { solid?: boolean; onChat:
                   <NavDropdownTrigger label="Soluciones" open={openMenu === "soluciones"} setOpen={() => setOpenMenu("soluciones")} />
                   <NavDropdownTrigger label="Nosotros" open={openMenu === "nosotros"} setOpen={() => setOpenMenu("nosotros")} />
                   <NavDropdownTrigger label="Blog" open={openMenu === "blog"} setOpen={() => setOpenMenu("blog")} />
+                  {/* Página de videos del canal (pedido del cliente, oct. 2026) */}
+                  <Link to="/videos" onClick={() => setOpenMenu(null)}
+                    className="px-2 2xl:px-2.5 py-2 rounded-full text-sm 2xl:text-[15px] font-bold transition-colors whitespace-nowrap"
+                    style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}
+                    onMouseEnter={e => { e.currentTarget.style.background = C.indigo; e.currentTarget.style.color = "#ffffff"; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = C.indigo; }}>
+                    Da play al conocimiento
+                  </Link>
                   {[{ label: "Contacto", href: "#faq" }].map(l => (
                     <a key={l.label} href={l.href}
-                      className="px-3 py-2 rounded-full text-base font-bold transition-colors"
+                      className="px-2 2xl:px-2.5 py-2 rounded-full text-sm 2xl:text-[15px] font-bold transition-colors whitespace-nowrap"
                       style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }}
                       onMouseEnter={e => { e.currentTarget.style.background = C.indigo; e.currentTarget.style.color = "#ffffff"; }}
                       onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = C.indigo; }}>
@@ -266,9 +282,9 @@ export function SiteHeader({ solid = false, onChat }: { solid?: boolean; onChat:
 
             {/* CTA derecha — píldora sólida navy, para destacar sobre el pill blanco */}
             <a href="#cotizador"
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold transition-transform hover:scale-105 active:scale-95 shrink-0"
+              className="inline-flex items-center gap-1.5 px-3.5 2xl:px-4 py-2 rounded-full text-[13px] 2xl:text-sm font-bold transition-transform hover:scale-105 active:scale-95 shrink-0 whitespace-nowrap"
               style={{ background: C.indigo, color: "#ffffff", fontFamily: "Montserrat, sans-serif" }}>
-              Solicitar cotización
+              <span className="min-[1440px]:hidden">Cotizar</span><span className="hidden min-[1440px]:inline">Solicitar cotización</span>
               <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M3 11L11 3M11 3H5M11 3V9" stroke="#ffffff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </a>
 
@@ -387,6 +403,11 @@ function MobileMenu({ onClose, onSearch, onChat }: { onClose: () => void; onSear
             </div>
           );
         })}
+        <Link to="/videos" onClick={onClose} className={`${rowCls} border-b`} style={{ ...rowText, borderColor: "#F0F1FA", textDecoration: "none" }}>
+          <MenuIcon n="youtube" size={36} />
+          <span className="flex-1 text-[15px] font-semibold">Da play al conocimiento</span>
+          <Bi n="chevron-right" size={13} color={C.faint} />
+        </Link>
         {[{ label: "Blog", icon: "journal-text", href: "#blog" }, { label: "Contacto y preguntas frecuentes", icon: "question-circle", href: "#faq" }].map(l => (
           <a key={l.label} href={l.href} onClick={onClose} className={`${rowCls} border-b`} style={{ ...rowText, borderColor: "#F0F1FA" }}>
             <MenuIcon n={l.icon} size={36} />

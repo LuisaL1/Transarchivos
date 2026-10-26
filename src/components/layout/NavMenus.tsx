@@ -19,7 +19,7 @@ export function NavDropdownTrigger({ label, open, setOpen }: { label: string; op
       // Para cerrar: mover el cursor fuera del pill, o clic afuera.
       onClick={() => setOpen(true)}
       onMouseEnter={() => setOpen(true)}
-      className="flex items-center gap-1 px-3 py-2 rounded-full text-base font-bold transition-colors"
+      className="flex items-center gap-1 px-2 2xl:px-2.5 py-2 rounded-full text-sm 2xl:text-[15px] font-bold transition-colors whitespace-nowrap"
       style={{
         color: open ? "#ffffff" : C.indigo,
         background: open ? C.indigo : "transparent",
@@ -147,7 +147,7 @@ export function NosotrosPanelContent({ setOpen }: { setOpen: (v: boolean) => voi
   );
 }
 
-// Menú "Blog": los 3 artículos más recientes y acceso al canal de YouTube.
+// Menú "Blog": los 3 artículos más recientes y la página de videos del canal.
 export function BlogPanelContent({ setOpen }: { setOpen: (v: boolean) => void }) {
   const close = () => setOpen(false);
   const recent = blogPosts.slice(0, 3);
@@ -168,12 +168,12 @@ export function BlogPanelContent({ setOpen }: { setOpen: (v: boolean) => void })
             </Link>
           ))}
         </div>
-        <a href="https://www.youtube.com/@Transarchivosltda" target="_blank" rel="noreferrer" onClick={close}
+        <Link to="/videos" onClick={close}
           className={`${menuItemCls} items-center mt-1.5`} style={{ borderTop: "1px solid #ECEEF6", borderRadius: 0, textDecoration: "none" }}>
           <MenuIcon n="youtube" size={34} />
-          <span className="flex-1 text-[13px] font-semibold" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>Véanos en nuestro canal de YouTube</span>
-          <Bi n="box-arrow-up-right" size={12} color={C.faint} />
-        </a>
+          <span className="flex-1 text-[13px] font-semibold" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>Da play al conocimiento: todos los videos del canal</span>
+          <Bi n="chevron-right" size={12} color={C.faint} />
+        </Link>
       </div>
     </div>
   );

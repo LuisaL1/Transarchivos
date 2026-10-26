@@ -4,6 +4,7 @@ import { join } from "node:path";
 import { services, serviceItems } from "@/data/services";
 import { SERVICE_DETAILS } from "@/data/serviceDetails";
 import { SERVICE_FAQS } from "@/data/serviceFaqs";
+import { VIDEOS } from "@/data/videos";
 import { SERVICE_JOEL } from "@/data/joelPoses";
 import { quoteConfig } from "@/data/quote";
 import { SOLUTIONS } from "@/data/solutions";
@@ -14,6 +15,14 @@ import { FAQS } from "@/data/faqs";
 const files = (dir: string): string[] => readdirSync(dir).flatMap(f => { const p = join(dir, f); return statSync(p).isDirectory() ? files(p) : [p]; });
 const SRC = files("src").filter(f => /\.(tsx?|css)$/.test(f));
 const all = SRC.map(f => [f, readFileSync(f, "utf8")] as const);
+
+describe("Videos", () => {
+  it("ids de YouTube válidos, únicos y con título y duración", () => {
+    const ids = VIDEOS.map(v => v.id);
+    expect(new Set(ids).size).toBe(ids.length);
+    for (const v of VIDEOS) { expect(v.id).toMatch(/^[\w-]{11}$/); expect(v.title.trim().length).toBeGreaterThan(5); expect(v.duration).toBeGreaterThan(0); }
+  });
+});
 
 describe("Servicios", () => {
   const slugs = services.map(s => s.slug);

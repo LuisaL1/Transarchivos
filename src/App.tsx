@@ -14,6 +14,7 @@ export const ServiceDetailPage = lazyNamed("servicio", () => import("@/pages/Ser
 export const ArticlePage = lazyNamed("articulo", () => import("@/pages/ArticlePage"), "ArticlePage");
 export const PrivacyPage = lazyNamed("privacidad", () => import("@/pages/PrivacyPage"), "PrivacyPage");
 export const PoliciesPage = lazyNamed("politicas", () => import("@/pages/PoliciesPage"), "PoliciesPage");
+export const VideosPage = lazyNamed("videos", () => import("@/pages/VideosPage"), "VideosPage");
 export const NotFoundPage = lazyNamed("404", () => import("@/pages/NotFoundPage"), "NotFoundPage");
 
 export default function App() {
@@ -30,6 +31,7 @@ export default function App() {
       <Route path="/blog/:slug" element={<ArticlePage />} />
       <Route path="/privacidad" element={<PrivacyPage />} />
       <Route path="/politicas" element={<PoliciesPage />} />
+      <Route path="/videos" element={<VideosPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
     </Suspense>

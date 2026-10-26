@@ -1,5 +1,6 @@
 import { blogPosts, type Post } from "@/data/blog";
 import { FAQS } from "@/data/faqs";
+import { VIDEOS } from "@/data/videos";
 import { SERVICE_DETAILS } from "@/data/serviceDetails";
 import { services } from "@/data/services";
 import { BRAND, GOOGLE_VERIFICATION, INDEXABLE, SITE_URL, abs } from "@/seo/site";
@@ -167,6 +168,19 @@ function policiesMeta(): PageMeta {
   };
 }
 
+function videosMeta(): PageMeta {
+  const title = "Da play al conocimiento: videos de gestión documental | Transarchivos";
+  const description = "Todos los videos del canal de YouTube de Transarchivos: Ley 594 de 2000, tablas de retención, digitalización, custodia y destrucción certificada de documentos.";
+  return {
+    ...base("/videos"), title, description, priority: 0.6,
+    jsonLd: [graph(
+      webPage("/videos", title, description, "CollectionPage"),
+      { "@type": "ItemList", name: "Videos de Transarchivos", itemListElement: VIDEOS.map((v, i) => ({ "@type": "ListItem", position: i + 1, name: v.title, url: `https://www.youtube.com/watch?v=${v.id}` })) },
+      breadcrumb([["Inicio", "/"], ["Da play al conocimiento", "/videos"]]),
+    )],
+  };
+}
+
 function notFoundMeta(path: string): PageMeta {
   return {
     ...base(path), canonical: SITE_URL + "/", robots: "noindex, follow", notFound: true,
@@ -183,6 +197,7 @@ export function getPageMeta(pathname: string): PageMeta {
   if (path === "/nosotros") return nosotrosMeta();
   if (path === "/privacidad") return privacyMeta();
   if (path === "/politicas") return policiesMeta();
+  if (path === "/videos") return videosMeta();
   const svc = path.match(/^\/servicios\/([a-z0-9-]+)$/);
   if (svc) return serviceMeta(svc[1]) ?? notFoundMeta(path);
   const art = path.match(/^\/blog\/([a-z0-9-]+)$/);
@@ -191,7 +206,7 @@ export function getPageMeta(pathname: string): PageMeta {
 }
 
 /** Todas las rutas públicas (pre-generación y sitemap). */
-export const PUBLIC_ROUTES = ["/", "/nosotros", "/privacidad", "/politicas", ...services.map(s => `/servicios/${s.slug}`), ...blogPosts.map(p => `/blog/${p.slug}`)];
+export const PUBLIC_ROUTES = ["/", "/nosotros", "/privacidad", "/politicas", "/videos", ...services.map(s => `/servicios/${s.slug}`), ...blogPosts.map(p => `/blog/${p.slug}`)];
 
 // ─── HTML del <head> (lo usa la pre-generación) ─────────────────────────────
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
