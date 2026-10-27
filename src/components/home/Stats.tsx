@@ -1,12 +1,15 @@
-import { STATS } from "@/data/stats";
+import { useContent } from "@/i18n/content";
+import { useUi } from "@/i18n/ui";
 import { C } from "@/styles/tokens";
 
 // Franja de indicadores bajo el hero (mismo formato que en Transpack): tarjeta
 // blanca redondeada sobre fondo índigo, cifras grandes en azul de marca con el "+" en dorado y
 // divisiones finas. Datos en src/data/stats.ts.
 export function Stats() {
+  const { stats: STATS } = useContent();
+  const u = useUi().stats;
   return (
-    <section aria-label="Nuestra experiencia en cifras" className="py-8 md:py-10" style={{ background: C.indigo }}>
+    <section aria-label={u.aria} className="py-8 md:py-10" style={{ background: C.indigo }}>
       <div className="max-w-6xl mx-auto px-5 md:px-8">
         <div className="grid sm:grid-cols-3 overflow-hidden rounded-[22px] bg-white"
           style={{ border: "1px solid #E4E6F7", boxShadow: "0 24px 50px -34px rgba(24,0,173,0.45)" }}>

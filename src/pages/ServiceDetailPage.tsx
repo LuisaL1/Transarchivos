@@ -1,13 +1,15 @@
-// ─── Service detail page ───────────────────────────────────────────────────────
-// Contenido de cada servicio en src/data/serviceDetails.ts ("Informe Documento
-// maestro" + documento de correcciones de las páginas de servicios, oct. 2026).
-// En el encabezado van dos fotos del servicio (pedido del cliente: reemplazan
-// la tarjeta "En cifras").
+// ─── Página de un servicio ───────────────────────────────────────────────────
+// Contenido de cada servicio en src/data/serviceDetails.ts (y su traducción
+// serviceDetails.en.ts): "Informe Documento maestro" + documentos de
+// correcciones del cliente (oct. 2026). En el encabezado van dos fotos del
+// servicio (reemplazan la tarjeta "En cifras"). La URL en inglés lleva el slug
+// traducido (/en/services/records-storage); el contenido se busca por el slug
+// en español (slugEs).
 
 import { useState, useEffect, useRef } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { ChatBot } from "@/components/chat/LazyChatBot";
-import { SiteHeader } from "@/components/layout/SiteHeader";
+import { HEADER_SPACE, SiteHeader } from "@/components/layout/SiteHeader";
 import { ServiceCard } from "@/components/sections/ServiceCard";
 import { Bi, BiTile } from "@/components/ui/Icons";
 import { SectionDecor, type DecorVariant } from "@/components/ui/SectionDecor";
@@ -15,13 +17,12 @@ import { h2, kicker } from "@/components/ui/SectionHead";
 import { CtaBand } from "@/components/sections/CtaBand";
 import { PageHero } from "@/components/sections/PageHero";
 import { ServiceFaqs } from "@/components/sections/ServiceFaqs";
-import { SERVICE_FAQS } from "@/data/serviceFaqs";
-import { SERVICE_DETAILS } from "@/data/serviceDetails";
-import { services } from "@/data/services";
-import { SOLUTIONS } from "@/data/solutions";
 import { SERVICE_JOEL } from "@/data/joelPoses";
 import { JoelShowcase } from "@/components/ui/JoelBridge";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
+import { slugEs, useLang } from "@/i18n";
+import { useContent } from "@/i18n/content";
+import { usePagesUi } from "@/i18n/pages";
 import { C } from "@/styles/tokens";
 
 // Fotos de cada servicio: assets/images/servicios/<slug>-1.webp y -2.webp
@@ -36,15 +37,19 @@ function splitBenefit(b: string) {
 }
 
 export function ServiceDetailPage() {
-  const { slug } = useParams();
+  const { slug: urlSlug } = useParams();
+  const { lang, lp } = useLang();
+  const { common, service: u } = usePagesUi();
+  const { services, serviceDetails, serviceFaqs, solutions } = useContent();
+  const slug = urlSlug ? slugEs(urlSlug, lang) : undefined;
   const service = services.find(s => s.slug === slug);
-  const detail = slug ? SERVICE_DETAILS[slug] : undefined;
+  const detail = slug ? serviceDetails[slug] : undefined;
   const pageRef = useRef<HTMLDivElement>(null);
   useScrollReveal(pageRef);
   const navigate = useNavigate();
   // Volver / "Servicios": siempre a la sección de servicios de la portada
   // (no al punto donde estaba el visitante, que podía ser el hero).
-  const goBack = () => navigate("/#servicios");
+  const goBack = () => navigate(lp("/#servicios"));
   const [chatOpen, setChatOpen] = useState(false);
 
   useEffect(() => { window.scrollTo(0, 0); }, [slug]);
@@ -52,13 +57,13 @@ export function ServiceDetailPage() {
   if (!service || !detail) {
     return (
       <div className="min-h-full flex flex-col items-center justify-center gap-4 px-6 text-center" style={{ fontFamily: "Inter, sans-serif" }}>
-        <p className="text-2xl font-bold" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>Servicio no encontrado</p>
-        <Link to="/#servicios" className="text-sm font-semibold" style={{ color: C.indigo, textDecoration: "none" }}>← Volver a servicios</Link>
+        <p className="text-2xl font-bold" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>{u.notFound}</p>
+        <Link to={lp("/#servicios")} className="text-sm font-semibold" style={{ color: C.indigo, textDecoration: "none" }}>{u.backList}</Link>
       </div>
     );
   }
 
-  const related = (SOLUTIONS.find(sol => sol.slugs.includes(service.slug))?.slugs ?? [])
+  const related = (solutions.find(sol => sol.slugs.includes(service.slug))?.slugs ?? [])
     .concat(services.map(s => s.slug))
     .filter((sl, i, arr) => sl !== service.slug && arr.indexOf(sl) === i)
     .slice(0, 3)
@@ -73,26 +78,27 @@ export function ServiceDetailPage() {
   const pageTitle = detail.title ?? service.title;
   const [photo1, photo2] = [photo(`${service.slug}-1`), photo(`${service.slug}-2`)];
   const shortReasons = detail.reasons.every(r => !r.d);
+  const quoteTo = `/?servicio=${service.slug}#cotizador`;
 
   return (
     <div ref={pageRef} className="min-h-full" style={{ background: C.cream, fontFamily: "Inter, sans-serif", color: "#37352F" }}>
       {/* El mismo navbar del sitio, en su versión de barra blanca. */}
       <SiteHeader solid onChat={() => setChatOpen(true)} />
-      <div aria-hidden="true" style={{ height: 60 }} />
+      <div aria-hidden="true" style={{ height: HEADER_SPACE }} />
 
-      {/* Hero: foto del archivo bajo un velo navy, con la carpeta como base */}
+      {/* Hero: foto del archivo bajo un velo índigo, con la carpeta como base */}
       <PageHero>
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] gap-10 items-center pt-12 pb-24">
             <div>
               <div className="flex items-center gap-4 mb-6">
-                <button type="button" onClick={goBack} aria-label="Volver a servicios" title="Volver a servicios"
+                <button type="button" onClick={goBack} aria-label={u.back} title={u.back}
                   className="grid place-items-center rounded-full shrink-0 transition-colors hover:bg-white/20"
                   style={{ width: 36, height: 36, background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.25)" }}>
                   <Bi n="arrow-left" size={15} color="#fff" />
                 </button>
                 <p className="text-xs" style={{ color: "rgba(255,255,255,0.6)", fontFamily: "Montserrat, sans-serif" }}>
-                  <Link to="/" style={{ color: "inherit", textDecoration: "none" }}>Inicio</Link> / <button type="button" onClick={goBack} style={{ color: "inherit" }}>Servicios</button> / <span style={{ color: C.yellow }}>{pageTitle}</span>
+                  <Link to={lp("/")} style={{ color: "inherit", textDecoration: "none" }}>{common.home}</Link> / <button type="button" onClick={goBack} style={{ color: "inherit" }}>{common.services}</button> / <span style={{ color: C.yellow }}>{pageTitle}</span>
                 </p>
               </div>
               <span className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full mb-5" style={{ background: "rgba(255,255,255,0.1)", color: C.yellow, border: "1px solid rgba(255,222,89,0.35)", fontFamily: "Montserrat, sans-serif" }}>
@@ -102,13 +108,13 @@ export function ServiceDetailPage() {
               <p className="text-lg md:text-xl font-semibold mb-4" style={{ color: C.yellow, fontFamily: "Poppins, sans-serif", lineHeight: 1.35 }}>{detail.tagline}</p>
               <p className="text-base max-w-xl mb-8" style={{ color: "rgba(255,255,255,0.78)", lineHeight: 1.7 }}>{detail.intro}</p>
               <div className="flex flex-wrap gap-3">
-                <Link to={`/?servicio=${service.slug}#cotizador`} className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold transition-transform hover:scale-[1.03]"
+                <Link to={lp(quoteTo)} className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold transition-transform hover:scale-[1.03]"
                   style={{ background: C.yellow, color: C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
-                  Solicitar cotización <Bi n="arrow-right" size={14} color={C.indigo} />
+                  {common.quote} <Bi n="arrow-right" size={14} color={C.indigo} />
                 </Link>
-                <Link to="/#faq" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold"
+                <Link to={lp("/#faq")} className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold"
                   style={{ background: "rgba(255,255,255,0.08)", color: "#fff", border: "1px solid rgba(255,255,255,0.3)", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
-                  <Bi n="headset" size={14} color="#fff" /> Hablar con un asesor
+                  <Bi n="headset" size={14} color="#fff" /> {common.advisor}
                 </Link>
               </div>
             </div>
@@ -117,7 +123,7 @@ export function ServiceDetailPage() {
                 abajo a la izquierda (en celular solo la principal). */}
             {photo1 && (
               <div className="relative lg:pb-14 lg:pl-10">
-                <img src={photo1} alt={`${pageTitle} en Transarchivos`} decoding="async" fetchPriority="high"
+                <img src={photo1} alt={u.photoAlt(pageTitle)} decoding="async" fetchPriority="high"
                   className="w-full aspect-[4/3] rounded-3xl"
                   style={{ objectFit: "cover", border: "1px solid rgba(255,255,255,0.2)", boxShadow: "0 30px 60px -30px rgba(0,0,0,0.7)" }} />
                 {photo2 && (
@@ -139,12 +145,12 @@ export function ServiceDetailPage() {
         <SectionDecor variant="light" />
         <div className="max-w-6xl mx-auto px-6 grid lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] gap-10 items-start">
           <div>
-            {kicker("Lo que obtiene")}
-            {h2(detail.benefitsTitle ?? <>Beneficios para <span style={{ background: "linear-gradient(transparent 62%, #FFDE59 62%)" }}>su empresa</span></>)}
+            {kicker(u.benefitsKicker)}
+            {h2(detail.benefitsTitle ?? <>{u.benefitsA}<span style={{ background: "linear-gradient(transparent 62%, #FFDE59 62%)" }}>{u.benefitsMark}</span></>)}
             {(detail.about ?? service.desc) && <p className="text-sm mt-4" style={{ color: C.muted, lineHeight: 1.7 }}>{detail.about ?? service.desc}</p>}
             {detail.includes && (
               <div className="mt-6">
-                <p className="text-sm font-bold mb-3" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>¿Qué incluye este servicio?</p>
+                <p className="text-sm font-bold mb-3" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>{u.includes}</p>
                 <ul className="flex flex-wrap gap-2">
                   {detail.includes.map(x => (
                     <li key={x} className="inline-flex items-center gap-1.5 text-sm font-semibold px-3.5 py-2 rounded-full" style={{ background: "#fff", color: C.indigo, border: "1px solid #E4E6F7", fontFamily: "Montserrat, sans-serif" }}>
@@ -183,8 +189,8 @@ export function ServiceDetailPage() {
           <SectionDecor variant="dark" flip folder={false} />
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center mb-10">
-              {kicker(detail.stepsKicker ?? "Cómo lo hacemos", true)}
-              {h2(detail.stepsTitle ?? "Un proceso claro, paso a paso", true)}
+              {kicker(detail.stepsKicker ?? u.stepsKicker, true)}
+              {h2(detail.stepsTitle ?? u.stepsTitle, true)}
               {detail.stepsIntro && <p className="text-sm mt-4 max-w-2xl mx-auto" style={{ color: "rgba(255,255,255,0.78)", lineHeight: 1.7 }}>{detail.stepsIntro}</p>}
             </div>
             <div className={`relative grid gap-4 sm:grid-cols-2 ${detail.steps.length >= 5 ? "lg:grid-cols-5" : "lg:grid-cols-4"}`}>
@@ -198,8 +204,7 @@ export function ServiceDetailPage() {
                       <p className="text-sm" style={{ color: C.muted, lineHeight: 1.6 }}>{st.d}</p>
                     </div>
                   ) : (
-                    // Solo título: un gráfico del paso en lugar del texto
-                    // (pedido del cliente, oct. 2026).
+                    // Solo título: un gráfico del paso en lugar del texto (pedido del cliente, oct. 2026).
                     <div className="rounded-2xl p-4 lg:p-5 w-full h-full flex items-center lg:flex-col gap-4 lg:gap-3 lg:text-center card-lift border border-borde hover:border-indigo" style={{ background: "#fff" }}>
                       <span className="relative grid place-items-center shrink-0 rounded-[22px] w-16 h-16 lg:w-24 lg:h-24" style={{ background: "#F1F3FB" }}>
                         <span aria-hidden="true" className="absolute rounded-md" style={{ right: 8, top: 8, width: 14, height: 14, transform: "rotate(45deg)", background: "rgba(255,222,89,0.85)" }} />
@@ -220,8 +225,8 @@ export function ServiceDetailPage() {
         <SectionDecor variant={tone.why} />
         <div className="max-w-6xl mx-auto px-6">
           <div className="max-w-2xl mb-10">
-            {kicker(detail.reasonsKicker ?? "Por qué con Transarchivos", dk("why"))}
-            {h2(detail.reasonsTitle ?? "Lo que nos diferencia", dk("why"))}
+            {kicker(detail.reasonsKicker ?? u.reasonsKicker, dk("why"))}
+            {h2(detail.reasonsTitle ?? u.reasonsTitle, dk("why"))}
           </div>
           <div className={`grid gap-5 sm:grid-cols-2 ${detail.reasons.length === 3 ? "lg:grid-cols-3" : detail.reasons.length === 5 ? "lg:grid-cols-5" : "lg:grid-cols-4"}`}>
             {detail.reasons.map((r, i) => shortReasons ? (
@@ -269,7 +274,7 @@ export function ServiceDetailPage() {
           <div className="max-w-6xl mx-auto px-6">
             {detail.modes && (
               <>
-                <div className="text-center mb-10">{kicker("Modalidades", dk("modes"))}{h2("Elija cómo lo necesita", dk("modes"))}</div>
+                <div className="text-center mb-10">{kicker(u.modesKicker, dk("modes"))}{h2(u.modesTitle, dk("modes"))}</div>
                 <div className={`grid gap-5 ${detail.modes.length === 3 ? "md:grid-cols-3" : "md:grid-cols-2"}`}>
                   {detail.modes.map((m, i) => (
                     <div key={m.t} className="relative rounded-3xl p-7 flex items-start gap-5 overflow-hidden"
@@ -288,7 +293,7 @@ export function ServiceDetailPage() {
             )}
             {detail.audience && (
               <div className={detail.modes ? "mt-14" : ""}>
-                <div className="text-center mb-10">{kicker("Pensado para usted", dk("modes"))}{h2(detail.audience.title, dk("modes"))}</div>
+                <div className="text-center mb-10">{kicker(u.audienceKicker, dk("modes"))}{h2(detail.audience.title, dk("modes"))}</div>
                 <div className={`grid gap-4 sm:grid-cols-2 ${detail.audience.items.length > 4 ? "lg:grid-cols-3" : "lg:grid-cols-4"}`}>
                   {detail.audience.items.map(a => (
                     <div key={a.t} className="flex items-start gap-3 rounded-2xl p-5" style={{ background: "#fff", border: "1px solid #E4E6F7" }}>
@@ -313,7 +318,7 @@ export function ServiceDetailPage() {
           <div className="rounded-3xl p-6 md:p-8 flex flex-col md:flex-row md:items-center gap-5 mb-14" style={{ background: "#fff", border: "1px solid #E4E6F7" }}>
             <div className="flex items-center gap-3 md:w-64 shrink-0">
               <BiTile n="patch-check" size={44} accent="#16a34a" />
-              <p className="text-base font-bold" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif", lineHeight: 1.25 }}>Respaldo normativo</p>
+              <p className="text-base font-bold" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif", lineHeight: 1.25 }}>{u.norms}</p>
             </div>
             {/* Centradas: cuando pasan a una segunda fila no queda un hueco a la derecha. */}
             <div className="flex-1 flex flex-wrap justify-center gap-2">
@@ -324,9 +329,9 @@ export function ServiceDetailPage() {
           </div>
 
           <div className="flex items-end justify-between gap-4 mb-6">
-            <div>{kicker("Complemente su solución", dk("norms"))}{h2("Servicios relacionados", dk("norms"))}</div>
-            <Link to="/#servicios" className="hidden sm:inline-flex items-center gap-1.5 text-sm font-bold" style={{ color: dk("norms") ? C.yellow : C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
-              Ver todos <Bi n="arrow-right" size={13} color={dk("norms") ? C.yellow : C.indigo} />
+            <div>{kicker(u.relatedKicker, dk("norms"))}{h2(u.relatedTitle, dk("norms"))}</div>
+            <Link to={lp("/#servicios")} className="hidden sm:inline-flex items-center gap-1.5 text-sm font-bold" style={{ color: dk("norms") ? C.yellow : C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
+              {common.seeAll} <Bi n="arrow-right" size={13} color={dk("norms") ? C.yellow : C.indigo} />
             </Link>
           </div>
           <div className="grid gap-5 md:grid-cols-3">
@@ -338,11 +343,11 @@ export function ServiceDetailPage() {
       {/* Preguntas frecuentes del servicio (src/data/serviceFaqs.ts) */}
       <section id="preguntas" className="relative isolate overflow-hidden py-16" style={{ scrollMarginTop: 80 }}>
         <SectionDecor variant={tone.faq} flip={tone.faq === "light"} />
-        <ServiceFaqs faqs={SERVICE_FAQS[service.slug] ?? []} serviceTitle={service.title} dark={dk("faq")} />
+        <ServiceFaqs faqs={serviceFaqs[service.slug] ?? []} serviceTitle={service.title} dark={dk("faq")} />
       </section>
 
       {/* Llamado final */}
-      <CtaBand title={detail.ctaTitle ?? `¿Listo para empezar con ${pageTitle.toLowerCase()}?`} text="Arme su solicitud en minutos o hable con un asesor. Sin compromiso." to={`/?servicio=${service.slug}#cotizador`} />
+      <CtaBand title={detail.ctaTitle ?? u.cta(pageTitle)} to={quoteTo} />
       <ChatBot open={chatOpen} setOpen={setChatOpen} />
     </div>
   );

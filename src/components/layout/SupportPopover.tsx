@@ -1,19 +1,22 @@
 // ─── Soporte (ícono de audífonos del header) ────────────────────────────────
-// Tarjeta flotante bajo el ícono, abierta hacia la derecha (hacia el margen,
-// para no tapar el contenido del hero; si no cabe, se corre a la izquierda):
-// chat con Joel, WhatsApp, teléfonos, correo y enlace a las preguntas frecuentes. Se dibuja con position: fixed (el pill del
-// header recorta lo que sobresale) y se cierra al hacer clic fuera o scroll.
+// Tarjeta flotante bajo el ícono: chat con Joel, WhatsApp, teléfonos, correo y
+// enlace a las preguntas frecuentes. Se dibuja con position: fixed (el pill
+// del header recorta lo que sobresale) y se cierra al hacer clic fuera o scroll.
 
 import { Bi } from "@/components/ui/Icons";
 import { PHONES, WHATSAPP_LABEL, whatsappUrl } from "@/data/contact";
+import { useLang } from "@/i18n";
+import { useUi } from "@/i18n/ui";
 import { C } from "@/styles/tokens";
 
 export function SupportPopover({ anchor, onClose, onChat, onHoverIn, onHoverOut }: { anchor: DOMRect; onClose: () => void; onChat: () => void; onHoverIn?: () => void; onHoverOut?: () => void }) {
+  const u = useUi().support;
+  const { lp } = useLang();
   const items = [
-    { ic: "chat-dots", t: "Chatee con Joel", d: "Asesor con IA, responde al instante", onClick: () => { onChat(); onClose(); } },
-    { ic: "whatsapp", t: "Escríbanos por WhatsApp", d: WHATSAPP_LABEL, href: whatsappUrl() },
-    { ic: "telephone", t: "Llámenos", d: PHONES.map(p => p.label).join(" · "), href: `tel:${PHONES[0].tel}` },
-    { ic: "envelope", t: "Escríbanos", d: "Formulario de contacto", href: "#contacto" },
+    { ic: "chat-dots", t: u.chat, d: u.chatDesc, onClick: () => { onChat(); onClose(); } },
+    { ic: "whatsapp", t: u.whatsapp, d: WHATSAPP_LABEL, href: whatsappUrl() },
+    { ic: "telephone", t: u.call, d: PHONES.map(p => p.label).join(" · "), href: `tel:${PHONES[0].tel}` },
+    { ic: "envelope", t: u.write, d: u.writeDesc, href: "#contacto" },
   ];
   return (
     <div data-support-popover onMouseEnter={onHoverIn} onMouseLeave={onHoverOut} className="fixed z-[60] w-[340px] rounded-3xl overflow-hidden"
@@ -21,9 +24,9 @@ export function SupportPopover({ anchor, onClose, onChat, onHoverIn, onHoverOut 
       <div className="relative px-6 pt-5 pb-5 overflow-hidden" style={{ background: C.indigo }}>
         <span className="absolute pointer-events-none" style={{ top: -30, right: -30, width: 110, height: 110, background: "rgba(255,222,89,0.18)", transform: "rotate(45deg)", borderRadius: 18 }} />
         <p className="relative flex items-center gap-2 text-base font-bold" style={{ color: "#fff", fontFamily: "Poppins, sans-serif" }}>
-          <Bi n="headset" size={17} color={C.yellow} /> Soporte Transarchivos
+          <Bi n="headset" size={17} color={C.yellow} /> {u.title}
         </p>
-        <p className="relative text-sm mt-1" style={{ color: "rgba(255,255,255,0.7)" }}>¿Necesita ayuda con su archivo o su solicitud?</p>
+        <p className="relative text-sm mt-1" style={{ color: "rgba(255,255,255,0.7)" }}>{u.text}</p>
       </div>
       <div className="py-2">
         {items.map(it => {
@@ -44,9 +47,9 @@ export function SupportPopover({ anchor, onClose, onChat, onHoverIn, onHoverOut 
             : <button key={it.t} type="button" className={cls} onClick={it.onClick}>{inner}</button>;
         })}
       </div>
-      <a href="/#faq" onClick={onClose} className="flex items-center justify-between px-6 py-4 text-sm font-bold transition-colors hover:bg-hielo"
+      <a href={`${lp("/")}#faq`} onClick={onClose} className="flex items-center justify-between px-6 py-4 text-sm font-bold transition-colors hover:bg-hielo"
         style={{ borderTop: "1px solid #ECEEF6", color: C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
-        Ver preguntas frecuentes <Bi n="question-circle" size={16} color={C.indigo} />
+        {u.faq} <Bi n="question-circle" size={16} color={C.indigo} />
       </a>
     </div>
   );

@@ -7,9 +7,23 @@ import { FAQS } from "@/data/faqs";
 const metas = PUBLIC_ROUTES.map(r => getPageMeta(r));
 
 describe("SEO · metadatos por página", () => {
-  it("cubre inicio, nosotros, 9 servicios y los artículos", () => {
+  it("cubre inicio, nosotros, 9 servicios y los artículos, en español y en inglés", () => {
     expect(PUBLIC_ROUTES).toContain("/");
+    expect(PUBLIC_ROUTES).toContain("/en");
     expect(PUBLIC_ROUTES.filter(r => r.startsWith("/servicios/"))).toHaveLength(9);
+    expect(PUBLIC_ROUTES.filter(r => r.startsWith("/en/services/"))).toHaveLength(9);
+    expect(PUBLIC_ROUTES.filter(r => r.startsWith("/en/")).length + 1).toBe(PUBLIC_ROUTES.filter(r => !r.startsWith("/en")).length);
+  });
+  it("cada página enlaza su versión en el otro idioma (hreflang) con x-default en español", () => {
+    const es = getPageMeta("/servicios/custodia-de-archivos"), en = getPageMeta("/en/services/records-storage");
+    expect(es.lang).toBe("es"); expect(en.lang).toBe("en");
+    expect(en.canonical).toBe(`${SITE_URL}/en/services/records-storage`);
+    expect(en.title).toMatch(/Records storage/);
+    expect(en.alternates).toEqual(es.alternates);
+    expect(es.alternates.map(a => a.hreflang)).toEqual(["es", "en", "x-default"]);
+    expect(es.alternates.find(a => a.hreflang === "x-default")?.href).toBe(es.canonical);
+    expect(renderHeadTags(en)).toContain('hreflang="es"');
+    expect(renderHeadTags(en)).toContain('og:locale" content="en_US"');
   });
   it("títulos únicos y de 30 a 70 caracteres", () => {
     expect(new Set(metas.map(m => m.title)).size).toBe(metas.length);
@@ -32,7 +46,7 @@ describe("SEO · metadatos por página", () => {
     for (const m of metas) expect(m.robots).toMatch(/noindex/);
   });
   it("rutas desconocidas → 404 con noindex", () => {
-    for (const p of ["/no-existe", "/servicios/no-existe", "/blog/no-existe"]) {
+    for (const p of ["/no-existe", "/servicios/no-existe", "/blog/no-existe", "/en/no-existe", "/en/services/no-existe"]) {
       const m = getPageMeta(p);
       expect(m.notFound).toBe(true);
       expect(m.robots).toMatch(/noindex/);

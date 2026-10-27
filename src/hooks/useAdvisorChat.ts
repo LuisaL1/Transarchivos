@@ -8,28 +8,27 @@
 // La conversación (pasos y textos) está en src/data/chat.ts; la interfaz en
 // src/components/chat/ChatBot.tsx.
 import { useEffect, useRef, useState } from "react";
-import { CHAT_STEPS, CHAT_TEXT as t, LEARN_DEST, teamQuoteMessage, type ChatData, type ChatMsg, type ChatOption, type ChatStep } from "@/data/chat";
+import { makeChat, type ChatData, type ChatMsg, type ChatOption, type ChatStep } from "@/data/chat";
 import { createJoel, newMemory, type JoelReply } from "@/lib/joel";
+import { createJoelEn } from "@/lib/joel.en";
+import { getContent } from "@/i18n/content";
+import { useLang, type Lang } from "@/i18n";
 import { track } from "@/lib/visitor";
 import { trackEvent } from "@/lib/analytics";
 import { ADVISOR_EVENT, CRM_CHAT_EVENT, QUOTE_EVENT, requestAdvisorChat } from "@/lib/advisorEvents";
 import { advisorAvailable, loadSaved, pollAdvisor, POLL_MS, save, sendToAdvisor, startAdvisor, WAIT_MS } from "@/lib/advisorChat";
 import { contactHref, whatsappUrl } from "@/data/contact";
-import { blogPosts } from "@/data/blog";
-import { FAQS } from "@/data/faqs";
-import { SERVICE_FAQS } from "@/data/serviceFaqs";
-import { QUOTE_UNIT, quoteConfig } from "@/data/quote";
-import { SERVICE_DETAILS } from "@/data/serviceDetails";
-import { services } from "@/data/services";
-import { SOLUTIONS } from "@/data/solutions";
+import { QUOTE_UNIT } from "@/data/quote";
 
-// Cerebro de Joel (src/lib/joel.ts): se crea al usarse por primera vez, con
-// todos los datos del sitio como conocimiento (una sola fuente de verdad).
-let joelBrain: ReturnType<typeof createJoel> | null = null;
-const getJoel = () => joelBrain ??= createJoel({
-  services, details: SERVICE_DETAILS, faqs: FAQS, serviceFaqs: SERVICE_FAQS, solutions: SOLUTIONS,
-  posts: blogPosts, quote: quoteConfig, quoteUnit: QUOTE_UNIT,
-});
+// Cerebro de Joel (src/lib/joel.ts en español, joel.en.ts en inglés): se crea
+// al usarse por primera vez, con todos los datos del sitio en ese idioma como
+// conocimiento (una sola fuente de verdad).
+const brains: Partial<Record<Lang, ReturnType<typeof createJoel>>> = {};
+const getJoel = (lang: Lang) => brains[lang] ??= (() => {
+  const c = getContent(lang);
+  const kb = { services: c.services, details: c.serviceDetails, faqs: c.faqs, serviceFaqs: c.serviceFaqs, solutions: c.solutions, posts: c.blogPosts, quote: c.quoteConfig, quoteUnit: QUOTE_UNIT };
+  return lang === "en" ? createJoelEn(kb) : createJoel(kb);
+})();
 
 export type ChatSeed = { text: string; id: number } | null | undefined;
 type Bridge = import("@/lib/zohoBridge").Bridge;
@@ -40,6 +39,9 @@ export function useAdvisorChat({ open, setOpen, seed, heroJoel = false }: {
   seed?: ChatSeed;
   heroJoel?: boolean;
 }) {
+  const { lang } = useLang();
+  const { steps: CHAT_STEPS, text: t, learnDest: LEARN_DEST, teamQuoteMessage, optionIcon } = makeChat(lang);
+  const brain = () => getJoel(lang);
   const [msgs, setMsgs] = useState<ChatMsg[]>([]);
   const [stepId, setStepId] = useState("start");
   const [data, setData] = useState<ChatData>({});
@@ -60,7 +62,7 @@ export function useAdvisorChat({ open, setOpen, seed, heroJoel = false }: {
 
   // Pasa un texto libre por el cerebro de Joel y muestra su respuesta.
   const think = (value: string, d: ChatData) => {
-    const r = getJoel().respond(value, mem.current);
+    const r = brain().respond(value, mem.current);
     if (r.service) { mem.current.lastService = r.service; track("service", r.service); }
     mem.current.lastIntent = r.intent;
     track("chat", r.intent);
@@ -81,7 +83,7 @@ export function useAdvisorChat({ open, setOpen, seed, heroJoel = false }: {
     const nextData = id === "reset" ? {} : d;
     if (id === "reset") { setMsgs([]); mem.current = newMemory(); }
     // El saludo se arma según lo que el visitante ha hecho en el sitio.
-    if (target === "start") { dyn.current = toStep(getJoel().greeting()); target = "dyn"; }
+    if (target === "start") { dyn.current = toStep(brain().greeting()); target = "dyn"; }
     if (target === "info_detail" && nextData.service) track("service", nextData.service);
     setData(nextData);
     setStepId(target);
@@ -204,6 +206,7 @@ export function useAdvisorChat({ open, setOpen, seed, heroJoel = false }: {
     pass.current = s;
     setLive("live");
     say(t.advisorResume);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const endAdvisor = (text = t.advisorBack) => {
@@ -251,6 +254,7 @@ export function useAdvisorChat({ open, setOpen, seed, heroJoel = false }: {
     if (live !== "connecting" || followUp.current) return;
     const id = window.setTimeout(() => say(t.advisorBusy, otherChannels()), WAIT_MS);
     return () => clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [live]);
 
   // Puente: abre la conversación en el Zoho escondido y pasa sus mensajes a Joel.
@@ -373,7 +377,7 @@ export function useAdvisorChat({ open, setOpen, seed, heroJoel = false }: {
     const next = typeof o.next === "function" ? o.next(d) : o.next;
     // Aprende de la elección si venía de algo que no entendió.
     const dest = o.set?.service ? `service:${o.set.service}` : LEARN_DEST[next];
-    if (dest) getJoel().learn(mem.current, dest);
+    if (dest) brain().learn(mem.current, dest);
     if (next.startsWith("brain:")) { think(next.slice(6), d); return; }
     if (next === "q_volume" && d.service) track("quote", d.service);
     goTo(next, d);
@@ -404,5 +408,6 @@ export function useAdvisorChat({ open, setOpen, seed, heroJoel = false }: {
     restart: () => goTo("reset", {}),
     teaser, setTeaser, endRef, inputRef,
     advisor, live, endAdvisor: () => endAdvisor(),
+    ui: t, optionIcon,
   };
 }

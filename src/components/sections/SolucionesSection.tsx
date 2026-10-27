@@ -1,33 +1,37 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Bi } from "@/components/ui/Icons";
 import { SectionDecor } from "@/components/ui/SectionDecor";
-import { services } from "@/data/services";
-import { SOLUTIONS } from "@/data/solutions";
+import { useLang } from "@/i18n";
+import { useContent } from "@/i18n/content";
+import { useUi } from "@/i18n/ui";
 import { C } from "@/styles/tokens";
 
 export function SolucionesSection() {
   const navigate = useNavigate();
+  const { lp } = useLang();
+  const u = useUi().solutions;
+  const { services, solutions } = useContent();
   return (
     <section id="soluciones" className="relative isolate overflow-hidden py-20" style={{ scrollMarginTop: 80 }}>
       <SectionDecor variant="light" flip />
       <div className="relative max-w-6xl mx-auto px-6">
         <div className="text-center mb-12">
-          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: C.gold, fontFamily: "Montserrat, sans-serif" }}>Soluciones</p>
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: C.gold, fontFamily: "Montserrat, sans-serif" }}>{u.kicker}</p>
           <h2 className="text-3xl md:text-4xl font-bold max-w-3xl mx-auto" style={{ fontFamily: "Poppins, sans-serif", color: C.indigo, lineHeight: 1.2 }}>
-            Soluciones de acuerdo con la <span style={{ background: "linear-gradient(transparent 62%, #FFDE59 62%)" }}>necesidad de su empresa</span>
+            {u.titleA}<span style={{ background: "linear-gradient(transparent 62%, #FFDE59 62%)" }}>{u.titleMark}</span>
           </h2>
-          <p className="text-sm mt-4 max-w-2xl mx-auto" style={{ color: C.muted }}>
-            Combinamos infraestructura, tecnología OCR e instrumentos archivísticos para resolver problemáticas complejas de espacio, cumplimiento, digitalización y seguridad.
-          </p>
+          <p className="text-sm mt-4 max-w-2xl mx-auto" style={{ color: C.muted }}>{u.text}</p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-5 max-w-5xl mx-auto">
-          {SOLUTIONS.map(sol => (
+          {solutions.map(sol => {
+            const quote = lp(`/?servicio=${sol.slugs[0]}&solucion=${sol.id}#cotizador`);
+            return (
             // Toda la tarjeta lleva a cotizar la solución (como las tarjetas de
             // servicios); los enlaces de adentro conservan su propio destino.
             <div key={sol.id} id={`sol-${sol.id}`} role="link" tabIndex={0}
-              onClick={e => { if ((e.target as HTMLElement).closest("a")) return; navigate(`/?servicio=${sol.slugs[0]}&solucion=${sol.id}#cotizador`); }}
-              onKeyDown={e => { if (e.key === "Enter") navigate(`/?servicio=${sol.slugs[0]}&solucion=${sol.id}#cotizador`); }}
+              onClick={e => { if ((e.target as HTMLElement).closest("a")) return; navigate(quote); }}
+              onKeyDown={e => { if (e.key === "Enter") navigate(quote); }}
               className="group relative flex flex-col rounded-3xl p-6 cursor-pointer card-lift border-[1.5px] border-borde hover:border-indigo"
               style={{ background: "#fff", scrollMarginTop: 100 }}>
               <div className="flex items-center justify-between mb-4">
@@ -47,24 +51,24 @@ export function SolucionesSection() {
                 ))}
               </ul>
               <div className="mt-auto pt-4" style={{ borderTop: "1px solid #F0F1FA" }}>
-                <p className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: C.faint, fontFamily: "Montserrat, sans-serif" }}>Servicios integrados</p>
+                <p className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: C.faint, fontFamily: "Montserrat, sans-serif" }}>{u.integrated}</p>
                 <div className="flex flex-wrap gap-1.5 mb-4">
                   {sol.slugs.map((sl, k) => {
                     const sv = services.find(x => x.slug === sl);
                     return sv ? (
-                      <Link key={sl} to={`/servicios/${sl}`} className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full transition-colors hover:bg-indigo hover:text-white"
+                      <Link key={sl} to={lp(`/servicios/${sl}`)} className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full transition-colors hover:bg-indigo hover:text-white"
                         style={{ background: "#F2F3FA", color: C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
                         {sol.labels?.[k] ?? sv.title}
                       </Link>
                     ) : null;
                   })}
                 </div>
-                <Link to={`/?servicio=${sol.slugs[0]}&solucion=${sol.id}#cotizador`} className="inline-flex items-center gap-1.5 text-sm font-bold transition-transform group-hover:translate-x-0.5" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
+                <Link to={quote} className="inline-flex items-center gap-1.5 text-sm font-bold transition-transform group-hover:translate-x-0.5" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
                   {sol.cta} <Bi n="arrow-right" size={14} color={C.indigo} className="shrink-0" />
                 </Link>
               </div>
             </div>
-          ))}
+          ); })}
         </div>
       </div>
     </section>

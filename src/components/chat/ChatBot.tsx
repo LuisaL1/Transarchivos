@@ -6,7 +6,7 @@
 // local de Joel (src/lib/joel.ts).
 import { Link } from "react-router-dom";
 import avatarImg from "@/assets/images/joel.webp";
-import { CHAT_TEXT as T, NAME, chatOptionIcon, type ChatMsg } from "@/data/chat";
+import { NAME, type ChatMsg } from "@/data/chat";
 import { useAdvisorChat, type ChatSeed } from "@/hooks/useAdvisorChat";
 import { requestAdvisorChat, requestQuoteToAdvisor } from "@/lib/advisorEvents";
 import { ChatAvatarFace } from "@/components/ui/Brand";
@@ -62,7 +62,7 @@ export function ChatBubble({ msg }: { msg: ChatMsg }) {
 // del hero también puedan abrir el chat. "seed": pregunta escrita en la caja
 // del hero (con id para que dos preguntas iguales cuenten como distintas).
 export function ChatBot({ open, setOpen, seed, heroJoel = false }: { open: boolean; setOpen: (v: boolean | ((prev: boolean) => boolean)) => void; seed?: ChatSeed; heroJoel?: boolean }) {
-  const { msgs, typing, text, setText, step, options, choose, send, restart, teaser, setTeaser, endRef, inputRef, advisor, live, endAdvisor } = useAdvisorChat({ open, setOpen, seed, heroJoel });
+  const { msgs, typing, text, setText, step, options, choose, send, restart, teaser, setTeaser, endRef, inputRef, advisor, live, endAdvisor, ui: T, optionIcon } = useAdvisorChat({ open, setOpen, seed, heroJoel });
 
   return (
     <>
@@ -71,14 +71,14 @@ export function ChatBot({ open, setOpen, seed, heroJoel = false }: { open: boole
         <div data-chat-launcher className="fixed bottom-[68px] right-4 sm:bottom-[76px] sm:right-3 md:bottom-[88px] md:right-6 z-[60] flex items-end" style={{ animation: "fadeInUp 0.5s ease both" }}>
           <div className="relative sm:mb-16 sm:-mr-4 max-w-[230px] rounded-2xl rounded-br-sm bg-white px-4 py-3 text-[13.5px]"
             style={{ color: "#37352F", boxShadow: "0 20px 40px -16px rgba(10,13,61,0.35), 0 2px 8px rgba(10,13,61,0.08)" }}>
-            <button onClick={() => setTeaser(false)} className="absolute right-2 top-1.5" aria-label="Cerrar invitación">
+            <button onClick={() => setTeaser(false)} className="absolute right-2 top-1.5" aria-label={T.closeTeaser}>
               <Bi n="x-lg" size={11} color={C.faint} />
             </button>
             <button onClick={() => setOpen(true)} className="pr-3 text-left leading-relaxed">
-              <b style={{ color: C.indigo }}>¡Hola! Soy {NAME}.</b> {T.teaser}
+              <b style={{ color: C.indigo }}>{T.hello}</b> {T.teaser}
             </button>
           </div>
-          <button onClick={() => setOpen(true)} aria-label={`Hablar con ${NAME}`} className="shrink-0">
+          <button onClick={() => setOpen(true)} aria-label={T.talk} className="shrink-0">
             <img loading="lazy" decoding="async" src={avatarImg} alt="" draggable={false} className="hidden sm:block h-[150px] md:h-[170px] w-auto select-none" style={{ filter: "drop-shadow(0 12px 18px rgba(29,32,80,0.25))" }} />
           </button>
         </div>
@@ -102,10 +102,10 @@ export function ChatBot({ open, setOpen, seed, heroJoel = false }: { open: boole
         )}
         <span className="hidden md:block text-left">
           <span className="flex items-center gap-1.5 text-[13px] font-semibold leading-tight" style={{ fontFamily: "Montserrat, sans-serif" }}>
-            {open ? "Cerrar" : NAME}
-            {!open && <span className="rounded-full px-1.5 py-px text-[9px] font-bold tracking-wide" style={{ background: C.yellow, color: C.indigo }}>IA</span>}
+            {open ? T.close : NAME}
+            {!open && <span className="rounded-full px-1.5 py-px text-[9px] font-bold tracking-wide" style={{ background: C.yellow, color: C.indigo }}>{T.ai}</span>}
           </span>
-          {!open && <span className="block text-[11.5px] leading-tight" style={{ color: "rgba(255,255,255,0.7)" }}>{advisor === "loading" ? "Conectando…" : "En línea"}</span>}
+          {!open && <span className="block text-[11.5px] leading-tight" style={{ color: "rgba(255,255,255,0.7)" }}>{advisor === "loading" ? T.connecting : T.online}</span>}
         </span>
       </button>}
 
@@ -165,7 +165,7 @@ export function ChatBot({ open, setOpen, seed, heroJoel = false }: { open: boole
                 <div className="rounded-2xl p-1.5 ml-8" style={{ ...CARD, animation: "fadeInUp 0.3s ease both" }}>
                   {options.map(o => (
                     <button key={o.label} type="button" onClick={() => choose(o)} className="group w-full flex items-center gap-3 rounded-xl px-2.5 py-2 text-left transition-colors hover:bg-hielo">
-                      <MenuIcon n={chatOptionIcon(o.label)} size={32} />
+                      <MenuIcon n={optionIcon(o.label)} size={32} />
                       <span className="flex-1 text-[13px] font-semibold" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>{o.label}</span>
                       <Bi n="chevron-right" size={12} color={C.faint} className="transition-transform group-hover:translate-x-0.5" />
                     </button>

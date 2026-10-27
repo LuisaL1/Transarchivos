@@ -1,5 +1,6 @@
 // ─── Blog / contenido especializado ─────────────────────────────────────────
-// Artículos reales de la carpeta RecursosTransarchivos (ver src/data/blog.ts).
+// Artículos reales de la carpeta RecursosTransarchivos (ver src/data/blog.ts y
+// su traducción blog.en.ts).
 
 import { useState } from "react";
 import { Link } from "react-router-dom";
@@ -7,10 +8,16 @@ import { sendLead } from "@/lib/leads";
 import { trackEvent } from "@/lib/analytics";
 import { Bi } from "@/components/ui/Icons";
 import { SectionDecor } from "@/components/ui/SectionDecor";
-import { blogCatColor, blogPosts, readMinutes } from "@/data/blog";
+import { blogCatColor, readMinutes } from "@/data/blog";
+import { useLang } from "@/i18n";
+import { useContent } from "@/i18n/content";
+import { useUi } from "@/i18n/ui";
 import { C } from "@/styles/tokens";
 
 export function BlogSection() {
+  const u = useUi().blog;
+  const { lang, lp } = useLang();
+  const { blogPosts } = useContent();
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   const [subState, setSubState] = useState<"idle" | "sending" | "error">("idle");
@@ -18,7 +25,7 @@ export function BlogSection() {
     e.preventDefault();
     if (!email.trim()) return;
     setSubState("sending");
-    const r = await sendLead("suscripcion", "Nueva suscripción al blog", { "Correo": email.trim(), "Origen": "Sección Blog del sitio web", "Autorización de datos": "Sí" }, { email: email.trim() });
+    const r = await sendLead("suscripcion", u.subject, { "Correo": email.trim(), "Origen": u.origin, "Autorización de datos": "Sí" }, { email: email.trim() }, "", lang);
     if (r.ok) { setSent(true); trackEvent("sign_up", { method: "blog" }); } else setSubState("error");
   };
 
@@ -32,37 +39,34 @@ export function BlogSection() {
         {/* Encabezado: solo título, centrado. */}
         <div className="mb-12 pb-8 flex flex-col items-center justify-center" style={{ borderBottom: "1.5px solid #E4E6F7" }}>
           <div className="text-center">
-          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: C.yellow, fontFamily: "Montserrat, sans-serif" }}>Blog y novedades</p>
+          <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: C.yellow, fontFamily: "Montserrat, sans-serif" }}>{u.kicker}</p>
           <h2 className="text-3xl md:text-[44px] font-bold max-w-3xl mx-auto" style={{ fontFamily: "Poppins, sans-serif", color: "#fff", lineHeight: 1.15 }}>
-            Conocimiento especializado que protege<br />
-            <span style={{ color: C.yellow }}>la memoria de su empresa</span>
+            {u.title1}<br />
+            <span style={{ color: C.yellow }}>{u.title2}</span>
           </h2>
           </div>
         </div>
 
-        {/* Bento: destacado grande a la izquierda (tarjeta "portada") +
-            columna de tarjetas compactas apiladas a la derecha — tarjetas
-            otra vez, pero organizadas como hero + sidebar en vez de un
-            grid parejo de 3 columnas. */}
+        {/* Bento: destacado grande a la izquierda + columna de tarjetas compactas a la derecha. */}
         <div className="grid lg:grid-cols-[1.3fr_1fr] gap-6 mb-10">
           {featured && (() => { const fc = blogCatColor(featured.cat); return (
-            <Link to={`/blog/${featured.slug}`}
+            <Link to={lp(`/blog/${featured.slug}`)}
               className="group flex flex-col rounded-3xl overflow-hidden card-lift border-[1.5px] border-borde hover:border-indigo"
               style={{ background: "#fff", textDecoration: "none" }}>
               <div className="relative overflow-hidden" style={{ height: 300 }}>
                 <img loading="lazy" decoding="async" src={featured.cover} alt="" className="w-full h-full" style={{ objectFit: "cover" }} />
                 <span aria-hidden="true" className="absolute pointer-events-none" style={{ right: -44, top: -44, width: 110, height: 110, transform: "rotate(45deg)", borderRadius: 19, background: "rgba(255,222,89,0.35)" }} />
                 <span className="absolute top-4 left-4 text-[11px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full" style={{ background: fc, color: "#fff", fontFamily: "Montserrat, sans-serif" }}>
-                  Destacado · {featured.cat}
+                  {u.featured} · {featured.cat}
                 </span>
               </div>
               <div className="flex flex-col flex-1 p-7 md:p-8">
                 <h3 className="text-2xl font-bold mb-3 transition-colors" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif", lineHeight: 1.25 }}>{featured.title}</h3>
                 <p className="text-sm mb-6" style={{ color: C.muted, lineHeight: 1.65 }}>{featured.excerpt}</p>
                 <div className="mt-auto pt-5 flex items-center justify-between text-xs" style={{ borderTop: "1px solid #F0F1FA", color: C.faint }}>
-                  <span>{featured.date} · {readMinutes(featured)} min</span>
+                  <span>{featured.date} · {readMinutes(featured)} {u.min}</span>
                   <span className="font-bold inline-flex items-center gap-1.5 transition-transform group-hover:translate-x-0.5" style={{ color: fc }}>
-                    Leer artículo <Bi n="arrow-right" size={13} color={fc} />
+                    {u.read} <Bi n="arrow-right" size={13} color={fc} />
                   </span>
                 </div>
               </div>
@@ -70,15 +74,13 @@ export function BlogSection() {
           ); })()}
 
           <div className="relative flex flex-col justify-center gap-4">
-            {/* Un solo cuadrado mostaza semi-torcido detrás de las 3
-                tarjetas juntas — mismo lenguaje que los acentos cuadrados
-                amarillos de los elementos gráficos. */}
+            {/* Un solo cuadrado mostaza semi-torcido detrás de las 3 tarjetas. */}
             <div className="hidden sm:block absolute pointer-events-none"
               style={{ top: 30, bottom: 30, left: -3, right: -3, background: C.yellow, borderRadius: 24, transform: "rotate(-2deg)", zIndex: 0 }} />
             {rest.map(p => {
               const pc = blogCatColor(p.cat);
               return (
-                <Link key={p.slug} to={`/blog/${p.slug}`}
+                <Link key={p.slug} to={lp(`/blog/${p.slug}`)}
                   className="group relative flex gap-4 rounded-2xl p-3 card-lift border-[1.5px] border-borde hover:border-indigo"
                   style={{ background: "#fff", textDecoration: "none" }}>
                   <div className="relative overflow-hidden rounded-xl shrink-0" style={{ width: 100, height: 100 }}>
@@ -87,7 +89,7 @@ export function BlogSection() {
                   <div className="flex-1 min-w-0 flex flex-col justify-center py-0.5">
                     <span className="text-[10px] font-bold uppercase tracking-wider mb-1.5" style={{ color: pc, fontFamily: "Montserrat, sans-serif" }}>{p.cat}</span>
                     <h4 className="text-sm font-bold mb-1.5 line-clamp-2" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif", lineHeight: 1.3 }}>{p.title}</h4>
-                    <span className="text-[11px]" style={{ color: C.faint }}>{p.date} · {readMinutes(p)} min</span>
+                    <span className="text-[11px]" style={{ color: C.faint }}>{p.date} · {readMinutes(p)} {u.min}</span>
                   </div>
                 </Link>
               );
@@ -95,8 +97,7 @@ export function BlogSection() {
           </div>
         </div>
 
-        {/* Suscripción, también como tarjeta — igual lenguaje que el resto
-            de la sección. */}
+        {/* Suscripción, también como tarjeta. */}
         <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-5 rounded-3xl p-7 md:px-9"
           style={{ background: "#fff", border: "1.5px solid #E4E6F7", boxShadow: "0 14px 34px -24px rgba(24,0,173,0.25)" }}>
           <div className="flex items-center gap-4">
@@ -105,28 +106,28 @@ export function BlogSection() {
               <Bi n="envelope-paper" size={19} color={C.yellow} className="relative" />
             </span>
             <div>
-              <p className="font-bold text-base" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>Reciba novedades y guías en su correo</p>
-              <p className="text-xs mt-0.5" style={{ color: C.faint }}>Contenido sobre gestión documental y novedades de Transarchivos.</p>
+              <p className="font-bold text-base" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>{u.subTitle}</p>
+              <p className="text-xs mt-0.5" style={{ color: C.faint }}>{u.subText}</p>
             </div>
           </div>
           {sent ? (
             <p className="text-sm font-semibold" style={{ color: "#15803d", fontFamily: "Montserrat, sans-serif" }}>
-              <Bi n="check-circle-fill" size={14} color="#15803d" className="mr-1.5" />¡Gracias! Le enviamos la confirmación a su correo.
+              <Bi n="check-circle-fill" size={14} color="#15803d" className="mr-1.5" />{u.thanks}
             </p>
           ) : (
             <form className="md:w-[380px]" onSubmit={subscribe}>
               <div className="flex gap-3">
-              <input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="su@correo.com"
+              <input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder={u.placeholder}
                 className="flex-1 min-w-0 px-4 py-2.5 rounded-full text-sm outline-none"
                 style={{ background: "#fff", border: "1.5px solid #E4E6F7", color: C.indigo }} />
               <button type="submit" className="px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all hover:opacity-85 cursor-pointer"
-                disabled={subState === "sending"} style={{ background: C.yellow, color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>{subState === "sending" ? "Enviando…" : "Suscribirme"}</button>
+                disabled={subState === "sending"} style={{ background: C.yellow, color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>{subState === "sending" ? u.sending : u.subscribe}</button>
               </div>
               <label htmlFor="sub-autorizacion" className="mt-2.5 flex items-start gap-2 text-[11px] cursor-pointer" style={{ color: C.muted, lineHeight: 1.5 }}>
                 <input id="sub-autorizacion" type="checkbox" required className="mt-0.5 h-3.5 w-3.5 shrink-0 accent-indigo" />
-                <span>Autorizo el tratamiento de mi correo para recibir novedades, según la <Link to="/privacidad" style={{ color: C.indigo, fontWeight: 600 }}>política de privacidad</Link>.</span>
+                <span>{u.consent}<Link to={lp("/privacidad")} style={{ color: C.indigo, fontWeight: 600 }}>{u.policy}</Link>.</span>
               </label>
-              {subState === "error" && <p role="alert" className="mt-2 text-[11px]" style={{ color: "#8A6D00" }}>No pudimos registrar su correo. Intente de nuevo en unos minutos.</p>}
+              {subState === "error" && <p role="alert" className="mt-2 text-[11px]" style={{ color: "#8A6D00" }}>{u.error}</p>}
             </form>
           )}
         </div>

@@ -1,32 +1,43 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { BlogPanelContent, NavDropdownTrigger, NosotrosPanelContent, ServicesPanelContent, SolucionesPanelContent } from "@/components/layout/NavMenus";
+import { LANG_BAR_HEIGHT, LangBar } from "@/components/layout/LangBar";
 import { SearchOverlay } from "@/components/layout/SearchOverlay";
 import { SupportPopover } from "@/components/layout/SupportPopover";
 import { HeaderLogo } from "@/components/ui/Brand";
 import { Bi, MenuIcon } from "@/components/ui/Icons";
-import { serviceItems } from "@/data/services";
-import { SOLUTIONS } from "@/data/solutions";
-import { nosotrosGroups } from "@/data/nosotros";
 import { searchContent } from "@/data/search";
 import { whatsappUrl } from "@/data/contact";
+import { useLang } from "@/i18n";
+import { useContent } from "@/i18n/content";
+import { useUi } from "@/i18n/ui";
 import { C } from "@/styles/tokens";
+
+// Alto que las páginas internas reservan arriba (barra blanca + franja de idioma).
+export const HEADER_SPACE = 60 + LANG_BAR_HEIGHT;
 
 // ─── Navbar del sitio ─────────────────────────────────────────────────────────
 // Mismo navbar en todas las páginas (logo, menús desplegables, botón de
-// cotización, búsqueda y soporte). "solid": siempre en su versión de barra
-// blanca (páginas internas, sin el hero oscuro de la principal). Los enlaces
-// "#sección" funcionan también fuera de la página principal: se redirigen a
-// "/#sección".
+// cotización, búsqueda y soporte), con la franja de idioma encima (se recoge
+// al hacer scroll). "solid": siempre en su versión de barra blanca (páginas
+// internas, sin el hero oscuro de la principal). Los enlaces "#sección"
+// funcionan también fuera de la página principal: se redirigen a "/#sección"
+// (en el idioma actual).
 export function SiteHeader({ solid = false, onChat }: { solid?: boolean; onChat: () => void }) {
   const navigateTo = useNavigate();
   const { pathname } = useLocation();
+  const { lang, lp } = useLang();
+  const u = useUi();
+  const c = useContent();
   const [mobileOpen, setMobileOpen] = useState(false);
   // Si el navegador restaura el scroll al recargar, el header arranca ya en
   // su estado final (sin animar el cambio).
   // false al inicio (como el HTML pre-generado); el efecto de scroll lo corrige al montar.
   const [scrolledRaw, setScrolled] = useState(false);
   const scrolled = solid || scrolledRaw;
+  // Franja de idioma: visible arriba del todo; al hacer scroll se recoge y el
+  // header sube a ocupar su lugar.
+  const barOffset = scrolledRaw ? 0 : LANG_BAR_HEIGHT;
   // Al cargar, el ancho del botón CTA se mide cuando terminan de cargar las
   // fuentes y eso movía los elementos del navbar. Hasta pasado ese momento
   // se desactivan las transiciones del header (clase nav-preload), así el
@@ -41,9 +52,7 @@ export function SiteHeader({ solid = false, onChat }: { solid?: boolean; onChat:
     Promise.all([minWait, fonts]).then(() => { if (alive) setNavReady(true); });
     return () => { alive = false; };
   }, []);
-  // Un solo dropdown abierto a la vez en el pill ("Servicios" o "Nosotros",
-  // antes solo existía "Servicios" con un boolean — ahora que hay dos, se
-  // necesita saber CUÁL está abierto, no solo si algo está abierto).
+  // Un solo dropdown abierto a la vez en el pill.
   const [openMenu, setOpenMenu] = useState<"servicios" | "soluciones" | "nosotros" | "blog" | null>(null);
   const pillRef = useRef<HTMLDivElement>(null);
   const toolsRef = useRef<HTMLDivElement>(null);
@@ -74,20 +83,13 @@ export function SiteHeader({ solid = false, onChat }: { solid?: boolean; onChat:
     return () => { window.removeEventListener("scroll", close); window.removeEventListener("resize", close); document.removeEventListener("mousedown", onDown); };
   }, [supportAnchor]);
 
-  // Búsqueda del header: reemplaza la fila del nav por un input cuando está
-  // abierta (mismo mecanismo "el pill crece" que Servicios/Nosotros), y
-  // cierra el dropdown "Servicios/Nosotros" si estaba abierto (mutuamente
-  // excluyentes dentro del mismo pill).
+  // Búsqueda del header (ventana propia); cierra el dropdown si estaba abierto.
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
-
-  // Al llegar desde otra página con un ancla (p.ej. "/#servicios" desde el
-  // detalle de un servicio), salta directo a esa sección en vez de quedar
-  // arriba del todo.
   // useMemo: evita recalcular el filtro en cada render del componente (p.ej.
   // al cruzar el umbral de "scrolled") cuando el texto de búsqueda no cambió.
-  const searchResults = useMemo(() => searchContent(searchQuery), [searchQuery]);
+  const searchResults = useMemo(() => searchContent(searchQuery, lang), [searchQuery, lang]);
   const searchHasQuery = searchQuery.trim().length >= 2;
   const toggleSearch = () => {
     setOpenMenu(null);
@@ -105,9 +107,7 @@ export function SiteHeader({ solid = false, onChat }: { solid?: boolean; onChat:
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Cierra "Servicios" al hacer clic fuera del pill (el mouseleave del pill ya
-  // lo cierra al pasar el cursor fuera, pero un clic afuera sin mover el mouse
-  // — p.ej. con teclado o trackpad — también debe cerrarlo).
+  // Cierra el dropdown al hacer clic fuera del pill.
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       const t = e.target as Node;
@@ -117,181 +117,115 @@ export function SiteHeader({ solid = false, onChat }: { solid?: boolean; onChat:
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-
-
+  const home = lp("/");
   const onAnchorClick = (e: React.MouseEvent) => {
-    if (pathname === "/") return;
+    if (pathname === home) return;
     const a = (e.target as HTMLElement).closest("a");
     const href = a?.getAttribute("href");
-    if (a && href && href.startsWith("#") && href.length > 1) { e.preventDefault(); navigateTo("/" + href); }
+    if (a && href && href.startsWith("#") && href.length > 1) { e.preventDefault(); navigateTo(home + href); }
+  };
+
+  const navLinkCls = "px-2 2xl:px-2.5 py-2 rounded-full text-sm 2xl:text-[15px] font-bold transition-colors whitespace-nowrap";
+  const navHover = {
+    onMouseEnter: (e: React.MouseEvent<HTMLAnchorElement>) => { e.currentTarget.style.background = C.indigo; e.currentTarget.style.color = "#ffffff"; },
+    onMouseLeave: (e: React.MouseEvent<HTMLAnchorElement>) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = C.indigo; },
   };
 
   return (
     <div onClickCapture={onAnchorClick} style={{ display: "contents" }}>
-      {/* ── HEADER — pill flotante que se convierte en barra completa al hacer scroll ── */}
-      {/* fixed (no sticky): el header sale del flujo del documento para que el hero
-          (tanto el lado claro como el navy) llegue hasta el borde real de arriba,
-          pegado, sin espacio por encima.
-          Logo y botón mobile posicionados de forma absoluta (no en el flujo), así
-          el pill queda REALMENTE centrado en la página sin que el ancho del logo
-          lo empuje hacia un lado. z-index explícito: cuando el pill se hace barra
-          completa al scrollear, pasa por debajo del logo/hamburguesa. */}
-      {/* min-h: en mobile el pill queda vacío (nav y CTA son hidden md:flex), así que
-          sin un alto mínimo propio el header se encoge a casi nada y el logo —
-          centrado respecto a él— queda cortado por arriba. */}
-      {/* Fondo propio del header (no solo del pill): en modo scrolled, el pill puede
-          ser unos px más bajo que el header y dejaba una franja transparente
-          alrededor del logo por donde se colaba el contenido al hacer scroll. */}
+      <LangBar hidden={scrolledRaw} />
+      {/* ── HEADER — pill flotante que se convierte en barra completa al hacer scroll ──
+          fixed (no sticky): el header sale del flujo del documento para que el
+          hero llegue hasta el borde real de arriba. Logo y botón móvil
+          posicionados de forma absoluta, así el pill queda centrado. min-h: en
+          móvil el pill queda vacío y sin alto mínimo el logo se cortaba. */}
       <header
-        className={`fixed top-0 left-0 right-0 z-50 min-h-[72px] xl:min-h-0 flex items-center justify-center ${navReady ? "" : "nav-preload"}`}
+        className={`fixed left-0 right-0 z-50 min-h-[72px] xl:min-h-0 flex items-center justify-center ${navReady ? "" : "nav-preload"}`}
         style={{
-          // Sin borderBottom: una línea de 1px sólida se ve dura/"cortada" al
-          // volver de scrolled a flotante — una sombra suave, sin borde, separa
-          // igual de bien pero con un degradado, más estético.
+          top: barOffset,
           background: scrolled || mobileOpen ? "#ffffff" : "transparent",
           boxShadow: scrolled || mobileOpen ? "0 4px 20px rgba(10,13,61,0.12)" : "none",
           // Arriba del todo, la barra flota separada del borde superior; al
           // hacer scroll se pega arriba y pasa a barra completa.
-          // Scrolled: 6px arriba y abajo, así el pill (y su botón) queda centrado
-          // en la barra a la misma altura del logo y los íconos.
           paddingTop: scrolled ? 6 : 18,
           paddingBottom: scrolled ? 6 : 12,
-          transition: "background 0.3s ease, box-shadow 0.3s ease, padding-top 0.3s ease, padding-bottom 0.3s ease",
+          transition: "top 0.3s ease, background 0.3s ease, box-shadow 0.3s ease, padding-top 0.3s ease, padding-bottom 0.3s ease",
         }}
       >
-        {/* Logo — suelto, alineado con el borde del bloque de texto del hero (no
-            pegado al borde real de la pantalla) */}
-        {/* top fijo en vez de top-1/2 (que centra respecto al header completo): al
-            abrirse "Servicios" el header crece en alto, y con top-1/2 el logo se
-            iba arrastrando hacia el centro nuevo en vez de quedarse arriba, fijo
-            junto a la fila 1 del navbar. */}
-        <Link to="/" aria-label="Transarchivos, ir al inicio" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="absolute z-10 left-4 md:left-12 2xl:left-28" style={{ top: scrolled ? 7 : 12, transition: "top 0.3s ease" }}>
+        {/* Logo — suelto, alineado con el borde del bloque de texto del hero */}
+        <Link to={home} aria-label={u.nav.logo} onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="absolute z-10 left-4 md:left-12 2xl:left-28" style={{ top: scrolled ? 7 : 12, transition: "top 0.3s ease" }}>
           <HeaderLogo scrolled={scrolled || mobileOpen} size={scrolled || mobileOpen ? 50 : 64} />
         </Link>
 
-        {/* Búsqueda y soporte — fuera del pill, a la derecha (simétricos al
-            logo de la izquierda), centrados con la fila del navbar. */}
+        {/* Búsqueda y soporte — fuera del pill, a la derecha */}
         <div ref={toolsRef} className="hidden xl:flex absolute z-10 right-4 md:right-12 2xl:right-28 items-center gap-2.5" style={{ top: scrolled ? 12 : 24, transition: "top 0.3s ease" }}>
-          <button type="button" onClick={toggleSearch} aria-label={searchOpen ? "Cerrar búsqueda" : "Buscar"} title={searchOpen ? "Cerrar búsqueda" : "Buscar"}
+          <button type="button" onClick={toggleSearch} aria-label={searchOpen ? u.nav.closeSearch : u.nav.search} title={searchOpen ? u.nav.closeSearch : u.nav.search}
             className="flex items-center justify-center rounded-full shrink-0 transition-transform hover:scale-105 active:scale-95"
             style={{ width: 40, height: 40, background: searchOpen ? C.indigo : "#fff", border: `1.5px solid ${searchOpen ? C.indigo : C.border}`, boxShadow: scrolled ? "none" : "0 8px 20px -8px rgba(10,13,61,0.35)" }}>
             <Bi n={searchOpen ? "x-lg" : "search"} size={searchOpen ? 14 : 15} color={searchOpen ? "#fff" : C.indigo} />
           </button>
-          <button ref={supportBtnRef} type="button" onClick={toggleSupport} onMouseEnter={supportHoverIn} onMouseLeave={supportHoverOut} aria-label="Soporte" title="Soporte" aria-expanded={!!supportAnchor}
+          <button ref={supportBtnRef} type="button" onClick={toggleSupport} onMouseEnter={supportHoverIn} onMouseLeave={supportHoverOut} aria-label={u.nav.support} title={u.nav.support} aria-expanded={!!supportAnchor}
             className="flex items-center justify-center rounded-full shrink-0 transition-transform hover:scale-105 active:scale-95"
             style={{ width: 40, height: 40, background: supportAnchor ? C.indigo : "#fff", border: `1.5px solid ${supportAnchor ? C.indigo : C.border}`, boxShadow: scrolled ? "none" : "0 8px 20px -8px rgba(10,13,61,0.35)" }}>
             <Bi n="headset" size={16} color={supportAnchor ? "#fff" : C.indigo} />
           </button>
         </div>
 
-        {/* Pill / barra — una sola figura que se ENSANCHA (crece en alto) cuando
-            "Servicios" está abierto, en vez de abrir un panel aparte pegado debajo.
-            Al ser un único elemento con un solo border-radius, no hay costura ni
-            huecos que tapar: el radio de 9999px se recorta solo a un valor normal
-            de "tarjeta redondeada" en cuanto la caja es más alta que ancha/2. */}
+        {/* Pill / barra — una sola figura que crece en alto cuando un menú está abierto. */}
         <div
           ref={pillRef}
           onMouseLeave={() => setOpenMenu(null)}
           // --pl / --pr: espacio reservado al logo (izquierda) y a los íconos
-          // (derecha); cambian con el margen del logo en 2xl.
-          className="hidden xl:flex relative flex-col [--pl:256px] [--pr:150px] 2xl:[--pl:320px] 2xl:[--pr:214px]"
+          // (derecha), cada uno con el mismo aire, así la píldora queda centrada
+          // ENTRE el logo y los íconos (pedido del cliente, oct. 2026).
+          className="hidden xl:flex relative flex-col [--pl:272px] [--pr:170px] 2xl:[--pl:332px] 2xl:[--pr:230px]"
           style={{
             zIndex: 1,
-            // Centrada cuando hay sitio; si al centrarla pisaría el logo, se
-            // corre a la derecha lo justo (hasta 1440 px el menú no cabe centrado
-            // con la entrada "Da play al conocimiento").
-            left: "max(0px, calc(var(--pl) - (100vw - min(1040px, calc(100vw - var(--pl) - var(--pr)))) / 2))",
-            // Ancho FIJO (no depende de openMenu): antes el pill se angostaba al
-            // cerrar y se ensanchaba al abrir cada dropdown, y como la fila 1 usa
-            // "mx-auto" para centrarse, ese cambio de ancho hacía que el texto
-            // (Servicios/Nosotros/Blog/Contacto) se recorriera visiblemente en
-            // cada apertura — el ancho ya es el máximo que necesita el dropdown
-            // más ancho (Servicios), así que abrir/cerrar nunca mueve la fila 1.
-            // Deja libre a cada lado el ancho del logo (izq.) y de los íconos (der.).
-            // En ambos estados el pill se queda entre el logo y los íconos
-            // (nunca pasa por debajo de la lupa/soporte), así la transición al
-            // hacer scroll en cualquier dirección no los superpone.
-            // Con el menú a 16 px en negrita y la entrada "Da play al
-            // conocimiento" necesita algo más de ancho (hasta 1535 px el menú
-            // va a 15 px para que quepa).
+            left: "calc((var(--pl) - var(--pr)) / 2)",
+            // Ancho FIJO (no depende de openMenu) para que la fila 1 no se mueva al abrir.
             width: "min(1040px, calc(100vw - var(--pl) - var(--pr)))",
-            // Un radio de 9999px NO se recorta a "tarjeta redondeada" al crecer:
-            // en CSS, un radio uniforme en las 4 esquinas siempre se limita a
-            // min(ancho, alto)/2 — con el pill más ancho que alto se veía como un
-            // óvalo gigante. Por eso acá, abierto, se usa un radio fijo normal.
-            // Siempre redondeado (también en la barra completa, donde el pill ya
-            // no ocupa todo el ancho): pasar de 0 a 9999px no se puede animar
-            // y por un instante se veían esquinas cuadradas al subir.
+            // Un radio de 9999px no se recorta bien al crecer: abierto, radio fijo.
             borderRadius: openMenu ? "28px" : "9999px",
             overflow: "hidden",
             background: "#ffffff",
             backdropFilter: "blur(16px)",
             WebkitBackdropFilter: "blur(16px)",
-            // Sin borde: incluso a 10% de opacidad, un borde de 1px contorneando
-            // todo el pill se veía como una línea oscura y dura calcando la forma
-            // — la sombra sola ya separa el pill del fondo, sin ese contorno duro.
             border: "none",
             boxShadow: scrolled
               ? "none"
               : "0 12px 32px -8px rgba(10,13,61,0.18), 0 2px 8px rgba(10,13,61,0.10)",
-            // Sin "border-radius" en la transición: animar el radio (9999px→28px al
-            // abrir "Servicios") hacía que Chromium recalculara el hit-test del mouse
-            // en cada frame de la animación, disparando entra/sale falsos en cadena y
-            // dejando el menú a veces cerrado justo después de abrirlo. El radio ahora
-            // cambia al instante (imperceptible); ancho/sombra/borde sí siguen animados
-            // para el efecto de scroll (pill → barra completa).
+            // Sin "border-radius" en la transición (provocaba hit-tests falsos al abrir).
             transition: "width 0.45s cubic-bezier(0.4,0,0.2,1), box-shadow 0.3s ease, border-color 0.3s ease",
           }}
         >
           {/* Fila 1: la barra de siempre */}
           <div className="flex items-center gap-2 pl-2 pr-2 py-2 md:pl-3 md:pr-3">
-
-            
-
-            {/* Desktop nav — centrado dentro del espacio que sobra entre los dos
-                huecos iguales (izquierdo y el que ocupa el CTA a la derecha).
-                Con la búsqueda abierta, el nav se reemplaza por el input
-                (mismo espacio, mismo centrado) en vez de convivir los dos. */}
             <div className="flex-1 flex justify-center min-w-0 px-2">
-              {(
-                <nav className="flex items-center gap-0.5 shrink-0">
-                  <NavDropdownTrigger label="Servicios" open={openMenu === "servicios"} setOpen={() => setOpenMenu("servicios")} />
-                  <NavDropdownTrigger label="Soluciones" open={openMenu === "soluciones"} setOpen={() => setOpenMenu("soluciones")} />
-                  <NavDropdownTrigger label="Nosotros" open={openMenu === "nosotros"} setOpen={() => setOpenMenu("nosotros")} />
-                  <NavDropdownTrigger label="Blog" open={openMenu === "blog"} setOpen={() => setOpenMenu("blog")} />
-                  {/* Página de videos del canal (pedido del cliente, oct. 2026) */}
-                  <Link to="/videos" onClick={() => setOpenMenu(null)}
-                    className="px-2 2xl:px-2.5 py-2 rounded-full text-sm 2xl:text-[15px] font-bold transition-colors whitespace-nowrap"
-                    style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}
-                    onMouseEnter={e => { e.currentTarget.style.background = C.indigo; e.currentTarget.style.color = "#ffffff"; }}
-                    onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = C.indigo; }}>
-                    Da play al conocimiento
-                  </Link>
-                  {[{ label: "Contacto", href: "#faq" }].map(l => (
-                    <a key={l.label} href={l.href}
-                      className="px-2 2xl:px-2.5 py-2 rounded-full text-sm 2xl:text-[15px] font-bold transition-colors whitespace-nowrap"
-                      style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }}
-                      onMouseEnter={e => { e.currentTarget.style.background = C.indigo; e.currentTarget.style.color = "#ffffff"; }}
-                      onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = C.indigo; }}>
-                      {l.label}
-                    </a>
-                  ))}
-                </nav>
-              )}
+              <nav className="flex items-center gap-0.5 shrink-0">
+                <NavDropdownTrigger label={u.nav.services} open={openMenu === "servicios"} setOpen={() => setOpenMenu("servicios")} />
+                <NavDropdownTrigger label={u.nav.solutions} open={openMenu === "soluciones"} setOpen={() => setOpenMenu("soluciones")} />
+                <NavDropdownTrigger label={u.nav.about} open={openMenu === "nosotros"} setOpen={() => setOpenMenu("nosotros")} />
+                <NavDropdownTrigger label={u.nav.blog} open={openMenu === "blog"} setOpen={() => setOpenMenu("blog")} />
+                {/* Página de videos del canal (pedido del cliente, oct. 2026) */}
+                <Link to={lp("/videos")} onClick={() => setOpenMenu(null)} className={navLinkCls} style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none" }} {...navHover}>
+                  {u.nav.videos}
+                </Link>
+                <a href="#faq" className={navLinkCls} style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }} {...navHover}>
+                  {u.nav.contact}
+                </a>
+              </nav>
             </div>
 
-            {/* CTA derecha — píldora sólida navy, para destacar sobre el pill blanco */}
+            {/* CTA derecha — píldora sólida índigo */}
             <a href="#cotizador"
               className="inline-flex items-center gap-1.5 px-3.5 2xl:px-4 py-2 rounded-full text-[13px] 2xl:text-sm font-bold transition-transform hover:scale-105 active:scale-95 shrink-0 whitespace-nowrap"
               style={{ background: C.indigo, color: "#ffffff", fontFamily: "Montserrat, sans-serif" }}>
-              <span className="min-[1440px]:hidden">Cotizar</span><span className="hidden min-[1440px]:inline">Solicitar cotización</span>
+              <span className="min-[1440px]:hidden">{u.nav.quote}</span><span className="hidden min-[1440px]:inline">{u.nav.quoteLong}</span>
               <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M3 11L11 3M11 3H5M11 3V9" stroke="#ffffff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </a>
-
           </div>
 
-          {/* Fila 2: contenido de "Servicios"/"Nosotros"/búsqueda — el pill
-              crece para incluirla (mutuamente excluyentes). */}
+          {/* Fila 2: contenido del menú abierto (el pill crece para incluirla) */}
           {openMenu === "servicios" && <ServicesPanelContent setOpen={() => setOpenMenu(null)} />}
           {openMenu === "nosotros" && <NosotrosPanelContent setOpen={() => setOpenMenu(null)} />}
           {openMenu === "soluciones" && <SolucionesPanelContent setOpen={() => setOpenMenu(null)} />}
@@ -299,7 +233,7 @@ export function SiteHeader({ solid = false, onChat }: { solid?: boolean; onChat:
         </div>
 
         {/* Menú móvil/tablet (< 1280 px): botón hamburguesa animado */}
-        <button type="button" onClick={() => setMobileOpen(o => !o)} aria-expanded={mobileOpen} aria-label={mobileOpen ? "Cerrar menú" : "Abrir menú"}
+        <button type="button" onClick={() => setMobileOpen(o => !o)} aria-expanded={mobileOpen} aria-label={mobileOpen ? u.nav.closeMenu : u.nav.openMenu}
           className="xl:hidden absolute z-10 right-4 md:right-8 grid place-items-center rounded-full transition-colors"
           style={{ top: 14, width: 44, height: 44, background: mobileOpen ? C.indigo : "#ffffff", boxShadow: "0 6px 18px rgba(10,13,61,0.18)" }}>
           <span className="relative block" style={{ width: 18, height: 14 }}>
@@ -317,6 +251,7 @@ export function SiteHeader({ solid = false, onChat }: { solid?: boolean; onChat:
 
         {mobileOpen && (
           <MobileMenu
+            top={72 + barOffset}
             onClose={() => setMobileOpen(false)}
             onSearch={() => { setMobileOpen(false); setSearchOpen(true); }}
             onChat={() => { setMobileOpen(false); onChat(); }} />
@@ -332,103 +267,102 @@ export function SiteHeader({ solid = false, onChat }: { solid?: boolean; onChat:
 
     </div>
   );
-}
 
-// ─── Menú móvil ───────────────────────────────────────────────────────────────
-// Panel a pantalla completa debajo de la barra: accesos rápidos (buscar, Joel,
-// llamar), secciones desplegables con los mismos contenidos de los menús de
-// escritorio y el botón de cotización fijo abajo. Bloquea el scroll de la
-// página y se cierra con Esc o al elegir una opción.
+  // ─── Menú móvil ─────────────────────────────────────────────────────────
+  // Panel a pantalla completa debajo de la barra: accesos rápidos (buscar, Joel,
+  // WhatsApp), secciones desplegables con los mismos contenidos de los menús de
+  // escritorio y el botón de cotización fijo abajo. Bloquea el scroll de la
+  // página y se cierra con Esc o al elegir una opción.
+  function MobileMenu({ top, onClose, onSearch, onChat }: { top: number; onClose: () => void; onSearch: () => void; onChat: () => void }) {
+    const [open, setOpen] = useState<string | null>(null);
+    useEffect(() => {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      document.body.classList.add("menu-open"); // oculta el botón flotante de Joel
+      const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+      window.addEventListener("keydown", onKey);
+      return () => { document.body.style.overflow = prev; document.body.classList.remove("menu-open"); window.removeEventListener("keydown", onKey); };
+    }, [onClose]);
 
-function MobileMenu({ onClose, onSearch, onChat }: { onClose: () => void; onSearch: () => void; onChat: () => void }) {
-  const [open, setOpen] = useState<string | null>(null);
-  useEffect(() => {
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    document.body.classList.add("menu-open"); // oculta el botón flotante de Joel
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
-    window.addEventListener("keydown", onKey);
-    return () => { document.body.style.overflow = prev; document.body.classList.remove("menu-open"); window.removeEventListener("keydown", onKey); };
-  }, [onClose]);
+    const groups: { id: string; label: string; icon: string; items: { label: string; icon: string; to?: string; href?: string }[] }[] = [
+      { id: "servicios", label: u.nav.services, icon: "grid", items: c.serviceItems.map(s => ({ label: s.title, icon: s.icon, to: lp(`/servicios/${s.slug}`) })) },
+      { id: "soluciones", label: u.nav.solutions, icon: "lightbulb", items: c.solutions.map(s => ({ label: s.title, icon: s.icon, href: `#sol-${s.id}` })) },
+      { id: "nosotros", label: u.nav.about, icon: "building", items: c.nosotrosGroups.flatMap(g => g.items).map(i => ({ label: i.label, icon: i.icon, to: lp(`/nosotros#${i.anchor}`) })) },
+    ];
+    const rowCls = "group w-full flex items-center gap-3 rounded-2xl px-3 py-3 text-left transition-colors hover:bg-hielo";
+    const rowText = { color: C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none" } as const;
 
-  const groups: { id: string; label: string; icon: string; items: { label: string; icon: string; to?: string; href?: string }[] }[] = [
-    { id: "servicios", label: "Servicios", icon: "grid", items: serviceItems.map(s => ({ label: s.title, icon: s.icon, to: `/servicios/${s.slug}` })) },
-    { id: "soluciones", label: "Soluciones", icon: "lightbulb", items: SOLUTIONS.map(s => ({ label: s.title, icon: s.icon, href: `#sol-${s.id}` })) },
-    { id: "nosotros", label: "Nosotros", icon: "building", items: nosotrosGroups.flatMap(g => g.items).map(i => ({ label: i.label, icon: i.icon, to: `/nosotros#${i.anchor}` })) },
-  ];
-  const rowCls = "group w-full flex items-center gap-3 rounded-2xl px-3 py-3 text-left transition-colors hover:bg-hielo";
-  const rowText = { color: C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none" } as const;
+    return (
+      <div className="xl:hidden fixed inset-x-0 bottom-0 flex flex-col" style={{ top, background: "#fff", animation: "fadeInUp 0.25s ease both" }}>
+        <div className="flex-1 overflow-y-auto px-4 pt-3 pb-4 max-w-xl w-full mx-auto">
+          {/* Accesos rápidos */}
+          <div className="grid grid-cols-3 gap-2 mb-4">
+            {[
+              { ic: "search", t: u.nav.search, onClick: onSearch },
+              { ic: "chat-dots", t: u.nav.chatJoel, onClick: onChat },
+              { ic: "whatsapp", t: u.nav.whatsapp, href: whatsappUrl() },
+            ].map(q => {
+              const inner = (<><Bi n={q.ic} size={18} color={C.indigo} /><span className="text-[11px] font-semibold" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>{q.t}</span></>);
+              const cls = "flex flex-col items-center gap-1.5 rounded-2xl py-3 transition-colors hover:bg-[#EEF0FB]";
+              return q.href
+                ? <a key={q.t} href={q.href} {...(/^https?:/.test(q.href) ? { target: "_blank", rel: "noopener noreferrer" } : {})} className={cls} style={{ background: "#F7F8FF", textDecoration: "none" }}>{inner}</a>
+                : <button key={q.t} type="button" onClick={q.onClick} className={cls} style={{ background: "#F7F8FF" }}>{inner}</button>;
+            })}
+          </div>
 
-  return (
-    <div className="xl:hidden fixed inset-x-0 bottom-0 top-[72px] flex flex-col" style={{ background: "#fff", animation: "fadeInUp 0.25s ease both" }}>
-      <div className="flex-1 overflow-y-auto px-4 pt-3 pb-4 max-w-xl w-full mx-auto">
-        {/* Accesos rápidos */}
-        <div className="grid grid-cols-3 gap-2 mb-4">
-          {[
-            { ic: "search", t: "Buscar", onClick: onSearch },
-            { ic: "chat-dots", t: "Chat con Joel", onClick: onChat },
-            { ic: "whatsapp", t: "WhatsApp", href: whatsappUrl() },
-          ].map(q => {
-            const inner = (<><Bi n={q.ic} size={18} color={C.indigo} /><span className="text-[11px] font-semibold" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>{q.t}</span></>);
-            const cls = "flex flex-col items-center gap-1.5 rounded-2xl py-3 transition-colors hover:bg-[#EEF0FB]";
-            return q.href
-              ? <a key={q.t} href={q.href} {...(/^https?:/.test(q.href) ? { target: "_blank", rel: "noopener noreferrer" } : {})} className={cls} style={{ background: "#F7F8FF", textDecoration: "none" }}>{inner}</a>
-              : <button key={q.t} type="button" onClick={q.onClick} className={cls} style={{ background: "#F7F8FF" }}>{inner}</button>;
-          })}
-        </div>
-
-        {/* Secciones desplegables */}
-        {groups.map(g => {
-          const on = open === g.id;
-          return (
-            <div key={g.id} className="border-b" style={{ borderColor: "#F0F1FA" }}>
-              <button type="button" onClick={() => setOpen(on ? null : g.id)} aria-expanded={on} className={rowCls}>
-                <MenuIcon n={g.icon} size={36} />
-                <span className="flex-1 text-[15px] font-semibold" style={rowText}>{g.label}</span>
-                <Bi n="chevron-down" size={14} color={C.indigo} style={{ transition: "transform 0.25s", transform: on ? "rotate(180deg)" : "none" }} />
-              </button>
-              <div className="grid transition-all duration-300" style={{ gridTemplateRows: on ? "1fr" : "0fr" }}>
-                <div className="overflow-hidden">
-                  <div className="pl-4 pb-2">
-                    {g.items.map(it => {
-                      const inner = (<><Bi n={it.icon} size={15} color={C.indigo} /><span className="text-sm" style={{ ...rowText, fontWeight: 500 }}>{it.label}</span></>);
-                      const cls = "flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors hover:bg-hielo";
-                      return it.to
-                        ? <Link key={it.label} to={it.to} onClick={onClose} className={cls} style={{ textDecoration: "none" }}>{inner}</Link>
-                        : <a key={it.label} href={it.href} onClick={onClose} className={cls} style={{ textDecoration: "none" }}>{inner}</a>;
-                    })}
+          {/* Secciones desplegables */}
+          {groups.map(g => {
+            const on = open === g.id;
+            return (
+              <div key={g.id} className="border-b" style={{ borderColor: "#F0F1FA" }}>
+                <button type="button" onClick={() => setOpen(on ? null : g.id)} aria-expanded={on} className={rowCls}>
+                  <MenuIcon n={g.icon} size={36} />
+                  <span className="flex-1 text-[15px] font-semibold" style={rowText}>{g.label}</span>
+                  <Bi n="chevron-down" size={14} color={C.indigo} style={{ transition: "transform 0.25s", transform: on ? "rotate(180deg)" : "none" }} />
+                </button>
+                <div className="grid transition-all duration-300" style={{ gridTemplateRows: on ? "1fr" : "0fr" }}>
+                  <div className="overflow-hidden">
+                    <div className="pl-4 pb-2">
+                      {g.items.map(it => {
+                        const inner = (<><Bi n={it.icon} size={15} color={C.indigo} /><span className="text-sm" style={{ ...rowText, fontWeight: 500 }}>{it.label}</span></>);
+                        const cls = "flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors hover:bg-hielo";
+                        return it.to
+                          ? <Link key={it.label} to={it.to} onClick={onClose} className={cls} style={{ textDecoration: "none" }}>{inner}</Link>
+                          : <a key={it.label} href={it.href} onClick={onClose} className={cls} style={{ textDecoration: "none" }}>{inner}</a>;
+                      })}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
-        <Link to="/videos" onClick={onClose} className={`${rowCls} border-b`} style={{ ...rowText, borderColor: "#F0F1FA", textDecoration: "none" }}>
-          <MenuIcon n="youtube" size={36} />
-          <span className="flex-1 text-[15px] font-semibold">Da play al conocimiento</span>
-          <Bi n="chevron-right" size={13} color={C.faint} />
-        </Link>
-        {[{ label: "Blog", icon: "journal-text", href: "#blog" }, { label: "Contacto y preguntas frecuentes", icon: "question-circle", href: "#faq" }].map(l => (
-          <a key={l.label} href={l.href} onClick={onClose} className={`${rowCls} border-b`} style={{ ...rowText, borderColor: "#F0F1FA" }}>
-            <MenuIcon n={l.icon} size={36} />
-            <span className="flex-1 text-[15px] font-semibold">{l.label}</span>
+            );
+          })}
+          <Link to={lp("/videos")} onClick={onClose} className={`${rowCls} border-b`} style={{ ...rowText, borderColor: "#F0F1FA", textDecoration: "none" }}>
+            <MenuIcon n="youtube" size={36} />
+            <span className="flex-1 text-[15px] font-semibold">{u.nav.videos}</span>
             <Bi n="chevron-right" size={13} color={C.faint} />
-          </a>
-        ))}
+          </Link>
+          {[{ label: u.nav.blog, icon: "journal-text", href: "#blog" }, { label: u.nav.blogAndFaq, icon: "question-circle", href: "#faq" }].map(l => (
+            <a key={l.label} href={l.href} onClick={onClose} className={`${rowCls} border-b`} style={{ ...rowText, borderColor: "#F0F1FA" }}>
+              <MenuIcon n={l.icon} size={36} />
+              <span className="flex-1 text-[15px] font-semibold">{l.label}</span>
+              <Bi n="chevron-right" size={13} color={C.faint} />
+            </a>
+          ))}
 
-        <div className="mt-5 rounded-2xl p-4 flex flex-col gap-2" style={{ background: "#F7F8FF" }}>
-          <a href="#contacto" className="flex items-center gap-2.5 text-sm" style={{ color: C.indigo, textDecoration: "none" }}><Bi n="envelope" size={14} color={C.gold} /> info@transarchivos.com</a>
-          <span className="flex items-center gap-2.5 text-sm" style={{ color: C.muted }}><Bi n="geo-alt" size={14} color={C.gold} /> Cl. 21 # 39A-40, Bogotá</span>
+          <div className="mt-5 rounded-2xl p-4 flex flex-col gap-2" style={{ background: "#F7F8FF" }}>
+            <a href="#contacto" className="flex items-center gap-2.5 text-sm" style={{ color: C.indigo, textDecoration: "none" }}><Bi n="envelope" size={14} color={C.gold} /> info@transarchivos.com</a>
+            <span className="flex items-center gap-2.5 text-sm" style={{ color: C.muted }}><Bi n="geo-alt" size={14} color={C.gold} /> {u.nav.address}</span>
+          </div>
+        </div>
+
+        {/* Botón principal fijo abajo */}
+        <div className="px-4 py-3 border-t" style={{ borderColor: "#ECEEF6", paddingBottom: "max(12px, env(safe-area-inset-bottom))" }}>
+          <a href="#cotizador" onClick={onClose} className="max-w-xl mx-auto flex items-center justify-center gap-2 py-3.5 rounded-2xl text-sm font-bold"
+            style={{ background: C.indigo, color: "#fff", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
+            {u.nav.quoteLong} <Bi n="arrow-up-right" size={13} color="#fff" />
+          </a>
         </div>
       </div>
-
-      {/* Botón principal fijo abajo */}
-      <div className="px-4 py-3 border-t" style={{ borderColor: "#ECEEF6", paddingBottom: "max(12px, env(safe-area-inset-bottom))" }}>
-        <a href="#cotizador" onClick={onClose} className="max-w-xl mx-auto flex items-center justify-center gap-2 py-3.5 rounded-2xl text-sm font-bold"
-          style={{ background: C.indigo, color: "#fff", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
-          Solicitar cotización <Bi n="arrow-up-right" size={13} color="#fff" />
-        </a>
-      </div>
-    </div>
-  );
+    );
+  }
 }

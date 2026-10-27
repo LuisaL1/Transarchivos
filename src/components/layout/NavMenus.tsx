@@ -1,22 +1,17 @@
 import { Link } from "react-router-dom";
 import { Bi, MenuIcon } from "@/components/ui/Icons";
-import { blogPosts } from "@/data/blog";
-import { nosotrosGroups } from "@/data/nosotros";
-import { serviceItems } from "@/data/services";
-import { SOLUTIONS } from "@/data/solutions";
+import { useLang } from "@/i18n";
+import { useContent } from "@/i18n/content";
+import { useUi } from "@/i18n/ui";
 import { C } from "@/styles/tokens";
 
-// Solo el botón disparador. El contenido del menú ya no es un panel aparte
-// posicionado en "absolute" — vive dentro del propio pill (ver App), como una
-// segunda fila que aparece cuando "open" es true. Así el pill literalmente
-// crece para contenerlo: una sola figura, sin costuras ni huecos que tapar.
+// Solo el botón disparador. El contenido del menú vive dentro del propio pill
+// (ver SiteHeader), como una segunda fila que aparece cuando "open" es true.
 export function NavDropdownTrigger({ label, open, setOpen }: { label: string; open: boolean; setOpen: (v: boolean | ((prev: boolean) => boolean)) => void }) {
   return (
     <button
       // Solo abre (no alterna): con mouse, el hover ya lo abre antes de que el
-      // click llegue a disparar — si el click alternara, cerraría lo que el
-      // hover acababa de abrir. En touch (sin hover previo) el click sí abre.
-      // Para cerrar: mover el cursor fuera del pill, o clic afuera.
+      // click llegue a disparar. Para cerrar: mover el cursor fuera del pill, o clic afuera.
       onClick={() => setOpen(true)}
       onMouseEnter={() => setOpen(true)}
       className="flex items-center gap-1 px-2 2xl:px-2.5 py-2 rounded-full text-sm 2xl:text-[15px] font-bold transition-colors whitespace-nowrap"
@@ -36,10 +31,9 @@ export function NavDropdownTrigger({ label, open, setOpen }: { label: string; op
 }
 
 // ─── Menús desplegables del navbar ──────────────────────────────────────────
-// Mismo esquema que el header de Transpack: a la izquierda una columna
-// destacada (degradado azul de marca, cuadro amarillo girado, rótulo, título,
-// texto y llamado a la acción); a la derecha las opciones, con íconos que se
-// rellenan de azul al pasar el mouse.
+// A la izquierda una columna destacada (índigo, cuadro amarillo girado, rótulo,
+// título, texto y llamado a la acción); a la derecha las opciones, con íconos
+// que se rellenan de azul al pasar el mouse. Textos en src/i18n/ui.ts.
 
 function MenuFeature({ kicker, title, text, cta, href, onClick }: { kicker: string; title: string; text: string; cta: string; href: string; onClick: () => void }) {
   return (
@@ -55,23 +49,22 @@ function MenuFeature({ kicker, title, text, cta, href, onClick }: { kicker: stri
   );
 }
 
-// Línea superior + aire: separa el menú de la fila del navbar (y del logo,
-// que en la barra completa queda justo encima de la columna destacada).
+// Línea superior + aire: separa el menú de la fila del navbar.
 const menuShell = "grid grid-cols-[220px_minmax(0,1fr)] gap-3 px-3 pb-3 pt-3 mt-2 border-t border-indigo/10";
-
 const menuItemCls = "group flex items-start gap-3 rounded-xl p-2.5 transition-colors hover:bg-hielo";
 
 export function ServicesPanelContent({ setOpen }: { setOpen: (v: boolean) => void }) {
   const close = () => setOpen(false);
+  const { lp } = useLang();
+  const m = useUi().menus.services;
+  const { serviceItems } = useContent();
   return (
     <div className={menuShell} style={{ animation: "fadeInUp 0.25s ease both" }}>
-      <MenuFeature kicker="Diagnóstico documental" title="¿No sabe por dónde empezar?"
-        text="Le mostramos el diagnóstico técnico y normativo de su información antes de mover un solo folio. ¿Dudas inmediatas? Pregúntele a Joel, nuestro consultor virtual disponible 24/7."
-        cta="Agendar diagnóstico inicial" href="#diagnostico" onClick={close} />
+      <MenuFeature kicker={m.kicker} title={m.title} text={m.text} cta={m.cta} href="#diagnostico" onClick={close} />
       <div className="py-1">
         <div className="grid grid-cols-3 gap-0.5">
           {serviceItems.map(s => (
-            <Link key={s.title} to={`/servicios/${s.slug}`} onClick={close} className={menuItemCls} style={{ textDecoration: "none" }}>
+            <Link key={s.slug} to={lp(`/servicios/${s.slug}`)} onClick={close} className={menuItemCls} style={{ textDecoration: "none" }}>
               <MenuIcon n={s.icon} />
               <span className="min-w-0">
                 <span className="block text-[13px] font-semibold leading-tight" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>{s.title}</span>
@@ -81,9 +74,9 @@ export function ServicesPanelContent({ setOpen }: { setOpen: (v: boolean) => voi
           ))}
         </div>
         <div className="flex items-center justify-between mt-1.5 pt-2.5 px-2.5" style={{ borderTop: "1px solid #ECEEF6" }}>
-          <span className="text-[11px]" style={{ color: C.faint }}>9 servicios bajo la Ley 594 de 2000 y la normativa del AGN</span>
+          <span className="text-[11px]" style={{ color: C.faint }}>{m.foot}</span>
           <a href="#servicios" onClick={close} className="text-xs font-semibold inline-flex items-center gap-1" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
-            Ver todos <Bi n="arrow-right" size={12} color={C.indigo} />
+            {m.all} <Bi n="arrow-right" size={12} color={C.indigo} />
           </a>
         </div>
       </div>
@@ -93,21 +86,17 @@ export function ServicesPanelContent({ setOpen }: { setOpen: (v: boolean) => voi
 
 // ─── Soluciones ─────────────────────────────────────────────────────────────
 // Organizadas por la NECESIDAD del cliente (no por servicio): cada solución
-// combina los servicios que la resuelven. Contenido tomado del "Informe
-// Documento maestro" (argumentos de venta de cada servicio) y de los sectores
-// que la empresa reporta haber atendido.
-
+// combina los servicios que la resuelven (src/data/solutions.ts).
 export function SolucionesPanelContent({ setOpen }: { setOpen: (v: boolean) => void }) {
   const close = () => setOpen(false);
+  const m = useUi().menus.solutions;
+  const { solutions } = useContent();
   return (
     <div className={menuShell} style={{ animation: "fadeInUp 0.25s ease both" }}>
-      <MenuFeature kicker="Soluciones" title="Parta de su necesidad, no del servicio"
-        text="Combinamos nuestros servicios según el reto de su empresa: cumplimiento legal, espacio, oficina cero papel o gestión del archivo en su sede."
-        cta="Ver todas las soluciones" href="#soluciones" onClick={close} />
-      {/* content-center: con 4 soluciones las filas no se estiran al alto de la
-          tarjeta índigo (quedaban huecos grandes entre filas). */}
+      <MenuFeature kicker={m.kicker} title={m.title} text={m.text} cta={m.cta} href="#soluciones" onClick={close} />
+      {/* content-center: con 4 soluciones las filas no se estiran al alto de la tarjeta índigo. */}
       <div className="grid grid-cols-2 content-center gap-x-0.5 gap-y-1 py-1">
-        {SOLUTIONS.map(sol => (
+        {solutions.map(sol => (
           <a key={sol.id} href={`#sol-${sol.id}`} onClick={close} className={menuItemCls} style={{ textDecoration: "none" }}>
             <MenuIcon n={sol.icon} />
             <span className="min-w-0">
@@ -123,18 +112,19 @@ export function SolucionesPanelContent({ setOpen }: { setOpen: (v: boolean) => v
 
 export function NosotrosPanelContent({ setOpen }: { setOpen: (v: boolean) => void }) {
   const close = () => setOpen(false);
+  const { lp } = useLang();
+  const m = useUi().menus.about;
+  const { nosotrosGroups } = useContent();
   return (
     <div className={menuShell} style={{ animation: "fadeInUp 0.25s ease both" }}>
-      <MenuFeature kicker="Desde 1983" title="Pioneros de la gestión documental en Colombia"
-        text="Más de 40 años ayudando a las empresas a organizar, proteger y transformar su información."
-        cta="Conozca nuestra historia" href="/nosotros#historia" onClick={close} />
+      <MenuFeature kicker={m.kicker} title={m.title} text={m.text} cta={m.cta} href={lp("/nosotros#historia")} onClick={close} />
       <div className="grid grid-cols-3 gap-3 py-1">
         {nosotrosGroups.map(g => (
           <div key={g.heading}>
             <p className="text-[10.5px] font-bold uppercase mb-1.5 px-2 whitespace-nowrap" style={{ letterSpacing: "0.12em", color: C.faint, fontFamily: "Montserrat, sans-serif" }}>{g.heading}</p>
             <div className="flex flex-col">
               {g.items.map(item => (
-                <Link key={item.label} to={`/nosotros#${item.anchor}`} onClick={close} className="group flex items-center gap-3 rounded-xl p-2 transition-colors hover:bg-hielo" style={{ textDecoration: "none" }}>
+                <Link key={item.anchor} to={lp(`/nosotros#${item.anchor}`)} onClick={close} className="group flex items-center gap-3 rounded-xl p-2 transition-colors hover:bg-hielo" style={{ textDecoration: "none" }}>
                   <MenuIcon n={item.icon} size={34} />
                   <span className="text-[13px] font-semibold whitespace-nowrap" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>{item.label}</span>
                 </Link>
@@ -150,16 +140,17 @@ export function NosotrosPanelContent({ setOpen }: { setOpen: (v: boolean) => voi
 // Menú "Blog": los 3 artículos más recientes y la página de videos del canal.
 export function BlogPanelContent({ setOpen }: { setOpen: (v: boolean) => void }) {
   const close = () => setOpen(false);
+  const { lp } = useLang();
+  const m = useUi().menus.blog;
+  const { blogPosts } = useContent();
   const recent = blogPosts.slice(0, 3);
   return (
     <div className={menuShell} style={{ animation: "fadeInUp 0.25s ease both" }}>
-      <MenuFeature kicker="Blog y novedades" title="Conocimiento especializado que protege la memoria de su empresa"
-        text="Guías sobre gestión documental, normativa, tecnología y sostenibilidad."
-        cta="Ver todos los artículos" href="#blog" onClick={close} />
+      <MenuFeature kicker={m.kicker} title={m.title} text={m.text} cta={m.cta} href="#blog" onClick={close} />
       <div className="py-1 pr-2 min-w-0">
         <div className="grid grid-cols-1 gap-0.5">
           {recent.map(p => (
-            <Link key={p.slug} to={`/blog/${p.slug}`} onClick={close} className={`${menuItemCls} items-center`} style={{ textDecoration: "none" }}>
+            <Link key={p.slug} to={lp(`/blog/${p.slug}`)} onClick={close} className={`${menuItemCls} items-center`} style={{ textDecoration: "none" }}>
               <img loading="lazy" decoding="async" src={p.cover} alt="" className="shrink-0 rounded-lg object-cover" style={{ width: 64, height: 48 }} />
               <span className="min-w-0 flex-1 pr-2">
                 <span className="block text-[10.5px] font-bold uppercase" style={{ letterSpacing: "0.1em", color: C.gold, fontFamily: "Montserrat, sans-serif" }}>{p.cat}</span>
@@ -168,10 +159,10 @@ export function BlogPanelContent({ setOpen }: { setOpen: (v: boolean) => void })
             </Link>
           ))}
         </div>
-        <Link to="/videos" onClick={close}
+        <Link to={lp("/videos")} onClick={close}
           className={`${menuItemCls} items-center mt-1.5`} style={{ borderTop: "1px solid #ECEEF6", borderRadius: 0, textDecoration: "none" }}>
           <MenuIcon n="youtube" size={34} />
-          <span className="flex-1 text-[13px] font-semibold" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>Da play al conocimiento: todos los videos del canal</span>
+          <span className="flex-1 text-[13px] font-semibold" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>{m.videos}</span>
           <Bi n="chevron-right" size={12} color={C.faint} />
         </Link>
       </div>

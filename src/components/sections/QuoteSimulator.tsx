@@ -4,7 +4,9 @@
 // captura las variables que Comercial necesita por tipo de servicio, ubica la
 // solicitud en el modelo (Entrada → Solución → Protección → Expansión), sugiere
 // servicios complementarios y decide el siguiente paso (completar información,
-// validación de Operaciones o cotización estándar).
+// validación de Operaciones o cotización estándar). Textos en src/i18n/ui.ts y
+// preguntas en src/data/quote.ts (y quote.en.ts); el correo al equipo va con
+// los rótulos en español.
 
 import { useState, useEffect } from "react";
 import { trackEvent } from "@/lib/analytics";
@@ -13,12 +15,16 @@ import { track } from "@/lib/visitor";
 import { sendLead } from "@/lib/leads";
 import { whatsappUrl } from "@/data/contact";
 import { Bi, MenuIcon } from "@/components/ui/Icons";
-import { QUOTE_SECTORS, quoteConfig } from "@/data/quote";
-import { services } from "@/data/services";
-import { SOLUTIONS, SOLUTIONS_ICON } from "@/data/solutions";
+import { SOLUTIONS_ICON } from "@/data/solutions";
+import { useLang } from "@/i18n";
+import { getContent, useContent } from "@/i18n/content";
+import { UI, useUi } from "@/i18n/ui";
 import { C } from "@/styles/tokens";
 
 export function QuoteSimulator() {
+  const u = useUi().quote;
+  const { lang, lp } = useLang();
+  const { services, solutions: SOLUTIONS, quoteConfig, quoteSectors } = useContent();
   const [selected, setSelected] = useState("diagnostico");
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -35,12 +41,12 @@ export function QuoteSimulator() {
     setSelected(sv); setAnswers({}); setStep(1);
     setSolution(sp.get("solucion"));
     track("quote", sv);
-  }, [location.search, location.key]);
+  }, [location.search, location.key, services]);
   const solutionInfo = solution ? SOLUTIONS.find(x => x.id === solution) : undefined;
 
   const cfg = quoteConfig[selected];
   const svc = services.find(s => s.slug === selected);
-  const title = svc ? svc.quote?.title ?? svc.title : "Diagnóstico documental";
+  const title = svc ? svc.quote?.title ?? svc.title : u.diagnostic.title;
   const accent = svc ? svc.accent : C.gold;
   const icon = svc ? svc.icon : "search";
 
@@ -50,51 +56,55 @@ export function QuoteSimulator() {
   const setA = (k: string, v: string) => setAnswers(a => ({ ...a, [k]: v }));
   const setC = (k: string, v: string) => setContact(c => ({ ...c, [k]: v }));
 
-  const unknownCount = cfg.fields.filter(f => (answers[f.key] ?? "").toLowerCase().startsWith("no l") || (answers[f.key] ?? "").toLowerCase().startsWith("no estoy")).length;
+  const isUnknown = (v: string) => u.unknown.some(p => v.toLowerCase().startsWith(p));
+  const unknownCount = cfg.fields.filter(f => isUnknown(answers[f.key] ?? "")).length;
   const missingVolume = !(answers.volume ?? "").trim();
   const special = (answers.especiales ?? "").trim().length > 0;
   const nextStep = missingVolume || unknownCount >= 2
-    ? { t: "Completar la información", d: "Faltan variables críticas. Un asesor le pedirá los datos restantes o programará una visita o levantamiento antes de cotizar.", ic: "question-circle-fill", c: C.gold }
+    ? { ...u.nextSteps.missing, ic: "question-circle-fill", c: C.gold }
     : special
-      ? { t: "Validación de Operaciones", d: "Su solicitud tiene una condición especial. Comercial y Operaciones la validarán antes de comprometer alcance y tiempos.", ic: "shield-fill-exclamation", c: C.indigo }
-      : { t: "Cotización según parámetros", d: "La información es suficiente. Comercial elaborará la cotización con el alcance y las condiciones definidas.", ic: "check-circle-fill", c: "#16a34a" };
+      ? { ...u.nextSteps.special, ic: "shield-fill-exclamation", c: C.indigo }
+      : { ...u.nextSteps.ok, ic: "check-circle-fill", c: "#16a34a" };
 
-  // Completitud "en vivo": cuántas de las variables que el documento marca
-  // como mínimas (volumen + campos del servicio + ubicación) ya
-  // tiene el cliente respondidas — no es un precio, es transparencia sobre
-  // qué tan lista está la solicitud para cotizarse, sin esperar a un asesor.
-  // (El nivel de urgencia se retiró del formulario: pedido del cliente, oct. 2026.)
+  // Completitud "en vivo": cuántas de las variables mínimas (volumen + campos
+  // del servicio + ubicación) ya tiene el cliente respondidas. No es un precio,
+  // es transparencia sobre qué tan lista está la solicitud para cotizarse.
   const requiredKeys = ["volume", ...cfg.fields.map(f => f.key), "ubicacion"];
   const answeredCount = requiredKeys.filter(k => (answers[k] ?? "").trim()).length;
   const completPct = Math.round((answeredCount / requiredKeys.length) * 100);
 
-  const summary: [string, string][] = [
-    [cfg.volumeLabel, answers.volume || "—"],
-    ...cfg.fields.map(f => [f.label, answers[f.key] || "—"] as [string, string]),
-    ["Ubicación", answers.ubicacion || "—"],
-    ["Requerimientos especiales", answers.especiales || "Ninguno"],
+  // Filas del resumen con los rótulos de un idioma (pantalla: el de la página;
+  // correo al equipo: siempre español).
+  const rows = (L: typeof u, cfgL: typeof cfg): [string, string][] => [
+    [cfgL.volumeLabel, answers.volume || "—"],
+    ...cfgL.fields.map(f => [f.label, answers[f.key] || "—"] as [string, string]),
+    [L.labels.location, answers.ubicacion || "—"],
+    [L.labels.special, answers.especiales || L.labels.none],
   ];
-  const contactRows: [string, string][] = [
-    ["Empresa", contact.empresa || "—"], ["Sector", contact.sector || "—"],
-    ["Contacto", `${contact.nombre || "—"}${contact.cargo ? " · " + contact.cargo : ""}`],
-    ["Correo", contact.email || "—"], ["Teléfono", contact.telefono || "—"],
+  const contactRowsOf = (L: typeof u): [string, string][] => [
+    [L.labels.company, contact.empresa || "—"], [L.labels.sector, contact.sector || "—"],
+    [L.labels.contact, `${contact.nombre || "—"}${contact.cargo ? " · " + contact.cargo : ""}`],
+    [L.labels.email, contact.email || "—"], [L.labels.phone, contact.telefono || "—"],
   ];
+  const summary = rows(u, cfg);
+  const contactRows = contactRowsOf(u);
   // Misma solicitud como mensaje de WhatsApp (chat con el texto ya escrito)
   const whatsappQuote = () => whatsappUrl(
-    `Hola, Transarchivos. Quisiera una cotización.\n\n*Servicio:* ${title}` + (solutionInfo ? `\n*Solución:* ${solutionInfo.title}` : "") +
-    `\n\n*Datos de la solicitud*\n` + summary.map(([k, v]) => `- ${k}: ${v}`).join("\n") +
-    `\n\n*Contacto*\n` + contactRows.map(([k, v]) => `- ${k}: ${v}`).join("\n"));
+    `${u.waIntro}\n\n*${u.labels.service}:* ${title}` + (solutionInfo ? `\n*${u.solution}:* ${solutionInfo.title}` : "") +
+    `\n\n*${u.waData}*\n` + summary.map(([k, v]) => `- ${k}: ${v}`).join("\n") +
+    `\n\n*${u.waContact}*\n` + contactRows.map(([k, v]) => `- ${k}: ${v}`).join("\n"));
   // Envío directo de la solicitud (función del sitio → Brevo → correo de la empresa)
   const [sendState, setSendState] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const sendQuote = async () => {
     setSendState("sending");
+    const es = UI.es.quote, cfgEs = getContent("es").quoteConfig[selected];
     const fields: Record<string, string> = { "Servicio": title };
-    if (solutionInfo) fields["Solución de interés"] = solutionInfo.title;
-    summary.forEach(([k, v]) => { fields[k] = v; });
-    contactRows.forEach(([k, v]) => { fields[k] = v; });
-    fields["Siguiente paso sugerido"] = nextStep.t;
+    if (solutionInfo) fields[es.labels.solutionOf] = solutionInfo.title;
+    rows(es, cfgEs).forEach(([k, v]) => { fields[k] = v; });
+    contactRowsOf(es).forEach(([k, v]) => { fields[k] = v; });
+    fields[es.labels.nextStep] = nextStep.t;
     fields["Autorización de datos"] = "Sí";
-    const r = await sendLead("cotizacion", `Solicitud de cotización — ${title}`, fields, { email: contact.email ?? "", name: contact.nombre });
+    const r = await sendLead("cotizacion", u.subject(title), fields, { email: contact.email ?? "", name: contact.nombre }, "", lang);
     setSendState(r.ok ? "sent" : "error");
     if (r.ok) trackEvent("generate_lead", { method: "cotizador", service: selected, solution: solution ?? undefined });
   };
@@ -107,25 +117,19 @@ export function QuoteSimulator() {
   // Opciones del paso 1 (textos del cotizador en services.ts; Servicio
   // inmediato no se ofrece aquí: pedido del cliente, oct. 2026).
   const units = [
-    { slug: "diagnostico", icon: "search", title: "Diagnóstico documental", desc: "Identifique brechas normativas, físicas y operativas en su archivo. Diseñamos la ruta técnica adecuada antes de iniciar cualquier intervención.", accent: C.gold },
+    { slug: "diagnostico", icon: "search", title: u.diagnostic.title, desc: u.diagnostic.desc, accent: C.gold },
     ...services.flatMap(sv => sv.quote ? [{ slug: sv.slug, icon: sv.icon, title: sv.quote.title, desc: sv.quote.desc, accent: sv.accent }] : []),
   ];
-  const STEPS = ["Servicio", "Detalles", "Contacto", "Resumen"];
+  const STEPS = u.steps;
   const primaryBtn = "inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all hover:opacity-90 cursor-pointer";
   const secondaryBtn = "inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold cursor-pointer";
-  const answeredRows = summary.filter(([, v]) => v !== "—" && v !== "Ninguno");
+  const answeredRows = summary.filter(([, v]) => v !== "—" && v !== u.labels.none);
 
   return (
     <section id="cotizador" className="relative max-w-6xl mx-auto px-6 py-16" style={{ scrollMarginTop: 80 }}>
-      <p className="text-xs font-bold uppercase tracking-widest text-center mb-3" style={{ color: C.gold, fontFamily: "Montserrat, sans-serif" }}>
-        Cotización a la medida
-      </p>
-      <h2 className="text-3xl font-bold text-center mb-4" style={{ fontFamily: "Poppins, sans-serif", color: C.indigo }}>
-        Defina su necesidad y prepare su solicitud comercial
-      </h2>
-      <p className="text-sm text-center max-w-xl mx-auto mb-10" style={{ color: C.muted }}>
-        4 pasos simples. Visualice la composición técnica de su requerimiento en tiempo real antes de conectarse con nuestro equipo comercial.
-      </p>
+      <p className="text-xs font-bold uppercase tracking-widest text-center mb-3" style={{ color: C.gold, fontFamily: "Montserrat, sans-serif" }}>{u.kicker}</p>
+      <h2 className="text-3xl font-bold text-center mb-4" style={{ fontFamily: "Poppins, sans-serif", color: C.indigo }}>{u.title}</h2>
+      <p className="text-sm text-center max-w-xl mx-auto mb-10" style={{ color: C.muted }}>{u.text}</p>
 
       <div className="rounded-3xl overflow-hidden" style={{ background: "#fff", border: "1.5px solid #E4E6F7", boxShadow: "0 30px 60px -34px rgba(24,0,173,0.3)" }}>
         {/* Pasos */}
@@ -158,30 +162,30 @@ export function QuoteSimulator() {
           <div className="p-5 md:p-8" key={step} style={{ animation: "fadeInUp 0.3s ease both" }}>
             {step === 0 && (
               <>
-                <p className="text-lg font-bold mb-1" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>¿Qué servicio necesita?</p>
-                <p className="text-sm mb-5" style={{ color: "#8A8A8A" }}>¿No tiene certeza sobre el alcance técnico? Inicie con un Diagnóstico Documental para evaluar el estado actual de su archivo.</p>
+                <p className="text-lg font-bold mb-1" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>{u.s0Title}</p>
+                <p className="text-sm mb-5" style={{ color: "#8A8A8A" }}>{u.s0Text}</p>
                 <div className="grid sm:grid-cols-2 gap-3">
-                  {units.map(u => {
-                    const on = u.slug === selected;
+                  {units.map(x => {
+                    const on = x.slug === selected;
                     return (
-                      <button key={u.slug} type="button" onClick={() => pick(u.slug, 0)}
+                      <button key={x.slug} type="button" onClick={() => pick(x.slug, 0)}
                         className="relative flex items-start gap-3 text-left p-3.5 rounded-2xl cursor-pointer card-lift"
-                        style={{ border: `1.5px solid ${on ? u.accent : "#ECEEF6"}`, background: on ? `${u.accent}0D` : "#fff" }}>
-                        <span className="flex items-center justify-center rounded-xl shrink-0" style={{ width: 38, height: 38, background: on ? u.accent : `${u.accent}14`, transition: "background 0.2s" }}>
-                          <Bi n={u.icon} size={17} color={on ? "#fff" : u.accent} />
+                        style={{ border: `1.5px solid ${on ? x.accent : "#ECEEF6"}`, background: on ? `${x.accent}0D` : "#fff" }}>
+                        <span className="flex items-center justify-center rounded-xl shrink-0" style={{ width: 38, height: 38, background: on ? x.accent : `${x.accent}14`, transition: "background 0.2s" }}>
+                          <Bi n={x.icon} size={17} color={on ? "#fff" : x.accent} />
                         </span>
                         <span className="min-w-0 pr-5">
-                          <span className="block text-sm font-semibold leading-tight mb-0.5" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>{u.title}</span>
-                          <span className="block text-[11px] leading-snug" style={{ color: "#8A8A8A" }}>{u.desc}</span>
+                          <span className="block text-sm font-semibold leading-tight mb-0.5" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>{x.title}</span>
+                          <span className="block text-[11px] leading-snug" style={{ color: "#8A8A8A" }}>{x.desc}</span>
                         </span>
-                        {on && <Bi n="check-circle-fill" size={16} color={u.accent} className="absolute top-3 right-3" />}
+                        {on && <Bi n="check-circle-fill" size={16} color={x.accent} className="absolute top-3 right-3" />}
                       </button>
                     );
                   })}
                 </div>
                 <div className="flex justify-end mt-6">
                   <button type="button" onClick={() => setStep(1)} className={primaryBtn} style={{ background: C.yellow, color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>
-                    Continuar <Bi n="arrow-right" size={15} color={C.indigo} />
+                    {u.next} <Bi n="arrow-right" size={15} color={C.indigo} />
                   </button>
                 </div>
               </>
@@ -193,10 +197,8 @@ export function QuoteSimulator() {
                   <div className="flex items-start gap-3 rounded-2xl p-3.5 mb-5" style={{ background: "#F7F8FF", border: "1px solid #E4E6F7" }}>
                     <MenuIcon n={SOLUTIONS_ICON[solutionInfo.id] ?? "lightbulb"} size={34} />
                     <div className="min-w-0">
-                      <p className="text-[11px] font-bold uppercase tracking-wider" style={{ color: C.gold, fontFamily: "Montserrat, sans-serif" }}>Solución: {solutionInfo.title}</p>
-                      <p className="text-xs mt-0.5" style={{ color: C.muted }}>
-                        {solutionInfo.slugs.length > 1 ? "Esta solución combina varios servicios. Está cotizando el principal; puede cambiar:" : "Está cotizando el servicio que compone esta solución."}
-                      </p>
+                      <p className="text-[11px] font-bold uppercase tracking-wider" style={{ color: C.gold, fontFamily: "Montserrat, sans-serif" }}>{u.solution}: {solutionInfo.title}</p>
+                      <p className="text-xs mt-0.5" style={{ color: C.muted }}>{solutionInfo.slugs.length > 1 ? u.multi : u.single}</p>
                       {solutionInfo.slugs.length > 1 && (
                         <div className="flex flex-wrap gap-1.5 mt-2">
                           {solutionInfo.slugs.map(sl => {
@@ -211,8 +213,8 @@ export function QuoteSimulator() {
                     </div>
                   </div>
                 )}
-                <p className="text-lg font-bold mb-1" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>Cuéntenos sobre su archivo</p>
-                <p className="text-sm mb-5" style={{ color: "#8A8A8A" }}>Si no conoce algún dato, elija "No lo sé": un asesor le ayudará a completarlo.</p>
+                <p className="text-lg font-bold mb-1" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>{u.s1Title}</p>
+                <p className="text-sm mb-5" style={{ color: "#8A8A8A" }}>{u.s1Text}</p>
                 <div className="grid sm:grid-cols-2 gap-x-4 gap-y-4">
                   <div className="sm:col-span-2">
                     <label htmlFor="cot-volume" className={labelCls} style={labelStyle}>{cfg.volumeLabel}</label>
@@ -222,26 +224,26 @@ export function QuoteSimulator() {
                     <div key={f.key} className={i === cfg.fields.length - 1 && cfg.fields.length % 2 === 1 ? "sm:col-span-2" : ""}>
                       <label className={labelCls} style={labelStyle}>{f.label}</label>
                       <select value={answers[f.key] ?? ""} onChange={e => setA(f.key, e.target.value)} className={inputCls} style={inputStyle}>
-                        <option value="">Seleccione…</option>
+                        <option value="">{u.select}</option>
                         {f.options.map(o => <option key={o} value={o}>{o}</option>)}
                       </select>
                     </div>
                   ))}
                   <div className="sm:col-span-2">
-                    <label htmlFor="cot-ubicacion" className={labelCls} style={labelStyle}>Ubicación (ciudad y sede)</label>
-                    <input id="cot-ubicacion" value={answers.ubicacion ?? ""} onChange={e => setA("ubicacion", e.target.value)} placeholder="Ej.: Bogotá, sede principal" className={inputCls} style={inputStyle} />
+                    <label htmlFor="cot-ubicacion" className={labelCls} style={labelStyle}>{u.location}</label>
+                    <input id="cot-ubicacion" value={answers.ubicacion ?? ""} onChange={e => setA("ubicacion", e.target.value)} placeholder={u.locationPh} className={inputCls} style={inputStyle} />
                   </div>
                   <div className="sm:col-span-2">
-                    <label htmlFor="cot-especiales" className={labelCls} style={labelStyle}>Requerimientos especiales <span style={{ color: C.faint, fontWeight: 400 }}>(opcional)</span></label>
-                    <textarea id="cot-especiales" value={answers.especiales ?? ""} onChange={e => setA("especiales", e.target.value)} rows={2} placeholder="Restricciones, características del material, otra información…" className={`${inputCls} resize-none`} style={inputStyle} />
+                    <label htmlFor="cot-especiales" className={labelCls} style={labelStyle}>{u.special} <span style={{ color: C.faint, fontWeight: 400 }}>{u.optional}</span></label>
+                    <textarea id="cot-especiales" value={answers.especiales ?? ""} onChange={e => setA("especiales", e.target.value)} rows={2} placeholder={u.specialPh} className={`${inputCls} resize-none`} style={inputStyle} />
                   </div>
                 </div>
                 <div className="flex justify-between gap-3 mt-6">
                   <button type="button" onClick={() => setStep(0)} className={secondaryBtn} style={{ background: "#fff", color: C.indigo, border: "1.5px solid #DDE0F2", fontFamily: "Montserrat, sans-serif" }}>
-                    <Bi n="arrow-left" size={14} color={C.indigo} /> Atrás
+                    <Bi n="arrow-left" size={14} color={C.indigo} /> {u.back}
                   </button>
                   <button type="submit" className={primaryBtn} style={{ background: C.yellow, color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>
-                    Continuar <Bi n="arrow-right" size={15} color={C.indigo} />
+                    {u.next} <Bi n="arrow-right" size={15} color={C.indigo} />
                   </button>
                 </div>
               </form>
@@ -249,48 +251,48 @@ export function QuoteSimulator() {
 
             {step === 2 && (
               <form onSubmit={e => { e.preventDefault(); setStep(3); }}>
-                <p className="text-lg font-bold mb-1" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>¿A quién contactamos?</p>
-                <p className="text-sm mb-5" style={{ color: C.muted }}>Usaremos estos datos solo para responder su solicitud.</p>
+                <p className="text-lg font-bold mb-1" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>{u.s2Title}</p>
+                <p className="text-sm mb-5" style={{ color: C.muted }}>{u.s2Text}</p>
                 <div className="grid sm:grid-cols-2 gap-x-4 gap-y-4">
                   <div>
-                    <label htmlFor="cot-empresa" className={labelCls} style={labelStyle}>Empresa</label>
+                    <label htmlFor="cot-empresa" className={labelCls} style={labelStyle}>{u.company}</label>
                     <input id="cot-empresa" required value={contact.empresa ?? ""} onChange={e => setC("empresa", e.target.value)} className={inputCls} style={inputStyle} />
                   </div>
                   <div>
-                    <label htmlFor="cot-sector" className={labelCls} style={labelStyle}>Sector económico</label>
+                    <label htmlFor="cot-sector" className={labelCls} style={labelStyle}>{u.sector}</label>
                     <select id="cot-sector" required value={contact.sector ?? ""} onChange={e => setC("sector", e.target.value)} className={inputCls} style={inputStyle}>
-                      <option value="">Seleccione…</option>
-                      {QUOTE_SECTORS.map(o => <option key={o} value={o}>{o}</option>)}
+                      <option value="">{u.select}</option>
+                      {quoteSectors.map(o => <option key={o} value={o}>{o}</option>)}
                     </select>
                   </div>
                   <div>
-                    <label htmlFor="cot-nombre" className={labelCls} style={labelStyle}>Su nombre</label>
+                    <label htmlFor="cot-nombre" className={labelCls} style={labelStyle}>{u.name}</label>
                     <input id="cot-nombre" required value={contact.nombre ?? ""} onChange={e => setC("nombre", e.target.value)} className={inputCls} style={inputStyle} />
                   </div>
                   <div>
-                    <label htmlFor="cot-cargo" className={labelCls} style={labelStyle}>Cargo</label>
+                    <label htmlFor="cot-cargo" className={labelCls} style={labelStyle}>{u.role}</label>
                     <input id="cot-cargo" required value={contact.cargo ?? ""} onChange={e => setC("cargo", e.target.value)} className={inputCls} style={inputStyle} />
                   </div>
                   <div>
-                    <label htmlFor="cot-email" className={labelCls} style={labelStyle}>Correo electrónico</label>
+                    <label htmlFor="cot-email" className={labelCls} style={labelStyle}>{u.email}</label>
                     <input id="cot-email" required type="email" value={contact.email ?? ""} onChange={e => setC("email", e.target.value)} className={inputCls} style={inputStyle} />
                   </div>
                   <div>
-                    <label htmlFor="cot-telefono" className={labelCls} style={labelStyle}>Teléfono</label>
+                    <label htmlFor="cot-telefono" className={labelCls} style={labelStyle}>{u.phone}</label>
                     <input id="cot-telefono" required type="tel" value={contact.telefono ?? ""} onChange={e => setC("telefono", e.target.value)} className={inputCls} style={inputStyle} />
                   </div>
                 </div>
                 {/* Autorización de tratamiento de datos (Ley 1581 de 2012): obligatoria, sin marcar por defecto */}
                 <label htmlFor="cot-autorizacion" className="mt-5 flex items-start gap-2.5 text-xs cursor-pointer" style={{ color: "#4B4B4B", lineHeight: 1.55 }}>
                   <input id="cot-autorizacion" type="checkbox" required checked={contact.autorizacion === "si"} onChange={e => setC("autorizacion", e.target.checked ? "si" : "")} className="mt-0.5 h-4 w-4 shrink-0 accent-indigo" />
-                  <span>Autorizo a Transarchivos Ltda. a tratar mis datos personales para responder esta solicitud, según su <Link to="/privacidad" target="_blank" style={{ color: C.indigo, fontWeight: 600 }}>política de privacidad y tratamiento de datos</Link>.</span>
+                  <span>{u.consent}<Link to={lp("/privacidad")} target="_blank" style={{ color: C.indigo, fontWeight: 600 }}>{u.consentLink}</Link>.</span>
                 </label>
                 <div className="flex justify-between gap-3 mt-6">
                   <button type="button" onClick={() => setStep(1)} className={secondaryBtn} style={{ background: "#fff", color: C.indigo, border: "1.5px solid #DDE0F2", fontFamily: "Montserrat, sans-serif" }}>
-                    <Bi n="arrow-left" size={14} color={C.indigo} /> Atrás
+                    <Bi n="arrow-left" size={14} color={C.indigo} /> {u.back}
                   </button>
                   <button type="submit" className={primaryBtn} style={{ background: C.yellow, color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>
-                    Ver resumen <Bi n="arrow-right" size={15} color={C.indigo} />
+                    {u.summary} <Bi n="arrow-right" size={15} color={C.indigo} />
                   </button>
                 </div>
               </form>
@@ -298,12 +300,12 @@ export function QuoteSimulator() {
 
             {step === 3 && (
               <div>
-                <p className="text-lg font-bold mb-1" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>Revise y envíe su solicitud</p>
-                <p className="text-sm mb-5" style={{ color: C.muted }}>Envíela por correo o por WhatsApp: llega directamente a nuestro equipo comercial.</p>
+                <p className="text-lg font-bold mb-1" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>{u.s3Title}</p>
+                <p className="text-sm mb-5" style={{ color: C.muted }}>{u.s3Text}</p>
                 <div className="flex items-start gap-3 rounded-2xl p-4 mb-5" style={{ background: `${nextStep.c}10`, border: `1px solid ${nextStep.c}33` }}>
                   <Bi n={nextStep.ic} size={20} color={nextStep.c} style={{ marginTop: 2, flexShrink: 0 }} />
                   <div>
-                    <p className="text-sm font-bold" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>Siguiente paso: {nextStep.t}</p>
+                    <p className="text-sm font-bold" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>{u.nextStep}: {nextStep.t}</p>
                     <p className="text-xs mt-0.5" style={{ color: C.muted, lineHeight: 1.55 }}>{nextStep.d}</p>
                   </div>
                 </div>
@@ -317,7 +319,7 @@ export function QuoteSimulator() {
                 </div>
                 {cfg.next.length > 0 && (
                   <div className="mb-6">
-                    <p className="text-[11px] font-bold uppercase tracking-wider mb-2" style={{ color: C.faint, fontFamily: "Montserrat, sans-serif" }}>También podría necesitar</p>
+                    <p className="text-[11px] font-bold uppercase tracking-wider mb-2" style={{ color: C.faint, fontFamily: "Montserrat, sans-serif" }}>{u.also}</p>
                     <div className="flex flex-wrap gap-2">
                       {cfg.next.map(n => {
                         const o = units.find(x => x.slug === n);
@@ -333,26 +335,26 @@ export function QuoteSimulator() {
                 )}
                 <div className="flex flex-col-reverse sm:flex-row justify-between gap-3">
                   <button type="button" onClick={() => setStep(2)} className={secondaryBtn} style={{ background: "#fff", color: C.indigo, border: "1.5px solid #DDE0F2", fontFamily: "Montserrat, sans-serif" }}>
-                    <Bi n="arrow-left" size={14} color={C.indigo} /> Modificar datos
+                    <Bi n="arrow-left" size={14} color={C.indigo} /> {u.modify}
                   </button>
                   <div className="flex flex-col sm:flex-row gap-3">
                     <a href={whatsappQuote()} target="_blank" rel="noopener noreferrer" onClick={() => trackEvent("generate_lead", { method: "whatsapp", service: selected, solution: solution ?? undefined })}
                       className={primaryBtn} style={{ background: "#fff", color: C.indigo, border: "1.5px solid #1800AD", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
-                      <Bi n="whatsapp" size={16} color="#16a34a" /> Enviar por WhatsApp
+                      <Bi n="whatsapp" size={16} color="#16a34a" /> {u.sendWa}
                     </a>
                     <button type="button" onClick={sendQuote} disabled={sendState === "sending" || sendState === "sent"} className={`${primaryBtn} disabled:opacity-70`} style={{ background: sendState === "sent" ? "#16a34a" : C.yellow, color: sendState === "sent" ? "#fff" : C.indigo, fontFamily: "Montserrat, sans-serif" }}>
-                      {sendState === "sent" ? <><Bi n="check-lg" size={16} color="#fff" /> Solicitud enviada</> : sendState === "sending" ? "Enviando…" : <><Bi n="envelope-arrow-up" size={15} color={C.indigo} /> Enviar por correo</>}
+                      {sendState === "sent" ? <><Bi n="check-lg" size={16} color="#fff" /> {u.sent}</> : sendState === "sending" ? u.sending : <><Bi n="envelope-arrow-up" size={15} color={C.indigo} /> {u.sendMail}</>}
                     </button>
                   </div>
                 </div>
                 {sendState === "sent" && (
                   <p role="status" className="mt-4 rounded-xl px-3.5 py-3 text-sm" style={{ background: "#EAF7EE", color: "#15803d" }}>
-                    <Bi n="check-circle-fill" size={14} color="#15803d" className="mr-1.5" />¡Gracias! Recibimos su solicitud. Un asesor le responderá a {contact.email}.
+                    <Bi n="check-circle-fill" size={14} color="#15803d" className="mr-1.5" />{u.thanks(contact.email ?? "")}
                   </p>
                 )}
                 {sendState === "error" && (
                   <p role="alert" className="mt-4 rounded-xl px-3.5 py-3 text-xs" style={{ background: "#FFF6D6", color: "#8A6D00", lineHeight: 1.55 }}>
-                    No pudimos enviar la solicitud en este momento. Intente de nuevo o escríbanos por <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" style={{ color: C.indigo, fontWeight: 700 }}>WhatsApp</a>.
+                    {u.error}<a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" style={{ color: C.indigo, fontWeight: 700 }}>WhatsApp</a>.
                   </p>
                 )}
               </div>
@@ -361,7 +363,7 @@ export function QuoteSimulator() {
 
           {/* Resumen en vivo */}
           <aside className="p-5 md:p-7 lg:border-l" style={{ borderColor: "#ECEEF6", background: "#FAFBFF" }}>
-            <p className="text-[11px] font-bold uppercase tracking-wider mb-3" style={{ color: C.faint, fontFamily: "Montserrat, sans-serif" }}>Su solicitud</p>
+            <p className="text-[11px] font-bold uppercase tracking-wider mb-3" style={{ color: C.faint, fontFamily: "Montserrat, sans-serif" }}>{u.aside}</p>
             <div className="flex items-center gap-3 rounded-2xl p-3 mb-4" style={{ background: "#fff", border: "1px solid #ECEEF6" }}>
               <span className="flex items-center justify-center rounded-xl shrink-0" style={{ width: 42, height: 42, background: accent }}>
                 <Bi n={icon} size={19} color="#fff" />
@@ -371,13 +373,13 @@ export function QuoteSimulator() {
                 {cfg.level && <p className="text-[11px]" style={{ color: C.faint }}>{cfg.level}</p>}
               </div>
               {step > 0 && (
-                <button type="button" onClick={() => setStep(0)} className="text-[11px] font-semibold shrink-0" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>Cambiar</button>
+                <button type="button" onClick={() => setStep(0)} className="text-[11px] font-semibold shrink-0" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>{u.change}</button>
               )}
             </div>
 
             <div className="mb-4">
               <div className="flex items-center justify-between mb-1.5">
-                <span className="text-xs font-semibold" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>Información completa</span>
+                <span className="text-xs font-semibold" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>{u.complete}</span>
                 <span className="text-xs font-bold" style={{ color: completPct === 100 ? "#16a34a" : C.indigo }}>{completPct}%</span>
               </div>
               <div className="h-2 rounded-full overflow-hidden" style={{ background: C.border }}>
@@ -396,13 +398,13 @@ export function QuoteSimulator() {
               </ul>
             ) : (
               <p className="text-xs leading-relaxed" style={{ color: C.faint }}>
-                {units.find(u => u.slug === selected)?.desc ?? svc?.desc}
+                {units.find(x => x.slug === selected)?.desc ?? svc?.desc}
               </p>
             )}
 
             <div className="flex items-start gap-2 mt-5 pt-4" style={{ borderTop: "1px solid #ECEEF6" }}>
               <Bi n="shield-lock" size={13} color={C.faint} style={{ marginTop: 2, flexShrink: 0 }} />
-              <p className="text-[11px] leading-snug" style={{ color: C.faint }}>Sin compromiso. Un asesor revisa su solicitud y le responde con el alcance y las condiciones.</p>
+              <p className="text-[11px] leading-snug" style={{ color: C.faint }}>{u.noCommit}</p>
             </div>
           </aside>
         </div>

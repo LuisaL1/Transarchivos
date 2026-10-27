@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { Bi } from "@/components/ui/Icons";
 import { kicker, h2 } from "@/components/ui/SectionHead";
+import { usePagesUi } from "@/i18n/pages";
 import { C } from "@/styles/tokens";
 import type { ServiceFaq } from "@/data/serviceFaqs";
 
@@ -31,11 +32,12 @@ function lead(s: string): ReactNode {
 
 export function ServiceFaqs({ faqs, serviceTitle, dark }: { faqs: ServiceFaq[]; serviceTitle: string; dark: boolean }) {
   const [open, setOpen] = useState(0);
+  const u = usePagesUi().service;
   return (
     <div className="max-w-6xl mx-auto px-6">
       <div className="max-w-2xl mb-8">
-        {kicker("Preguntas frecuentes", dark)}
-        {h2(<>Lo que nos preguntan sobre {serviceTitle.toLowerCase()}</>, dark)}
+        {kicker(u.faqKicker, dark)}
+        {h2(u.faqTitle(serviceTitle), dark)}
       </div>
       <div className="space-y-3">
         {faqs.map((f, i) => {

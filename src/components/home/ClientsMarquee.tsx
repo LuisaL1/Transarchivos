@@ -1,4 +1,5 @@
 import { CLIENTS } from "@/data/clients";
+import { useUi } from "@/i18n/ui";
 import { C } from "@/styles/tokens";
 
 // Carrusel de clientes históricos (mismo recurso de Transpack): dos filas que
@@ -20,11 +21,12 @@ function logoBox(ratio: number) {
 const ROWS = [CLIENTS.filter((_, i) => i % 2 === 0), CLIENTS.filter((_, i) => i % 2 === 1)];
 
 export function ClientsMarquee() {
+  const u = useUi().clients;
   return (
-    <section aria-label="Empresas que han confiado en Transarchivos" className="relative pt-10 pb-8 md:pt-12 md:pb-10" style={{ background: "#FFFFFF" }}>
-      <p className="mb-2 text-center text-xs font-bold uppercase tracking-widest" style={{ color: C.gold, fontFamily: "Montserrat, sans-serif" }}>Nuestros clientes</p>
+    <section aria-label={u.aria} className="relative pt-10 pb-8 md:pt-12 md:pb-10" style={{ background: "#FFFFFF" }}>
+      <p className="mb-2 text-center text-xs font-bold uppercase tracking-widest" style={{ color: C.gold, fontFamily: "Montserrat, sans-serif" }}>{u.kicker}</p>
       <p className="mb-8 px-6 mx-auto max-w-4xl text-center text-xl md:text-2xl font-bold" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>
-        Más de 4.000 compañías garantizan nuestro cumplimiento
+        {u.title}
       </p>
       {/* Franja blanca (única sección clara del sitio): los logos van
           directamente sobre el fondo, en gris, y recuperan su color al pasar
@@ -33,7 +35,7 @@ export function ClientsMarquee() {
         {ROWS.map((row, r) => (
           // Región desplazable (con "reducir movimiento"): debe poder enfocarse con teclado (WCAG).
           // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-          <div key={r} className="marquee flex overflow-hidden py-2" dir="ltr" role="region" tabIndex={0} aria-label={`Logos de clientes, fila ${r + 1}`}>
+          <div key={r} className="marquee flex overflow-hidden py-2" dir="ltr" role="region" tabIndex={0} aria-label={u.row(r + 1)}>
             {[0, 1].map(k => (
               <div key={k} aria-hidden={k === 1} className={`marquee-track flex shrink-0 items-center gap-12 pr-12 md:gap-14 md:pr-14 ${r ? "marquee-reverse" : ""}`}
                 style={{ animationDuration: `${row.length * 3.2}s` }}>

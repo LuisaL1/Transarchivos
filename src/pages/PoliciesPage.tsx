@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ChatBot } from "@/components/chat/LazyChatBot";
-import { SiteHeader } from "@/components/layout/SiteHeader";
+import { HEADER_SPACE, SiteHeader } from "@/components/layout/SiteHeader";
 import { Bi } from "@/components/ui/Icons";
 import { SectionDecor } from "@/components/ui/SectionDecor";
 import { PageHero } from "@/components/sections/PageHero";
 import { POLICIES, type Policy, type PolicyBlock } from "@/data/policies";
+import { useLang } from "@/i18n";
+import { usePagesUi } from "@/i18n/pages";
 import { C } from "@/styles/tokens";
 
 // ─── Políticas institucionales ─────────────────────────────────────────────
@@ -41,9 +43,9 @@ function Blocks({ blocks }: { blocks: PolicyBlock[] }) {
   return <>{out}</>;
 }
 
-function PolicyCard({ p, open, onToggle }: { p: Policy; open: boolean; onToggle: () => void }) {
+function PolicyCard({ p, open, onToggle, pdfLabel }: { p: Policy; open: boolean; onToggle: () => void; pdfLabel: string }) {
   return (
-    <section id={p.id} className="rounded-3xl bg-white" style={{ border: "1.5px solid #E4E6F7", boxShadow: "0 14px 30px -26px rgba(24,0,173,0.45)", scrollMarginTop: 90 }}>
+    <section id={p.id} lang="es" className="rounded-3xl bg-white" style={{ border: "1.5px solid #E4E6F7", boxShadow: "0 14px 30px -26px rgba(24,0,173,0.45)", scrollMarginTop: 90 }}>
       <button type="button" onClick={onToggle} aria-expanded={open} aria-controls={`${p.id}-body`} className="w-full flex items-start gap-4 p-5 md:p-6 text-left">
         <span className="grid place-items-center rounded-2xl shrink-0" style={{ width: 46, height: 46, background: C.indigo }}>
           <Bi n={ICONS[p.id] ?? "file-earmark-text"} size={20} color={C.yellow} />
@@ -67,7 +69,7 @@ function PolicyCard({ p, open, onToggle }: { p: Policy; open: boolean; onToggle:
           {p.pdf && (
             <a href={p.pdf} target="_blank" rel="noopener noreferrer" className="mt-5 inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold"
               style={{ background: C.indigo, color: "#fff", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
-              <Bi n="file-earmark-pdf" size={15} color={C.yellow} /> Descargar documento oficial (PDF)
+              <Bi n="file-earmark-pdf" size={15} color={C.yellow} /> {pdfLabel}
             </a>
           )}
         </div>
@@ -78,6 +80,8 @@ function PolicyCard({ p, open, onToggle }: { p: Policy; open: boolean; onToggle:
 
 export function PoliciesPage() {
   const [chatOpen, setChatOpen] = useState(false);
+  const u = usePagesUi();
+  const { lp } = useLang();
   const { hash } = useLocation();
   const [open, setOpen] = useState<string | null>(null);
   // Llegada con ancla (#proteccion-de-datos…): abre esa política y la muestra.
@@ -90,25 +94,28 @@ export function PoliciesPage() {
   return (
     <div className="min-h-full" style={{ background: C.cream, fontFamily: "Inter, sans-serif", color: "#37352F" }}>
       <SiteHeader solid onChat={() => setChatOpen(true)} />
-      <div aria-hidden="true" style={{ height: 60 }} />
+      <div aria-hidden="true" style={{ height: HEADER_SPACE }} />
 
       <PageHero>
         <div className="max-w-6xl mx-auto px-6 pt-12 pb-20">
           <p className="text-xs mb-5" style={{ color: "rgba(255,255,255,0.6)", fontFamily: "Montserrat, sans-serif" }}>
-            <Link to="/" style={{ color: "inherit", textDecoration: "none" }}>Inicio</Link> / <span style={{ color: C.yellow }}>Políticas</span>
+            <Link to={lp("/")} style={{ color: "inherit", textDecoration: "none" }}>{u.common.home}</Link> / <span style={{ color: C.yellow }}>{u.common.policies}</span>
           </p>
-          <h1 className="text-3xl md:text-5xl font-bold mb-4 max-w-3xl" style={{ color: "#fff", fontFamily: "Poppins, sans-serif", lineHeight: 1.12 }}>Políticas Transarchivos</h1>
-          <p className="text-base max-w-2xl" style={{ color: "rgba(255,255,255,0.8)", lineHeight: 1.7 }}>
-            Los compromisos que guían nuestra operación: protección de datos personales, seguridad de la información, seguridad vial, responsabilidad social, transparencia y HSEQ.
-          </p>
+          <h1 className="text-3xl md:text-5xl font-bold mb-4 max-w-3xl" style={{ color: "#fff", fontFamily: "Poppins, sans-serif", lineHeight: 1.12 }}>{u.policies.title}</h1>
+          <p className="text-base max-w-2xl" style={{ color: "rgba(255,255,255,0.8)", lineHeight: 1.7 }}>{u.policies.text}</p>
+          {u.policies.note && (
+            <p className="mt-5 inline-flex items-start gap-2 rounded-xl px-4 py-3 text-sm max-w-2xl" style={{ background: "rgba(255,255,255,0.1)", color: "#fff", border: "1px solid rgba(255,222,89,0.35)" }}>
+              <Bi n="translate" size={15} color={C.yellow} className="mt-0.5 shrink-0" /> <span>{u.policies.note}</span>
+            </p>
+          )}
         </div>
       </PageHero>
 
       <section className="relative isolate overflow-hidden pb-16">
         <SectionDecor variant="light" />
         <div className="max-w-6xl mx-auto px-6 grid lg:grid-cols-[260px_minmax(0,1fr)] gap-8 items-start">
-          <nav aria-label="Índice de políticas" className="lg:sticky lg:top-24 rounded-3xl p-5 bg-white" style={{ border: "1px solid #E4E6F7" }}>
-            <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: C.gold, fontFamily: "Montserrat, sans-serif" }}>Políticas</p>
+          <nav aria-label={u.policies.indexAria} className="lg:sticky lg:top-24 rounded-3xl p-5 bg-white" style={{ border: "1px solid #E4E6F7" }}>
+            <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: C.gold, fontFamily: "Montserrat, sans-serif" }}>{u.policies.index}</p>
             <ol className="space-y-1">
               {POLICIES.map(p => (
                 <li key={p.id}>
@@ -119,18 +126,18 @@ export function PoliciesPage() {
               ))}
             </ol>
             <div className="mt-4 pt-4" style={{ borderTop: "1px solid #F0F1FA" }}>
-              <Link to="/privacidad" className="flex items-center gap-2 text-[12px] font-bold" style={{ color: C.indigo, textDecoration: "none" }}>
-                <Bi n="cookie" size={13} color={C.indigo} /> Aviso de privacidad y cookies del sitio web
+              <Link to={lp("/privacidad")} className="flex items-center gap-2 text-[12px] font-bold" style={{ color: C.indigo, textDecoration: "none" }}>
+                <Bi n="cookie" size={13} color={C.indigo} /> {u.policies.privacy}
               </Link>
             </div>
           </nav>
           <div className="space-y-4">
-            {POLICIES.map(p => <PolicyCard key={p.id} p={p} open={open === p.id} onToggle={() => setOpen(o => (o === p.id ? null : p.id))} />)}
+            {POLICIES.map(p => <PolicyCard key={p.id} p={p} open={open === p.id} pdfLabel={u.policies.pdf} onToggle={() => setOpen(o => (o === p.id ? null : p.id))} />)}
             <div className="rounded-3xl p-5 md:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4" style={{ background: C.lavender }}>
-              <p className="text-sm" style={{ color: "#4B4B4B" }}>¿Consultas sobre sus datos personales o una PQRS?</p>
+              <p className="text-sm" style={{ color: "#4B4B4B" }}>{u.policies.ask}</p>
               <a href="#contacto?motivo=Datos+personales+%28Ley+1581%29" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold shrink-0"
                 style={{ background: C.yellow, color: C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
-                Escribirnos <Bi n="arrow-right" size={13} color={C.indigo} />
+                {u.policies.write} <Bi n="arrow-right" size={13} color={C.indigo} />
               </a>
             </div>
           </div>

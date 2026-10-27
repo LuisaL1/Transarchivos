@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ChatBot } from "@/components/chat/LazyChatBot";
-import { SiteHeader } from "@/components/layout/SiteHeader";
+import { HEADER_SPACE, SiteHeader } from "@/components/layout/SiteHeader";
 import { Bi } from "@/components/ui/Icons";
 import { PHONES, WHATSAPP_LABEL } from "@/data/contact";
+import { useLang } from "@/i18n";
+import { usePagesUi } from "@/i18n/pages";
 import { BRAND, LEGAL } from "@/seo/site";
 import { analyticsEnabled, resetConsent } from "@/lib/analytics";
 import { C } from "@/styles/tokens";
@@ -11,98 +13,84 @@ import { C } from "@/styles/tokens";
 // Política de privacidad y tratamiento de datos personales DEL SITIO WEB
 // (Ley 1581 de 2012, Decreto 1377 de 2013 compilado en el Decreto 1074 de 2015).
 // Describe lo que el sitio realmente recoge. La política general de la empresa
-// (clientes, empleados, documentos en custodia) es un documento aparte.
+// (clientes, empleados, documentos en custodia) es un documento aparte. Textos
+// en src/i18n/pages.ts; la versión en inglés es una traducción de cortesía.
 export function PrivacyPage() {
   const [chatOpen, setChatOpen] = useState(false);
+  const { privacy: u, common } = usePagesUi();
+  const { lang, lp } = useLang();
   // Respuesta visible al botón de cookies (si no hay analítica configurada,
   // no hay aviso que mostrar: se explica en vez de no hacer nada).
   const [cookieMsg, setCookieMsg] = useState<"" | "banner" | "none">("");
   const changeCookies = () => { resetConsent(); setCookieMsg(analyticsEnabled ? "banner" : "none"); };
   const addr = `${BRAND.address.streetAddress}, ${BRAND.address.addressLocality}, Colombia`;
   const h2 = (t: string) => <h2 className="text-xl md:text-2xl font-bold mt-10 mb-3" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>{t}</h2>;
-  const rows: [string, string, string][] = [
-    ["Cotizador del sitio", "Nombre, cargo, empresa, sector económico, correo electrónico, teléfono y la información de su archivo (volumen, ubicación, urgencia, requerimientos)", "Preparar y enviar la cotización, contactarle para aclarar el alcance y hacer seguimiento comercial a su solicitud"],
-    ["Formulario de contacto", "Nombre, empresa, correo, teléfono, motivo y mensaje", "Responder su consulta, solicitud, petición, queja o reclamo"],
-    ["Chat con Joel (asesor virtual)", "Nombre, empresa, celular y lo que usted escriba en el chat", "Orientarle y armar la solicitud. Si elige «Enviar a un asesor», el resumen de su cotización (con su nombre y celular) llega al chat del equipo comercial para darle seguimiento"],
-    ["Chat con un asesor (Zoho SalesIQ)", "Lo que usted escriba al asesor y, si Zoho los pide, sus datos de contacto", "Atender su consulta con un asesor humano. Zoho solo se carga si usted elige hablar con un asesor o enviar su cotización a uno"],
-    ["WhatsApp, llamadas y correo", "Número de teléfono, correo y el contenido de su mensaje", "Atender su consulta o solicitud"],
-    ["Suscripción al blog", "Correo electrónico", "Enviarle novedades y contenido sobre gestión documental; puede cancelar cuando quiera"],
-    ["Google Analytics (solo si acepta las cookies)", "Datos de navegación: páginas visitadas, tiempo, dispositivo, ciudad aproximada e identificadores de cookies", "Medir y mejorar el sitio. No se usa con fines publicitarios"],
-  ];
+  const link = { color: C.indigo, fontWeight: 600 } as const;
+  const policies = lp("/politicas#proteccion-de-datos");
   return (
     <div className="min-h-full" style={{ background: C.cream, fontFamily: "Inter, sans-serif", color: "#37352F" }}>
       <SiteHeader solid onChat={() => setChatOpen(true)} />
-      <div aria-hidden="true" style={{ height: 60 }} />
+      <div aria-hidden="true" style={{ height: HEADER_SPACE }} />
       <div className="px-4 py-10 md:py-14">
-      {/* Documento sobre tarjeta blanca (fondo del sitio en azul marino) */}
+      {/* Documento sobre tarjeta blanca */}
       <main className="max-w-3xl mx-auto rounded-3xl bg-white px-6 py-10 md:px-12 md:py-12 text-[15px]" style={{ lineHeight: 1.75, boxShadow: "0 30px 60px -34px rgba(24,0,173,0.3)" }}>
-        <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: C.muted, fontFamily: "Montserrat, sans-serif" }}>Protección de datos personales</p>
-        <h1 className="text-3xl md:text-4xl font-bold mb-3" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif", lineHeight: 1.15 }}>Política de privacidad y tratamiento de datos del sitio web</h1>
-        <p className="text-sm mb-8" style={{ color: C.muted }}>Última actualización: {LEGAL.updated}</p>
+        <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: C.muted, fontFamily: "Montserrat, sans-serif" }}>{u.kicker}</p>
+        <h1 className="text-3xl md:text-4xl font-bold mb-3" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif", lineHeight: 1.15 }}>{u.title}</h1>
+        <p className="text-sm mb-8" style={{ color: C.muted }}>{u.updated}: {lang === "es" ? LEGAL.updated : LEGAL.updatedEn}</p>
+        {u.note && <p className="mb-6 rounded-xl px-4 py-3 text-sm" style={{ background: "#F7F8FF", color: C.muted }}>{u.note}</p>}
 
-        <p>Esta política explica qué datos personales recoge el sitio web de {BRAND.legalName}, para qué los usa y cómo puede ejercer sus derechos, conforme a la Ley 1581 de 2012 y sus decretos reglamentarios.</p>
+        <p>{u.intro(BRAND.legalName)}</p>
 
-        {h2("1. Responsable del tratamiento")}
+        {h2(u.h1)}
         <ul className="list-none space-y-1">
-          <li><strong>Razón social:</strong> {BRAND.legalName}{LEGAL.nit ? ` · NIT ${LEGAL.nit}` : ""}</li>
-          <li><strong>Dirección:</strong> {addr}</li>
-          <li><strong>Correo:</strong> {LEGAL.privacyEmail} · <a href="#contacto" style={{ color: C.indigo, fontWeight: 600 }}>formulario de contacto</a></li>
-          <li><strong>Teléfonos:</strong> {PHONES.map(p => p.label).join(" · ")} · WhatsApp {WHATSAPP_LABEL}</li>
+          <li><strong>{u.legalName}:</strong> {BRAND.legalName}{LEGAL.nit ? ` · NIT ${LEGAL.nit}` : ""}</li>
+          <li><strong>{u.address}:</strong> {addr}</li>
+          <li><strong>{u.email}:</strong> {LEGAL.privacyEmail} · <a href="#contacto" style={link}>{u.form}</a></li>
+          <li><strong>{u.phones}:</strong> {PHONES.map(p => p.label).join(" · ")} · WhatsApp {WHATSAPP_LABEL}</li>
         </ul>
 
-        {h2("2. Datos que recogemos y para qué")}
-        <p className="mb-4">El sitio no solicita datos sensibles (salud, origen étnico, orientación política, religiosa o sexual, datos biométricos) ni datos de menores de edad.</p>
+        {h2(u.h2)}
+        <p className="mb-4">{u.noSensitive}</p>
         <div className="overflow-x-auto rounded-2xl" style={{ border: "1.5px solid #E4E6F7" }}>
           <table className="w-full text-sm" style={{ borderCollapse: "collapse", minWidth: 560, lineHeight: 1.5 }}>
-            <thead><tr style={{ background: C.indigo, color: "#fff" }}>{["Dónde", "Datos", "Finalidad"].map(h => <th key={h} className="text-left px-4 py-3 font-semibold" style={{ fontFamily: "Montserrat, sans-serif" }}>{h}</th>)}</tr></thead>
-            <tbody>{rows.map((r, i) => <tr key={r[0]} style={{ background: i % 2 ? "#F7F8FF" : "#fff", borderTop: "1px solid #E4E6F7" }}>{r.map((c, j) => <td key={j} className="px-4 py-3 align-top" style={j === 0 ? { fontWeight: 700, color: C.indigo } : undefined}>{c}</td>)}</tr>)}</tbody>
+            <thead><tr style={{ background: C.indigo, color: "#fff" }}>{u.head.map(h => <th key={h} className="text-left px-4 py-3 font-semibold" style={{ fontFamily: "Montserrat, sans-serif" }}>{h}</th>)}</tr></thead>
+            <tbody>{u.rows.map((r, i) => <tr key={r[0]} style={{ background: i % 2 ? "#F7F8FF" : "#fff", borderTop: "1px solid #E4E6F7" }}>{r.map((c, j) => <td key={j} className="px-4 py-3 align-top" style={j === 0 ? { fontWeight: 700, color: C.indigo } : undefined}>{c}</td>)}</tr>)}</tbody>
           </table>
         </div>
 
-        {h2("3. Cómo se transmiten y guardan")}
+        {h2(u.h3)}
         <ul className="list-disc pl-5 space-y-1.5">
-          <li>El formulario de contacto y el cotizador envían su solicitud directamente al correo de {BRAND.legalName} mediante Brevo (proveedor de envío de correos, que actúa como encargado del tratamiento). El sitio no guarda una copia de sus datos.</li>
-          <li>Los mensajes por WhatsApp se rigen además por las condiciones de WhatsApp (Meta).</li>
-          <li>El chat con un asesor humano funciona con Zoho SalesIQ (Zoho Corporation), que actúa como encargado del tratamiento y puede procesar los datos en servidores fuera de Colombia, con garantías de protección adecuadas. Zoho no se carga ni guarda cookies mientras usted no elija hablar con un asesor.</li>
-          <li>El asesor virtual Joel guarda en su navegador (almacenamiento local) un perfil de los temas que consultó, para personalizar el saludo. Ese perfil no sale de su equipo y puede borrarlo limpiando los datos del sitio en su navegador.</li>
-          <li>Conservamos los datos de las solicitudes mientras dure la relación comercial y el tiempo que exijan las normas contables y legales; después se eliminan de forma segura.</li>
+          {u.storage(BRAND.legalName).map(t => <li key={t}>{t}</li>)}
         </ul>
 
-        {h2("4. Cookies y analítica")}
-        <p>El sitio usa cookies de Google Analytics 4 únicamente si usted las acepta en el aviso de cookies. Mientras no acepte, no se guardan cookies analíticas. No usamos cookies publicitarias ni compartimos datos con fines de publicidad. Google actúa como encargado del tratamiento y puede procesar los datos fuera de Colombia, con garantías de protección adecuadas.</p>
+        {h2(u.h4)}
+        <p>{u.cookies}</p>
         <button type="button" onClick={changeCookies} className="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold" style={{ background: "#fff", color: C.indigo, border: "1.5px solid #DDE0F2", fontFamily: "Montserrat, sans-serif" }}>
-          <Bi n="sliders" size={14} color={C.indigo} /> Cambiar mi decisión sobre cookies
+          <Bi n="sliders" size={14} color={C.indigo} /> {u.changeCookies}
         </button>
         {cookieMsg && (
           <p role="status" className="mt-3 rounded-xl px-4 py-3 text-sm" style={{ background: cookieMsg === "banner" ? "#EAF7EE" : "#FFF6D6", color: cookieMsg === "banner" ? "#15803d" : "#8A6D00", lineHeight: 1.55 }}>
             <Bi n={cookieMsg === "banner" ? "check-circle-fill" : "info-circle-fill"} size={14} className="mr-1.5" />
-            {cookieMsg === "banner"
-              ? "Listo: borramos su decisión anterior. El aviso de cookies volvió a aparecer en la parte inferior de la pantalla para que elija de nuevo."
-              : "Borramos su decisión anterior. En este momento el sitio no tiene activas cookies analíticas, así que no hay nada que aceptar o rechazar."}
+            {cookieMsg === "banner" ? u.cookieBanner : u.cookieNone}
           </p>
         )}
 
-        {h2("5. Sus derechos")}
-        <p>Como titular de los datos, usted puede en cualquier momento:</p>
+        {h2(u.h5)}
+        <p>{u.rightsIntro}</p>
         <ul className="list-disc pl-5 space-y-1.5 mt-2">
-          <li>Conocer, actualizar y rectificar sus datos personales.</li>
-          <li>Solicitar prueba de la autorización que otorgó.</li>
-          <li>Ser informado sobre el uso que se ha dado a sus datos.</li>
-          <li>Revocar la autorización o solicitar la supresión de sus datos, cuando no exista un deber legal o contractual de conservarlos.</li>
-          <li>Acceder gratuitamente a sus datos.</li>
-          <li>Presentar quejas ante la Superintendencia de Industria y Comercio (SIC) por infracciones a la ley.</li>
+          {u.rights.map(t => <li key={t}>{t}</li>)}
         </ul>
 
-        {h2("6. Cómo ejercerlos")}
-        <p>Escríbanos mediante el <a href="#contacto?motivo=Datos+personales+%28Ley+1581%29" style={{ color: C.indigo, fontWeight: 600 }}>formulario de contacto</a> (motivo «Datos personales») o al correo {LEGAL.privacyEmail}, indicando su nombre, documento de identidad, la solicitud y un medio de contacto. Responderemos las <strong>consultas</strong> en máximo 10 días hábiles (prorrogables 5 días hábiles) y los <strong>reclamos</strong> (corrección, actualización, supresión o revocatoria) en máximo 15 días hábiles (prorrogables 8 días hábiles), según nuestra <Link to="/politicas#proteccion-de-datos" style={{ color: C.indigo, fontWeight: 600 }}>Política de Protección de Datos Personales</Link>.</p>
+        {h2(u.h6)}
+        <p>{u.exercise.a}<a href="#contacto?motivo=Datos+personales+%28Ley+1581%29" style={link}>{u.exercise.link}</a>{u.exercise.b}{LEGAL.privacyEmail}{u.exercise.c}<strong>{u.exercise.queries}</strong>{u.exercise.d}<strong>{u.exercise.claims}</strong>{u.exercise.e}<Link to={policies} style={link}>{u.exercise.policy}</Link>{u.exercise.f}</p>
 
-        {h2("7. Autorización")}
-        <p>Al marcar la casilla de autorización en el cotizador o en la suscripción, o al escribirnos por nuestros canales, usted autoriza a {BRAND.legalName} a tratar sus datos para las finalidades descritas. Este aviso complementa la <Link to="/politicas#proteccion-de-datos" style={{ color: C.indigo, fontWeight: 600 }}>Política de Protección de Datos Personales</Link> de la empresa (vigente desde el 31 de octubre de 2016), que regula todo tratamiento de datos de Transarchivos.</p>
+        {h2(u.h7)}
+        <p>{u.auth.a}{BRAND.legalName}{u.auth.b}<Link to={policies} style={link}>{u.auth.policy}</Link>{u.auth.c}</p>
 
-        {h2("8. Cambios")}
-        <p>Podemos actualizar esta política. Publicaremos los cambios en esta página con su fecha de actualización.</p>
+        {h2(u.h8)}
+        <p>{u.changes}</p>
 
-        <div className="mt-12"><Link to="/" className="inline-flex items-center gap-2 text-sm font-bold" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}><Bi n="arrow-left" size={14} color={C.indigo} /> Volver al inicio</Link></div>
+        <div className="mt-12"><Link to={lp("/")} className="inline-flex items-center gap-2 text-sm font-bold" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}><Bi n="arrow-left" size={14} color={C.indigo} /> {common.back}</Link></div>
       </main>
       </div>
       <ChatBot open={chatOpen} setOpen={setChatOpen} />

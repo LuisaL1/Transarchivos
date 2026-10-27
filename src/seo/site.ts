@@ -16,7 +16,7 @@ export const INDEXABLE = import.meta.env.VITE_SITE_INDEXABLE === "true";
 export const GOOGLE_VERIFICATION = (import.meta.env.VITE_GOOGLE_SITE_VERIFICATION ?? "").trim();
 
 /** Datos legales para la política de privacidad. NIT: confirmar con Transarchivos (no figura en los documentos fuente). */
-export const LEGAL = { nit: "", privacyEmail: "info@transarchivos.com", updated: "7 de octubre de 2026" };
+export const LEGAL = { nit: "", privacyEmail: "info@transarchivos.com", updated: "7 de octubre de 2026", updatedEn: "7 October 2026" };
 
 export const BRAND = {
   name: "Transarchivos",

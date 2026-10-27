@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { track } from "@/lib/visitor";
 import { ChatBot } from "@/components/chat/LazyChatBot";
-import { SiteHeader } from "@/components/layout/SiteHeader";
+import { HEADER_SPACE, SiteHeader } from "@/components/layout/SiteHeader";
 import { Bi } from "@/components/ui/Icons";
 import { JoelFigure } from "@/components/ui/JoelBridge";
 import { SectionDecor } from "@/components/ui/SectionDecor";
@@ -10,8 +10,10 @@ import { CtaBand } from "@/components/sections/CtaBand";
 import { PageHero } from "@/components/sections/PageHero";
 import { JOEL } from "@/data/joelPoses";
 import { type Item, type Post, blogPosts, readMinutes } from "@/data/blog";
-import { FAQS } from "@/data/faqs";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
+import { slugEs, useLang } from "@/i18n";
+import { useContent } from "@/i18n/content";
+import { usePagesUi } from "@/i18n/pages";
 import { C } from "@/styles/tokens";
 
 // Detalle de esquina (el mismo del chat y del menú): un cuadrado amarillo
@@ -24,7 +26,8 @@ function Corner({ size = 104, offset = -36, alpha = 0.25 }: { size?: number; off
 }
 
 // Preguntas frecuentes que más se relacionan con el artículo: cada pregunta
-// suma puntos por las palabras de su tema que aparecen en el texto.
+// suma puntos por las palabras de su tema que aparecen en el texto (se evalúa
+// sobre el artículo en español; las preguntas se muestran en el idioma de la página).
 const FAQ_TOPICS: string[][] = [
   ["diagnóstico", "inventario", "organiz"],
   ["cotiza", "solicit"],
@@ -36,22 +39,27 @@ const FAQ_TOPICS: string[][] = [
   ["destruc", "reciclaje", "papel", "eliminación", "sostenib", "ambiental"],
   ["instalaciones", "inhouse", "sede", "personal"],
 ];
-function relatedFaqs(post: Post, n = 4) {
+function relatedFaqIndexes(post: Post, n = 4) {
   const text = [post.title, post.excerpt, ...post.blocks.map(b => "text" in b ? b.text : "")].join(" ").toLowerCase();
-  return FAQS.map((f, i) => ({ f, i, score: FAQ_TOPICS[i].reduce((acc, k) => acc + text.split(k).length - 1, 0) }))
+  return FAQ_TOPICS.map((topic, i) => ({ i, score: topic.reduce((acc, k) => acc + text.split(k).length - 1, 0) }))
     .sort((a, b) => b.score - a.score || a.i - b.i)
     .slice(0, n)
-    .map(x => x.f);
+    .map(x => x.i);
 }
 
 export function ArticlePage() {
-  const { slug } = useParams();
-  const post = blogPosts.find(p => p.slug === slug);
+  const { slug: urlSlug } = useParams();
+  const { lang, lp } = useLang();
+  const { common, article: u } = usePagesUi();
+  const { blogPosts: posts, faqs: allFaqs } = useContent();
+  const slug = urlSlug ? slugEs(urlSlug, lang) : undefined;
+  const post = posts.find(p => p.slug === slug);
+  const esPost = blogPosts.find(p => p.slug === slug);
   const pageRef = useRef<HTMLDivElement>(null);
   useScrollReveal(pageRef);
   const navigate = useNavigate();
   // Volver / "Blog": siempre a la sección del blog en la portada.
-  const goBack = () => navigate("/#blog");
+  const goBack = () => navigate(lp("/#blog"));
   const [chatOpen, setChatOpen] = useState(false);
   const [progress, setProgress] = useState(0);
 
@@ -67,21 +75,22 @@ export function ArticlePage() {
     return () => window.removeEventListener("scroll", onScroll);
   }, [slug]);
 
-  if (!post) {
+  if (!post || !esPost) {
     return (
       <div className="min-h-full flex flex-col items-center justify-center gap-4 px-6 text-center" style={{ fontFamily: "Inter, sans-serif" }}>
-        <p className="text-2xl font-bold" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>Artículo no encontrado</p>
-        <Link to="/#blog" className="text-sm font-semibold" style={{ color: C.indigo, textDecoration: "none" }}>← Volver al blog</Link>
+        <p className="text-2xl font-bold" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>{u.notFound}</p>
+        <Link to={lp("/#blog")} className="text-sm font-semibold" style={{ color: C.indigo, textDecoration: "none" }}>{u.backList}</Link>
       </div>
     );
   }
 
-  const others = blogPosts.filter(p => p.slug !== post.slug).slice(0, 3);
-  const faqs = relatedFaqs(post);
+  const others = posts.filter(p => p.slug !== post.slug).slice(0, 3);
+  const faqs = relatedFaqIndexes(esPost).map(i => allFaqs[i]).filter(Boolean);
   const renderItem = (i: Item) => typeof i === "string" ? i : <><strong style={{ color: C.indigo }}>{i.b}.</strong> {i.t}</>;
   const firstP = post.blocks.findIndex(b => b.t === "p");
   const toc = post.blocks.map((b, i) => b.t === "h2" ? { id: `sec-${i}`, text: b.text } : null).filter(Boolean) as { id: string; text: string }[];
   const goTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  const cardStyle = { background: "#fff", border: "1px solid #E4E6F7", boxShadow: "0 14px 30px -26px rgba(24,0,173,0.45)" } as const;
 
   return (
     <div ref={pageRef} className="min-h-full" style={{ background: C.cream, fontFamily: "Inter, sans-serif", color: "#37352F" }}>
@@ -92,21 +101,21 @@ export function ArticlePage() {
 
       {/* El mismo navbar del sitio, en su versión de barra blanca. */}
       <SiteHeader solid onChat={() => setChatOpen(true)} />
-      <div aria-hidden="true" style={{ height: 60 }} />
+      <div aria-hidden="true" style={{ height: HEADER_SPACE }} />
 
-      {/* Hero: portada del artículo bajo un velo navy, con la carpeta como base */}
+      {/* Hero: portada del artículo bajo un velo índigo, con la carpeta como base */}
       <PageHero image={post.cover}>
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] gap-10 items-center pt-12 pb-24">
             <div>
               <div className="flex items-center gap-4 mb-6">
-                <button type="button" onClick={goBack} aria-label="Volver al blog" title="Volver al blog"
+                <button type="button" onClick={goBack} aria-label={u.back} title={u.back}
                   className="grid place-items-center rounded-full shrink-0 transition-colors hover:bg-white/20"
                   style={{ width: 36, height: 36, background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.25)" }}>
                   <Bi n="arrow-left" size={15} color="#fff" />
                 </button>
                 <p className="text-xs" style={{ color: "rgba(255,255,255,0.6)", fontFamily: "Montserrat, sans-serif" }}>
-                  <Link to="/" style={{ color: "inherit", textDecoration: "none" }}>Inicio</Link> / <button type="button" onClick={goBack} style={{ color: "inherit" }}>Blog</button> / <span style={{ color: C.yellow }}>{post.cat}</span>
+                  <Link to={lp("/")} style={{ color: "inherit", textDecoration: "none" }}>{common.home}</Link> / <button type="button" onClick={goBack} style={{ color: "inherit" }}>{common.blog}</button> / <span style={{ color: C.yellow }}>{post.cat}</span>
                 </p>
               </div>
               <span className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full mb-5" style={{ background: "rgba(255,255,255,0.1)", color: C.yellow, border: "1px solid rgba(255,222,89,0.35)", fontFamily: "Montserrat, sans-serif" }}>
@@ -117,11 +126,11 @@ export function ArticlePage() {
               <div className="flex flex-wrap gap-3">
                 <button type="button" onClick={() => goTo(toc[0]?.id ?? "articulo")} className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold transition-transform hover:scale-[1.03]"
                   style={{ background: C.yellow, color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>
-                  Leer artículo <Bi n="arrow-down" size={14} color={C.indigo} />
+                  {u.read} <Bi n="arrow-down" size={14} color={C.indigo} />
                 </button>
                 <button type="button" onClick={() => setChatOpen(true)} className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold"
                   style={{ background: "rgba(255,255,255,0.08)", color: "#fff", border: "1px solid rgba(255,255,255,0.3)", fontFamily: "Montserrat, sans-serif" }}>
-                  <Bi n="chat-dots" size={14} color="#fff" /> Preguntarle a Joel
+                  <Bi n="chat-dots" size={14} color="#fff" /> {u.ask}
                 </button>
               </div>
             </div>
@@ -135,9 +144,9 @@ export function ArticlePage() {
                 </div>
                 <div className="grid grid-cols-3 gap-2 px-3 pt-5 pb-3">
                   {[
-                    { ic: "calendar3", l: "Publicado", v: post.date },
-                    { ic: "clock", l: "Lectura", v: `${readMinutes(post)} min` },
-                    { ic: "building", l: "Autor", v: "Transarchivos" },
+                    { ic: "calendar3", l: u.published, v: post.date },
+                    { ic: "clock", l: u.reading, v: `${readMinutes(post)} min` },
+                    { ic: "building", l: u.author, v: "Transarchivos" },
                   ].map(x => (
                     <div key={x.l} className="min-w-0">
                       <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: "rgba(255,255,255,0.55)", fontFamily: "Montserrat, sans-serif" }}>
@@ -178,7 +187,7 @@ export function ArticlePage() {
                 if (b.t === "ul") return (
                   <ul key={i} className="grid gap-3">
                     {b.items.map((it, j) => (
-                      <li key={j} className="flex items-start gap-3 rounded-2xl p-4 text-[15px]" style={{ background: "#fff", border: "1px solid #E4E6F7", boxShadow: "0 14px 30px -26px rgba(24,0,173,0.45)", lineHeight: 1.65 }}>
+                      <li key={j} className="flex items-start gap-3 rounded-2xl p-4 text-[15px]" style={{ ...cardStyle, lineHeight: 1.65 }}>
                         <span className="grid place-items-center rounded-lg shrink-0" style={{ width: 28, height: 28, background: "#EAF7EE", marginTop: 1 }}>
                           <Bi n="check-lg" size={14} color="#16a34a" />
                         </span>
@@ -208,7 +217,7 @@ export function ArticlePage() {
                     <table className="w-full text-sm" style={{ borderCollapse: "collapse", minWidth: 560, lineHeight: 1.5 }}>
                       <thead>
                         <tr style={{ background: C.indigo, color: "#fff" }}>
-                          {b.head.map(h => <th key={h} className="text-left px-4 py-3.5 font-semibold" style={{ fontFamily: "Montserrat, sans-serif" }}>{h}</th>)}
+                          {b.head.map(hd => <th key={hd} className="text-left px-4 py-3.5 font-semibold" style={{ fontFamily: "Montserrat, sans-serif" }}>{hd}</th>)}
                         </tr>
                       </thead>
                       <tbody>
@@ -228,8 +237,8 @@ export function ArticlePage() {
           {/* Lateral: índice, más del blog, preguntas frecuentes, llamado corto y Joel */}
           <aside className="lg:self-stretch flex flex-col gap-5">
             {toc.length > 0 && (
-              <div className="rounded-3xl p-6" style={{ background: "#fff", border: "1px solid #E4E6F7", boxShadow: "0 14px 30px -26px rgba(24,0,173,0.45)" }}>
-                <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: C.gold, fontFamily: "Montserrat, sans-serif" }}>En este artículo</p>
+              <div className="rounded-3xl p-6" style={cardStyle}>
+                <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: C.gold, fontFamily: "Montserrat, sans-serif" }}>{u.toc}</p>
                 <ol className="space-y-1">
                   {toc.map((t, n) => (
                     <li key={t.id}>
@@ -242,16 +251,16 @@ export function ArticlePage() {
                 </ol>
               </div>
             )}
-            <div className="rounded-3xl p-6" style={{ background: "#fff", border: "1px solid #E4E6F7", boxShadow: "0 14px 30px -26px rgba(24,0,173,0.45)" }}>
+            <div className="rounded-3xl p-6" style={cardStyle}>
               <div className="flex items-center justify-between mb-4">
-                <p className="text-xs font-bold uppercase tracking-widest" style={{ color: C.gold, fontFamily: "Montserrat, sans-serif" }}>Más del blog</p>
-                <Link to="/#blog" className="inline-flex items-center gap-1 text-[11px] font-bold" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
-                  Ver todos <Bi n="arrow-right" size={11} color={C.indigo} />
+                <p className="text-xs font-bold uppercase tracking-widest" style={{ color: C.gold, fontFamily: "Montserrat, sans-serif" }}>{u.more}</p>
+                <Link to={lp("/#blog")} className="inline-flex items-center gap-1 text-[11px] font-bold" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
+                  {common.seeAll} <Bi n="arrow-right" size={11} color={C.indigo} />
                 </Link>
               </div>
               <div className="space-y-1">
                 {others.map(o => (
-                  <Link key={o.slug} to={`/blog/${o.slug}`} className="group flex items-start gap-3 rounded-xl p-2 -mx-2 transition-colors hover:bg-niebla" style={{ textDecoration: "none" }}>
+                  <Link key={o.slug} to={lp(`/blog/${o.slug}`)} className="group flex items-start gap-3 rounded-xl p-2 -mx-2 transition-colors hover:bg-niebla" style={{ textDecoration: "none" }}>
                     <span className="relative overflow-hidden rounded-xl shrink-0" style={{ width: 64, height: 64 }}>
                       <img loading="lazy" decoding="async" src={o.cover} alt="" className="w-full h-full transition-transform duration-500 group-hover:scale-110" style={{ objectFit: "cover" }} />
                       <Corner size={34} offset={-17} alpha={0.4} />
@@ -264,8 +273,8 @@ export function ArticlePage() {
                 ))}
               </div>
             </div>
-            <div className="rounded-3xl p-6" style={{ background: "#fff", border: "1px solid #E4E6F7", boxShadow: "0 14px 30px -26px rgba(24,0,173,0.45)" }}>
-              <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: C.gold, fontFamily: "Montserrat, sans-serif" }}>Preguntas frecuentes</p>
+            <div className="rounded-3xl p-6" style={cardStyle}>
+              <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: C.gold, fontFamily: "Montserrat, sans-serif" }}>{u.faq}</p>
               <div>
                 {faqs.map((f, n) => (
                   <details key={f.q} className="group py-3" style={{ borderTop: n ? "1px solid #F0F1FA" : "none" }}>
@@ -279,19 +288,19 @@ export function ArticlePage() {
                   </details>
                 ))}
               </div>
-              <Link to="/#faq" className="group mt-2 pt-3 flex items-center gap-1.5 text-[12px] font-bold" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none", borderTop: "1px solid #F0F1FA" }}>
-                Ver todas las preguntas <Bi n="arrow-right" size={12} color={C.indigo} className="transition-transform group-hover:translate-x-1" />
+              <Link to={lp("/#faq")} className="group mt-2 pt-3 flex items-center gap-1.5 text-[12px] font-bold" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none", borderTop: "1px solid #F0F1FA" }}>
+                {u.allFaq} <Bi n="arrow-right" size={12} color={C.indigo} className="transition-transform group-hover:translate-x-1" />
               </Link>
             </div>
             {/* Lo de abajo acompaña la lectura (se queda fijo al hacer scroll) */}
             <div className="lg:sticky lg:top-24 space-y-5">
             <div className="relative flex flex-col overflow-hidden rounded-3xl p-6" style={{ background: C.indigo }}>
               <Corner />
-              <p className="relative mb-2 text-[10.5px] font-bold uppercase" style={{ letterSpacing: "0.16em", color: C.yellow, fontFamily: "Montserrat, sans-serif" }}>Diagnóstico documental</p>
-              <p className="relative mb-2 text-[17px] font-bold leading-snug" style={{ color: "#fff", fontFamily: "Poppins, sans-serif" }}>¿Le pasa esto a su archivo?</p>
-              <p className="relative mb-5 text-[12.5px] leading-relaxed" style={{ color: "rgba(255,255,255,0.75)" }}>Le mostramos qué está pasando hoy con su archivo antes de mover un solo papel.</p>
-              <Link to="/#cotizador" className="group relative inline-flex items-center gap-1.5 text-[13px] font-semibold" style={{ color: "#fff", textDecoration: "none", fontFamily: "Montserrat, sans-serif" }}>
-                Solicitar diagnóstico <Bi n="arrow-right" size={13} color={C.yellow} className="transition-transform group-hover:translate-x-1" />
+              <p className="relative mb-2 text-[10.5px] font-bold uppercase" style={{ letterSpacing: "0.16em", color: C.yellow, fontFamily: "Montserrat, sans-serif" }}>{u.boxKicker}</p>
+              <p className="relative mb-2 text-[17px] font-bold leading-snug" style={{ color: "#fff", fontFamily: "Poppins, sans-serif" }}>{u.boxTitle}</p>
+              <p className="relative mb-5 text-[12.5px] leading-relaxed" style={{ color: "rgba(255,255,255,0.75)" }}>{u.boxText}</p>
+              <Link to={lp("/#cotizador")} className="group relative inline-flex items-center gap-1.5 text-[13px] font-semibold" style={{ color: "#fff", textDecoration: "none", fontFamily: "Montserrat, sans-serif" }}>
+                {u.boxCta} <Bi n="arrow-right" size={13} color={C.yellow} className="transition-transform group-hover:translate-x-1" />
               </Link>
             </div>
             <div className="pl-6"><JoelFigure src={JOEL.documento} height={220} /></div>
@@ -301,7 +310,7 @@ export function ArticlePage() {
       </section>
 
       {/* Llamado final (mismo de las páginas de servicio) */}
-      <CtaBand title="¿Hablamos de la gestión documental de su empresa?" text="Agende su diagnóstico documental con el equipo de especialistas de Transarchivos." />
+      <CtaBand title={u.cta} text={u.ctaText} />
       <ChatBot open={chatOpen} setOpen={setChatOpen} />
     </div>
   );
