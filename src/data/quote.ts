@@ -109,17 +109,3 @@ export const quoteConfig: Record<string, QConfig> = {
     ],
   },
 };
-
-// Unidad de cotización por servicio — tabla del punto 7 de "LÓGICA DE
-// COTIZACIÓN TRANSARCHIVOS" ("las unidades definitivas, tarifas y fórmulas
-// deben ser determinadas posteriormente"). Solo cubre los 5 servicios que el
-// documento tabula explícitamente; el resto no tiene unidad definida todavía.
-export const QUOTE_UNIT: Record<string, string> = {
-  "custodia-de-archivos": "Unidad contractual/operativa, según volumen, permanencia y condiciones.",
-  "custodia-de-medios-magneticos": "Unidad contractual/operativa, según volumen, permanencia y condiciones.",
-  "digitalizacion-de-documentos": "Unidad de producción, según volumen y características documentales.",
-  "levantamiento-de-inventario": "Unidad de levantamiento, según volumen, detalle y complejidad.",
-  "destruccion-de-documentos": "Unidad de manejo, según volumen y condiciones.",
-  "diagnostico": "Proyecto, jornada o entregable, según alcance y dedicación.",
-  "programa-de-gestion-documental": "Proyecto, jornada o entregable, según alcance y dedicación.",
-};

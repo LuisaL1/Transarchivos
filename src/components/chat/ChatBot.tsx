@@ -2,13 +2,13 @@
 // Invitación que asoma a los 7 s (una vez por sesión), botón flotante y
 // ventana con encabezado, mensajes, opciones rápidas (lista con ícono) y
 // campo de texto. La conversación está en src/data/chat.ts y la lógica en
-// src/hooks/useAdvisorChat.ts. No usa IA externa: sigue un guion y el cerebro
-// local de Joel (src/lib/joel.ts).
+// src/hooks/useAdvisorChat.ts. Los botones siguen un guion local; lo que el
+// visitante escribe lo responde Zoho SalesIQ (bot o asesor).
 import { Link } from "react-router-dom";
 import avatarImg from "@/assets/images/joel.webp";
 import { CHAT_TEXT as T, NAME, chatOptionIcon, type ChatMsg } from "@/data/chat";
 import { useAdvisorChat, type ChatSeed } from "@/hooks/useAdvisorChat";
-import { requestAdvisorChat, requestQuoteToAdvisor } from "@/lib/advisorEvents";
+import { requestQuoteToAdvisor } from "@/lib/advisorEvents";
 import { ChatAvatarFace } from "@/components/ui/Brand";
 import { Bi, MenuIcon } from "@/components/ui/Icons";
 import { C } from "@/styles/tokens";
@@ -45,8 +45,8 @@ export function ChatBubble({ msg }: { msg: ChatMsg }) {
                   <Bi n="arrow-up-right" size={11} color={C.faint} />
                 </>
               );
-              // "Enviar a un asesor" y "Chatear con un asesor": los atiende useAdvisorChat
-              if (a.sendQuote || a.crm) return <button key={a.label} type="button" onClick={a.sendQuote ? requestQuoteToAdvisor : requestAdvisorChat} className={`${cls} w-full`}>{inner}</button>;
+              // "Enviar a un asesor": lo atiende useAdvisorChat
+              if (a.sendQuote) return <button key={a.label} type="button" onClick={requestQuoteToAdvisor} className={`${cls} w-full`}>{inner}</button>;
               return a.to
                 ? <Link key={a.label} to={a.to} className={cls} style={{ textDecoration: "none" }}>{inner}</Link>
                 : <a key={a.label} href={a.href} {...(/^https?:/.test(a.href ?? "") ? { target: "_blank", rel: "noopener noreferrer" } : {})} className={cls} style={{ textDecoration: "none" }}>{inner}</a>;
@@ -62,7 +62,7 @@ export function ChatBubble({ msg }: { msg: ChatMsg }) {
 // del hero también puedan abrir el chat. "seed": pregunta escrita en la caja
 // del hero (con id para que dos preguntas iguales cuenten como distintas).
 export function ChatBot({ open, setOpen, seed, heroJoel = false }: { open: boolean; setOpen: (v: boolean | ((prev: boolean) => boolean)) => void; seed?: ChatSeed; heroJoel?: boolean }) {
-  const { msgs, typing, text, setText, step, options, choose, send, restart, teaser, setTeaser, endRef, inputRef, advisor, live, endAdvisor } = useAdvisorChat({ open, setOpen, seed, heroJoel });
+  const { msgs, typing, waiting, text, setText, step, options, choose, send, restart, teaser, setTeaser, endRef, inputRef, advisor } = useAdvisorChat({ open, setOpen, seed, heroJoel });
 
   return (
     <>
@@ -85,7 +85,7 @@ export function ChatBot({ open, setOpen, seed, heroJoel = false }: { open: boole
       )}
 
       {/* Botón flotante (con la ventana de Zoho abierta se usa su propio botón de cerrar) */}
-      {advisor !== "open" && <button data-chat-launcher onClick={() => setOpen(o => !o)} aria-expanded={open} aria-busy={advisor === "loading"}
+      {advisor !== "open" && <button data-chat-launcher onClick={() => setOpen(o => !o)} aria-expanded={open}
         aria-label={open ? T.closeChat : T.openChat}
         className={`fixed bottom-4 right-4 md:bottom-6 md:right-6 z-[60] items-center gap-2.5 rounded-full p-1.5 md:pr-4 text-white transition-transform hover:-translate-y-0.5 ${open ? "hidden sm:flex" : "flex"}`}
         style={{ background: C.indigo, boxShadow: "0 16px 34px -10px rgba(24,0,173,0.6)" }}>
@@ -105,7 +105,7 @@ export function ChatBot({ open, setOpen, seed, heroJoel = false }: { open: boole
             {open ? "Cerrar" : NAME}
             {!open && <span className="rounded-full px-1.5 py-px text-[9px] font-bold tracking-wide" style={{ background: C.yellow, color: C.indigo }}>IA</span>}
           </span>
-          {!open && <span className="block text-[11.5px] leading-tight" style={{ color: "rgba(255,255,255,0.7)" }}>{advisor === "loading" ? "Conectando…" : "En línea"}</span>}
+          {!open && <span className="block text-[11.5px] leading-tight" style={{ color: "rgba(255,255,255,0.7)" }}>En línea</span>}
         </span>
       </button>}
 
@@ -142,18 +142,10 @@ export function ChatBot({ open, setOpen, seed, heroJoel = false }: { open: boole
               </button>
             </header>
 
-            {/* Chat con un asesor dentro de Joel */}
-            {live !== "off" && (
-              <div className="shrink-0 flex items-center gap-2 px-4 py-2 text-[12.5px] font-semibold" style={{ background: "#FBFBF8", borderBottom: "1px solid #E4E6F7", color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>
-                <Bi n="headset" size={14} color={C.gold} />
-                <span className="flex-1">{T.advisorBanner}</span>
-                <button type="button" onClick={endAdvisor} className="rounded-lg px-2 py-1 underline-offset-2 hover:underline" style={{ color: C.indigo }}>{T.advisorEnd}</button>
-              </div>
-            )}
-
             <div className="flex-1 min-h-0 space-y-3 overflow-y-auto p-4" style={{ background: "#F6F7FD" }} aria-live="polite">
               {msgs.map((m, i) => <ChatBubble key={i} msg={m} />)}
-              {typing && (
+              {/* Joel escribiendo, o esperando la respuesta de Zoho SalesIQ */}
+              {(typing || waiting) && (
                 <div className="flex items-end gap-2">
                   <ChatAvatarFace size={24} round />
                   <div className="flex gap-1 px-3.5 py-3" style={{ ...CARD, borderRadius: "4px 16px 16px 16px" }}>
@@ -161,7 +153,7 @@ export function ChatBot({ open, setOpen, seed, heroJoel = false }: { open: boole
                   </div>
                 </div>
               )}
-              {!typing && options.length > 0 && (
+              {!typing && !waiting && options.length > 0 && (
                 <div className="rounded-2xl p-1.5 ml-8" style={{ ...CARD, animation: "fadeInUp 0.3s ease both" }}>
                   {options.map(o => (
                     <button key={o.label} type="button" onClick={() => choose(o)} className="group w-full flex items-center gap-3 rounded-xl px-2.5 py-2 text-left transition-colors hover:bg-hielo">
@@ -177,7 +169,7 @@ export function ChatBot({ open, setOpen, seed, heroJoel = false }: { open: boole
 
             <form onSubmit={e => { e.preventDefault(); send(); }} className="shrink-0 flex items-center gap-2 bg-white p-3" style={{ borderTop: "1px solid #ECEEF6", paddingBottom: "max(12px, env(safe-area-inset-bottom))" }}>
               <input ref={inputRef} value={text} onChange={e => setText(e.target.value)}
-                placeholder={live !== "off" ? T.advisorPlaceholder : (step.input?.placeholder ?? T.placeholder)} aria-label={T.message}
+                placeholder={step.input?.placeholder ?? T.placeholder} aria-label={T.message}
                 className="min-w-0 flex-1 rounded-full px-4 py-2.5 text-[14px] outline-none transition focus:bg-white"
                 style={{ border: "1px solid #E4E6F7", background: "#F6F7FD", color: C.indigo }} />
               <button type="submit" disabled={!text.trim() || typing} aria-label={T.send}

@@ -1,11 +1,13 @@
 // ─── Puente con Zoho SalesIQ ─────────────────────────────────────────────────
-// Chat con un asesor DENTRO de la ventana de Joel sin la API de organización de
-// Zoho: el widget de SalesIQ se carga escondido (en la página aislada
-// public/chat-asesor.html, fuera de la pantalla) y este
-// módulo escribe en su ventana y lee lo que responden el bot o el asesor de
-// Zoho, para mostrarlo en Joel. Ver docs/08-chat-asesor.md.
+// Lo que el visitante escribe en Joel lo responde Zoho SalesIQ (su bot, con los
+// artículos y preguntas frecuentes configurados allá, o un asesor) sin la API
+// de organización de Zoho: el widget de SalesIQ se carga escondido (en la
+// página aislada public/chat-asesor.html, fuera de la pantalla) al abrir el
+// chat, y este módulo escribe en su ventana y lee lo que responden el bot o el
+// asesor de Zoho, para mostrarlo en Joel. Ver docs/08-chat-asesor.md.
 //
-// · Textos y opciones (botones de sugerencia) pasan a Joel.
+// · Textos y opciones (botones de sugerencia) pasan a Joel. Lo que Zoho muestre
+//   antes del primer mensaje del visitante (su saludo) no se repite: Joel ya saludó.
 // · Las preguntas opcionales de datos del visitante que hace Zoho (nombre,
 //   correo, teléfono) se omiten solas: Joel ya tiene la consulta y así Zoho
 //   pasa la conversación a los asesores. Si un formulario no se puede omitir,
@@ -28,12 +30,12 @@ export type BridgeHandlers = {
   /** Zoho pide un formulario (nombre, contacto…): Joel ofrece completarlo en
    *  la ventana de Zoho o, si Zoho lo permite, omitirlo */
   onForm: (f: { canSkip: boolean }) => void;
-  /** Un mensaje no se pudo entregar a Zoho en un minuto */
-  onSendFailed?: (text: string) => void;
 };
 export type Bridge = {
-  /** Envía (o deja en cola si Zoho tiene el campo bloqueado un momento) */
-  send: (text: string) => boolean;
+  /** Envía (en cola si Zoho tiene el campo bloqueado un momento); resuelve
+   *  true cuando el mensaje aparece en la conversación de Zoho, false si no
+   *  se pudo entregar */
+  send: (text: string) => Promise<boolean>;
   choose: (option: string) => boolean;
   /** Pulsa "Omitir" en el formulario de Zoho */
   skip: () => boolean;
@@ -77,18 +79,18 @@ function type(doc: Document, text: string): boolean {
   return true;
 }
 
-/** Abre la conversación en el Zoho escondido, envía la pregunta y empieza a escuchar. */
-export async function startBridge(question: string, h: BridgeHandlers): Promise<Bridge> {
+/** Prepara la ventana de Zoho escondida (lista para escribir) y empieza a escuchar. */
+export async function openBridge(h: BridgeHandlers): Promise<Bridge> {
   setBridging(true);
   try {
-    return await connect(question, h);
+    return await connect(h);
   } catch (e) {
     setBridging(false);
     throw e;
   }
 }
 
-async function connect(question: string, h: BridgeHandlers): Promise<Bridge> {
+async function connect(h: BridgeHandlers): Promise<Bridge> {
   const z = await loadCrmChat();
   z.floatwindow?.visible("show");
   styleChatWindow();
@@ -114,7 +116,9 @@ async function connect(question: string, h: BridgeHandlers): Promise<Bridge> {
   // de texto unos segundos mientras pasa la conversación a los asesores.
   // Se envía uno a la vez y se confirma que aparezca en la conversación de Zoho
   // antes de seguir (Zoho pierde envíos muy seguidos).
-  const queue: { text: string; at: number }[] = [{ text: question, at: Date.now() }];
+  const queue: { text: string; at: number; done: (ok: boolean) => void }[] = [];
+  // Antes del primer mensaje del visitante, lo que muestre Zoho (su saludo) no pasa a Joel
+  let armed = false;
   const QUEUE_MS = 60_000;
   const VISITOR = '[data-zsqa="visitor_msg message_bubble"]';
   // Zoho cambia el texto al mostrarlo (saltos de línea, emojis como imagen…):
@@ -144,8 +148,6 @@ async function connect(question: string, h: BridgeHandlers): Promise<Bridge> {
   // no se pudo confirmar, reintentar sin límite lo repetiría sin fin.
   const MAX_TRIES = 3;
   let tries = 0;
-  // El primer mensaje (la pregunta): startBridge espera a que Zoho lo confirme
-  let first: "pending" | "ok" | "failed" = "pending";
   let inFlight: { before: number; total: number; at: number } | null = null;
   const flush = () => {
     if (!queue.length) return;
@@ -153,15 +155,14 @@ async function connect(question: string, h: BridgeHandlers): Promise<Bridge> {
     // menos, un mensaje nuevo del visitante
     if (inFlight) {
       if (shown(queue[0].text) > inFlight.before || visitorCount() > inFlight.total) {
-        queue.shift();
+        queue.shift()!.done(true);
         inFlight = null;
         tries = 0;
-        if (first === "pending") first = "ok";
       } else if (Date.now() - inFlight.at > 5000) {
         inFlight = null;
         if (tries >= MAX_TRIES) {
           tries = 0;
-          fail(queue.shift()!.text);
+          queue.shift()!.done(false);
         }
       } else return;
       if (!queue.length) return;
@@ -170,14 +171,11 @@ async function connect(question: string, h: BridgeHandlers): Promise<Bridge> {
       const before = shown(queue[0].text);
       const total = visitorCount();
       if (type(doc, queue[0].text)) {
+        armed = true;
         tries++;
         inFlight = { before, total, at: Date.now() };
       }
-    } else if (Date.now() - queue[0].at > QUEUE_MS) fail(queue.shift()!.text);
-  };
-  const fail = (text: string) => {
-    if (first === "pending") first = "failed";
-    else h.onSendFailed?.(text);
+    } else if (Date.now() - queue[0].at > QUEUE_MS) queue.shift()!.done(false);
   };
 
   // Un mensaje de Zoho se procesa cuando ya está completo: el texto llega a
@@ -188,6 +186,10 @@ async function connect(question: string, h: BridgeHandlers): Promise<Bridge> {
   const scan = () => {
     for (const el of Array.from(doc.querySelectorAll<HTMLElement>(AGENT))) {
       if (!el.id || seen.has(el.id)) continue;
+      if (!armed) {
+        seen.add(el.id);
+        continue;
+      }
       const t0 = firstSeen.get(el.id) ?? Date.now();
       firstSeen.set(el.id, t0);
       if (Date.now() - t0 < STABLE_MS) continue;
@@ -221,33 +223,23 @@ async function connect(question: string, h: BridgeHandlers): Promise<Bridge> {
   const timer = window.setInterval(scan, 400);
   scan();
 
-  // Solo hay conversación si Zoho recibió la pregunta: si no, se deja todo
-  // como estaba y Joel ofrece otro canal (en vez de decir "Listo").
   const stopAll = () => {
     obs.disconnect();
     window.clearInterval(timer);
-    queue.length = 0;
+    for (const q of queue.splice(0)) q.done(false);
   };
-  try {
-    await until(() => (first === "pending" ? null : first), 30_000);
-  } catch {
-    first = "failed";
-  }
-  if (first === "failed") {
-    stopAll();
-    throw new Error("bridge-send");
-  }
 
   return {
-    send: (text) => {
-      queue.push({ text, at: Date.now() });
-      flush();
-      return true;
-    },
+    send: (text) =>
+      new Promise<boolean>((done) => {
+        queue.push({ text, at: Date.now(), done });
+        flush();
+      }),
     choose: (option) => {
       const tag = Array.from(doc.querySelectorAll<HTMLElement>(".tag-div")).find(
         (t) => t.textContent?.trim() === option,
       );
+      if (tag) armed = true;
       tag?.click();
       return !!tag;
     },

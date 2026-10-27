@@ -1,5 +1,6 @@
-// Chat con un asesor dentro de la ventana de Joel: habla solo con /api/advisor
-// (función del sitio → Zoho SalesIQ). El navegador nunca carga Zoho en este modo.
+// Respuestas de Zoho SalesIQ (bot o asesor) dentro de la ventana de Joel por la
+// API: habla solo con /api/advisor (función del sitio → Zoho SalesIQ). El
+// navegador nunca carga Zoho en este modo.
 // Ver docs/08-chat-asesor.md.
 
 export type AdvisorMessage = {
@@ -14,8 +15,9 @@ export type AdvisorMessage = {
 
 /** Cada cuánto se preguntan las respuestas del asesor */
 export const POLL_MS = 3500;
-/** Si en este tiempo no responde nadie, Joel ofrece otros canales */
-export const WAIT_MS = 120_000;
+/** Si en este tiempo Zoho no responde, Joel ofrece otros canales (la respuesta
+ *  se sigue mostrando si llega después) */
+export const REPLY_MS = 40_000;
 /** Conversación en curso (sobrevive a la navegación y a recargar la página) */
 const KEY = "ta-advisor";
 
@@ -35,7 +37,7 @@ async function call<T>(body: Record<string, unknown>): Promise<T & { ok: boolean
   }
 }
 
-/** ¿El chat dentro de Joel está configurado? Si no, se usa la ventana de Zoho. */
+/** ¿La API está configurada? Si no, Joel usa el puente con el widget de Zoho. */
 export async function advisorAvailable(): Promise<boolean> {
   try {
     const r = await fetch("/api/advisor", { headers: { Accept: "application/json" } });

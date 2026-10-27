@@ -33,7 +33,7 @@ for (const route of ["/", "/servicios/custodia-de-archivos", "/blog/mido-softwar
   });
 }
 
-test("CSP permite cargar el chat con un asesor (Zoho SalesIQ) en su página aislada", async ({ page, isMobile }) => {
+test("CSP permite cargar Zoho SalesIQ (respuestas del chat de Joel) en su página aislada", async ({ page, isMobile }) => {
   test.skip(isMobile, "Basta con revisarlo una vez");
   const blocked: string[] = [];
   page.on("console", m => { if (/Content Security Policy|Refused to/i.test(m.text())) blocked.push(m.text()); });
@@ -46,12 +46,8 @@ test("CSP permite cargar el chat con un asesor (Zoho SalesIQ) en su página aisl
   await withHeaders(page);
   await page.route("**/api/advisor", r => r.fulfill({ json: { configured: false } }));
   await page.goto("/");
+  // Zoho se carga al abrir el chat (para que la primera respuesta llegue antes)
   await page.locator("[data-chat-launcher]").first().click();
-  const chat = page.getByRole("region", { name: "Chat con Joel" });
-  await chat.getByRole("button", { name: "Hablar con un asesor" }).click({ timeout: 10_000 });
-  const input = chat.getByRole("textbox", { name: "Mensaje" });
-  await input.fill("Hola");
-  await input.press("Enter");
   await expect.poll(() => loaded, { timeout: 15_000 }).toBe(true);
   await page.waitForTimeout(500);
   expect(blocked).toEqual([]);

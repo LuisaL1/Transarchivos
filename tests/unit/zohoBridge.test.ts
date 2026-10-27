@@ -13,7 +13,7 @@ vi.mock("@/lib/crmChat", () => ({
 }));
 // El puente espera 1,5 s a que el campo de Zoho esté quieto: las pruebas tardan un poco más
 vi.setConfig({ testTimeout: 12_000 });
-const { startBridge } = await import("@/lib/zohoBridge");
+const { openBridge } = await import("@/lib/zohoBridge");
 const { setBridging } = await import("@/lib/crmChat");
 
 let doc: Document;
@@ -55,6 +55,7 @@ function agentSays(id: string, name: string, text: string, extra = "") {
 }
 // El puente procesa cada mensaje cuando ya está completo (unos 700 ms)
 const tick = () => new Promise((r) => setTimeout(r, 1300));
+const handlers = () => ({ onMessage: vi.fn(), onForm: vi.fn() });
 
 beforeEach(() => {
   sent.length = 0;
@@ -66,23 +67,31 @@ afterEach(() => {
   vi.clearAllMocks();
 });
 
-describe("puente con Zoho (chat con un asesor dentro de Joel)", () => {
-  it("abre la conversación escondida y envía la pregunta", async () => {
-    await startBridge("Necesito cotizar custodia", { onMessage: vi.fn(), onForm: vi.fn() });
+describe("puente con Zoho (Joel pregunta y Zoho SalesIQ responde)", () => {
+  it("al abrir el chat prepara la conversación escondida, sin enviar nada", async () => {
+    await openBridge(handlers());
     expect(setBridging).toHaveBeenCalledWith(true);
     expect(z.floatwindow.visible).toHaveBeenCalledWith("show");
-    expect(sent).toEqual(["Necesito cotizar custodia"]);
+    expect(doc.querySelector("textarea.siqcw-textarea")).not.toBeNull();
+    expect(sent).toEqual([]);
   });
 
-  it("pasa a Joel los mensajes nuevos con su nombre y sus opciones", async () => {
-    const onMessage = vi.fn();
-    const b = await startBridge("Hola", { onMessage, onForm: vi.fn() });
-    agentSays("m1", "Laura", "¡Hola! ¿Qué servicio necesitas?", `<div class="tag-div">Custodia de archivos</div><div class="tag-div">Digitalización</div>`);
+  it("envía lo que escribe el visitante y confirma que Zoho lo recibió", async () => {
+    const b = await openBridge(handlers());
+    await expect(b.send("¿Tienen custodia de cintas?")).resolves.toBe(true);
+    expect(sent).toEqual(["¿Tienen custodia de cintas?"]);
+  });
+
+  it("pasa a Joel las respuestas con su nombre y sus opciones", async () => {
+    const h = handlers();
+    const b = await openBridge(h);
+    await b.send("Hola");
+    agentSays("m1", "Joel", "¡Hola! ¿Qué servicio necesita?", `<div class="tag-div">Custodia de archivos</div><div class="tag-div">Digitalización</div>`);
     await tick();
-    expect(onMessage).toHaveBeenCalledWith({
+    expect(h.onMessage).toHaveBeenCalledWith({
       id: "m1",
-      name: "Laura",
-      text: "¡Hola! ¿Qué servicio necesitas?",
+      name: "Joel",
+      text: "¡Hola! ¿Qué servicio necesita?",
       options: ["Custodia de archivos", "Digitalización"],
     });
     // Elegir una opción pulsa el botón correspondiente en Zoho
@@ -90,82 +99,82 @@ describe("puente con Zoho (chat con un asesor dentro de Joel)", () => {
     doc.querySelectorAll(".tag-div")[1].addEventListener("click", clicked);
     expect(b.choose("Digitalización")).toBe(true);
     expect(clicked).toHaveBeenCalled();
-    // Lo que el visitante escribe después va a Zoho (uno a la vez, confirmado)
-    expect(b.send("Somos dos")).toBe(true);
-    expect(b.send("Y un piano")).toBe(true);
-    await tick();
+    // Lo que el visitante escribe después va a Zoho (uno a la vez, confirmado y en orden)
+    await expect(Promise.all([b.send("Somos dos"), b.send("Y un piano")])).resolves.toEqual([true, true]);
     expect(sent).toEqual(["Hola", "Somos dos", "Y un piano"]);
+  });
+
+  it("no repite en Joel lo que Zoho muestra antes del primer mensaje (su saludo)", async () => {
+    const h = handlers();
+    const b = await openBridge(h);
+    agentSays("w1", "Joel", "¡Bienvenido a Transarchivos!");
+    await tick();
+    expect(h.onMessage).not.toHaveBeenCalled();
+    await b.send("Hola");
+    agentSays("m1", "Joel", "¿En qué le ayudo?");
+    await tick();
+    expect(h.onMessage.mock.calls.map((c) => c[0].id)).toEqual(["m1"]);
   });
 
   it("envía UNA sola vez un mensaje de varias líneas con emoji (Zoho lo muestra distinto)", async () => {
     // Zoho cambia los saltos de línea por <br> y el emoji por una imagen
     render = (v) => v.replace(/\n/g, "<br>").replace("🆕", '<img alt="">');
-    await startBridge("🆕 NUEVA COTIZACIÓN\nCliente: Ana\n\n• Servicio: Custodia", {
-      onMessage: vi.fn(),
-      onForm: vi.fn(),
-    });
+    const b = await openBridge(handlers());
+    await expect(b.send("🆕 NUEVA COTIZACIÓN\nCliente: Ana\n\n• Servicio: Custodia")).resolves.toBe(true);
     await new Promise((r) => setTimeout(r, 6500));
     expect(sent).toHaveLength(1);
-  }, 10_000);
+  }, 12_000);
 
-  it("si Zoho nunca confirma la pregunta, reintenta pocas veces y falla (sin bucle ni falso 'Listo')", async () => {
-    render = () => null;
+  it("si Zoho nunca confirma un mensaje, reintenta pocas veces, avisa que no llegó y sigue con los demás", async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
-    const p = startBridge("Hola", { onMessage: vi.fn(), onForm: vi.fn() });
-    const check = expect(p).rejects.toThrow("bridge-send");
-    await vi.advanceTimersByTimeAsync(60_000);
-    await check;
-    expect(sent).toEqual(["Hola", "Hola", "Hola"]);
-    // Después de fallar no sigue enviando
+    const b = await openBridge(handlers());
+    render = () => null;
+    const lost = b.send("Perdido");
+    await vi.advanceTimersByTimeAsync(30_000);
+    await expect(lost).resolves.toBe(false);
+    expect(sent).toEqual(["Perdido", "Perdido", "Perdido"]);
+    // Después de fallar no sigue enviando ese mensaje
     await vi.advanceTimersByTimeAsync(30_000);
     expect(sent).toHaveLength(3);
-    vi.useRealTimers();
-  });
-
-  it("si un mensaje posterior no se confirma, avisa a Joel y sigue con los demás", async () => {
-    const onSendFailed = vi.fn();
-    vi.useFakeTimers({ shouldAdvanceTime: true });
-    const b = await startBridge("Hola", { onMessage: vi.fn(), onForm: vi.fn(), onSendFailed });
-    render = () => null;
-    b.send("Perdido");
-    await vi.advanceTimersByTimeAsync(30_000);
-    expect(sent).toEqual(["Hola", "Perdido", "Perdido", "Perdido"]);
-    expect(onSendFailed).toHaveBeenCalledWith("Perdido");
+    render = (v) => v;
+    const ok = b.send("Hola");
+    await vi.advanceTimersByTimeAsync(1_000);
+    await expect(ok).resolves.toBe(true);
     b.stop();
     vi.useRealTimers();
   });
 
   it("espera a que el campo de Zoho esté habilitado y quieto antes de escribir (al abrir queda un momento en «Por favor, espere…»)", async () => {
     // Como el Zoho real: el campo aparece deshabilitado y se habilita después
-    const ready = doc.createElement("textarea");
     doc.querySelector(".home-icon-optns")!.addEventListener("click", () => {
       const ta = doc.querySelector<HTMLTextAreaElement>("textarea.siqcw-textarea")!;
       ta.disabled = true;
       ta.placeholder = "Por favor, espere...";
-      setTimeout(() => { ta.disabled = false; ta.placeholder = "Estamos a su disposición para ayudarle"; ready.click(); }, 1200);
+      setTimeout(() => { ta.disabled = false; ta.placeholder = "Estamos a su disposición para ayudarle"; }, 1200);
     });
     const t0 = Date.now();
-    await startBridge("Hola", { onMessage: vi.fn(), onForm: vi.fn() });
-    expect(sent).toEqual(["Hola"]);
-    // No escribió mientras el campo estaba deshabilitado
+    const b = await openBridge(handlers());
+    // No queda lista mientras el campo está deshabilitado
     expect(Date.now() - t0).toBeGreaterThanOrEqual(1200);
+    await expect(b.send("Hola")).resolves.toBe(true);
   }, 15_000);
 
   it("no repite mensajes ya vistos", async () => {
-    const onMessage = vi.fn();
-    await startBridge("Hola", { onMessage, onForm: vi.fn() });
+    const h = handlers();
+    const b = await openBridge(h);
+    await b.send("Hola");
     agentSays("m1", "Laura", "Hola");
     await tick();
     agentSays("m2", "Laura", "¿En qué te ayudo?");
     await tick();
     await tick();
-    expect(onMessage.mock.calls.map((c) => c[0].id)).toEqual(["m1", "m2"]);
+    expect(h.onMessage.mock.calls.map((c) => c[0].id)).toEqual(["m1", "m2"]);
   });
 
-  it("omite solas las preguntas opcionales de datos de Zoho (para que pase a los asesores)", async () => {
-    const onForm = vi.fn();
-    const onMessage = vi.fn();
-    await startBridge("Hola", { onMessage, onForm });
+  it("omite solas las preguntas opcionales de datos de Zoho", async () => {
+    const h = handlers();
+    const b = await openBridge(h);
+    await b.send("Hola");
     const skipped = vi.fn();
     agentSays(
       "f1",
@@ -178,25 +187,30 @@ describe("puente con Zoho (chat con un asesor dentro de Joel)", () => {
     agentSays("f2", "Transarchivos", "¿Podemos enviarle un correo electrónico?", `<span data-zsqa="skip_btn">Omitir</span>`);
     await tick();
     expect(skipped).toHaveBeenCalled();
-    expect(onMessage).not.toHaveBeenCalled();
-    expect(onForm).not.toHaveBeenCalled();
+    expect(h.onMessage).not.toHaveBeenCalled();
+    expect(h.onForm).not.toHaveBeenCalled();
   });
 
   it("si un formulario no se puede omitir, Joel ofrece llenarlo en la ventana de Zoho", async () => {
-    const onForm = vi.fn();
-    await startBridge("Hola", { onMessage: vi.fn(), onForm });
+    const h = handlers();
+    const b = await openBridge(h);
+    await b.send("Hola");
     agentSays("f3", "Transarchivos", "Indique su nombre", `<input class="siqcw-input">`);
     await tick();
-    expect(onForm).toHaveBeenCalledWith({ canSkip: false });
+    expect(h.onForm).toHaveBeenCalledWith({ canSkip: false });
   });
 
-  it("al terminar deja de escuchar y esconde la ventana", async () => {
-    const onMessage = vi.fn();
-    const b = await startBridge("Hola", { onMessage, onForm: vi.fn() });
+  it("al terminar deja de escuchar, esconde la ventana y descarta lo pendiente", async () => {
+    const h = handlers();
+    const b = await openBridge(h);
+    await b.send("Hola");
+    render = () => null;
+    const pending = b.send("¿Sigue ahí?");
     b.stop();
+    await expect(pending).resolves.toBe(false);
     agentSays("m9", "Laura", "¿Sigues ahí?");
     await tick();
-    expect(onMessage).not.toHaveBeenCalled();
+    expect(h.onMessage).not.toHaveBeenCalled();
     expect(z.floatwindow.visible).toHaveBeenLastCalledWith("hide");
     expect(setBridging).toHaveBeenLastCalledWith(false);
   });
@@ -204,7 +218,7 @@ describe("puente con Zoho (chat con un asesor dentro de Joel)", () => {
   it("si la ventana de Zoho no aparece, falla y deja de esconderla", async () => {
     document.getElementById("siq_chatwindow")!.remove();
     vi.useFakeTimers();
-    const p = startBridge("Hola", { onMessage: vi.fn(), onForm: vi.fn() });
+    const p = openBridge(handlers());
     const check = expect(p).rejects.toThrow("bridge-timeout");
     await vi.advanceTimersByTimeAsync(16_000);
     await check;

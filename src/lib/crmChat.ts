@@ -1,16 +1,16 @@
-// ─── Chat con un asesor: Zoho SalesIQ (CRM) ─────────────────────────────────
-// Joel atiende primero. Cuando la persona elige "Hablar con un asesor" (en el
-// chat de Joel), se carga Zoho SalesIQ. El script de Zoho NO se carga al entrar
-// al sitio: solo en ese momento. Así, antes de eso Zoho no guarda cookies ni
-// rastrea la visita (Ley 1581 de 2012; ver la política de datos).
+// ─── Chat de Joel con Zoho SalesIQ (CRM) ─────────────────────────────────────
+// Lo que el visitante escribe en Joel lo responde Zoho SalesIQ. El script de
+// Zoho NO se carga al entrar al sitio: solo cuando la persona abre el chat. Así,
+// antes de eso Zoho no guarda cookies ni rastrea la visita (Ley 1581 de 2012;
+// ver la política de datos).
 //
 // · Zoho vive en una PÁGINA AISLADA del sitio (public/chat-asesor.html) que se
 //   carga en un iframe escondido. Esa página tiene su propia CSP (vercel.json)
 //   con los scripts en línea que Zoho necesita; el resto del sitio conserva su
 //   CSP estricta.
-// · Normalmente trabaja escondida como puente (src/lib/zohoBridge.ts): la
-//   conversación se ve en Joel. Su ventana solo se muestra como respaldo o para
-//   llenar un formulario de Zoho (clase ta-zoho-open, src/styles/index.css).
+// · Trabaja escondida como puente (src/lib/zohoBridge.ts): la conversación se
+//   ve en Joel. Su ventana solo se muestra para llenar un formulario de Zoho
+//   (clase ta-zoho-open, src/styles/index.css).
 // · Diseño: src/styles/zoho-chat.css (adentro de la ventana) y
 //   src/styles/zoho-host.css (marco y botón de cerrar).
 // · Solo en español. El código del widget no es secreto.
@@ -25,7 +25,7 @@ export const SALESIQ_SRC = `https://salesiq.zohopublic.com/widget?wc=${SALESIQ_W
 /** Página aislada donde vive Zoho y el iframe que la contiene */
 export const HOST_SRC = "/chat-asesor.html";
 export const HOST_ID = "ta-zoho-frame";
-/** Tiempo máximo para que Zoho responda antes de ofrecer otros canales */
+/** Tiempo máximo para que cargue el widget de Zoho */
 const TIMEOUT_MS = 15_000;
 
 type SalesIQ = {
@@ -164,15 +164,6 @@ export function loadCrmChat(): Promise<SalesIQ> {
   }));
   loading.catch(() => (loading = null));
   return loading;
-}
-
-/** Abre la ventana del chat de Zoho a la vista (respaldo). */
-export async function openCrmChat(): Promise<void> {
-  const z = await loadCrmChat();
-  setBridging(false);
-  z.floatwindow?.visible("show");
-  styleChatWindow();
-  announce(true);
 }
 
 /** Cierra la ventana del chat si Zoho ya está cargado. */

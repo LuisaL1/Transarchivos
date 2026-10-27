@@ -1,8 +1,8 @@
 // Joel, asesor virtual: chat guiado (cotización, servicios, preguntas
 // frecuentes y contacto). Aquí viven los pasos de la conversación, los textos
 // de la interfaz y los íconos de las opciones. La lógica está en
-// src/hooks/useAdvisorChat.ts; el texto libre lo responde el cerebro de Joel
-// (src/lib/joel.ts).
+// src/hooks/useAdvisorChat.ts; el texto libre lo responde Zoho SalesIQ (ver
+// docs/08-chat-asesor.md).
 import { FAQS } from "@/data/faqs";
 import { services } from "@/data/services";
 import { contactHref, whatsappUrl } from "@/data/contact";
@@ -15,13 +15,11 @@ type ChatAction = {
   icon: string;
   href?: string;
   to?: string;
-  /** Abre el chat con un asesor (Zoho SalesIQ; lo atiende useAdvisorChat) */
-  crm?: boolean;
   /** Envía la cotización del chat a un asesor (useAdvisorChat) */
   sendQuote?: boolean;
 };
 export type ChatMsg = {
-  /** "agent": un asesor de Transarchivos respondiendo desde Zoho SalesIQ */
+  /** "agent": un asesor de Transarchivos (o un bot de Zoho SalesIQ con otro nombre que Joel) */
   from: "bot" | "user" | "agent";
   text: string;
   actions?: ChatAction[];
@@ -65,6 +63,7 @@ const quoteWhatsapp = (d: ChatData) =>
 /**
  * Mensaje para el equipo comercial cuando el visitante termina una cotización
  * con Joel: llega al chat de los asesores (Zoho SalesIQ) para dar seguimiento.
+ * El bot de Zoho debe pasarlo a un asesor (empieza por "🆕 NUEVA COTIZACIÓN").
  */
 export function teamQuoteMessage(d: ChatData): string {
   return [
@@ -77,11 +76,6 @@ export function teamQuoteMessage(d: ChatData): string {
     "Por favor, contactar al cliente para dar seguimiento o cerrar la venta.",
   ].join("\n");
 }
-
-const CONTACT_ACTIONS: ChatAction[] = [
-  { label: "Escribir por WhatsApp", icon: "whatsapp", href: whatsappUrl() },
-  { label: "Escribirnos (formulario)", icon: "envelope-fill", href: contactHref() },
-];
 
 export const CHAT_STEPS: Record<string, ChatStep> = {
   start: {
@@ -170,19 +164,11 @@ export const CHAT_STEPS: Record<string, ChatStep> = {
       { label: "Volver al inicio", next: "reset" },
     ],
   },
-
-  // "Hablar con un asesor": useAdvisorChat conecta de una vez con el asesor.
-  // Este paso solo se muestra si eso no es posible.
-  human: {
-    say: () => ["Le conecto con un asesor."],
-    actions: () => [{ label: "Chatear con un asesor", icon: "headset", crm: true }, ...CONTACT_ACTIONS],
-    options: [{ label: "Volver al inicio", next: "reset" }],
-  },
 };
-
-// Opciones que, al elegirse después de algo que Joel no entendió, le enseñan
-// a qué se refería el visitante.
-export const LEARN_DEST: Record<string, string> = { q_service: "intent:cotizar", human: "intent:contacto", faq_list: "intent:normativa" };
+// Opciones que no son un paso (las atiende useAdvisorChat):
+//  · next "human" ("Hablar con un asesor"): le pide a Zoho SalesIQ un asesor
+//    (CHAT_TEXT.humanRequest); el bot de Zoho hace la transferencia.
+//  · next "zoho": le pregunta a Zoho SalesIQ el texto de la opción.
 
 // Textos de la interfaz del chat
 export const CHAT_TEXT = {
@@ -197,22 +183,15 @@ export const CHAT_TEXT = {
   send: "Enviar",
   teaser: "¿Necesita organizar, digitalizar o custodiar su archivo? Le ayudo.",
   backToStart: "Volver al inicio",
-  // Chat con un asesor (Zoho SalesIQ)
-  crmError: "No pudimos abrir el chat con un asesor en este momento. Escríbanos por otro canal:",
+  // Respuestas de Zoho SalesIQ (src/lib/advisorChat.ts y zohoBridge.ts)
+  zohoError: "No pude responderle en este momento. Escríbanos por otro canal y le atenderemos:",
+  zohoSlow: "La respuesta está tardando más de lo normal. Puede seguir esperando aquí o escribirnos por otro canal:",
   crmWhatsapp: "Escribir por WhatsApp",
   crmForm: "Dejar un mensaje",
-  // Chat con un asesor dentro de la ventana de Joel (src/lib/advisorChat.ts y zohoBridge.ts)
-  advisorAsk: "Le conecto con un asesor. Escríbale su mensaje y le responderá aquí mismo.",
-  advisorConnecting: "Listo, un asesor le responderá aquí en unos momentos.",
+  /** Lo que se le envía a Zoho al elegir "Hablar con un asesor" */
+  humanRequest: "Quiero hablar con un asesor",
   advisorJoined: (name: string) => `${name} se unió a la conversación.`,
-  advisorBusy: "Nuestros asesores están ocupados en este momento. Puede seguir esperando aquí o escribirnos por otro canal:",
   advisorEnded: "El asesor terminó la conversación. ¡Gracias por escribirnos!",
-  advisorBack: "Volvió conmigo. Si quiere hablar otra vez con un asesor, elija «Hablar con un asesor».",
-  advisorResume: "Sigue en el chat con un asesor de Transarchivos.",
-  advisorSendError: "Su mensaje no se pudo enviar. Inténtelo de nuevo.",
-  advisorBanner: "Chat con un asesor de Transarchivos",
-  advisorEnd: "Volver con Joel",
-  advisorPlaceholder: "Escriba su mensaje al asesor…",
   advisorLabel: "Asesor",
   advisorForm: "Nuestro equipo le pide unos datos de contacto. Puede completarlos en la ventana de atención o seguir sin ellos.",
   advisorFormFill: "Completar mis datos",

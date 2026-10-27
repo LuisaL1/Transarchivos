@@ -1,35 +1,24 @@
 // Lógica del chat de Joel: estado de la conversación, mensajes uno a uno con
-// indicador de "escribiendo", invitación una vez por sesión, pregunta escrita
-// en la caja del hero ("seed") y el cerebro de Joel para el texto libre.
-// Chat con un asesor: si /api/advisor está configurado, el visitante habla con
-// el asesor aquí mismo (Zoho SalesIQ por detrás); si no, por el puente con el
-// widget de Zoho escondido (src/lib/zohoBridge.ts); si el puente falla, se
-// abre la ventana de Zoho (src/lib/crmChat.ts). Ver docs/08-chat-asesor.md.
-// La conversación (pasos y textos) está en src/data/chat.ts; la interfaz en
-// src/components/chat/ChatBot.tsx.
+// indicador de "escribiendo", invitación una vez por sesión y pregunta escrita
+// en la caja del hero ("seed").
+// · Los botones (menú, servicios, preguntas frecuentes y cotización guiada) se
+//   resuelven aquí con los pasos de src/data/chat.ts.
+// · Lo que el visitante ESCRIBE lo responde Zoho SalesIQ: su bot, con los
+//   artículos y preguntas frecuentes configurados allá, o un asesor si el bot
+//   lo transfiere. Por /api/advisor si está configurado (el navegador no carga
+//   Zoho); si no, por el puente con el widget de Zoho escondido
+//   (src/lib/zohoBridge.ts), que se prepara al abrir el chat.
+// · Si Zoho no responde, Joel lo dice y ofrece WhatsApp y el formulario.
+// La interfaz está en src/components/chat/ChatBot.tsx. Ver docs/08-chat-asesor.md.
 import { useEffect, useRef, useState } from "react";
-import { CHAT_STEPS, CHAT_TEXT as t, LEARN_DEST, teamQuoteMessage, type ChatData, type ChatMsg, type ChatOption, type ChatStep } from "@/data/chat";
-import { createJoel, newMemory, type JoelReply } from "@/lib/joel";
-import { track } from "@/lib/visitor";
+import { CHAT_STEPS, CHAT_TEXT as t, NAME, teamQuoteMessage, type ChatData, type ChatMsg, type ChatOption, type ChatStep } from "@/data/chat";
+import { greeting } from "@/lib/joel";
 import { trackEvent } from "@/lib/analytics";
-import { ADVISOR_EVENT, CRM_CHAT_EVENT, QUOTE_EVENT, requestAdvisorChat } from "@/lib/advisorEvents";
-import { advisorAvailable, loadSaved, pollAdvisor, POLL_MS, save, sendToAdvisor, startAdvisor, WAIT_MS } from "@/lib/advisorChat";
+import { CRM_CHAT_EVENT, QUOTE_EVENT } from "@/lib/advisorEvents";
+import { advisorAvailable, loadSaved, pollAdvisor, POLL_MS, REPLY_MS, save, sendToAdvisor, startAdvisor } from "@/lib/advisorChat";
 import { contactHref, whatsappUrl } from "@/data/contact";
-import { blogPosts } from "@/data/blog";
-import { FAQS } from "@/data/faqs";
-import { SERVICE_FAQS } from "@/data/serviceFaqs";
-import { QUOTE_UNIT, quoteConfig } from "@/data/quote";
-import { SERVICE_DETAILS } from "@/data/serviceDetails";
 import { services } from "@/data/services";
-import { SOLUTIONS } from "@/data/solutions";
-
-// Cerebro de Joel (src/lib/joel.ts): se crea al usarse por primera vez, con
-// todos los datos del sitio como conocimiento (una sola fuente de verdad).
-let joelBrain: ReturnType<typeof createJoel> | null = null;
-const getJoel = () => joelBrain ??= createJoel({
-  services, details: SERVICE_DETAILS, faqs: FAQS, serviceFaqs: SERVICE_FAQS, solutions: SOLUTIONS,
-  posts: blogPosts, quote: quoteConfig, quoteUnit: QUOTE_UNIT,
-});
+import { track } from "@/lib/visitor";
 
 export type ChatSeed = { text: string; id: number } | null | undefined;
 type Bridge = import("@/lib/zohoBridge").Bridge;
@@ -50,38 +39,21 @@ export function useAdvisorChat({ open, setOpen, seed, heroJoel = false }: {
   const inputRef = useRef<HTMLInputElement>(null);
   const timers = useRef<number[]>([]);
   const seedHandled = useRef(0);
-  const mem = useRef(newMemory());
-  // Paso "dinámico": la respuesta que arma el cerebro de Joel a un texto libre.
+  // Paso "dinámico": el saludo, o lo que se muestra mientras se habla con Zoho.
   const dyn = useRef<ChatStep | null>(null);
   const step = (stepId === "dyn" && dyn.current) ? dyn.current : CHAT_STEPS[stepId];
 
-  const toStep = (r: JoelReply): ChatStep => ({ say: () => r.say, actions: r.actions ? () => r.actions! : undefined, options: r.options });
   const say = (text: string, actions?: ChatMsg["actions"]) => setMsgs(m => [...m, { from: "bot", text, actions }]);
-
-  // Pasa un texto libre por el cerebro de Joel y muestra su respuesta.
-  const think = (value: string, d: ChatData) => {
-    const r = getJoel().respond(value, mem.current);
-    if (r.service) { mem.current.lastService = r.service; track("service", r.service); }
-    mem.current.lastIntent = r.intent;
-    track("chat", r.intent);
-    if (!r.intent.startsWith("fallback")) mem.current.unknownStreak = 0;
-    // Pidió hablar con un asesor: se le pasa de una vez
-    if (r.handoff) { setData(d); requestAdvisorChat(); return; }
-    dyn.current = toStep(r);
-    goTo("dyn", { ...d, ...(r.service ? { service: r.service } : {}) });
-  };
 
   // Muestra los mensajes de un paso uno a uno, con indicador de "escribiendo".
   const goTo = (id: string, d: ChatData) => {
-    // "Hablar con un asesor": se conecta de una vez, sin más explicaciones
-    if (id === "human") { setData(d); requestAdvisorChat(); return; }
     // Cotización nueva: su resumen se podrá enviar a un asesor
     if (id === "reset" || id === "q_service" || id === "q_volume") quoteSent.current = "";
     let target = id === "reset" ? "start" : id;
     const nextData = id === "reset" ? {} : d;
-    if (id === "reset") { setMsgs([]); mem.current = newMemory(); }
+    if (id === "reset") { setMsgs([]); setLiveOptions([]); stopWaiting(); }
     // El saludo se arma según lo que el visitante ha hecho en el sitio.
-    if (target === "start") { dyn.current = toStep(getJoel().greeting()); target = "dyn"; }
+    if (target === "start") { const g = greeting(services); dyn.current = { say: () => g.say, options: g.options }; target = "dyn"; }
     if (target === "info_detail" && nextData.service) track("service", nextData.service);
     setData(nextData);
     setStepId(target);
@@ -103,13 +75,15 @@ export function useAdvisorChat({ open, setOpen, seed, heroJoel = false }: {
   useEffect(() => { if (open) trackEvent("chat_open"); }, [open]);
 
   // Al abrir: saludo la primera vez, o respuesta a la pregunta del hero.
+  // También se prepara Zoho (puente) para que la primera respuesta llegue antes.
   useEffect(() => {
     if (!open) return;
     setTeaser(false);
+    void getMode().then(m => { if (m === "bridge") getBridge().catch(() => { /* se reintenta al escribir */ }); });
     if (seed && seed.id !== seedHandled.current) {
       seedHandled.current = seed.id;
       setMsgs(m => [...m, { from: "user", text: seed.text }]);
-      think(seed.text, data);
+      void askZoho(seed.text);
       return;
     }
     if (msgs.length === 0 && !typing) goTo("start", {});
@@ -138,62 +112,99 @@ export function useAdvisorChat({ open, setOpen, seed, heroJoel = false }: {
     return () => clearTimeout(id);
   }, [heroJoel]);
 
-  // ─── Chat con un asesor ────────────────────────────────────────────────
-  // advisor: ventana de Zoho ("loading"/"open") cuando se usa como respaldo.
-  // live: chat con el asesor dentro de Joel:
-  //   "ask" (Joel pide el mensaje) → "connecting" (esperando asesor) → "live".
-  //   Por la API (/api/advisor) si está configurada; si no, por el puente con
-  //   el widget de Zoho escondido (src/lib/zohoBridge.ts).
-  const [advisor, setAdvisor] = useState<"idle" | "loading" | "open">("idle");
-  const [live, setLive] = useState<"off" | "ask" | "connecting" | "live">("off");
-  const pass = useRef<{ token: string; after: number } | null>(null);
-  const mode = useRef<"api" | "bridge">("api");
-  const bridge = useRef<Bridge | null>(null);
-  // Respuestas sugeridas por el bot o el asesor de Zoho (modo puente)
+  // ─── Respuestas de Zoho SalesIQ ────────────────────────────────────────
+  // advisor: la ventana de Zoho a la vista ("open"), solo para llenar un
+  // formulario que Zoho no deja omitir.
+  const [advisor, setAdvisor] = useState<"idle" | "open">("idle");
+  // Esperando la respuesta de Zoho (indicador de "escribiendo")
+  const [waiting, setWaiting] = useState(false);
+  const waitTimer = useRef(0);
+  // Respuestas sugeridas por el bot o el asesor de Zoho (botones)
   const [liveOptions, setLiveOptions] = useState<string[]>([]);
-  // Mensajes escritos mientras el puente se conecta (se envían al estar listo)
-  const pending = useRef<string[] | null>(null);
-  // Cotización enviada al equipo ("" | "sending" | "sent") y seguimiento (el
-  // asesor contacta al cliente después: no se avisa que nadie responde)
+  // Canal: la API (/api/advisor) si está configurada; si no, el puente
+  const mode = useRef<Promise<"api" | "bridge"> | null>(null);
+  const getMode = () => (mode.current ??= advisorAvailable().then(ok => (ok ? "api" : "bridge")));
+  const bridge = useRef<Promise<Bridge> | null>(null);
+  const bridgeReady = useRef<Bridge | null>(null);
+  // Modo API: pase de la conversación abierta en Zoho
+  const pass = useRef<{ token: string; after: number } | null>(null);
+  const [polling, setPolling] = useState(false);
+  // Cotización enviada al equipo ("" | "sending" | "sent")
   const quoteSent = useRef("");
-  const followUp = useRef(false);
   const otherChannels = (): ChatMsg["actions"] => [
     { label: t.crmWhatsapp, icon: "whatsapp", href: whatsappUrl() },
     { label: t.crmForm, icon: "envelope-fill", href: contactHref() },
   ];
 
-  // Ventana de Zoho (respaldo si el puente no funciona)
-  const openZohoWindow = () => {
-    setAdvisor("loading");
-    // El código de Zoho se descarga solo ahora (archivo aparte)
-    import("@/lib/crmChat")
-      .then(m => m.openCrmChat())
-      .catch(() => { setAdvisor("idle"); say(t.crmError, otherChannels()); });
+  const stopWaiting = () => { window.clearTimeout(waitTimer.current); setWaiting(false); };
+  const startWaiting = () => {
+    window.clearTimeout(waitTimer.current);
+    setWaiting(true);
+    // Si tarda, se avisa; la respuesta se sigue mostrando si llega después
+    waitTimer.current = window.setTimeout(() => { setWaiting(false); say(t.zohoSlow, otherChannels()); }, REPLY_MS);
+  };
+  useEffect(() => () => window.clearTimeout(waitTimer.current), []);
+
+  // Respuesta de Zoho: con el nombre de Joel (o sin nombre) se ve como Joel;
+  // con otro nombre, como un asesor
+  const onReply = (name: string, text: string, options: string[] = []) => {
+    stopWaiting();
+    setMsgs(list => [...list, !name || name === NAME ? { from: "bot", text } : { from: "agent", text, name }]);
+    setLiveOptions(options);
   };
 
+  // Puente: carga Zoho escondido una vez; si falla, se reintenta en el próximo mensaje
+  const getBridge = () => {
+    if (!bridge.current) {
+      const p = import("@/lib/zohoBridge").then(m => m.openBridge({
+        onMessage: m => onReply(m.name, m.text, m.options),
+        onForm: ({ canSkip }) => {
+          stopWaiting();
+          say(t.advisorForm);
+          setLiveOptions(canSkip ? [t.advisorFormFill, t.advisorFormSkip] : [t.advisorFormFill]);
+        },
+      }));
+      bridge.current = p;
+      p.then(b => { bridgeReady.current = b; }, () => { if (bridge.current === p) bridge.current = null; });
+    }
+    return bridge.current;
+  };
+
+  // Entrega un texto a Zoho (por el canal activo). Devuelve si Zoho lo recibió.
+  const deliver = async (value: string, name?: string): Promise<boolean> => {
+    if ((await getMode()) === "bridge") {
+      try { return await (await getBridge()).send(value); } catch { return false; }
+    }
+    if (pass.current) return (await sendToAdvisor(pass.current.token, value)).ok;
+    const r = await startAdvisor(value, name);
+    if (!r.ok || !r.token) return false;
+    pass.current = { token: r.token, after: 0 };
+    save(pass.current);
+    setPolling(true);
+    return true;
+  };
+
+  // Texto del visitante → Zoho SalesIQ → respuesta en Joel
+  const askZoho = async (value: string) => {
+    trackEvent("chat_message");
+    setLiveOptions([]);
+    dyn.current = { say: () => [], options: [{ label: t.backToStart, next: "reset" }] };
+    setStepId("dyn");
+    startWaiting();
+    if (!(await deliver(value, data.name))) { stopWaiting(); say(t.zohoError, otherChannels()); }
+  };
+
+  // Ventana de Zoho a la vista (formulario) o escondida otra vez
   useEffect(() => {
-    const onRequest = () => {
-      trackEvent("contact_click", { method: "advisor_chat" });
-      void advisorAvailable().then(ok => {
-        mode.current = ok ? "api" : "bridge";
-        setLive("ask");
-        say(t.advisorAsk);
-      });
-    };
     const onChange = (e: Event) => {
       const isOpen = (e as CustomEvent<{ open: boolean }>).detail.open;
       setAdvisor(isOpen ? "open" : "idle");
       if (isOpen) setOpen(false);
-      // Puente: al cerrar la ventana de Zoho, vuelve a esconderse y la
-      // conversación sigue en Joel
-      else if (bridge.current) { bridge.current.hideWindow(); setOpen(true); }
+      // Al cerrarla vuelve a esconderse y la conversación sigue en Joel
+      else if (bridgeReady.current) { bridgeReady.current.hideWindow(); setOpen(true); }
     };
-    window.addEventListener(ADVISOR_EVENT, onRequest);
     window.addEventListener(CRM_CHAT_EVENT, onChange);
-    return () => {
-      window.removeEventListener(ADVISOR_EVENT, onRequest);
-      window.removeEventListener(CRM_CHAT_EVENT, onChange);
-    };
+    return () => window.removeEventListener(CRM_CHAT_EVENT, onChange);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -202,41 +213,26 @@ export function useAdvisorChat({ open, setOpen, seed, heroJoel = false }: {
     const s = loadSaved();
     if (!s) return;
     pass.current = s;
-    setLive("live");
-    say(t.advisorResume);
+    setPolling(true);
   }, []);
 
-  const endAdvisor = (text = t.advisorBack) => {
-    followUp.current = false;
-    pass.current = null;
-    pending.current = null;
-    save(null);
-    bridge.current?.stop();
-    bridge.current = null;
-    setLiveOptions([]);
-    setLive("off");
-    dyn.current = { say: () => [text], options: [{ label: t.backToStart, next: "reset" }] };
-    goTo("dyn", data);
-  };
-
-  // Respuestas del asesor (modo API): se preguntan cada pocos segundos
+  // Respuestas de Zoho (modo API): se preguntan cada pocos segundos
   useEffect(() => {
-    if (live !== "connecting" && live !== "live") return;
+    if (!polling) return;
     let stop = false;
+    const end = () => { pass.current = null; save(null); setPolling(false); };
     const tick = async () => {
       const p = pass.current;
       if (!p || stop) return;
       const r = await pollAdvisor(p.token, p.after);
       if (stop) return;
-      if (!r.ok) { if (r.error === "token") endAdvisor(t.advisorEnded); return; }
+      // Pase vencido: el próximo mensaje abre otra conversación
+      if (!r.ok) { if (r.error === "token") end(); return; }
       for (const m of r.messages ?? []) {
         p.after = Math.max(p.after, m.seq);
-        if (m.from === "system" && m.text === "joined") { setLive("live"); say(t.advisorJoined(m.name)); }
-        else if (m.from === "system" && m.text === "ended") { endAdvisor(t.advisorEnded); return; }
-        else if (m.from !== "system") {
-          setLive("live");
-          setMsgs(list => [...list, { from: "agent", text: m.text, name: m.name || t.advisorLabel }]);
-        }
+        if (m.from === "system" && m.text === "joined") say(t.advisorJoined(m.name));
+        else if (m.from === "system" && m.text === "ended") { stopWaiting(); say(t.advisorEnded); end(); return; }
+        else if (m.from !== "system") onReply(m.from === "bot" ? m.name : m.name || t.advisorLabel, m.text);
       }
       save(p);
     };
@@ -244,73 +240,18 @@ export function useAdvisorChat({ open, setOpen, seed, heroJoel = false }: {
     void tick();
     return () => { stop = true; clearInterval(id); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [live]);
-
-  // Si nadie responde a tiempo, Joel ofrece otros canales (una vez)
-  useEffect(() => {
-    if (live !== "connecting" || followUp.current) return;
-    const id = window.setTimeout(() => say(t.advisorBusy, otherChannels()), WAIT_MS);
-    return () => clearTimeout(id);
-  }, [live]);
-
-  // Puente: abre la conversación en el Zoho escondido y pasa sus mensajes a Joel.
-  // quiet: para la cotización enviada al equipo (sin el mensaje de "ya le avisé"
-  // ni la ventana de Zoho de respaldo si falla). Devuelve si se conectó.
-  const startViaBridge = async (question: string, quiet = false): Promise<boolean> => {
-    pending.current = [];
-    setLive("connecting");
-    try {
-      const { startBridge } = await import("@/lib/zohoBridge");
-      bridge.current = await startBridge(question, {
-        onMessage: m => {
-          setLive("live");
-          setMsgs(list => [...list, { from: "agent", text: m.text, name: m.name || t.advisorLabel }]);
-          setLiveOptions(m.options);
-        },
-        onSendFailed: () => say(t.advisorSendError),
-        onForm: ({ canSkip }) => {
-          say(t.advisorForm);
-          setLiveOptions(canSkip ? [t.advisorFormFill, t.advisorFormSkip] : [t.advisorFormFill]);
-        },
-      });
-      if (!quiet) { trackEvent("generate_lead", { method: "advisor_chat" }); say(t.advisorConnecting); }
-      for (const text of pending.current ?? []) bridge.current.send(text);
-      pending.current = null;
-      return true;
-    } catch {
-      pending.current = null;
-      setLive("off");
-      // Si el puente no funciona, la ventana de Zoho de respaldo
-      if (!quiet) openZohoWindow();
-      return false;
-    }
-  };
+  }, [polling]);
 
   // ─── Cotización terminada → chat de los asesores para seguimiento ────────
   // Con "Enviar a un asesor" (resumen), Joel envía la cotización (con nombre y
-  // celular) a Zoho SalesIQ marcada como "NUEVA COTIZACIÓN para seguimiento", y
-  // se queda escuchando por si el asesor responde mientras el cliente sigue aquí.
+  // celular) a Zoho SalesIQ marcada como "NUEVA COTIZACIÓN para seguimiento", en
+  // la misma conversación; si el asesor responde, aparece en Joel.
   const sendQuoteToTeam = async (d: ChatData) => {
-    const message = teamQuoteMessage(d);
-    const busy = !!bridge.current || !!pass.current;
-    const viaApi = busy ? mode.current === "api" : await advisorAvailable();
-    if (!busy) mode.current = viaApi ? "api" : "bridge";
-    followUp.current = true;
-    let ok = false;
-    // Ya hay una conversación con un asesor abierta: la cotización va por ahí
-    if (bridge.current) ok = bridge.current.send(message);
-    else if (pass.current) ok = (await sendToAdvisor(pass.current.token, message)).ok;
-    else if (viaApi) {
-      const r = await startAdvisor(message, d.name);
-      if (r.ok && r.token) { pass.current = { token: r.token, after: 0 }; save(pass.current); setLive("connecting"); ok = true; }
-    } else ok = await startViaBridge(message, true);
+    const ok = await deliver(teamQuoteMessage(d), d.name);
     if (ok) {
       trackEvent("generate_lead", { method: "chat_advisor", service: d.service ?? "" });
       say(t.quoteSent(d.phone ?? ""));
-    } else {
-      followUp.current = false;
-      say(t.quoteSendFail);
-    }
+    } else say(t.quoteSendFail);
     return ok;
   };
   // Botón "Enviar a un asesor" del resumen: una vez por cotización (se puede
@@ -329,52 +270,26 @@ export function useAdvisorChat({ open, setOpen, seed, heroJoel = false }: {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Mensaje del visitante en el chat con el asesor
-  const sendLive = async (value: string) => {
-    // Puente conectándose: lo que se escriba queda en cola, en orden
-    if (mode.current === "bridge" && pending.current) return void pending.current.push(value);
-    if (live === "ask" && mode.current === "bridge") return void startViaBridge(value);
-    if (mode.current === "bridge") {
-      setLiveOptions([]);
-      if (!bridge.current?.send(value)) say(t.advisorSendError);
-      return;
-    }
-    if (live === "ask") {
-      const r = await startAdvisor(value, data.name);
-      if (!r.ok || !r.token) { setLive("off"); say(t.crmError, otherChannels()); return; }
-      pass.current = { token: r.token, after: 0 };
-      save(pass.current);
-      trackEvent("generate_lead", { method: "advisor_chat" });
-      setLive("connecting");
-      say(t.advisorConnecting);
-      return;
-    }
-    const p = pass.current;
-    if (!p) return;
-    const r = await sendToAdvisor(p.token, value);
-    if (!r.ok) say(t.advisorSendError);
-  };
-
-  useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" }); }, [msgs, typing]);
-  useEffect(() => { if (open && (step.input || live !== "off") && !typing) inputRef.current?.focus(); }, [open, step, typing, live]);
+  useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" }); }, [msgs, typing, waiting]);
+  useEffect(() => { if (open && step.input && !typing) inputRef.current?.focus(); }, [open, step, typing]);
 
   const choose = (o: ChatOption) => {
-    // Respuesta sugerida por Zoho (modo puente)
-    if (live !== "off" && o.next === "live") {
-      setMsgs(m => [...m, { from: "user", text: o.label }]);
+    setMsgs(m => [...m, { from: "user", text: o.label }]);
+    // Respuesta sugerida por Zoho (botones de su bot o del asesor)
+    if (o.next === "live") {
       setLiveOptions([]);
-      if (o.label === t.advisorFormFill) bridge.current?.showWindow();
-      else if (o.label === t.advisorFormSkip) { if (!bridge.current?.skip()) bridge.current?.showWindow(); }
-      else if (!bridge.current?.choose(o.label)) say(t.advisorSendError);
+      const b = bridgeReady.current;
+      if (o.label === t.advisorFormFill) b?.showWindow();
+      else if (o.label === t.advisorFormSkip) { if (!b?.skip()) b?.showWindow(); }
+      else if (b?.choose(o.label)) startWaiting();
+      else void askZoho(o.label);
       return;
     }
     const d = { ...data, ...o.set };
-    setMsgs(m => [...m, { from: "user", text: o.label }]);
     const next = typeof o.next === "function" ? o.next(d) : o.next;
-    // Aprende de la elección si venía de algo que no entendió.
-    const dest = o.set?.service ? `service:${o.set.service}` : LEARN_DEST[next];
-    if (dest) getJoel().learn(mem.current, dest);
-    if (next.startsWith("brain:")) { think(next.slice(6), d); return; }
+    // "Hablar con un asesor": el bot de Zoho transfiere a un asesor
+    if (next === "human") { trackEvent("contact_click", { method: "advisor_chat" }); setData(d); void askZoho(t.humanRequest); return; }
+    if (next === "zoho") { setData(d); void askZoho(o.label); return; }
     if (next === "q_volume" && d.service) track("quote", d.service);
     goTo(next, d);
   };
@@ -384,25 +299,22 @@ export function useAdvisorChat({ open, setOpen, seed, heroJoel = false }: {
     if (!value || typing) return;
     setText("");
     setMsgs(m => [...m, { from: "user", text: value }]);
-    if (live !== "off") { void sendLive(value); return; }
     if (step.input) {
       const d = { ...data, [step.input.key]: value };
       goTo(step.input.next(d), d);
     } else {
-      think(value, data);
+      void askZoho(value);
     }
   };
 
-  // Durante el chat con un asesor no se muestran las opciones de Joel, solo las
-  // respuestas sugeridas por Zoho
-  const options: ChatOption[] = live !== "off"
+  // Con botones sugeridos por Zoho, se muestran esos en lugar de los del paso
+  const options: ChatOption[] = liveOptions.length
     ? liveOptions.map(label => ({ label, next: "live" }))
     : typeof step.options === "function" ? step.options(data) : (step.options ?? []);
 
   return {
-    msgs, typing, text, setText, step, options, choose, send,
+    msgs, typing, waiting, text, setText, step, options, choose, send,
     restart: () => goTo("reset", {}),
-    teaser, setTeaser, endRef, inputRef,
-    advisor, live, endAdvisor: () => endAdvisor(),
+    teaser, setTeaser, endRef, inputRef, advisor,
   };
 }

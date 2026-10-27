@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { existsSync, readFileSync } from "node:fs";
-import { HOST_ID, SALESIQ_SRC, loadCrmChat, openCrmChat, resetCrmChatForTests, setZohoHostForTests, styleChatWindow } from "@/lib/crmChat";
-import { CRM_CHAT_EVENT } from "@/lib/advisorEvents";
+import { HOST_ID, SALESIQ_SRC, loadCrmChat, resetCrmChatForTests, setZohoHostForTests, styleChatWindow } from "@/lib/crmChat";
 
 // Cargador del chat de Zoho SalesIQ (sin cargar el script real). En el sitio,
 // Zoho vive en una página aislada (iframe); aquí esa página es la ventana de
@@ -45,22 +44,6 @@ describe("chat de Zoho SalesIQ", () => {
     const calls = zohoLoads();
     await p;
     expect(calls).toEqual(["language:es", "button:hide"]);
-  });
-
-  it("abre la ventana y avisa al sitio", async () => {
-    const events: boolean[] = [];
-    const on = (e: Event) => events.push((e as CustomEvent<{ open: boolean }>).detail.open);
-    window.addEventListener(CRM_CHAT_EVENT, on);
-    const p = openCrmChat();
-    await Promise.resolve();
-    await Promise.resolve();
-    const calls = zohoLoads();
-    await p;
-    expect(calls).toContain("window:show");
-    expect(events).toEqual([true]);
-    expect(document.documentElement.classList.contains("ta-zoho-open")).toBe(true);
-    window.removeEventListener(CRM_CHAT_EVENT, on);
-    document.documentElement.classList.remove("ta-zoho-open");
   });
 
   it("si el script no carga, falla y permite reintentar", async () => {

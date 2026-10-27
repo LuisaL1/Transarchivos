@@ -47,7 +47,7 @@ src/
 │   ├── serviceFaqs.ts        Preguntas frecuentes de cada servicio (página del servicio, Joel y buscador)
 │   ├── chat.ts               Pasos, textos e íconos del chat de Joel (cotización guiada, asesor)
 │   ├── policies.ts           Políticas institucionales oficiales (/politicas; PDF en public/documentos)
-│   ├── quote.ts              Preguntas y unidades del cotizador
+│   ├── quote.ts              Preguntas del cotizador
 │   ├── blog.ts               Artículos del blog
 │   ├── videos.ts             Videos horizontales del canal de YouTube (página /videos)
 │   ├── nosotros.ts           Menú de Nosotros
@@ -55,10 +55,10 @@ src/
 │   ├── contact.ts            Número y enlace de WhatsApp (whatsappUrl)
 │   ├── clients.ts            Clientes históricos (carrusel de logos; imágenes en assets/images/clientes)
 │   └── search.ts             Índice del buscador
-├── hooks/useAdvisorChat.ts  Lógica del chat de Joel y del chat con un asesor (API, puente, ventana de Zoho)
-├── lib/joel.ts           "Cerebro" del asesor virtual (sin IA externa)
-├── lib/advisorEvents.ts  Eventos ta:open-advisor, ta:crm-chat, ta:send-quote
-├── lib/crmChat.ts        Carga de Zoho SalesIQ en la página aislada (solo al pedir un asesor; SALESIQ_WIDGET)
+├── hooks/useAdvisorChat.ts  Lógica del chat de Joel: botones locales; el texto libre lo responde Zoho SalesIQ (API o puente)
+├── lib/joel.ts           Saludo personalizado de Joel (menú de botones)
+├── lib/advisorEvents.ts  Eventos ta:crm-chat, ta:send-quote
+├── lib/crmChat.ts        Carga de Zoho SalesIQ en la página aislada (al abrir el chat; SALESIQ_WIDGET)
 ├── lib/zohoBridge.ts     Puente: la conversación de Zoho se ve dentro de Joel
 ├── lib/advisorChat.ts    Cliente de /api/advisor (modo API, listo para activar)
 ├── lib/visitor.ts        Lo que el sitio recuerda del visitante (localStorage): visitas, eventos, búsquedas
@@ -141,17 +141,18 @@ RecursosTransarchivos/    Documentos fuente del cliente (contexto, no se publica
 
 ## Joel (asesor virtual)
 
-`src/lib/joel.ts` entiende texto libre (palabras clave, sinónimos, errores de
-tipeo), responde preguntas específicas, maneja objeciones, se defiende de
-manipulación y temas ajenos, personaliza el saludo según el comportamiento del
-visitante y aprende palabras nuevas. Todo se guarda en el `localStorage` del
-visitante (no hay servidor). Recibe el conocimiento desde `src/data/` al crearse
-(ver `getJoel()` en `hooks/useAdvisorChat.ts`).
+**Joel es la cara; Zoho SalesIQ, las respuestas** (oct. 2026). Todo lo que el
+visitante escribe lo responde Zoho SalesIQ (su bot, con los artículos y
+preguntas frecuentes configurados en Zoho, o un asesor si el bot transfiere),
+dentro de la ventana de Joel y sin mencionar Zoho. Si Zoho no responde, Joel lo
+dice y ofrece WhatsApp y el formulario: no hay respuestas locales de respaldo.
+Siguen locales (`src/data/chat.ts`): el saludo personalizado (`src/lib/joel.ts`,
+según el perfil del visitante en su `localStorage`), los botones de servicios y
+preguntas frecuentes y la cotización guiada. "Hablar con un asesor" le escribe
+a Zoho «Quiero hablar con un asesor» (el bot transfiere); "Enviar a un asesor"
+manda el resumen de la cotización a la misma conversación.
 
-**Chat con un asesor humano (Zoho SalesIQ):** Joel atiende primero; "Hablar con
-un asesor" o pedir una persona por escrito (`handoff`) conecta de una vez, sin
-mencionar Zoho. La conversación se ve dentro de Joel (puente); si falla, se abre
-la ventana de Zoho con el diseño del sitio. El resumen de la cotización guiada
-se envía al chat del equipo con "Enviar a un asesor". Zoho nunca se carga en las
-páginas del sitio ni antes de pedir un asesor. Las funciones de Vercel son
-`.mjs` (con `.ts` fallaban en Vercel). Ver `docs/08-chat-asesor.md`.
+Canal: el puente con el widget de Zoho escondido (se carga al abrir el chat,
+nunca antes) o, cuando Zoho dé el permiso, la API (`api/advisor.mjs`). Las
+funciones de Vercel son `.mjs` (con `.ts` fallaban en Vercel). Configuración
+del bot en Zoho y detalles: `docs/08-chat-asesor.md`.

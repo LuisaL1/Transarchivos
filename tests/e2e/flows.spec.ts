@@ -25,18 +25,6 @@ test("buscador encuentra un servicio sin tildes", async ({ page, isMobile }) => 
   await expect(page.getByRole("dialog").getByText(/Digitalización de documentos/).first()).toBeVisible();
 });
 
-test("chat de Joel responde texto libre", async ({ page }) => {
-  await page.goto("/");
-  // Con GA activo, el aviso de cookies oculta el botón del chat en celular hasta decidir.
-  const banner = page.getByRole("dialog", { name: "Aviso de cookies" });
-  if (await banner.isVisible()) await banner.getByRole("button", { name: "Rechazar" }).click();
-  await page.locator("[data-chat-launcher]").first().click();
-  const input = page.getByPlaceholder(/Escriba|mensaje|pregunta/i).first();
-  await input.fill("quiero digitalizar mis documentos");
-  await input.press("Enter");
-  await expect(page.getByText(/Digitalización/).last()).toBeVisible({ timeout: 15_000 });
-});
-
 test("artículo: el índice lleva a la sección", async ({ page, isMobile }) => {
   await page.goto("/blog/mido-software-gestion-documental");
   const toc = page.getByText("En este artículo").locator("..");
@@ -135,10 +123,11 @@ test("privacidad: el botón de cookies siempre responde (sin analítica explica 
   await expect(page.getByRole("status")).toContainText(/no tiene activas cookies/);
 });
 
-// ─── Chat con un asesor (Zoho SalesIQ) ──────────────────────────────────────
-// Zoho simulado: nunca se carga el script real. Imita la API que usa
-// src/lib/crmChat.ts y deja registro en window.__zoho (de la página aislada
-// public/chat-asesor.html, donde corre el widget).
+// ─── Chat de Joel con Zoho SalesIQ ──────────────────────────────────────────
+// Lo que el visitante escribe lo responde Zoho SalesIQ. Zoho simulado: nunca
+// se carga el script real. Imita la API que usa src/lib/crmChat.ts y deja
+// registro en window.__zoho (de la página aislada public/chat-asesor.html,
+// donde corre el widget).
 const ZOHO_STUB = `(() => {
   const z = window.$zoho.salesiq, log = (window.__zoho = { calls: [], sent: [] }), cb = {};
   z.language = (l) => log.calls.push("language:" + l);
@@ -148,25 +137,31 @@ const ZOHO_STUB = `(() => {
     open: (f) => (cb.open = f), close: (f) => (cb.close = f), minimize: (f) => (cb.min = f),
   };
   // Ventana de Zoho falsa (iframe del mismo origen, como la real): inicio con
-  // "Chatee con nosotros ahora"; al escribir, responde una asesora de prueba.
+  // "Chatee con nosotros ahora"; a cada mensaje responde el bot (Joel) o, si
+  // piden un asesor o llega una cotización, una asesora de prueba.
   const f = document.createElement("iframe"); f.id = "siq_chatwindow"; document.body.appendChild(f);
   const d = f.contentDocument;
   d.body.innerHTML = '<div class="home-icon-optns"><em class="siqico-chat-start"></em>Chatee con nosotros ahora</div><div id="scroll-container"></div>';
+  let n = 0;
+  const reply = (name, text, tags) => setTimeout(() => {
+    const g = d.createElement("div"); g.className = "siqcw-agentmsg-grp";
+    g.innerHTML = '<div class="siqcw-name-div"></div><div class="chat-bubble-cont" data-zsqa="agent_msg message_bubble"><span data-zsqa="msg"></span></div>';
+    g.firstChild.textContent = name;
+    const b = g.lastChild; b.id = "a" + ++n; b.firstChild.textContent = text;
+    for (const t of tags) { const e = d.createElement("div"); e.className = "tag-div"; e.textContent = t; b.appendChild(e); e.addEventListener("click", () => visitor(t)); }
+    d.getElementById("scroll-container").appendChild(g);
+  }, 300);
+  const visitor = (text) => {
+    log.sent.push(text);
+    const v = d.createElement("div"); v.setAttribute("data-zsqa", "visitor_msg message_bubble");
+    v.innerHTML = '<span data-zsqa="msg"></span>'; v.firstChild.textContent = text;
+    d.getElementById("scroll-container").appendChild(v);
+    if (/asesor|NUEVA COTIZACI/.test(text)) reply("Laura", "¡Hola! Soy Laura, asesora de Transarchivos. ¿En qué le ayudo?", []);
+    else reply("Joel", "SalesIQ responde: " + text, ["Custodia de archivos"]);
+  };
   d.querySelector(".home-icon-optns").addEventListener("click", () => {
     const ta = d.createElement("textarea"); ta.className = "siqcw-textarea"; d.body.appendChild(ta);
-    ta.addEventListener("keydown", (e) => {
-      if (e.key !== "Enter") return;
-      log.sent.push(ta.value);
-      const v = d.createElement("div"); v.setAttribute("data-zsqa", "visitor_msg message_bubble");
-      v.innerHTML = '<span data-zsqa="msg"></span>'; v.firstChild.textContent = ta.value;
-      d.getElementById("scroll-container").appendChild(v);
-      if (log.sent.length > 1) return;
-      setTimeout(() => {
-        const g = d.createElement("div"); g.className = "siqcw-agentmsg-grp";
-        g.innerHTML = '<div class="siqcw-name-div">Laura</div><div class="chat-bubble-cont" id="a1" data-zsqa="agent_msg message_bubble"><span data-zsqa="msg">¡Hola! Soy Laura. ¿En qué le ayudo?</span><div class="tag-div">Custodia de archivos</div></div>';
-        d.getElementById("scroll-container").appendChild(g);
-      }, 300);
-    });
+    ta.addEventListener("keydown", (e) => { if (e.key === "Enter") visitor(ta.value); });
   });
   setTimeout(() => z.ready && z.ready(), 50);
 })();`;
@@ -178,13 +173,18 @@ async function mockZoho(page: Page) {
 }
 // Registro del Zoho simulado, dentro de la página aislada
 const zohoLog = (page: Page) => page.evaluate(() => ((document.getElementById("ta-zoho-frame") as HTMLIFrameElement | null)?.contentWindow as unknown as { __zoho?: { calls: string[]; sent: string[] } } | null)?.__zoho);
-async function openJoel(page: Page) {
+async function openJoel(page: Page, before?: () => void) {
   await page.goto("/");
   const banner = page.getByRole("dialog", { name: "Aviso de cookies" });
   if (await banner.isVisible()) await banner.getByRole("button", { name: "Rechazar" }).click();
-  await page.locator("[data-chat-launcher]").first().click();
+  before?.();
   const chat = page.getByRole("region", { name: "Chat con Joel" });
-  await expect(chat).toBeVisible();
+  // El botón viene en el HTML pre-generado: un clic antes de que React lo
+  // active se pierde, así que se repite hasta que se abre el chat
+  await expect(async () => {
+    if (!(await chat.isVisible())) await page.locator("[data-chat-launcher]").first().click();
+    await expect(chat).toBeVisible({ timeout: 2000 });
+  }).toPass({ timeout: 15_000 });
   return chat;
 }
 // Escribe y envía cuando Joel terminó de "escribir" (mientras tanto el envío se descarta)
@@ -195,55 +195,44 @@ const sendText = async (chat: Locator, text: string) => {
   await input.press("Enter");
 };
 
-test("sin API, el chat con un asesor va por el puente con Zoho, dentro de Joel", async ({ page }) => {
+test("lo que se escribe en Joel lo responde Zoho SalesIQ (puente escondido)", async ({ page }) => {
   await page.route("**/api/advisor", r => r.fulfill({ json: { configured: false } }));
   const requests = await mockZoho(page);
-  const chat = await openJoel(page);
-  // Joel funciona sin cargar Zoho
-  expect(requests).toEqual([]);
-  // "Hablar con un asesor" conecta de una vez, sin explicaciones ni la plataforma
-  await chat.getByRole("button", { name: "Hablar con un asesor" }).click({ timeout: 10_000 });
-  await expect(chat.getByText(/Le conecto con un asesor/)).toBeVisible({ timeout: 10_000 });
-  await expect(chat.getByText("Chat con un asesor de Transarchivos")).toBeVisible();
-  await expect(chat).not.toContainText(/Zoho/);
-  expect(requests).toEqual([]);
-  // La pregunta abre la conversación en el Zoho escondido
-  await sendText(chat, "Quiero cotizar custodia de archivos");
+  // Zoho no se carga al entrar al sitio: solo al abrir el chat
+  const chat = await openJoel(page, () => expect(requests).toEqual([]));
   await expect.poll(() => requests.length).toBe(1);
-  await expect.poll(async () => (await zohoLog(page))?.sent).toEqual(["Quiero cotizar custodia de archivos"]);
-  expect((await zohoLog(page))?.calls).toEqual(expect.arrayContaining(["language:es", "button:hide"]));
-  await expect(chat.getByText(/un asesor le responderá aquí/)).toBeVisible();
+  await expect.poll(async () => (await zohoLog(page))?.calls ?? []).toEqual(expect.arrayContaining(["language:es", "button:hide"]));
+  // Abrir el chat no envía nada a Zoho
+  expect((await zohoLog(page))?.sent ?? []).toEqual([]);
+  await sendText(chat, "¿Tienen custodia de cintas?");
+  await expect.poll(async () => (await zohoLog(page))?.sent).toEqual(["¿Tienen custodia de cintas?"]);
+  // La respuesta de Zoho aparece en Joel (el bot de Zoho se llama Joel: se ve como Joel)
+  await expect(chat.getByText("SalesIQ responde: ¿Tienen custodia de cintas?")).toBeVisible({ timeout: 10_000 });
+  await expect(chat).not.toContainText(/Zoho/);
   // Zoho trabaja en la página aislada, escondida; Joel sigue a la vista
-  await expect(page.locator("#ta-zoho-frame")).toBeAttached();
   await expect(page.locator("html")).not.toHaveClass(/ta-zoho-open/);
-  await expect(chat).toBeVisible();
-  // La respuesta de Zoho aparece en Joel, con el nombre y sus opciones
-  await expect(chat.getByText("¡Hola! Soy Laura. ¿En qué le ayudo?")).toBeVisible({ timeout: 10_000 });
-  await expect(chat.getByText("Laura", { exact: true })).toBeVisible();
+  // Los botones sugeridos por Zoho se eligen en Joel
   await chat.getByRole("button", { name: "Custodia de archivos" }).click();
-  // Lo que el visitante escribe después va a Zoho
+  await expect(chat.getByText("SalesIQ responde: Custodia de archivos")).toBeVisible({ timeout: 10_000 });
   await sendText(chat, "Tenemos 300 cajas");
   await expect.poll(async () => (await zohoLog(page))?.sent.at(-1)).toBe("Tenemos 300 cajas");
-  // Volver con Joel termina el puente (la ventana de Zoho no se muestra)
-  await chat.getByRole("button", { name: "Volver con Joel" }).click();
-  await expect(chat.getByText(/Volvió conmigo/)).toBeVisible();
-  await expect(chat.getByText("Chat con un asesor de Transarchivos")).toBeHidden();
-  await expect(page.locator("html")).not.toHaveClass(/ta-zoho-open/);
 });
 
-test("escribir que se quiere un asesor conecta de una vez (sin pasos intermedios)", async ({ page }) => {
+test("«Hablar con un asesor» se lo pide a Zoho, y el asesor responde dentro de Joel", async ({ page }) => {
   await page.route("**/api/advisor", r => r.fulfill({ json: { configured: false } }));
   await mockZoho(page);
   const chat = await openJoel(page);
-  await sendText(chat, "quiero hablar con un asesor");
-  await expect(chat.getByText(/Le conecto con un asesor/)).toBeVisible({ timeout: 10_000 });
-  await expect(chat.getByRole("textbox", { name: "Mensaje" })).toHaveAttribute("placeholder", /mensaje al asesor/);
+  await chat.getByRole("button", { name: "Hablar con un asesor" }).click({ timeout: 10_000 });
+  await expect.poll(async () => (await zohoLog(page))?.sent).toEqual(["Quiero hablar con un asesor"]);
+  await expect(chat.getByText(/Soy Laura, asesora de Transarchivos/)).toBeVisible({ timeout: 10_000 });
+  await expect(chat.getByText("Laura", { exact: true })).toBeVisible();
 });
 
 test("al terminar una cotización con Joel, llega al chat de los asesores para seguimiento", async ({ page }) => {
   await page.route("**/api/advisor", r => r.fulfill({ json: { configured: false } }));
-  const requests = await mockZoho(page);
+  await mockZoho(page);
   const chat = await openJoel(page);
+  // La cotización guiada (botones y datos) la lleva Joel, sin Zoho
   await chat.getByRole("button", { name: "Cotizar un servicio" }).click({ timeout: 10_000 });
   await chat.getByRole("button", { name: "Custodia de archivos" }).click({ timeout: 10_000 });
   await chat.getByRole("button", { name: "Entre 100 y 1.000 cajas" }).click({ timeout: 10_000 });
@@ -257,12 +246,10 @@ test("al terminar una cotización con Joel, llega al chat de los asesores para s
   await expect(chat.getByText(/Ese número no parece completo/)).toBeVisible({ timeout: 10_000 });
   await sendText(chat, "300 123 4567");
   await expect(chat.getByText(/Este es el resumen de su solicitud/)).toBeVisible({ timeout: 10_000 });
-  // Nada se envía hasta que la persona elige "Enviar a un asesor"
+  // Nada se envía a Zoho hasta que la persona elige "Enviar a un asesor"
   await page.waitForTimeout(1000);
-  expect(requests).toEqual([]);
+  expect((await zohoLog(page))?.sent ?? []).toEqual([]);
   await chat.getByRole("button", { name: "Enviar a un asesor" }).click({ timeout: 10_000 });
-  // Joel envía la cotización al chat de los asesores (Zoho escondido)
-  await expect.poll(() => requests.length, { timeout: 15_000 }).toBe(1);
   await expect.poll(async () => (await zohoLog(page))?.sent[0] ?? "", { timeout: 15_000 }).toContain("NUEVA COTIZACIÓN para seguimiento");
   const msg = (await zohoLog(page))!.sent[0];
   expect(msg).toContain("Cliente: Luisa");
@@ -271,28 +258,26 @@ test("al terminar una cotización con Joel, llega al chat de los asesores para s
   expect(msg).toContain("• Empresa: Acme S.A.S.");
   // Solo dice "Listo" cuando Zoho confirmó la recepción
   await expect(chat.getByText(/Le contactará al 300 123 4567/)).toBeVisible();
-  // La ventana queda escuchando: la respuesta del asesor aparece en Joel
-  await expect(chat.getByText("¡Hola! Soy Laura. ¿En qué le ayudo?")).toBeVisible({ timeout: 10_000 });
-  await expect(page.locator("html")).not.toHaveClass(/ta-zoho-open/);
+  // La respuesta del asesor aparece en Joel
+  await expect(chat.getByText(/Soy Laura, asesora de Transarchivos/)).toBeVisible({ timeout: 10_000 });
   // Una cotización se envía una sola vez
   await chat.getByRole("button", { name: "Enviar a un asesor" }).click();
   await page.waitForTimeout(800);
   expect((await zohoLog(page))!.sent.filter(s => s.includes("NUEVA COTIZACIÓN"))).toHaveLength(1);
 });
 
-test("si el chat con un asesor no carga, Joel ofrece WhatsApp y el formulario", async ({ page }) => {
+test("si Zoho SalesIQ no carga, Joel lo dice y ofrece WhatsApp y el formulario", async ({ page }) => {
   await page.route("**/api/advisor", r => r.fulfill({ json: { configured: false } }));
   await page.route("https://salesiq.zohopublic.com/**", r => r.abort());
   const chat = await openJoel(page);
-  await chat.getByRole("button", { name: "Hablar con un asesor" }).click({ timeout: 10_000 });
   await sendText(chat, "Hola");
-  await expect(chat.getByText("No pudimos abrir el chat con un asesor")).toBeVisible({ timeout: 20_000 });
+  await expect(chat.getByText(/No pude responderle en este momento/)).toBeVisible({ timeout: 40_000 });
   await expect(chat.getByRole("link", { name: /Escribir por WhatsApp/ }).last()).toHaveAttribute("href", /wa\.me/);
   await chat.getByRole("link", { name: /Dejar un mensaje/ }).click();
   await expect(page.getByRole("dialog", { name: "Escríbanos" })).toBeVisible();
 });
 
-test("chat con un asesor por la API: se escribe y se responde dentro de Joel, sin cargar Zoho", async ({ page }) => {
+test("con la API de Zoho, lo que se escribe se responde dentro de Joel sin cargar Zoho", async ({ page }) => {
   const calls: { action?: string; question?: string; text?: string }[] = [];
   let polls = 0;
   await page.route("**/api/advisor", async r => {
@@ -302,24 +287,21 @@ test("chat con un asesor por la API: se escribe y se responde dentro de Joel, si
     if (b.action === "start") return r.fulfill({ json: { ok: true, token: "pase.prueba" } });
     if (b.action === "poll" && ++polls === 2)
       return r.fulfill({ json: { ok: true, messages: [
-        { id: "1", seq: 1, from: "system", name: "Laura", text: "joined", time: 1 },
-        { id: "2", seq: 2, from: "operator", name: "Laura", text: "¡Hola! ¿En qué le ayudo?", time: 2 },
+        { id: "1", seq: 1, from: "bot", name: "Joel", text: "La custodia de cintas se hace en bóveda.", time: 1 },
+        { id: "2", seq: 2, from: "system", name: "Laura", text: "joined", time: 2 },
+        { id: "3", seq: 3, from: "operator", name: "Laura", text: "¡Hola! ¿En qué le ayudo?", time: 3 },
       ] } });
     return r.fulfill({ json: { ok: true, messages: [] } });
   });
   let zoho = 0;
   await page.route("https://salesiq.zohopublic.com/**", r => (zoho++, r.abort()));
   const chat = await openJoel(page);
-  await chat.getByRole("button", { name: "Hablar con un asesor" }).click({ timeout: 10_000 });
-  await expect(chat.getByText(/Le conecto con un asesor/)).toBeVisible({ timeout: 10_000 });
-  await sendText(chat, "Quiero cotizar la custodia de 500 cajas");
-  await expect(chat.getByText(/un asesor le responderá aquí/)).toBeVisible();
-  expect(calls.find(c => c.action === "start")?.question).toBe("Quiero cotizar la custodia de 500 cajas");
-  await expect(chat.getByText("Laura se unió a la conversación.")).toBeVisible({ timeout: 15_000 });
+  await sendText(chat, "¿Custodian cintas de backup?");
+  await expect.poll(() => calls.find(c => c.action === "start")?.question).toBe("¿Custodian cintas de backup?");
+  await expect(chat.getByText("La custodia de cintas se hace en bóveda.")).toBeVisible({ timeout: 15_000 });
+  await expect(chat.getByText("Laura se unió a la conversación.")).toBeVisible();
   await expect(chat.getByText("¡Hola! ¿En qué le ayudo?")).toBeVisible();
   await sendText(chat, "Somos una empresa de Bogotá");
   await expect.poll(() => calls.find(c => c.action === "send")?.text).toBe("Somos una empresa de Bogotá");
   expect(zoho).toBe(0);
-  await chat.getByRole("button", { name: "Volver con Joel" }).click();
-  await expect(chat.getByText(/Volvió conmigo/)).toBeVisible();
 });

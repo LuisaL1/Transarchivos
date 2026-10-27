@@ -1,25 +1,23 @@
 // ─── Perfil del visitante ─────────────────────────────────────────────────
 // Lo que el sitio recuerda de cada visitante en SU navegador (localStorage,
-// sin servidor): visitas, secciones y servicios vistos, búsquedas, palabras
-// aprendidas y preguntas que Joel no supo responder. Está separado del
-// cerebro de Joel (joel.ts) para que las páginas puedan registrar eventos sin
-// cargar el chat completo (el chat se descarga aparte).
+// sin servidor): visitas, secciones y servicios vistos y búsquedas. Con eso
+// Joel personaliza el saludo (joel.ts). Está separado de joel.ts para que las
+// páginas puedan registrar eventos sin cargar el chat completo (el chat se
+// descarga aparte).
 
 export type Profile = {
   visits: number; first: number; last: number;
-  counts: Record<string, number>;      // "section:faq", "service:slug", "article:slug", "quote:slug", "chat:intent"
+  counts: Record<string, number>;      // "section:faq", "service:slug", "article:slug", "quote:slug"
   searches: string[];
-  learned: Record<string, string>;     // palabra → destino ("service:slug" | "step:id" | "intent:x")
-  unknown: string[];                   // preguntas que no supo responder (para revisar)
 };
 const KEY = "ta-joel-profile";
-const empty = (): Profile => ({ visits: 0, first: Date.now(), last: Date.now(), counts: {}, searches: [], learned: {}, unknown: [] });
+const empty = (): Profile => ({ visits: 0, first: Date.now(), last: Date.now(), counts: {}, searches: [] });
 
-export function load(): Profile {
+function load(): Profile {
   try { const p = JSON.parse(localStorage.getItem(KEY) || "null"); if (p && typeof p === "object") return { ...empty(), ...p }; } catch { /* sin almacenamiento */ }
   return empty();
 }
-export function save(p: Profile) { try { localStorage.setItem(KEY, JSON.stringify(p)); } catch { /* sin almacenamiento */ } }
+function save(p: Profile) { try { localStorage.setItem(KEY, JSON.stringify(p)); } catch { /* sin almacenamiento */ } }
 
 /** Registra una visita (una vez por sesión del navegador). */
 export function trackVisit() {
@@ -27,7 +25,7 @@ export function trackVisit() {
   const p = load(); p.visits += 1; p.last = Date.now(); save(p);
 }
 /** Registra un evento: track("section", "faq"), track("service", slug)… */
-export function track(kind: "section" | "service" | "article" | "quote" | "chat", key: string) {
+export function track(kind: "section" | "service" | "article" | "quote", key: string) {
   const p = load(); const k = `${kind}:${key}`;
   p.counts[k] = (p.counts[k] || 0) + 1; p.last = Date.now(); save(p);
 }
@@ -59,12 +57,11 @@ export function getInsight(): Insight {
     const [kind, key] = k.split(":");
     if (kind === "service") add(key, 3 * v);
     if (kind === "quote" && key !== "diagnostico") add(key, 4 * v);
-    if (kind === "chat" && key.startsWith("svc-")) add(key.slice(4), 2 * v);
     if (kind === "article" && ARTICLE_SERVICE[key]) add(ARTICLE_SERVICE[key], 1 * v);
   }
   const articles = Object.keys(c).filter(k => k.startsWith("article:")).map(k => k.slice(8));
-  const tech = articles.length * 2 + (c["section:faq"] || 0) + (c["section:modelo"] || 0) + (c["chat:normativa"] || 0) * 2 + (c["chat:faq"] || 0);
-  const buy = (c["section:cotizador"] || 0) + sum("quote:") * 3 + (c["chat:precio"] || 0) * 3 + (c["chat:cotizar"] || 0) * 3;
+  const tech = articles.length * 2 + (c["section:faq"] || 0) + (c["section:modelo"] || 0);
+  const buy = (c["section:cotizador"] || 0) + sum("quote:") * 3;
   const segment = buy >= 3 && buy >= tech ? "comprador" : tech >= 3 ? "tecnico" : "explorador";
   return {
     returning: p.visits > 1,
