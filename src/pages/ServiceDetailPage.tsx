@@ -162,7 +162,7 @@ export function ServiceDetailPage() {
             {detail.benefits.map(b => {
               const { t, d } = splitBenefit(b);
               return (
-                <div key={b} className="flex items-start gap-3 rounded-2xl p-4" style={{ background: "#fff", border: "1px solid #E4E6F7", boxShadow: "0 14px 30px -26px rgba(24,0,173,0.45)" }}>
+                <div key={b} className="flex items-start gap-3 rounded-2xl p-4 card-lift border border-borde hover:border-indigo" style={{ background: "#fff" }}>
                   <span className="grid place-items-center rounded-lg shrink-0" style={{ width: 28, height: 28, background: "#EAF7EE" }}>
                     <Bi n="check-lg" size={14} color="#16a34a" />
                   </span>
@@ -193,14 +193,14 @@ export function ServiceDetailPage() {
                 <div key={st.t} className="relative flex lg:flex-col items-center gap-3 lg:gap-0 text-left lg:text-center">
                   <span className="relative grid place-items-center rounded-full font-bold lg:mb-4 shrink-0" style={{ width: 44, height: 44, background: i === 0 ? C.yellow : "#fff", color: C.indigo, border: "2px solid #FFDE59", fontFamily: "Poppins, sans-serif", fontSize: 18, boxShadow: "0 10px 24px -12px rgba(0,0,0,0.5)" }}>{i + 1}</span>
                   {st.d ? (
-                    <div className="rounded-2xl p-4 w-full h-full" style={{ background: "#fff", border: "1px solid #E4E6F7" }}>
+                    <div className="rounded-2xl p-4 w-full h-full card-lift border border-borde hover:border-indigo" style={{ background: "#fff" }}>
                       <p className="text-base font-bold mb-1.5" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif", lineHeight: 1.3 }}>{st.t}</p>
                       <p className="text-sm" style={{ color: C.muted, lineHeight: 1.6 }}>{st.d}</p>
                     </div>
                   ) : (
                     // Solo título: un gráfico del paso en lugar del texto
                     // (pedido del cliente, oct. 2026).
-                    <div className="rounded-2xl p-4 lg:p-5 w-full h-full flex items-center lg:flex-col gap-4 lg:gap-3 lg:text-center" style={{ background: "#fff", border: "1px solid #E4E6F7" }}>
+                    <div className="rounded-2xl p-4 lg:p-5 w-full h-full flex items-center lg:flex-col gap-4 lg:gap-3 lg:text-center card-lift border border-borde hover:border-indigo" style={{ background: "#fff" }}>
                       <span className="relative grid place-items-center shrink-0 rounded-[22px] w-16 h-16 lg:w-24 lg:h-24" style={{ background: "#F1F3FB" }}>
                         <span aria-hidden="true" className="absolute rounded-md" style={{ right: 8, top: 8, width: 14, height: 14, transform: "rotate(45deg)", background: "rgba(255,222,89,0.85)" }} />
                         <Bi n={st.ic ?? "check2-circle"} size={40} color={C.indigo} className="lg:scale-125" />
@@ -225,13 +225,13 @@ export function ServiceDetailPage() {
           </div>
           <div className={`grid gap-5 sm:grid-cols-2 ${detail.reasons.length === 3 ? "lg:grid-cols-3" : detail.reasons.length === 5 ? "lg:grid-cols-5" : "lg:grid-cols-4"}`}>
             {detail.reasons.map((r, i) => shortReasons ? (
-              <div key={r.t} className="flex flex-col gap-3 rounded-3xl p-5" style={{ background: "#fff", border: "1.5px solid #E4E6F7", boxShadow: "0 18px 40px -28px rgba(24,0,173,0.45)" }}>
+              <div key={r.t} className="flex flex-col gap-3 rounded-3xl p-5 card-lift border-[1.5px] border-borde hover:border-indigo" style={{ background: "#fff" }}>
                 <BiTile n={r.ic} size={44} accent={C.indigo} />
                 <p className="text-base font-bold" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif", lineHeight: 1.3 }}>{r.t}</p>
               </div>
             ) : (
-              <div key={r.t} className="group relative rounded-3xl p-6 transition-all hover:-translate-y-1.5 overflow-hidden"
-                style={{ background: "#fff", border: "1.5px solid #E4E6F7", boxShadow: "0 18px 40px -28px rgba(24,0,173,0.45)" }}>
+              <div key={r.t} className="group relative rounded-3xl p-6 overflow-hidden card-lift border-[1.5px] border-borde hover:border-indigo"
+                style={{ background: "#fff" }}>
                 <span aria-hidden="true" className="absolute select-none pointer-events-none font-bold" style={{ right: 16, top: 10, fontSize: 44, lineHeight: 1, color: "rgba(24,0,173,0.06)", fontFamily: "Poppins, sans-serif" }}>0{i + 1}</span>
                 <span className="grid place-items-center rounded-2xl mb-4 transition-colors bg-indigo/[0.08] group-hover:bg-indigo" style={{ width: 48, height: 48 }}>
                   <i className={`bi bi-${r.ic} text-indigo group-hover:text-amarillo transition-colors`} aria-hidden="true" style={{ fontSize: 21, lineHeight: 1 }} />

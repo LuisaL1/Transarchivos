@@ -47,8 +47,8 @@ export function BlogSection() {
         <div className="grid lg:grid-cols-[1.3fr_1fr] gap-6 mb-10">
           {featured && (() => { const fc = blogCatColor(featured.cat); return (
             <Link to={`/blog/${featured.slug}`}
-              className="group flex flex-col rounded-3xl overflow-hidden transition-all hover:-translate-y-1.5"
-              style={{ background: "#fff", border: "1.5px solid #E4E6F7", boxShadow: `0 24px 50px -28px ${fc}66`, textDecoration: "none" }}>
+              className="group flex flex-col rounded-3xl overflow-hidden card-lift border-[1.5px] border-borde hover:border-indigo"
+              style={{ background: "#fff", textDecoration: "none" }}>
               <div className="relative overflow-hidden" style={{ height: 300 }}>
                 <img loading="lazy" decoding="async" src={featured.cover} alt="" className="w-full h-full" style={{ objectFit: "cover" }} />
                 <span aria-hidden="true" className="absolute pointer-events-none" style={{ right: -44, top: -44, width: 110, height: 110, transform: "rotate(45deg)", borderRadius: 19, background: "rgba(255,222,89,0.35)" }} />
@@ -79,8 +79,8 @@ export function BlogSection() {
               const pc = blogCatColor(p.cat);
               return (
                 <Link key={p.slug} to={`/blog/${p.slug}`}
-                  className="group relative flex gap-4 rounded-2xl p-3 transition-all hover:-translate-y-1"
-                  style={{ background: "#fff", border: "1.5px solid #E4E6F7", boxShadow: `0 10px 24px -20px ${pc}80`, textDecoration: "none" }}>
+                  className="group relative flex gap-4 rounded-2xl p-3 card-lift border-[1.5px] border-borde hover:border-indigo"
+                  style={{ background: "#fff", textDecoration: "none" }}>
                   <div className="relative overflow-hidden rounded-xl shrink-0" style={{ width: 100, height: 100 }}>
                     <img loading="lazy" decoding="async" src={p.cover} alt="" className="w-full h-full" style={{ objectFit: "cover" }} />
                   </div>

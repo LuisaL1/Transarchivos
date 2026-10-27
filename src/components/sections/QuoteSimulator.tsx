@@ -165,8 +165,8 @@ export function QuoteSimulator() {
                     const on = u.slug === selected;
                     return (
                       <button key={u.slug} type="button" onClick={() => pick(u.slug, 0)}
-                        className="relative flex items-start gap-3 text-left p-3.5 rounded-2xl transition-all cursor-pointer hover:-translate-y-0.5"
-                        style={{ border: `1.5px solid ${on ? u.accent : "#ECEEF6"}`, background: on ? `${u.accent}0D` : "#fff", boxShadow: on ? `0 10px 24px -16px ${u.accent}` : "none" }}>
+                        className="relative flex items-start gap-3 text-left p-3.5 rounded-2xl cursor-pointer card-lift"
+                        style={{ border: `1.5px solid ${on ? u.accent : "#ECEEF6"}`, background: on ? `${u.accent}0D` : "#fff" }}>
                         <span className="flex items-center justify-center rounded-xl shrink-0" style={{ width: 38, height: 38, background: on ? u.accent : `${u.accent}14`, transition: "background 0.2s" }}>
                           <Bi n={u.icon} size={17} color={on ? "#fff" : u.accent} />
                         </span>
