@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ChatBot } from "@/components/chat/LazyChatBot";
+import { openChat } from "@/lib/chatWidget";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { Bi } from "@/components/ui/Icons";
 import { PHONES, WHATSAPP_LABEL } from "@/data/contact";
@@ -13,7 +13,6 @@ import { C } from "@/styles/tokens";
 // Describe lo que el sitio realmente recoge. La política general de la empresa
 // (clientes, empleados, documentos en custodia) es un documento aparte.
 export function PrivacyPage() {
-  const [chatOpen, setChatOpen] = useState(false);
   // Respuesta visible al botón de cookies (si no hay analítica configurada,
   // no hay aviso que mostrar: se explica en vez de no hacer nada).
   const [cookieMsg, setCookieMsg] = useState<"" | "banner" | "none">("");
@@ -23,15 +22,14 @@ export function PrivacyPage() {
   const rows: [string, string, string][] = [
     ["Cotizador del sitio", "Nombre, cargo, empresa, sector económico, correo electrónico, teléfono y la información de su archivo (volumen, ubicación, urgencia, requerimientos)", "Preparar y enviar la cotización, contactarle para aclarar el alcance y hacer seguimiento comercial a su solicitud"],
     ["Formulario de contacto", "Nombre, empresa, correo, teléfono, motivo y mensaje", "Responder su consulta, solicitud, petición, queja o reclamo"],
-    ["Chat con Joel (asesor virtual)", "Nombre, empresa, celular y lo que usted escriba en el chat", "Orientarle y armar la solicitud. Lo que usted escribe lo responde Zoho SalesIQ (fila siguiente). Si elige «Enviar a un asesor», el resumen de su cotización (con su nombre y celular) llega al chat del equipo comercial para darle seguimiento"],
-    ["Respuestas del chat (Zoho SalesIQ)", "Lo que usted escriba en el chat, el resumen de su cotización si lo envía a un asesor y, si Zoho los pide, sus datos de contacto", "Responder sus preguntas con el asistente automático de Transarchivos o con un asesor humano. Zoho solo se carga si usted abre el chat"],
+    ["Chat con Joel (Zoho SalesIQ)", "Lo que usted escriba en el chat y, si el chat los pide, su nombre, empresa y datos de contacto", "Responder sus preguntas y orientar su solicitud con el asistente automático de Transarchivos o con un asesor humano. El chat funciona con Zoho SalesIQ (ver más abajo)"],
     ["WhatsApp, llamadas y correo", "Número de teléfono, correo y el contenido de su mensaje", "Atender su consulta o solicitud"],
     ["Suscripción al blog", "Correo electrónico", "Enviarle novedades y contenido sobre gestión documental; puede cancelar cuando quiera"],
     ["Google Analytics (solo si acepta las cookies)", "Datos de navegación: páginas visitadas, tiempo, dispositivo, ciudad aproximada e identificadores de cookies", "Medir y mejorar el sitio. No se usa con fines publicitarios"],
   ];
   return (
     <div className="min-h-full" style={{ background: C.cream, fontFamily: "Inter, sans-serif", color: "#37352F" }}>
-      <SiteHeader solid onChat={() => setChatOpen(true)} />
+      <SiteHeader solid onChat={openChat} />
       <div aria-hidden="true" style={{ height: 60 }} />
       <div className="px-4 py-10 md:py-14">
       {/* Documento sobre tarjeta blanca (fondo del sitio en azul marino) */}
@@ -63,7 +61,7 @@ export function PrivacyPage() {
         <ul className="list-disc pl-5 space-y-1.5">
           <li>El formulario de contacto y el cotizador envían su solicitud directamente al correo de {BRAND.legalName} mediante Brevo (proveedor de envío de correos, que actúa como encargado del tratamiento). El sitio no guarda una copia de sus datos.</li>
           <li>Los mensajes por WhatsApp se rigen además por las condiciones de WhatsApp (Meta).</li>
-          <li>Las respuestas del chat (del asistente automático o de un asesor humano) funcionan con Zoho SalesIQ (Zoho Corporation), que actúa como encargado del tratamiento y puede procesar los datos en servidores fuera de Colombia, con garantías de protección adecuadas. Zoho no se carga ni guarda cookies mientras usted no abra el chat.</li>
+          <li>Las respuestas del chat (del asistente automático o de un asesor humano) funcionan con Zoho SalesIQ (Zoho Corporation), que actúa como encargado del tratamiento y puede procesar los datos en servidores fuera de Colombia, con garantías de protección adecuadas. El chat de Zoho se carga al entrar al sitio y Zoho puede guardar en su navegador las cookies que necesita para funcionar (por ejemplo, para recordar su conversación).</li>
           <li>El asesor virtual Joel guarda en su navegador (almacenamiento local) un perfil de los temas que consultó, para personalizar el saludo. Ese perfil no sale de su equipo y puede borrarlo limpiando los datos del sitio en su navegador.</li>
           <li>Conservamos los datos de las solicitudes mientras dure la relación comercial y el tiempo que exijan las normas contables y legales; después se eliminan de forma segura.</li>
         </ul>
@@ -105,7 +103,6 @@ export function PrivacyPage() {
         <div className="mt-12"><Link to="/" className="inline-flex items-center gap-2 text-sm font-bold" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}><Bi n="arrow-left" size={14} color={C.indigo} /> Volver al inicio</Link></div>
       </main>
       </div>
-      <ChatBot open={chatOpen} setOpen={setChatOpen} />
     </div>
   );
 }

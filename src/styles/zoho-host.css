@@ -11,9 +11,22 @@
 #zsiq_chat_wrap iframe {
   border-radius: 24px !important;
 }
+/* Botón flotante: 25 % más grande y separado de la esquina (32 px; 20 px en
+   celular). Si se cambian, ajustar el tamaño del iframe cerrado
+   (#ta-zoho-frame en src/styles/index.css) para que no lo recorte. */
 #zsiq_float {
+  right: 32px !important;
+  bottom: 32px !important;
+  transform: scale(1.25);
+  transform-origin: bottom right;
   background: #1800ad !important;
   box-shadow: 0 16px 34px -10px rgba(24, 0, 173, 0.6) !important;
+}
+@media (max-width: 639px) {
+  #zsiq_float {
+    right: 20px !important;
+    bottom: 20px !important;
+  }
 }
 #zsiq_float,
 #zsiq_float * {

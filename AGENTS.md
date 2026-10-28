@@ -19,8 +19,8 @@ React 19 + Vite 8 + Tailwind CSS v4 + TypeScript. Se publica en Vercel.
 ```
 src/
 ├── main.tsx              Punto de entrada (router + estilos globales)
-├── App.tsx               Rutas: el inicio va en el paquete principal; las demás páginas y el chat
-│                         se cargan aparte (React.lazy); el pre-render las espera
+├── App.tsx               Rutas: el inicio va en el paquete principal; las demás páginas
+│                         se cargan aparte (React.lazy); el pre-render las espera. Arranca el chat
 ├── pages/                Una página por ruta
 │   ├── HomePage.tsx          "/"  (estado del chat, hero, secciones)
 │   ├── ServiceDetailPage.tsx "/servicios/:slug"
@@ -36,7 +36,6 @@ src/
 │   │                     cotizador, blog, preguntas frecuentes; y las compartidas por
 │   │                     las páginas internas: PageHero (encabezado) y CtaBand (llamado final)
 │   ├── home/             Piezas propias del hero (videos, barra de Joel)
-│   ├── chat/             Chat de Joel (ChatBot: interfaz); LazyChatBot lo carga aparte
 │   └── ui/               Primitivas: íconos, marca (logo/Joel), fondos y pestaña de carpeta
 │                         (SectionDecor), rótulo/título de sección (SectionHead)
 ├── data/                 CONTENIDO del sitio (fuente única de verdad)
@@ -45,7 +44,6 @@ src/
 │   ├── solutions.ts          Soluciones por necesidad del cliente
 │   ├── faqs.ts               Preguntas frecuentes (portada y Joel)
 │   ├── serviceFaqs.ts        Preguntas frecuentes de cada servicio (página del servicio, Joel y buscador)
-│   ├── chat.ts               Pasos, textos e íconos del chat de Joel (cotización guiada, asesor)
 │   ├── policies.ts           Políticas institucionales oficiales (/politicas; PDF en public/documentos)
 │   ├── quote.ts              Preguntas del cotizador
 │   ├── blog.ts               Artículos del blog
@@ -55,12 +53,8 @@ src/
 │   ├── contact.ts            Número y enlace de WhatsApp (whatsappUrl)
 │   ├── clients.ts            Clientes históricos (carrusel de logos; imágenes en assets/images/clientes)
 │   └── search.ts             Índice del buscador
-├── hooks/useAdvisorChat.ts  Lógica del chat de Joel: botones locales; el texto libre lo responde Zoho SalesIQ (API o puente)
-├── lib/joel.ts           Saludo personalizado de Joel (menú de botones)
-├── lib/advisorEvents.ts  Eventos ta:crm-chat, ta:send-quote
-├── lib/crmChat.ts        Carga de Zoho SalesIQ en la página aislada (al abrir el chat; SALESIQ_WIDGET)
-├── lib/zohoBridge.ts     Puente: la conversación de Zoho se ve dentro de Joel
-├── lib/advisorChat.ts    Cliente de /api/advisor (modo API, listo para activar)
+├── lib/chatWidget.ts     Chat = widget de Zoho SalesIQ: lo carga al entrar (startChatWidget) y lo abre (openChat)
+├── lib/crmChat.ts        Carga del widget en la página aislada, visible en la esquina (SALESIQ_WIDGET)
 ├── lib/visitor.ts        Lo que el sitio recuerda del visitante (localStorage): visitas, eventos, búsquedas
 ├── lib/leads.ts          Envío de formularios a /api/contact
 ├── lib/analytics.ts      Google Analytics con consentimiento (Consent Mode v2)
@@ -73,9 +67,9 @@ src/
 └── styles/index.css      Estilos globales, tokens de color de Tailwind (@theme), animaciones
 public/                   Archivos servidos tal cual (videos, favicon, robots, documentos/ PDF oficiales)
 api/contact.mjs           Función de Vercel: formularios → correo por Brevo (docs/07-formularios.md)
-api/advisor.mjs           Función de Vercel: chat con un asesor por la API de Zoho SalesIQ (docs/08-chat-asesor.md)
+api/advisor.mjs           Función de Vercel: chat por la API de Zoho SalesIQ (sin uso en esta variante; docs/08-chat-asesor.md)
 public/chat-asesor.html   Página aislada donde vive el widget de Zoho (CSP propia en vercel.json)
-src/styles/zoho-*.css     Diseño del sitio dentro de la ventana de Zoho (respaldo)
+src/styles/zoho-*.css     Diseño del sitio dentro del widget de Zoho
 scripts/prerender.mjs     Pre-genera dist/<ruta>.html, 404, sitemap y robots (SEO)
 scripts/generate-email-header.mjs  Banner de los correos (pnpm email:header)
 knip.json                 Detección de archivos, exportaciones y dependencias sin uso (pnpm lint:unused)
@@ -87,8 +81,8 @@ RecursosTransarchivos/    Documentos fuente del cliente (contexto, no se publica
 ### Reglas
 
 - El texto del sitio vive en `src/data/`. Para cambiar un servicio, una pregunta
-  frecuente o una solución, edite el archivo de datos: el sitio, el buscador y
-  Joel se actualizan solos.
+  frecuente o una solución, edite el archivo de datos: el sitio y el buscador
+  se actualizan solos (el chat se configura en Zoho SalesIQ).
 - Todo el contenido debe salir de los documentos de `RecursosTransarchivos/`.
   No inventar cifras, precios, horarios ni certificaciones (la empresa NO tiene
   ISO 9001). Operan principalmente en Bogotá.
@@ -139,20 +133,16 @@ RecursosTransarchivos/    Documentos fuente del cliente (contexto, no se publica
   Joel con la caja y el flujo de documentos (`assets/images/joel-flujo.webp`,
   imagen del cliente). En celular todo centrado y sin Joel (oct. 2026).
 
-## Joel (asesor virtual)
+## Chat (widget de Zoho SalesIQ)
 
-**Joel es la cara; Zoho SalesIQ, las respuestas** (oct. 2026). Todo lo que el
-visitante escribe lo responde Zoho SalesIQ (su bot, con los artículos y
-preguntas frecuentes configurados en Zoho, o un asesor si el bot transfiere),
-dentro de la ventana de Joel y sin mencionar Zoho. Si Zoho no responde, Joel lo
-dice y ofrece WhatsApp y el formulario: no hay respuestas locales de respaldo.
-Siguen locales (`src/data/chat.ts`): el saludo personalizado (`src/lib/joel.ts`,
-según el perfil del visitante en su `localStorage`), los botones de servicios y
-preguntas frecuentes y la cotización guiada. "Hablar con un asesor" le escribe
-a Zoho «Quiero hablar con un asesor» (el bot transfiere); "Enviar a un asesor"
-manda el resumen de la cotización a la misma conversación.
+**Variante de prueba, rama `chat-salesiq-widget`** (oct. 2026). El chat del
+sitio es el widget de Zoho SalesIQ tal cual (botón flotante y ventana); el chat
+propio de Joel sigue en la rama `chat-joel-salesiq`. Todo el flujo (saludo,
+botones, preguntas frecuentes, cotización, transferencia a un asesor) se
+configura en Zoho, no en el código.
 
-Canal: el puente con el widget de Zoho escondido (se carga al abrir el chat,
-nunca antes) o, cuando Zoho dé el permiso, la API (`api/advisor.mjs`). Las
-funciones de Vercel son `.mjs` (con `.ts` fallaban en Vercel). Configuración
-del bot en Zoho y detalles: `docs/08-chat-asesor.md`.
+El widget se carga al entrar al sitio (cuando el navegador queda libre) en la
+página aislada `public/chat-asesor.html`, mostrada en un iframe en la esquina
+(`#ta-zoho-frame`): pequeño con la ventana cerrada, grande al abrirla. Los
+botones "Chat con Joel" del sitio la abren con `openChat`. Detalles:
+`docs/08-chat-asesor.md`.

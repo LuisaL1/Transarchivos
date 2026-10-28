@@ -1,23 +1,21 @@
-// ─── Chat de Joel con Zoho SalesIQ (CRM) ─────────────────────────────────────
-// Lo que el visitante escribe en Joel lo responde Zoho SalesIQ. El script de
-// Zoho NO se carga al entrar al sitio: solo cuando la persona abre el chat. Así,
-// antes de eso Zoho no guarda cookies ni rastrea la visita (Ley 1581 de 2012;
-// ver la política de datos).
+// ─── Chat con el widget de Zoho SalesIQ ──────────────────────────────────────
+// El chat del sitio ES el widget de Zoho SalesIQ (botón flotante y ventana):
+// los flujos, botones y respuestas se configuran en Zoho. Se carga al entrar
+// al sitio (src/lib/chatWidget.ts), así que Zoho pone sus cookies desde la
+// primera visita (ver la política de datos).
 //
 // · Zoho vive en una PÁGINA AISLADA del sitio (public/chat-asesor.html) que se
-//   carga en un iframe escondido. Esa página tiene su propia CSP (vercel.json)
-//   con los scripts en línea que Zoho necesita; el resto del sitio conserva su
-//   CSP estricta.
-// · Trabaja escondida como puente (src/lib/zohoBridge.ts): la conversación se
-//   ve en Joel. Su ventana solo se muestra para llenar un formulario de Zoho
-//   (clase ta-zoho-open, src/styles/index.css).
+//   muestra en un iframe en la esquina. Esa página tiene su propia CSP
+//   (vercel.json) con los scripts en línea que Zoho necesita; el resto del
+//   sitio conserva su CSP estricta.
+// · El iframe ocupa solo el botón mientras la ventana está cerrada y crece al
+//   abrirla (clase ta-zoho-open, src/styles/index.css).
 // · Diseño: src/styles/zoho-chat.css (adentro de la ventana) y
-//   src/styles/zoho-host.css (marco y botón de cerrar).
+//   src/styles/zoho-host.css (marco y botón).
 // · Solo en español. El código del widget no es secreto.
 // Documentación: docs/08-chat-asesor.md.
 import chatCss from "@/styles/zoho-chat.css?raw";
 import hostCss from "@/styles/zoho-host.css?raw";
-import { CRM_CHAT_EVENT } from "@/lib/advisorEvents";
 
 /** Código del widget de SalesIQ de Transarchivos (Zoho → Configuración → Marcas → Transarchivos → Código de instalación). No es secreto. */
 export const SALESIQ_WIDGET = "siqeaaa826a3795e844e6740651f160fdd894fe2b84c3b32f737334473fe85fbb32";
@@ -49,22 +47,17 @@ declare global {
 let host: Promise<Window> | null = null;
 let hostWin: Window | null = null;
 
-/** Ventana de la página aislada (o null si todavía no se creó). */
-export const zohoWindow = () => hostWin;
-
-/** Crea (una vez) el iframe escondido con la página aislada y espera a que cargue. */
+/** Crea (una vez) el iframe con la página aislada y espera a que cargue. */
 function zohoHost(): Promise<Window> {
   if (host) return host;
   host = new Promise<Window>((resolve, reject) => {
     const frame = document.createElement("iframe");
     frame.id = HOST_ID;
     frame.title = "Chat con un asesor de Transarchivos";
-    frame.setAttribute("aria-hidden", "true");
-    frame.tabIndex = -1;
     frame.onload = () => {
       const w = frame.contentWindow;
       if (!w?.document?.body) return reject(new Error("host"));
-      // Marco y botón de cerrar de la ventana de Zoho
+      // Marco y botón de la ventana de Zoho
       const style = w.document.createElement("style");
       style.textContent = hostCss;
       w.document.head.appendChild(style);
@@ -111,20 +104,8 @@ function watchChatWindow(w: Window) {
   window.setTimeout(() => obs.disconnect(), 30_000);
 }
 
-// ─── Visible o escondida ────────────────────────────────────────────────────
-// En modo puente (src/lib/zohoBridge.ts) la ventana de Zoho trabaja escondida:
-// no se muestra ni se avisa al sitio, para que Joel siga a la vista.
-let bridging = false;
-export const setBridging = (on: boolean) => {
-  bridging = on;
-  if (on) document.documentElement.classList.remove("ta-zoho-open");
-};
-/** Muestra u oculta la ventana de Zoho y avisa al sitio (salvo en modo puente). */
-export const announce = (open: boolean) => {
-  if (bridging) return;
-  document.documentElement.classList.toggle("ta-zoho-open", open);
-  window.dispatchEvent(new CustomEvent(CRM_CHAT_EVENT, { detail: { open } }));
-};
+/** Agranda el iframe mientras la ventana de Zoho está abierta. */
+const setOpen = (open: boolean) => document.documentElement.classList.toggle("ta-zoho-open", open);
 
 let loading: Promise<SalesIQ> | null = null;
 
@@ -147,11 +128,12 @@ export function loadCrmChat(): Promise<SalesIQ> {
         window.clearTimeout(timer);
         const z = w.$zoho!.salesiq!;
         z.language?.("es");
-        z.floatbutton?.visible("hide");
-        z.floatwindow?.open?.(() => announce(true));
-        z.floatwindow?.close?.(() => announce(false));
-        z.floatwindow?.minimize?.(() => announce(false));
+        z.floatbutton?.visible("show");
+        z.floatwindow?.open?.(() => setOpen(true));
+        z.floatwindow?.close?.(() => setOpen(false));
+        z.floatwindow?.minimize?.(() => setOpen(false));
         watchChatWindow(w);
+        document.documentElement.classList.add("ta-zoho-ready");
         resolve(z);
       },
     };
@@ -166,10 +148,11 @@ export function loadCrmChat(): Promise<SalesIQ> {
   return loading;
 }
 
-/** Cierra la ventana del chat si Zoho ya está cargado. */
-export function closeCrmChat() {
-  hostWin?.$zoho?.salesiq?.floatwindow?.visible("hide");
-  announce(false);
+/** Abre la ventana del chat (carga Zoho si hace falta). */
+export async function openCrmChat() {
+  const z = await loadCrmChat();
+  setOpen(true);
+  z.floatwindow?.visible("show");
 }
 
 /** Solo para pruebas: usa esta ventana como página aislada (jsdom no carga iframes). */
@@ -184,4 +167,5 @@ export function resetCrmChatForTests() {
   host = null;
   hostWin = null;
   document.getElementById(HOST_ID)?.remove();
+  document.documentElement.classList.remove("ta-zoho-open", "ta-zoho-ready");
 }

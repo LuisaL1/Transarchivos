@@ -31,13 +31,13 @@ src/
 │   ├── sections/       Secciones reutilizables: ServiceCard, SolucionesSection,
 │   │                   QuoteSimulator (cotizador), BlogSection, FaqSection, ServiceFaqs
 │   ├── home/           Hero (videos, palabra rotativa, selector), MapReveal
-│   ├── chat/           ChatBot (interfaz + guion del chat)
 │   └── ui/             Icons, Brand (logo, avatar, silueta), SectionDecor,
 │                       JoelBridge/JoelFigure (poses de Joel)
 ├── data/               CONTENIDO (fuente única): services, serviceDetails,
 │                       solutions, faqs, quote, blog, nosotros, search, joelPoses
 ├── lib/
-│   ├── joel.ts         Saludo personalizado de Joel (el texto libre lo responde Zoho SalesIQ)
+│   ├── chatWidget.ts   Chat: widget de Zoho SalesIQ (se carga al entrar; openChat lo abre)
+│   ├── crmChat.ts      Carga del widget en la página aislada (ver 08)
 │   └── analytics.ts    GA4: carga, consentimiento, page_view, eventos
 ├── hooks/useScrollReveal.ts  Aparición al hacer scroll
 ├── assets/images/      Imágenes importadas (Vite les pone hash de caché)
@@ -81,18 +81,16 @@ RecursosTransarchivos/ (documentos del cliente)
         │  (redacción manual)
         ▼
 src/data/*.ts ──► páginas y secciones (render)
-        ├──────► data/search.ts  (índice del buscador)
-        └──────► data/chat.ts     (botones del chat de Joel)
+        └──────► data/search.ts  (índice del buscador)
 
 Estado del visitante (solo en su navegador, localStorage/sessionStorage):
-  ta-joel-profile        perfil de Joel (visitas, intereses, búsquedas)
+  ta-joel-profile        perfil del visitante (visitas, intereses, búsquedas)
   ta-joel-visit          marca de visita por sesión
-  ta-chat-teaser         invitación del chat ya mostrada en la sesión
   ta-analytics-consent   decisión del aviso de cookies
 ```
 
-No hay estado global (ni Context ni store). Cada página maneja su propio estado
-(por ejemplo, `chatOpen` en las páginas que muestran el chat).
+No hay estado global (ni Context ni store). Cada página maneja su propio estado; el chat
+(widget de Zoho) se abre con `openChat` (`src/lib/chatWidget.ts`).
 
 ## Componentes clave
 
@@ -103,24 +101,17 @@ No hay estado global (ni Context ni store). Cada página maneja su propio estado
 | `Hero` | `HeroPhotos` (secuencia de 16 fotos de la operación en `public/hero-fotos/`, WebP 1920 px, fundido de 2,5 s cada 12 s, sin acercamiento (el título ya se anima); la primera precargada en `index.html`; con «reducir movimiento» queda fija), palabra rotativa y selector `HeroQuickStart`. Las páginas internas usan `page-hero.jpg` como fondo de su encabezado (`PageHero`) | Panel de detalle de alto fijo para que el título no salte al cambiar de pestaña |
 | `MapReveal` | Sección fija de 260vh: mapa de Colombia → pin de Bogotá → revelado circular del video del centro documental (`transarchivos-centro-documental.mp4` / `-movil.mp4`, 7,8 s en bucle al 70 %) (clip-path) | Capa oculta con `inert` para que no reciba foco |
 | `QuoteSimulator` | Cotizador guiado de 4 pasos (ver 03) | Preguntas por servicio en `data/quote.ts` |
-| `ChatBot` | Chat de Joel: guion por pasos (botones) + texto libre respondido por Zoho SalesIQ (`hooks/useAdvisorChat.ts`, ver 08) | `heroJoel`: no muestra la invitación en pantallas medianas o grandes, porque Joel ya está en el hero |
 | `JoelBridge` / `JoelFigure` | Poses de Joel entre secciones y dentro de páginas | Ocultas en celular |
 | `JoelShowcase` | "Joel en acción" en cada servicio: tarjeta azul con pestaña de carpeta y Joel sobresaliendo por arriba | Pose y alto por servicio en `SERVICE_JOEL` (`data/joelPoses.ts`); visible también en celular |
 | `SectionDecor` | Fondo de sección: color plano, puntos y carpeta en contorno | Variantes `cream` / `lavender` |
 | `useScrollReveal` | Fundido de entrada escalonado al hacer scroll | Respeta `prefers-reduced-motion` |
 
-## Joel · asesor virtual
+## Chat · widget de Zoho SalesIQ
 
-Desde octubre de 2026 **lo que el visitante escribe lo responde Zoho SalesIQ**
-(su bot con los artículos y preguntas frecuentes configurados en Zoho, o un
-asesor). Ver `docs/08-chat-asesor.md`. En el sitio quedan:
-
-1. **Saludo personalizado** (`src/lib/joel.ts`). Según el perfil del visitante
-   (`src/lib/visitor.ts`: secciones, servicios, artículos y búsquedas, solo en
-   su navegador) lo clasifica (comprador, técnico, interesado en un servicio,
-   recurrente) y arma el menú de botones.
-2. **Guion por botones** (`src/data/chat.ts`): servicios, preguntas
-   frecuentes y cotización guiada, con los textos de `src/data/`.
+En esta variante (rama `chat-salesiq-widget`) el chat es el widget de Zoho
+SalesIQ, tal cual: botón flotante y ventana. El flujo (saludo, botones,
+preguntas frecuentes, cotización, asesor) se configura en Zoho. Ver
+`docs/08-chat-asesor.md`.
 
 ## Configuración y despliegue
 

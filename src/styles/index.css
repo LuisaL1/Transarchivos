@@ -153,11 +153,11 @@ select:focus-visible, summary:focus-visible {
   box-shadow: 0 20px 40px -12px rgba(24,0,173, 0.2);
 }
 
-/* Con el menú móvil abierto, el botón e invitación de Joel no tapan el menú. */
-body.menu-open [data-chat-launcher] { display: none !important; }
+/* Con el menú móvil abierto, el botón del chat (widget de Zoho) no tapa el menú. */
+body.menu-open #ta-zoho-frame { display: none !important; }
 
-/* Mientras se muestra el aviso de cookies, en celular el botón de Joel no lo tapa. */
-@media (max-width: 639px) { body.consent-open [data-chat-launcher] { display: none !important; } }
+/* Mientras se muestra el aviso de cookies, en celular el botón del chat no lo tapa. */
+@media (max-width: 639px) { body.consent-open #ta-zoho-frame { display: none !important; } }
 
 /* Hero: entrada de la palabra que rota en el título. */
 @keyframes heroWordIn { from { opacity: 0; transform: translateY(40%); } to { opacity: 1; transform: none; } }
@@ -204,15 +204,17 @@ body.menu-open [data-chat-launcher] { display: none !important; }
 
 /* ─── Chat con un asesor (Zoho SalesIQ) ──────────────────────────────────────
    Zoho vive en una página aislada (public/chat-asesor.html) dentro de este
-   iframe. Escondido fuera de la pantalla mientras trabaja como puente; visible
-   en la esquina solo cuando se abre su ventana (clase ta-zoho-open). El marco
+   iframe, en la esquina inferior derecha. Invisible hasta que Zoho está listo
+   (clase ta-zoho-ready); con la ventana cerrada solo ocupa el botón flotante,
+   para no tapar el sitio, y crece al abrirla (clase ta-zoho-open). El marco
    de la ventana de Zoho está en src/styles/zoho-host.css. */
 #ta-zoho-frame {
   position: fixed;
-  left: -10000px;
+  right: 0;
   bottom: 0;
-  width: 440px;
-  height: min(800px, 100vh);
+  /* Botón de Zoho (≈ 75 px, a 32 px de la esquina: src/styles/zoho-host.css) y su sombra */
+  width: 160px;
+  height: 160px;
   border: 0;
   background: transparent;
   color-scheme: normal;
@@ -220,11 +222,13 @@ body.menu-open [data-chat-launcher] { display: none !important; }
   pointer-events: none;
   z-index: 70;
 }
-html.ta-zoho-open #ta-zoho-frame {
-  left: auto;
-  right: 0;
+html.ta-zoho-ready #ta-zoho-frame {
   opacity: 1;
   pointer-events: auto;
+}
+html.ta-zoho-open #ta-zoho-frame {
+  width: 440px;
+  height: min(800px, 100vh);
 }
 @media (max-width: 639px) {
   html.ta-zoho-open #ta-zoho-frame {

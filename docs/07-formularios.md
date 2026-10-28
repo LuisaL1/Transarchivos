@@ -9,7 +9,7 @@ abre el programa de correo del visitante.
 | **Suscripción al blog** (`BlogSection`) | Sección Blog de la portada | Correo del suscriptor y autorización → marketing@; el suscriptor recibe "Suscripción confirmada" |
 | **Cotizador** (`QuoteSimulator`) | Sección `#cotizador` | Servicio, respuestas, datos de contacto, siguiente paso sugerido y autorización |
 
-- Cualquier enlace a `#contacto` abre el formulario. Con `contactHref({ motivo, mensaje, nombre, empresa })` (`src/data/contact.ts`) se abre con datos precargados. Así lo hace Joel al terminar una cotización en el chat.
+- Cualquier enlace a `#contacto` abre el formulario.
 - Ambos formularios exigen la **autorización de tratamiento de datos** (Ley 1581 de 2012). El servidor la vuelve a verificar.
 
 ## Cómo viaja la información

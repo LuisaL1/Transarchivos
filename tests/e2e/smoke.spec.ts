@@ -1,5 +1,10 @@
 import { expect, test } from "@playwright/test";
 
+// El widget de Zoho SalesIQ se carga en cada página: en las pruebas nunca el
+// real: un script vacío (las que lo necesitan registran después su Zoho
+// simulado, que tiene prioridad).
+test.beforeEach(({ page }) => page.route("https://salesiq.zohopublic.com/**", r => r.fulfill({ contentType: "text/javascript", body: "" })));
+
 // Todas las rutas cargan, sin errores de JavaScript ni recursos rotos.
 const ROUTES = ["/", "/nosotros", "/privacidad", "/politicas", "/videos", "/servicios/custodia-de-archivos", "/servicios/digitalizacion-de-documentos", "/blog/mido-software-gestion-documental"];
 

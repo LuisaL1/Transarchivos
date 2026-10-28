@@ -1,6 +1,7 @@
 import { Suspense, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import { trackVisit } from "@/lib/visitor";
+import { startChatWidget } from "@/lib/chatWidget";
 import { AnalyticsTracker, CookieBanner } from "@/components/layout/Analytics";
 import { SeoHead } from "@/components/layout/SeoHead";
 import { ContactModal } from "@/components/layout/ContactModal";
@@ -18,7 +19,7 @@ export const VideosPage = lazyNamed("videos", () => import("@/pages/VideosPage")
 export const NotFoundPage = lazyNamed("404", () => import("@/pages/NotFoundPage"), "NotFoundPage");
 
 export default function App() {
-  useEffect(() => { trackVisit(); }, []);
+  useEffect(() => { trackVisit(); startChatWidget(); }, []);
   return (
     <>
     <SeoHead />

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { track } from "@/lib/visitor";
-import { ChatBot } from "@/components/chat/LazyChatBot";
+import { openChat } from "@/lib/chatWidget";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { Bi } from "@/components/ui/Icons";
 import { JoelFigure } from "@/components/ui/JoelBridge";
@@ -52,7 +52,6 @@ export function ArticlePage() {
   const navigate = useNavigate();
   // Volver / "Blog": siempre a la sección del blog en la portada.
   const goBack = () => navigate("/#blog");
-  const [chatOpen, setChatOpen] = useState(false);
   const [progress, setProgress] = useState(0);
 
   useEffect(() => { if (slug) track("article", slug); }, [slug]);
@@ -91,7 +90,7 @@ export function ArticlePage() {
       </div>
 
       {/* El mismo navbar del sitio, en su versión de barra blanca. */}
-      <SiteHeader solid onChat={() => setChatOpen(true)} />
+      <SiteHeader solid onChat={openChat} />
       <div aria-hidden="true" style={{ height: 60 }} />
 
       {/* Hero: portada del artículo bajo un velo navy, con la carpeta como base */}
@@ -119,7 +118,7 @@ export function ArticlePage() {
                   style={{ background: C.yellow, color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>
                   Leer artículo <Bi n="arrow-down" size={14} color={C.indigo} />
                 </button>
-                <button type="button" onClick={() => setChatOpen(true)} className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold"
+                <button type="button" onClick={openChat} className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold"
                   style={{ background: "rgba(255,255,255,0.08)", color: "#fff", border: "1px solid rgba(255,255,255,0.3)", fontFamily: "Montserrat, sans-serif" }}>
                   <Bi n="chat-dots" size={14} color="#fff" /> Preguntarle a Joel
                 </button>
@@ -302,7 +301,6 @@ export function ArticlePage() {
 
       {/* Llamado final (mismo de las páginas de servicio) */}
       <CtaBand title="¿Hablamos de la gestión documental de su empresa?" text="Agende su diagnóstico documental con el equipo de especialistas de Transarchivos." />
-      <ChatBot open={chatOpen} setOpen={setChatOpen} />
     </div>
   );
 }

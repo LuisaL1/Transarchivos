@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { existsSync, readFileSync } from "node:fs";
-import { HOST_ID, SALESIQ_SRC, loadCrmChat, resetCrmChatForTests, setZohoHostForTests, styleChatWindow } from "@/lib/crmChat";
+import { HOST_ID, SALESIQ_SRC, loadCrmChat, openCrmChat, resetCrmChatForTests, setZohoHostForTests, styleChatWindow } from "@/lib/crmChat";
 
 // Cargador del chat de Zoho SalesIQ (sin cargar el script real). En el sitio,
 // Zoho vive en una página aislada (iframe); aquí esa página es la ventana de
@@ -16,24 +16,25 @@ afterEach(() => {
 // Simula lo que hace el script de Zoho al cargar: completa la API y llama a ready()
 function zohoLoads() {
   const calls: string[] = [];
+  const on: Record<string, () => void> = {};
   const z = window.$zoho!.salesiq!;
   Object.assign(z, {
     language: (l: string) => calls.push(`language:${l}`),
     floatbutton: { visible: (v: string) => calls.push(`button:${v}`) },
-    floatwindow: { visible: (v: string) => calls.push(`window:${v}`), open: () => {}, close: () => {}, minimize: () => {} },
+    floatwindow: { visible: (v: string) => calls.push(`window:${v}`), open: (cb: () => void) => (on.open = cb), close: (cb: () => void) => (on.close = cb), minimize: () => {} },
   });
   z.ready!();
-  return calls;
+  return { calls, on };
 }
 
 describe("chat de Zoho SalesIQ", () => {
-  it("no hace nada hasta que se pide abrir el chat", () => {
+  it("no carga nada por sí solo (lo arranca src/lib/chatWidget.ts)", () => {
     expect(document.getElementById("zsiqscript")).toBeNull();
     expect(window.$zoho).toBeUndefined();
     expect(document.getElementById(HOST_ID)).toBeNull();
   });
 
-  it("carga el script una sola vez, en español y sin el botón de Zoho", async () => {
+  it("carga el script una sola vez, en español y con el botón de Zoho", async () => {
     const p = loadCrmChat();
     expect(loadCrmChat()).toBe(p);
     await Promise.resolve();
@@ -41,9 +42,25 @@ describe("chat de Zoho SalesIQ", () => {
     const s = document.getElementById("zsiqscript") as HTMLScriptElement;
     expect(s.src).toBe(SALESIQ_SRC);
     expect(document.querySelectorAll("#zsiqscript")).toHaveLength(1);
-    const calls = zohoLoads();
+    const { calls, on } = zohoLoads();
     await p;
-    expect(calls).toEqual(["language:es", "button:hide"]);
+    expect(calls).toEqual(["language:es", "button:show"]);
+    expect(document.documentElement.classList.contains("ta-zoho-ready")).toBe(true);
+    // El iframe crece mientras la ventana está abierta
+    on.open();
+    expect(document.documentElement.classList.contains("ta-zoho-open")).toBe(true);
+    on.close();
+    expect(document.documentElement.classList.contains("ta-zoho-open")).toBe(false);
+  });
+
+  it("los botones del sitio abren la ventana de Zoho", async () => {
+    const p = openCrmChat();
+    await Promise.resolve();
+    await Promise.resolve();
+    const { calls } = zohoLoads();
+    await p;
+    expect(calls).toContain("window:show");
+    expect(document.documentElement.classList.contains("ta-zoho-open")).toBe(true);
   });
 
   it("si el script no carga, falla y permite reintentar", async () => {

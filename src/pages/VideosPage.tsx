@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ChatBot } from "@/components/chat/LazyChatBot";
+import { openChat } from "@/lib/chatWidget";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { Bi } from "@/components/ui/Icons";
 import { SectionDecor } from "@/components/ui/SectionDecor";
@@ -55,10 +55,9 @@ function VideoCard({ v }: { v: Video }) {
 }
 
 export function VideosPage() {
-  const [chatOpen, setChatOpen] = useState(false);
   return (
     <div className="min-h-full" style={{ background: C.cream, fontFamily: "Inter, sans-serif", color: "#37352F" }}>
-      <SiteHeader solid onChat={() => setChatOpen(true)} />
+      <SiteHeader solid onChat={openChat} />
       <div aria-hidden="true" style={{ height: 60 }} />
 
       <PageHero>
@@ -96,7 +95,6 @@ export function VideosPage() {
       </section>
 
       <CtaBand title="¿Listo para poner en orden su archivo?" text="Arme su solicitud en minutos o hable con un asesor. Sin compromiso." />
-      <ChatBot open={chatOpen} setOpen={setChatOpen} />
     </div>
   );
 }

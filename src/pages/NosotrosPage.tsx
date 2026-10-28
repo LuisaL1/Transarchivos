@@ -10,11 +10,11 @@
 // de seguridad) — "Aliados tecnológicos" se presenta honestamente como
 // "Tecnología y seguridad".
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Bi, BiTile } from "@/components/ui/Icons";
 import { norms } from "@/data/services";
-import { ChatBot } from "@/components/chat/LazyChatBot";
+import { openChat } from "@/lib/chatWidget";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { JoelFigure } from "@/components/ui/JoelBridge";
 import { SectionDecor } from "@/components/ui/SectionDecor";
@@ -29,7 +29,6 @@ export function NosotrosPage() {
   const { hash } = useLocation();
   const pageRef = useRef<HTMLDivElement>(null);
   useScrollReveal(pageRef);
-  const [chatOpen, setChatOpen] = useState(false);
 
   useEffect(() => {
     if (hash) {
@@ -44,7 +43,7 @@ export function NosotrosPage() {
 
   return (
     <div ref={pageRef} className="min-h-full" style={{ background: C.cream, fontFamily: "Inter, sans-serif", color: "#37352F" }}>
-      <SiteHeader solid onChat={() => setChatOpen(true)} />
+      <SiteHeader solid onChat={openChat} />
       <div aria-hidden="true" style={{ height: 60 }} />
 
       {/* Hero: mismo formato de las páginas de servicio */}
@@ -289,7 +288,6 @@ export function NosotrosPage() {
       {/* Llamado final (mismo de las páginas de servicio) */}
       <CtaBand title="¿Hablamos de la gestión documental de su empresa?" text="Arme su solicitud en minutos o hable con un asesor. Sin compromiso." />
 
-      <ChatBot open={chatOpen} setOpen={setChatOpen} />
     </div>
   );
 }
