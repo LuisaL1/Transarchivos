@@ -3,7 +3,7 @@
 // Las 4 soluciones más recurrentes (documento "Correcciones en página web de
 // Transarchivos - Home", oct. 2026: se retiraron "Respaldo y recuperación ante
 // desastres" y "Auditorías y requerimientos urgentes" para optimizar el
-// espacio; esos casos los cubren Custodia de medios magnéticos y Servicio
+// espacio; esos casos los cubren Custodia de medios técnicos y Servicio
 // inmediato). "problem": la frase de beneficio bajo el título. "labels": cómo
 // se nombran los servicios integrados en la tarjeta (mismo orden que "slugs";
 // si falta, se usa el nombre del servicio). "cta": texto del enlace a cotizar.

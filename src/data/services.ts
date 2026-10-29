@@ -12,7 +12,7 @@ import { C } from "@/styles/tokens";
 export const serviceItems: { icon: string; title: string; slug: string; desc: string; keywords: string[] }[] = [
   { icon: "list-columns-reverse", title: "Inventario documental", slug: "levantamiento-de-inventario", desc: "Diagnóstico y clasificación de su archivo bajo estándares del Archivo General de la Nación (AGN).", keywords: ["Inventario documental", "Diagnóstico"] },
   { icon: "folder2-open", title: "Programa de Gestión Documental (PGD)", slug: "programa-de-gestion-documental", desc: "Instrumento estratégico para el control del ciclo de vida documental bajo cumplimiento de la Ley 594.", keywords: ["TRD", "Tablas de retención"] },
-  { icon: "hdd-stack", title: "Custodia de medios magnéticos", slug: "custodia-de-medios-magneticos", desc: "Almacenamiento de cintas LTO, discos duros y soportes ópticos bajo estricto control de temperatura y humedad.", keywords: ["Copia aislada (air gap)", "Cintas LTO"] },
+  { icon: "hdd-stack", title: "Custodia de medios técnicos", slug: "custodia-de-medios-magneticos", desc: "Almacenamiento de cintas LTO, discos duros y soportes ópticos bajo estricto control de temperatura y humedad.", keywords: ["Copia aislada (air gap)", "Cintas LTO"] },
   { icon: "archive", title: "Custodia de archivos", slug: "custodia-de-archivos", desc: "Resguardo de su archivo en instalaciones con vigilancia 24/7 y estricto control de acceso.", keywords: ["Centro documental", "Consulta y recuperación"] },
   { icon: "upc-scan", title: "Digitalización de documentos", slug: "digitalizacion-de-documentos", desc: "Escaneo masivo, reconocimiento OCR e indexación para el control total de su información.", keywords: ["OCR", "DMS / ECM"] },
   { icon: "file-earmark-x", title: "Destrucción de documentos", slug: "destruccion-de-documentos", desc: "Trituración confidencial irrecuperable con certificado de destrucción, registro en video y trazabilidad total.", keywords: ["Trituración industrial", "Certificado de destrucción"] },
@@ -50,7 +50,7 @@ export const services: { icon: string; title: string; slug: string; tag: string;
     quote: { title: "Programa de Gestión Documental (PGD)", desc: "Estructuración del marco normativo y operativo que garantiza la trazabilidad, conservación y validez jurídica de los documentos de su compañía." },
   },
   {
-    icon: "hdd-stack", title: "Custodia de medios magnéticos", slug: "custodia-de-medios-magneticos",
+    icon: "hdd-stack", title: "Custodia de medios técnicos", slug: "custodia-de-medios-magneticos",
     tag: "Copia aislada (air gap) · DRP", accent: C.indigo,
     desc: "Almacenamiento especializado de cintas LTO/DAT/DLT, discos duros, CDs/DVDs y otros medios.",
     card: { title: "Custodia de medios magnéticos y copia aislada", tag: "Air Gap · DRP", cta: "Conocer especificaciones técnicas",

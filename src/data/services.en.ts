@@ -27,7 +27,7 @@ const SVC: Record<string, SvcText> = {
     quote: { title: "Records Management Program (PGD)", desc: "Structuring of the regulatory and operational framework that guarantees the traceability, preservation and legal validity of your company's documents." },
   },
   "custodia-de-medios-magneticos": {
-    title: "Media vaulting", tag: "Air-gapped copy · DRP",
+    title: "Technical media vaulting", tag: "Air-gapped copy · DRP",
     desc: "Specialised storage of LTO/DAT/DLT tapes, hard drives, CDs/DVDs and other media.",
     menu: "Storage of LTO tapes, hard drives and optical media under strict temperature and humidity control.",
     card: { title: "Media vaulting and air-gapped backup", tag: "Air gap · DRP", cta: "See technical specifications",
