@@ -3,7 +3,12 @@
 // principal.
 import { whatsappUrl } from "@/data/contact";
 
+/** Evento con { open: boolean } cuando la ventana de Zoho se abre o se cierra */
+export const CHAT_EVENT = "ta:crm-chat";
+
 const crmChat = () => import("@/lib/crmChat");
+let open = false;
+if (typeof window !== "undefined") window.addEventListener(CHAT_EVENT, e => { open = (e as CustomEvent<{ open: boolean }>).detail.open; });
 
 /** Carga el widget al entrar al sitio, cuando el navegador está libre. */
 export function startChatWidget() {
@@ -15,4 +20,10 @@ export function startChatWidget() {
 /** Abre la ventana del chat; si Zoho no carga, ofrece WhatsApp. */
 export function openChat() {
   void crmChat().then(m => m.openCrmChat()).catch(() => window.open(whatsappUrl(), "_blank", "noopener"));
+}
+
+/** Botón flotante de Joel: abre o cierra la ventana del chat. */
+export function toggleChat() {
+  if (!open) return openChat();
+  void crmChat().then(m => m.closeCrmChat());
 }

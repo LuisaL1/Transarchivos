@@ -1,25 +1,29 @@
 # Chat con el widget de Zoho SalesIQ
 
 **Variante de prueba (rama `chat-salesiq-widget`, oct. 2026).** El chat del
-sitio **es el widget de Zoho SalesIQ**: su botón flotante y su ventana, tal
-cual. El chat propio de Joel (ventana, saludo personalizado, botones de
-servicios y preguntas frecuentes, cotización guiada y el puente con Zoho) se
-quitó; esa versión sigue en la rama `chat-joel-salesiq`.
+sitio **es el widget de Zoho SalesIQ**, con el aspecto del chat de Joel: se
+abre con el mismo botón flotante de Joel y su ventana tiene la posición, el
+tamaño y el diseño de la ventana de Joel. El funcionamiento es el de Zoho. El
+chat propio de Joel (saludo personalizado, botones de servicios y preguntas
+frecuentes, cotización guiada y el puente con Zoho) se quitó; esa versión
+sigue en la rama `chat-joel-salesiq`.
 
 Todo el flujo (saludo, botones, preguntas frecuentes, cotización, transferencia
 a un asesor) **se configura en Zoho SalesIQ**, no en el código.
 
 | Qué hace el visitante | Qué pasa |
 | --- | --- |
-| Entra a cualquier página | Cuando el navegador queda libre, se carga el widget de Zoho y aparece su botón flotante en la esquina inferior derecha. |
-| Pulsa el botón de Zoho | Se abre la ventana de Zoho. |
+| Entra a cualquier página | Ve el botón flotante de Joel (foto, "Joel · IA · En línea") en la esquina inferior derecha. Cuando el navegador queda libre, se carga el widget de Zoho, escondido (su botón propio no se muestra). |
+| Pulsa el botón de Joel | Se abre la ventana de Zoho sobre el botón; el botón pasa a "Cerrar" (en celular la ventana ocupa la pantalla y el botón se esconde). Otro clic la cierra. |
+| Cierra o minimiza desde la ventana de Zoho | La ventana se esconde y el botón vuelve a "Joel". |
 | Pulsa "Chat con Joel" / "Chatee con Joel" (menú, soporte, preguntas frecuentes) o la imagen de Joel del hero | Se abre la misma ventana de Zoho (`openChat`, `src/lib/chatWidget.ts`). Si Zoho no carga, se abre WhatsApp. |
 
 | Pieza | Archivo |
 | --- | --- |
-| Arranque al entrar y apertura desde los botones del sitio | `src/lib/chatWidget.ts` (`startChatWidget`, `openChat`; desde `App.tsx` y las páginas) |
-| Carga del widget en la página aislada | `src/lib/crmChat.ts` (`loadCrmChat`, `openCrmChat`) |
-| Tamaño y posición del iframe | `#ta-zoho-frame` en `src/styles/index.css` |
+| Botón flotante de Joel | `src/components/chat/ChatLauncher.tsx` (en `App.tsx`) |
+| Arranque al entrar, abrir, abrir o cerrar | `src/lib/chatWidget.ts` (`startChatWidget`, `openChat`, `toggleChat`; evento `ta:crm-chat` con `{ open }`) |
+| Carga del widget en la página aislada | `src/lib/crmChat.ts` (`loadCrmChat`, `openCrmChat`, `closeCrmChat`) |
+| Tamaño y posición de la ventana | `#ta-zoho-frame` en `src/styles/index.css` |
 
 ## Configuración en Zoho SalesIQ
 
@@ -40,21 +44,19 @@ a un asesor) **se configura en Zoho SalesIQ**, no en el código.
 ## Página aislada y CSP (vercel.json)
 
 Zoho **no se carga en las páginas del sitio**: vive en `public/chat-asesor.html`,
-que el sitio muestra en un iframe en la esquina (`#ta-zoho-frame`). El widget
+que el sitio muestra en un iframe (`#ta-zoho-frame`). El widget
 ejecuta un script en línea distinto para cada visitante, así que no se puede
 autorizar en la CSP estricta del sitio.
 
-El iframe es invisible hasta que Zoho está listo (clase `ta-zoho-ready` en
-`<html>`). Con la ventana cerrada mide 160 × 160 px (solo el botón flotante, 25 % más
-grande y a 32 px de la esquina: `src/styles/zoho-host.css`),
-para no tapar el sitio; al abrir la ventana crece a 440 px de ancho (en celular,
-toda la pantalla) con la clase `ta-zoho-open`, que se pone y se quita con los
-eventos de abrir, cerrar y minimizar de Zoho. Se esconde con el menú móvil
-abierto y, en celular, mientras se muestra el aviso de cookies.
-
-**Ojo:** si Zoho muestra algo fuera del botón con la ventana cerrada (por
-ejemplo, una burbuja de invitación junto al botón), queda recortado por el
-iframe. Desactívelo en Zoho o agrande el iframe cerrado en `index.css`.
+Con la ventana cerrada, el iframe espera fuera de la pantalla (cuando Zoho
+está listo, `<html>` lleva la clase `ta-zoho-ready`). Abierta (clase
+`ta-zoho-open`, que se pone y se quita con los eventos de abrir, cerrar y
+minimizar de Zoho), el iframe es la ventana del chat de Joel: 400 px de ancho
+y hasta 620 px de alto, a 24 px del borde derecho y 92 px del inferior (sobre
+el botón), esquinas de 24 px, borde índigo suave y sombra; en celular, toda la
+pantalla. Adentro, la ventana de Zoho llena el iframe (`src/styles/zoho-host.css`).
+El botón de Joel se esconde con el menú móvil abierto y, en celular, mientras
+se muestra el aviso de cookies.
 
 | Cabeceras | Para | Scripts permitidos |
 | --- | --- | --- |
@@ -67,17 +69,34 @@ mensaje "Refused to …" indica el dominio que falta. Agréguelo en las reglas d
 
 ## Diseño
 
-Los colores, el avatar y los textos del widget se configuran primero en Zoho
-(Configuración → Marcas → Personalización). Además, el sitio inyecta dos hojas
-de estilo (iframes del mismo origen):
+El sitio inyecta dos hojas de estilo (iframes del mismo origen):
 
 | Qué | Archivo |
 | --- | --- |
-| Lo de adentro de la ventana | `src/styles/zoho-chat.css` (se inyecta desde `src/lib/crmChat.ts`) |
-| Marco (esquinas, sombra) y botón flotante | `src/styles/zoho-host.css` (se inyecta en la página aislada) |
+| Lo de adentro de la ventana: diseño del chat de Joel | `src/styles/zoho-chat.css` (se inyecta desde `src/lib/crmChat.ts`) |
+| La ventana llena el iframe; sin el botón de Zoho | `src/styles/zoho-host.css` (se inyecta en la página aislada) |
 
-Los estilos dependen de las clases internas de Zoho (`.siqcw-header`,
-`#zsiq_float`…); revise el chat después de cada actualización grande de Zoho.
+Lo que se copia del chat de Joel: cabecera índigo con el cuadrado amarillo
+girado, foto de Joel con punto verde, rótulo "ASESOR VIRTUAL" y "En línea ·
+Responde al instante"; cuerpo gris; mensajes del bot en tarjeta blanca con la
+foto de Joel al lado, del visitante en índigo; sin hora; opciones en una
+tarjeta con una fila por opción; campo en píldora y botón de enviar amarillo.
+
+Lo que se configura en Zoho: el **nombre** que se ve en la cabecera y sobre
+los mensajes (hoy "Transarchivos"; para que diga "Joel", cambie el nombre del
+bot o de la marca en Zoho) y el texto de los mensajes y opciones. "Con
+tecnología Zoho SalesIQ" es de Zoho y se deja.
+
+**CSS personalizado del portal:** `docs/zoho-salesiq-portal.css` es una copia
+de `zoho-chat.css` (con la foto de Joel en dirección completa) para subir en
+Zoho → Configuración → Marcas → Personalización. Si el que está subido es
+distinto, se mezcla con el del sitio: las reglas de los mensajes del sitio van
+con `#scroll-container` delante para ganar, pero conviene que sean iguales.
+
+Los estilos dependen de las clases internas de la ventana de Zoho
+(`.siqcw-header`, `.chat-bubble-cont`, `.tag-div`, `data-zsqa`…; revisadas
+con el widget real en octubre de 2026); revise el chat después de cada
+actualización grande de Zoho.
 
 ## Protección de datos
 
@@ -101,11 +120,12 @@ Las pruebas **nunca se conectan con Zoho**: cada archivo de
 `tests/e2e/` responde al script de Zoho con un script vacío, y las que necesitan
 el widget lo simulan (`mockZoho` en `tests/e2e/flows.spec.ts`).
 
-- `tests/unit/crmChat.test.ts`: carga una sola vez, en español y con el botón;
-  el iframe crece al abrir la ventana; los botones del sitio la abren;
-  reintento si falla; estilos inyectados.
-- `tests/e2e/flows.spec.ts`: el widget se carga al entrar, con el iframe
-  pequeño, y "Chatee con Joel" abre la ventana.
+- `tests/unit/crmChat.test.ts`: carga una sola vez, en español y sin el botón
+  de Zoho; el iframe se muestra al abrir la ventana y avisa al botón de Joel;
+  abrir y cerrar; reintento si falla; estilos inyectados.
+- `tests/e2e/flows.spec.ts`: el widget se carga al entrar, con el iframe fuera
+  de la pantalla y el botón de Joel a la vista; el botón de Joel y "Chatee con
+  Joel" abren la ventana; el botón la cierra.
 - `tests/e2e/csp.spec.ts`: con las cabeceras de `vercel.json`, Zoho carga al
   entrar sin bloqueos.
 - `tests/security/static.test.ts`: CSP del sitio sin Zoho.

@@ -1,64 +1,66 @@
-/* ─── Ventana del chat de Zoho SalesIQ con el diseño del sitio ────────────────
-   Mismo estilo del chat de Joel (AdvisorChat): cabecera azul sólida
-   con el cuadrado amarillo translúcido girado 45° (puntas redondeadas), rótulo
-   amarillo en mayúsculas, fondo gris, opciones en tarjetas blancas con el ícono
-   en un recuadro gris y botón de enviar azul con ícono amarillo.
+/* ─── Ventana del chat de Zoho SalesIQ con el diseño del chat de Joel ─────────
+   Se inyecta dentro de la ventana de Zoho desde src/lib/crmChat.ts. Copia el
+   chat de Joel (rama chat-joel-salesiq, ChatBot.tsx):
 
-   Se inyecta dentro de la ventana de Zoho desde src/lib/crmChat.ts. El mismo
-   archivo se puede pegar en Zoho (Configuración → Marca → Personalización →
-   CSS personalizado) para que también aplique fuera del sitio. Ver
-   docs/08-chat-asesor.md. Solo colores de la marca (src/styles/tokens.ts). */
+   · cabecera índigo con el cuadrado amarillo translúcido girado 45°, foto de
+     Joel redonda con punto verde, rótulo "ASESOR VIRTUAL" en amarillo, nombre
+     en Poppins y "En línea · Responde al instante"; botones en cuadros
+     translúcidos;
+   · cuerpo gris #F6F7FD; mensajes del bot o del asesor en tarjeta blanca con
+     la foto de Joel al lado; del visitante, en índigo a la derecha; sin hora;
+   · opciones en una tarjeta blanca, una fila por opción con flecha;
+   · campo de texto en píldora gris y botón de enviar redondo amarillo.
 
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Montserrat:wght@400;500;600;700&display=swap");
+   Los selectores salen de la ventana real de Zoho (oct. 2026: .siqcw-*,
+   data-zsqa…). Si Zoho la cambia, revisar. Solo colores de la marca
+   (src/styles/tokens.ts), sin degradados. Ver docs/08-chat-asesor.md. */
 
-/* Colores: el verde del tema de Zoho pasa a ser el azul de la marca */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Montserrat:wght@500;600;700&family=Poppins:wght@600;700&display=swap");
+
+/* ── Colores del tema de Zoho → paleta del sitio. Zoho los pone en línea en
+   <html>: !important les gana. ─────────────────────────────────────────────── */
+html,
 [theme] {
-  --siqcw-custom-text-color: #1800ad;
-  --siqcw-custom-icon-color: #1800ad;
-  --siqcw-custom-bg-color: #1800ad;
-  --siqcw-custom-border-color: #1800ad;
+  --siqcw-custom-text-color: #1800ad !important;
+  --siqcw-custom-icon-color: #1800ad !important;
+  --siqcw-custom-bg-color: #1800ad !important;
+  --siqcw-custom-border-color: #1800ad !important;
+  --siqcw-dynamic-text-color: #1800ad !important;
   --siqcw-custom-secondary-bg: #1800ad;
   --siqcw-minimise-button-bg-color: #1800ad;
   --siqcw-newchat-btn-bg: #ffde59;
   --siqcw-dialog-hdr-bg-color: #1800ad;
   --siqcw-button-bg-color: #1800ad;
   --siqcw-call-only-btn-bg: #1800ad;
-  /* Colores planos (sin degradados, como en todo el sitio) */
-  --siqcw-visitor-bubble-gradient-color: #f1f3fb;
-  --siqcw-dropdown-listdiv-sel-bg: #f6f7fd;
+  --siqcw-visitor-bubble-gradient-color: #1800ad;
   --siqcw-agent-bubble-bg-color: #ffffff;
-  --siqcw-listitem-hover-bg-color: #f6f7fd;
-  --siqcw-homelist-hover-bg-color: #f6f7fd;
-  --siqcw-options-hover-bg-color: #f6f7fd;
-  --siqcw-composer-icon-hover-bg-color: #f6f7fd;
+  --siqcw-dropdown-listdiv-sel-bg: #f7f8ff;
+  --siqcw-listitem-hover-bg-color: #f7f8ff;
+  --siqcw-homelist-hover-bg-color: #f7f8ff;
+  --siqcw-options-hover-bg-color: #f7f8ff;
+  --siqcw-composer-icon-hover-bg-color: #f7f8ff;
   --siqcw-input-focus-bg-color: #ffffff;
-  --siqcw-divider-bg-color: #e4e6f7;
+  --siqcw-divider-bg-color: #eceef6;
   --siqcw-banner-bg: #fbfbf8;
   --siqcw-common-radius: 16px;
 }
 
-/* Tipografías del sitio */
+/* ── Tipografías: Inter (texto), Montserrat (rótulos y botones), Poppins (títulos) */
+html,
 body,
-button,
 input,
 textarea,
 [theme] {
-  font-family: "Montserrat", sans-serif !important;
+  font-family: "Inter", sans-serif !important;
   color: #37352f;
 }
-.home-title,
-.header-title,
-.home-widget > .fw600:first-child {
-  font-family: "Poppins", sans-serif !important;
+button,
+.tag-div,
+.footer-tab {
+  font-family: "Montserrat", sans-serif !important;
 }
 
-/* Fondo gris del cuerpo, como el chat de Joel */
-.siqcw-section-cont,
-.call-home-wrap {
-  background: #f6f7fd !important;
-}
-
-/* ── Cabeceras: azul sólido + cuadrado amarillo girado ──────────────────────── */
+/* ── Cabecera ─────────────────────────────────────────────────────────────── */
 .siqcw-header,
 .home-header-wrap,
 .seasonal-home-bg {
@@ -67,20 +69,28 @@ textarea,
   position: relative;
   overflow: hidden;
 }
+.siqcw-header {
+  height: auto !important;
+  min-height: 76px;
+  padding: 16px 20px !important;
+  box-sizing: border-box;
+}
 .seasonal-header-bg::before,
-.seasonal-cw-bg {
+.seasonal-cw-bg,
+.seasonal-msg-bgimg {
   display: none !important;
 }
+/* Cuadrado amarillo translúcido girado 45° en la esquina */
 .siqcw-header::after,
 .home-header-wrap::after {
   content: "";
   position: absolute;
-  top: -32px;
+  top: -48px;
+  right: -48px;
   left: auto !important;
-  right: -32px;
-  width: 80px;
-  height: 80px;
-  border-radius: 22%;
+  width: 90px;
+  height: 90px;
+  border-radius: 15px;
   background: rgba(255, 222, 89, 0.22);
   transform: rotate(45deg);
   pointer-events: none;
@@ -96,38 +106,429 @@ textarea,
 .brand-detl-wrap * {
   color: #ffffff !important;
 }
-.header-title .font16 {
-  font-family: "Poppins", sans-serif !important;
+.siqcw-header-detail {
+  position: relative;
+  z-index: 1;
+  overflow: visible !important;
+}
+/* Foto de Joel (46 px, redonda, fondo amarillo) con el punto verde de "en línea".
+   Si un asesor con foto toma la conversación, su foto (img) va encima. La
+   imagen se sirve desde el sitio: public/brand/joel.webp. */
+.embed-prof-cont {
+  position: relative;
+  width: 46px !important;
+  height: 46px !important;
+  margin-right: 14px !important;
+  border-radius: 50% !important;
+  overflow: visible !important;
+  background: #ffde59 !important;
+  box-shadow: 0 4px 10px -3px rgba(10, 13, 61, 0.35);
+}
+.siqcw-bot-logo,
+.embed-prof-cont {
+  background-image: url("/brand/joel.webp") !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+}
+.embed-prof-cont img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.embed-prof-cont .siqico-clogo {
+  display: none !important;
+}
+.embed-prof-cont::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 12px;
+  height: 12px;
+  box-sizing: border-box;
+  border-radius: 50%;
+  border: 2px solid #1800ad;
+  background: #22c55e;
+}
+/* Rótulo, nombre y estado */
+.header-title {
+  position: relative;
+  overflow: visible !important;
+}
+.header-title::before {
+  content: "Asesor virtual";
+  display: block;
+  margin-bottom: 4px;
+  font:
+    700 10px/1 "Montserrat",
+    sans-serif;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #ffde59 !important;
+}
+.header-title [data-zsqa="header_title"] {
+  font:
+    600 17px/1.25 "Poppins",
+    sans-serif !important;
+}
+.header-title [data-zsqa="header_title"]::after {
+  content: "En línea · Responde al instante";
+  display: block;
+  margin-top: 2px;
+  padding-left: 12px;
+  font:
+    400 12px/1.4 "Inter",
+    sans-serif;
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+/* Punto verde del estado */
+.header-title::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 6px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22c55e;
+}
+/* Botones de la cabecera: cuadros translúcidos de 36 px a la derecha */
+.siqcw-header .left-arrow-icon {
+  order: 3;
+  margin-left: 10px;
+}
+.siqcw-header em[role="button"]:not(.hide) {
+  display: grid !important;
+  place-items: center;
+  flex-shrink: 0;
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 12px !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: rgba(255, 255, 255, 0.85) !important;
+  font-size: 15px !important;
+  transition: background-color 0.2s;
+}
+.siqcw-header em[role="button"]:not(.hide):hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* ── Cuerpo y mensajes ────────────────────────────────────────────────────── */
+.siqcw-section-cont,
+.call-home-wrap,
+#scroll-container {
+  background: #f6f7fd !important;
+}
+#scroll-container {
+  padding: 16px !important;
+}
+/* Las reglas de los mensajes van con #scroll-container delante para ganarle a
+   las de Zoho y a las del CSS personalizado del portal. */
+/* 12 px entre mensajes, como en Joel */
+#scroll-container .siqcw-agentmsg-grp,
+#scroll-container .siqcw-visitormsg-grp {
+  margin-bottom: 12px !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+#scroll-container .chat-bubble-cont + .chat-bubble-cont {
+  margin-top: 8px !important;
+}
+/* Nombre de quien responde, alineado con la burbuja (junto a la foto) */
+#scroll-container .siqcw-name-cont {
+  padding-left: 32px;
+  box-sizing: border-box;
+}
+#scroll-container .siqcw-name-div {
+  margin-bottom: 4px;
+  font:
+    600 11px/1.3 "Montserrat",
+    sans-serif !important;
+  color: #1800ad !important;
+}
+#scroll-container .siqcw-name-div:empty {
+  display: none;
+}
+/* Contenedor de cada mensaje: sin fondo propio; la foto y la burbuja en fila
+   y, debajo, las opciones si las hay. La burbuja mide lo que su texto. */
+#scroll-container .chat-bubble-cont {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: flex-start !important;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+#scroll-container .chat-bubble-cont > div {
+  display: contents;
+}
+#scroll-container .chat-bubble {
+  width: fit-content !important;
+  max-width: 82% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  box-sizing: border-box;
+  padding: 10px 14px !important;
+  font:
+    400 13.5px/1.625 "Inter",
+    sans-serif !important;
+  word-break: break-word;
+}
+#scroll-container .textmsg-div {
+  margin: 0 !important;
+}
+/* Bot o asesor: foto de Joel (24 px) y tarjeta blanca con la punta arriba a la izquierda */
+#scroll-container .siqcw-agentmsg-grp .chat-bubble-cont::before {
+  content: "";
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #ffde59 url("/brand/joel.webp") center / cover no-repeat;
+  box-shadow: 0 4px 10px -3px rgba(10, 13, 61, 0.35);
+}
+#scroll-container .siqcw-agentmsg-grp .chat-bubble {
+  background: #ffffff !important;
+  border: 1px solid #e4e6f7 !important;
+  border-radius: 4px 16px 16px 16px !important;
+  box-shadow: 0 1px 2px rgba(10, 13, 61, 0.05) !important;
+  color: #37352f !important;
+}
+#scroll-container .siqcw-agentmsg-grp .chat-bubble * {
+  color: #37352f !important;
+}
+#scroll-container .siqcw-agentmsg-grp .chat-bubble a {
+  color: #1800ad !important;
   font-weight: 600;
 }
-/* Rótulo amarillo en mayúsculas sobre el saludo */
+/* Visitante: índigo con texto blanco, a la derecha, punta abajo a la derecha */
+#scroll-container .siqcw-visitormsg-grp .chat-bubble-cont,
+#scroll-container [data-zsqa*="visitor_msg"] {
+  justify-content: flex-end !important;
+}
+#scroll-container .siqcw-visitormsg-grp .chat-bubble,
+#scroll-container [data-zsqa*="visitor_msg"] .chat-bubble {
+  margin-left: auto !important;
+  background: #1800ad !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 16px 16px 4px 16px !important;
+  box-shadow: none !important;
+}
+#scroll-container .siqcw-visitormsg-grp .chat-bubble *,
+#scroll-container [data-zsqa*="visitor_msg"] .chat-bubble * {
+  color: #ffffff !important;
+}
+/* Sin hora ni recibos de lectura, como en Joel */
+#scroll-container .bubble-time,
+#scroll-container .virtual-div,
+#scroll-container [data-zsqa="readreceipt_section"] {
+  display: none !important;
+}
+/* Joel escribiendo: tres puntos índigo que saltan */
+#scroll-container .typing-loader {
+  display: flex !important;
+  gap: 4px;
+  padding: 4px 0 !important;
+}
+#scroll-container .typing-loader span {
+  width: 6px !important;
+  height: 6px !important;
+  margin: 0 !important;
+  border-radius: 50% !important;
+  background: rgba(24, 0, 173, 0.6) !important;
+  animation: taChatBounce 1.4s infinite !important;
+}
+#scroll-container .typing-loader span:nth-child(2) {
+  animation-delay: 0.15s !important;
+}
+#scroll-container .typing-loader span:nth-child(3) {
+  animation-delay: 0.3s !important;
+}
+@keyframes taChatBounce {
+  0%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-6px);
+  }
+}
+
+/* ── Opciones del bot: una tarjeta blanca, debajo del mensaje y alineada con
+   la burbuja, con una fila por opción ─────────────────────────────────────── */
+#scroll-container .chat-sugges-cont .textR {
+  flex-basis: 100%;
+  display: block !important;
+  margin: 8px 0 0 32px !important;
+  max-width: calc(100% - 32px);
+  padding: 6px !important;
+  box-sizing: border-box;
+  text-align: left !important;
+  background: #ffffff !important;
+  border: 1px solid #e4e6f7 !important;
+  border-radius: 16px !important;
+}
+#scroll-container .tag-div {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  box-sizing: border-box;
+  padding: 10px !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #1800ad !important;
+  font:
+    600 13px/1.3 "Montserrat",
+    sans-serif !important;
+  text-align: left !important;
+  transition: background-color 0.2s;
+}
+#scroll-container .tag-div * {
+  color: #1800ad !important;
+}
+#scroll-container .tag-div::after {
+  content: "›";
+  font-size: 18px;
+  line-height: 1;
+  color: #9b9b9b;
+  transition: transform 0.2s;
+}
+#scroll-container .tag-div:hover {
+  background: #f7f8ff !important;
+}
+#scroll-container .tag-div:hover::after {
+  transform: translateX(2px);
+}
+
+/* ── Barra de escritura: píldora gris + botón redondo amarillo ────────────── */
+.siqcw-conv-footer {
+  background: #ffffff !important;
+  border-top: 1px solid #eceef6 !important;
+}
+.siqcw-textarea-composer,
+.siqcw-composer {
+  height: auto !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: #ffffff !important;
+}
+.siqcw-textarea-cont {
+  flex-direction: row !important;
+  align-items: center;
+  gap: 8px;
+  height: auto !important;
+  padding: 12px !important;
+  background: #ffffff !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+.siqcw-textarea-cont .scroll-txtarea {
+  flex: 1;
+  min-width: 0;
+}
+.siqcw-textarea {
+  box-sizing: border-box;
+  height: 42px !important;
+  min-height: 42px !important;
+  max-height: 96px !important;
+  overflow-y: auto !important;
+  padding: 10px 16px !important;
+  border: 1px solid #e4e6f7 !important;
+  border-radius: 21px !important;
+  background: #f6f7fd !important;
+  color: #1800ad !important;
+  font-size: 14px !important;
+  line-height: 20px !important;
+  resize: none !important;
+  transition: background-color 0.2s;
+}
+.siqcw-textarea:focus {
+  background: #ffffff !important;
+  outline: none;
+}
+.siqcw-textarea::placeholder {
+  color: #9b9b9b !important;
+}
+.siqcw-textarea-cont .footer-icons {
+  gap: 6px;
+  margin: 0 !important;
+  color: #9b9b9b !important;
+}
+.siqico-send {
+  width: 40px !important;
+  height: 40px !important;
+  flex-shrink: 0;
+  border-radius: 50% !important;
+  background: #ffde59 !important;
+  color: #1800ad !important;
+  display: grid !important;
+  place-items: center;
+  font-size: 15px !important;
+  transition: opacity 0.2s;
+}
+.siqico-send:hover {
+  opacity: 0.85;
+}
+/* "Con tecnología Zoho SalesIQ": discreto, sobre blanco */
+.siqcw-drivenby-cont {
+  background: #ffffff !important;
+  font-size: 11px !important;
+}
+
+/* ── Inicio de Zoho (flecha de la cabecera): tarjetas blancas ─────────────── */
+.home-title,
+.home-widget > .fw600:first-child {
+  font-family: "Poppins", sans-serif !important;
+  font-weight: 600 !important;
+}
 .home-title::before {
   content: "Transarchivos";
   display: block;
   margin-bottom: 10px;
   font:
-    600 11px/1 "Poppins",
+    700 10px/1 "Montserrat",
     sans-serif;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: #ffde59 !important;
 }
 .home-desc {
-  color: rgba(255, 255, 255, 0.75) !important;
+  color: rgba(255, 255, 255, 0.7) !important;
   font-weight: 500 !important;
 }
-
-/* ── Opciones del inicio (chatear, llamar): tarjeta con ícono en cuadro gris ── */
-.home-icon-optns {
+.home-icon-optns,
+.home-widget {
   background: #ffffff !important;
   border: 1px solid #e4e6f7 !important;
   border-radius: 16px !important;
-  box-shadow: 0 1px 2px rgba(10, 13, 61, 0.06) !important;
-  transition: background-color 0.2s;
+  box-shadow: 0 1px 2px rgba(10, 13, 61, 0.05) !important;
+}
+.home-widget {
+  overflow: hidden;
 }
 .home-icon-optns:hover {
-  background: #ffffff !important;
-  border-color: rgba(39, 43, 124, 0.25) !important;
+  border-color: rgba(24, 0, 173, 0.25) !important;
 }
 .home-icon-optns .circle-btns {
   width: 36px !important;
@@ -137,45 +538,17 @@ textarea,
   color: #1800ad !important;
   display: grid !important;
   place-items: center;
-  transition:
-    background-color 0.2s,
-    color 0.2s;
 }
-.home-icon-optns:hover .circle-btns {
-  background: #1800ad !important;
-  color: #ffde59 !important;
-}
-.home-icon-optns .font16 {
-  font-weight: 600;
+.home-icon-optns .font16,
+.home-widget > .fw600:first-child,
+.siqcw-list-item .list-title,
+.home-widget .clr8 {
   color: #1800ad !important;
+  font-weight: 600 !important;
 }
 .home-icon-optns .font13 {
   color: #6b6b6b !important;
 }
-
-/* Artículos y preguntas frecuentes: tarjeta blanca con borde fino */
-.home-widget {
-  background: #ffffff !important;
-  border: 1px solid #e4e6f7 !important;
-  border-radius: 16px !important;
-  box-shadow: 0 1px 2px rgba(10, 13, 61, 0.06) !important;
-  overflow: hidden;
-}
-.home-widget > .fw600:first-child {
-  color: #1800ad !important;
-}
-.siqcw-list-item .list-title {
-  color: #1800ad !important;
-}
-.siqcw-list-item:hover .categ-rgt-icon {
-  color: #ffde59 !important;
-}
-.home-widget .clr8 {
-  color: #1800ad !important;
-  font-weight: 600;
-}
-
-/* Pestañas inferiores: la activa en azul con línea amarillo */
 .footer-tab.sel,
 .footer-tab.sel * {
   color: #1800ad !important;
@@ -183,116 +556,4 @@ textarea,
 .footer-tab.sel::after,
 .footer-tab.sel .footer-sub-tab::after {
   background: #ffde59 !important;
-}
-
-/* ── Conversación ─────────────────────────────────────────────────────────── */
-.siqcw-textarea-cont {
-  background: #ffffff !important;
-  border-top: 1px solid #e4e6f7 !important;
-}
-.siqcw-textarea {
-  font-size: 14px !important;
-  color: #1800ad !important;
-}
-.siqcw-textarea::placeholder {
-  color: #6b6b6b !important;
-}
-/* Botón de enviar: cuadro azul con ícono amarillo */
-.siqico-send {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px !important;
-  background: #1800ad !important;
-  color: #ffde59 !important;
-  display: grid !important;
-  place-items: center;
-  transition: background-color 0.2s;
-}
-.siqico-send:hover {
-  background: #ffde59 !important;
-  color: #ffffff !important;
-}
-
-/* Burbujas del asistente: blancas con borde fino y la punta arriba a la izquierda */
-.siqcw-agentmsg-grp .chat-bubble,
-.siqcw-agentmsg-grp .chat-bubble-cont .chat-bubble,
-.siqcw-agentmsg-grp .first_msg .chat-bubble {
-  background: #ffffff !important;
-  border: 1px solid #e4e6f7 !important;
-  border-radius: 4px 16px 16px 16px !important;
-  box-shadow: 0 1px 2px rgba(10, 13, 61, 0.06) !important;
-  color: #37352f !important;
-  font-size: 14px !important;
-  line-height: 1.55 !important;
-}
-.siqcw-name-div {
-  font-family: "Poppins", sans-serif !important;
-  font-weight: 600;
-  color: #1800ad !important;
-}
-.bubble-time {
-  color: #6b6b6b !important;
-}
-
-/* Opciones del asistente: filas como las del chat de Joel (texto azul en
-   negrita, borde fino y flecha que se vuelve amarillo al pasar el mouse) */
-.chat-sugges-cont .textR {
-  text-align: left !important;
-  box-sizing: border-box;
-  padding-right: 15px;
-}
-.tag-div {
-  display: flex !important;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  width: 100% !important;
-  max-width: 100% !important;
-  box-sizing: border-box;
-  padding: 11px 14px !important;
-  border: 1px solid #e4e6f7 !important;
-  border-radius: 12px !important;
-  background: #ffffff !important;
-  color: #1800ad !important;
-  font-weight: 600 !important;
-  font-size: 14px !important;
-  text-align: left !important;
-  box-shadow: 0 1px 2px rgba(10, 13, 61, 0.06) !important;
-  transition:
-    background-color 0.2s,
-    border-color 0.2s;
-}
-.tag-div::after {
-  content: "›";
-  font-size: 18px;
-  line-height: 1;
-  color: #6b6b6b;
-  transition:
-    color 0.2s,
-    transform 0.2s;
-}
-.tag-div:hover {
-  background: #f6f7fd !important;
-  border-color: rgba(39, 43, 124, 0.25) !important;
-}
-.tag-div:hover::after {
-  color: #ffde59;
-  transform: translateX(2px);
-}
-
-/* Foto de Joel en lugar del robot de Zoho (cabecera y donde aparezca el bot).
-   La imagen se sirve desde el sitio: public/brand/joel.webp. Si este CSS
-   se pega en el panel de Zoho, use la dirección completa:
-   https://www.transarchivos.com/brand/joel.webp */
-.siqcw-bot-logo {
-  background-image: url("/brand/joel.webp") !important;
-  background-size: cover !important;
-  background-position: center !important;
-  background-repeat: no-repeat !important;
-  border-radius: 50% !important;
-}
-.embed-prof-cont {
-  border-radius: 50% !important;
-  overflow: hidden;
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.35);
 }

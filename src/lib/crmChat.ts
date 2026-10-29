@@ -8,14 +8,17 @@
 //   muestra en un iframe en la esquina. Esa página tiene su propia CSP
 //   (vercel.json) con los scripts en línea que Zoho necesita; el resto del
 //   sitio conserva su CSP estricta.
-// · El iframe ocupa solo el botón mientras la ventana está cerrada y crece al
-//   abrirla (clase ta-zoho-open, src/styles/index.css).
-// · Diseño: src/styles/zoho-chat.css (adentro de la ventana) y
-//   src/styles/zoho-host.css (marco y botón).
+// · El botón propio de Zoho se esconde: el chat se abre con el botón de Joel
+//   (src/components/chat/ChatLauncher.tsx). El iframe solo se ve con la
+//   ventana abierta, con el tamaño y la posición de la ventana de Joel (clase
+//   ta-zoho-open, src/styles/index.css).
+// · Diseño: src/styles/zoho-chat.css (adentro de la ventana, como el chat de
+//   Joel) y src/styles/zoho-host.css (la ventana llena el iframe).
 // · Solo en español. El código del widget no es secreto.
 // Documentación: docs/08-chat-asesor.md.
 import chatCss from "@/styles/zoho-chat.css?raw";
 import hostCss from "@/styles/zoho-host.css?raw";
+import { CHAT_EVENT } from "@/lib/chatWidget";
 
 /** Código del widget de SalesIQ de Transarchivos (Zoho → Configuración → Marcas → Transarchivos → Código de instalación). No es secreto. */
 export const SALESIQ_WIDGET = "siqeaaa826a3795e844e6740651f160fdd894fe2b84c3b32f737334473fe85fbb32";
@@ -57,7 +60,7 @@ function zohoHost(): Promise<Window> {
     frame.onload = () => {
       const w = frame.contentWindow;
       if (!w?.document?.body) return reject(new Error("host"));
-      // Marco y botón de la ventana de Zoho
+      // La ventana de Zoho llena el iframe
       const style = w.document.createElement("style");
       style.textContent = hostCss;
       w.document.head.appendChild(style);
@@ -104,8 +107,11 @@ function watchChatWindow(w: Window) {
   window.setTimeout(() => obs.disconnect(), 30_000);
 }
 
-/** Agranda el iframe mientras la ventana de Zoho está abierta. */
-const setOpen = (open: boolean) => document.documentElement.classList.toggle("ta-zoho-open", open);
+/** Muestra el iframe mientras la ventana de Zoho está abierta y avisa al botón de Joel. */
+const setOpen = (open: boolean) => {
+  document.documentElement.classList.toggle("ta-zoho-open", open);
+  window.dispatchEvent(new CustomEvent(CHAT_EVENT, { detail: { open } }));
+};
 
 let loading: Promise<SalesIQ> | null = null;
 
@@ -128,7 +134,7 @@ export function loadCrmChat(): Promise<SalesIQ> {
         window.clearTimeout(timer);
         const z = w.$zoho!.salesiq!;
         z.language?.("es");
-        z.floatbutton?.visible("show");
+        z.floatbutton?.visible("hide");
         z.floatwindow?.open?.(() => setOpen(true));
         z.floatwindow?.close?.(() => setOpen(false));
         z.floatwindow?.minimize?.(() => setOpen(false));
@@ -153,6 +159,13 @@ export async function openCrmChat() {
   const z = await loadCrmChat();
   setOpen(true);
   z.floatwindow?.visible("show");
+}
+
+/** Cierra la ventana del chat. */
+export async function closeCrmChat() {
+  const z = await loadCrmChat();
+  z.floatwindow?.visible("hide");
+  setOpen(false);
 }
 
 /** Solo para pruebas: usa esta ventana como página aislada (jsdom no carga iframes). */

@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { existsSync, readFileSync } from "node:fs";
-import { HOST_ID, SALESIQ_SRC, loadCrmChat, openCrmChat, resetCrmChatForTests, setZohoHostForTests, styleChatWindow } from "@/lib/crmChat";
+import { CHAT_EVENT } from "@/lib/chatWidget";
+import { HOST_ID, SALESIQ_SRC, closeCrmChat, loadCrmChat, openCrmChat, resetCrmChatForTests, setZohoHostForTests, styleChatWindow } from "@/lib/crmChat";
 
 // Cargador del chat de Zoho SalesIQ (sin cargar el script real). En el sitio,
 // Zoho vive en una página aislada (iframe); aquí esa página es la ventana de
@@ -34,7 +35,7 @@ describe("chat de Zoho SalesIQ", () => {
     expect(document.getElementById(HOST_ID)).toBeNull();
   });
 
-  it("carga el script una sola vez, en español y con el botón de Zoho", async () => {
+  it("carga el script una sola vez, en español y sin el botón de Zoho (se usa el de Joel)", async () => {
     const p = loadCrmChat();
     expect(loadCrmChat()).toBe(p);
     await Promise.resolve();
@@ -44,13 +45,18 @@ describe("chat de Zoho SalesIQ", () => {
     expect(document.querySelectorAll("#zsiqscript")).toHaveLength(1);
     const { calls, on } = zohoLoads();
     await p;
-    expect(calls).toEqual(["language:es", "button:show"]);
+    expect(calls).toEqual(["language:es", "button:hide"]);
     expect(document.documentElement.classList.contains("ta-zoho-ready")).toBe(true);
-    // El iframe crece mientras la ventana está abierta
+    // El iframe se muestra mientras la ventana está abierta y el botón de Joel se entera
+    const events: boolean[] = [];
+    const listen = (e: Event) => events.push((e as CustomEvent<{ open: boolean }>).detail.open);
+    window.addEventListener(CHAT_EVENT, listen);
     on.open();
     expect(document.documentElement.classList.contains("ta-zoho-open")).toBe(true);
     on.close();
     expect(document.documentElement.classList.contains("ta-zoho-open")).toBe(false);
+    window.removeEventListener(CHAT_EVENT, listen);
+    expect(events).toEqual([true, false]);
   });
 
   it("los botones del sitio abren la ventana de Zoho", async () => {
@@ -61,6 +67,9 @@ describe("chat de Zoho SalesIQ", () => {
     await p;
     expect(calls).toContain("window:show");
     expect(document.documentElement.classList.contains("ta-zoho-open")).toBe(true);
+    await closeCrmChat();
+    expect(calls).toContain("window:hide");
+    expect(document.documentElement.classList.contains("ta-zoho-open")).toBe(false);
   });
 
   it("si el script no carga, falla y permite reintentar", async () => {
@@ -101,7 +110,7 @@ describe("chat de Zoho SalesIQ · diseño del sitio", () => {
     expect(css).toContain("rotate(45deg)");
     expect(css).not.toMatch(/#356b58|#272b7c|#ff7619/i);
     expect(css).not.toMatch(/linear-gradient/);
-    expect(css).toMatch(/\.siqcw-bot-logo \{[^}]*url\("\/brand\/joel\.webp"\)/);
+    expect(css).toMatch(/\.siqcw-bot-logo,\s*\.embed-prof-cont \{[^}]*url\("\/brand\/joel\.webp"\)/);
     expect(existsSync("public/brand/joel.webp")).toBe(true);
     expect(readFileSync("public/chat-asesor.html", "utf8")).toMatch(/noindex/);
   });

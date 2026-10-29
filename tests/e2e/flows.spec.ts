@@ -152,16 +152,17 @@ async function mockZoho(page: Page) {
 // Registro del Zoho simulado, dentro de la página aislada
 const zohoLog = (page: Page) => page.evaluate(() => ((document.getElementById("ta-zoho-frame") as HTMLIFrameElement | null)?.contentWindow as unknown as { __zoho?: { calls: string[] } } | null)?.__zoho);
 
-test("el widget de Zoho SalesIQ se carga al entrar, en español y con su botón", async ({ page }) => {
+test("el widget de Zoho SalesIQ se carga al entrar, en español y sin su botón (se usa el de Joel)", async ({ page }) => {
   const requests = await mockZoho(page);
   await page.goto("/");
   await expect.poll(() => requests.length, { timeout: 15_000 }).toBe(1);
-  await expect.poll(async () => (await zohoLog(page))?.calls ?? []).toEqual(["language:es", "button:show"]);
+  await expect.poll(async () => (await zohoLog(page))?.calls ?? []).toEqual(["language:es", "button:hide"]);
   await expect(page.locator("html")).toHaveClass(/ta-zoho-ready/);
-  // Con la ventana cerrada, el iframe solo ocupa la esquina del botón
+  // Con la ventana cerrada, el iframe espera fuera de la pantalla y se ve el botón de Joel
   const box = await page.locator("#ta-zoho-frame").boundingBox();
-  expect(box!.width).toBeLessThanOrEqual(160);
+  expect(box!.x + box!.width).toBeLessThan(0);
   await expect(page.locator("html")).not.toHaveClass(/ta-zoho-open/);
+  await expect(page.getByRole("button", { name: "Hablar con Joel, asesor virtual" })).toBeVisible();
 });
 
 test("«Chatee con Joel» abre la ventana del widget de Zoho", async ({ page }) => {
@@ -173,4 +174,20 @@ test("«Chatee con Joel» abre la ventana del widget de Zoho", async ({ page }) 
   await page.getByRole("button", { name: "Chatee con Joel" }).click();
   await expect.poll(async () => (await zohoLog(page))?.calls ?? []).toContain("window:show");
   await expect(page.locator("html")).toHaveClass(/ta-zoho-open/);
+});
+
+test("el botón de Joel abre y cierra la ventana del widget de Zoho", async ({ page, isMobile }) => {
+  await mockZoho(page);
+  await page.goto("/");
+  const banner = page.getByRole("dialog", { name: "Aviso de cookies" });
+  if (await banner.isVisible()) await banner.getByRole("button", { name: "Rechazar" }).click();
+  await expect(page.locator("html")).toHaveClass(/ta-zoho-ready/, { timeout: 15_000 });
+  await page.getByRole("button", { name: "Hablar con Joel, asesor virtual" }).click();
+  await expect(page.locator("html")).toHaveClass(/ta-zoho-open/);
+  await expect(page.locator("#ta-zoho-frame")).toBeInViewport();
+  // En celular la ventana ocupa la pantalla y se cierra desde la de Zoho
+  test.skip(isMobile, "En celular el botón se esconde con la ventana abierta");
+  await page.getByRole("button", { name: "Cerrar chat" }).click();
+  await expect.poll(async () => (await zohoLog(page))?.calls ?? []).toContain("window:hide");
+  await expect(page.locator("html")).not.toHaveClass(/ta-zoho-open/);
 });

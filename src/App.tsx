@@ -5,6 +5,7 @@ import { startChatWidget } from "@/lib/chatWidget";
 import { AnalyticsTracker, CookieBanner } from "@/components/layout/Analytics";
 import { SeoHead } from "@/components/layout/SeoHead";
 import { ContactModal } from "@/components/layout/ContactModal";
+import { ChatLauncher } from "@/components/chat/ChatLauncher";
 import { HomePage } from "@/pages/HomePage";
 import { lazyNamed } from "@/lib/lazyPage";
 
@@ -38,6 +39,7 @@ export default function App() {
     </Suspense>
     <CookieBanner />
     <ContactModal />
+    <ChatLauncher />
     </>
   );
 }

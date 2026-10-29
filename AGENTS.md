@@ -36,6 +36,7 @@ src/
 │   │                     cotizador, blog, preguntas frecuentes; y las compartidas por
 │   │                     las páginas internas: PageHero (encabezado) y CtaBand (llamado final)
 │   ├── home/             Piezas propias del hero (videos, barra de Joel)
+│   ├── chat/             Botón flotante de Joel (ChatLauncher): abre el widget de Zoho
 │   └── ui/               Primitivas: íconos, marca (logo/Joel), fondos y pestaña de carpeta
 │                         (SectionDecor), rótulo/título de sección (SectionHead)
 ├── data/                 CONTENIDO del sitio (fuente única de verdad)
@@ -136,13 +137,16 @@ RecursosTransarchivos/    Documentos fuente del cliente (contexto, no se publica
 ## Chat (widget de Zoho SalesIQ)
 
 **Variante de prueba, rama `chat-salesiq-widget`** (oct. 2026). El chat del
-sitio es el widget de Zoho SalesIQ tal cual (botón flotante y ventana); el chat
-propio de Joel sigue en la rama `chat-joel-salesiq`. Todo el flujo (saludo,
+sitio es el widget de Zoho SalesIQ con el aspecto del chat de Joel (mismo botón
+flotante, ventana con su posición, tamaño y diseño); el chat propio de Joel
+sigue en la rama `chat-joel-salesiq`. Todo el flujo (saludo,
 botones, preguntas frecuentes, cotización, transferencia a un asesor) se
 configura en Zoho, no en el código.
 
 El widget se carga al entrar al sitio (cuando el navegador queda libre) en la
-página aislada `public/chat-asesor.html`, mostrada en un iframe en la esquina
-(`#ta-zoho-frame`): pequeño con la ventana cerrada, grande al abrirla. Los
-botones "Chat con Joel" del sitio la abren con `openChat`. Detalles:
+página aislada `public/chat-asesor.html`, en un iframe (`#ta-zoho-frame`) que
+solo se ve con la ventana abierta. Se abre con el botón de Joel
+(`components/chat/ChatLauncher.tsx`) y con los botones "Chat con Joel" del
+sitio (`openChat`). Diseño de la ventana: `src/styles/zoho-chat.css` (copia
+para el portal de Zoho: `docs/zoho-salesiq-portal.css`). Detalles:
 `docs/08-chat-asesor.md`.
