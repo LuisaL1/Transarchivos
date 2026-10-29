@@ -20,8 +20,18 @@ function logoBox(ratio: number) {
 
 const ROWS = [CLIENTS.filter((_, i) => i % 2 === 0), CLIENTS.filter((_, i) => i % 2 === 1)];
 
-export function ClientsMarquee() {
+// "contained": solo las dos filas de logos, dentro del ancho del contenido y
+// con los bordes desvanecidos (reseña histórica de Nosotros; pedido del
+// cliente, oct. 2026: centrados y no de lado a lado como en el inicio).
+export function ClientsMarquee({ contained = false }: { contained?: boolean }) {
   const u = useUi().clients;
+  if (contained) return (
+    <div aria-label={u.aria} role="region" className="max-w-6xl mx-auto px-6">
+      <div className="space-y-4 rounded-3xl py-2" style={{ maskImage: "linear-gradient(90deg, rgba(0,0,0,0), #000 8%, #000 92%, rgba(0,0,0,0))", WebkitMaskImage: "linear-gradient(90deg, rgba(0,0,0,0), #000 8%, #000 92%, rgba(0,0,0,0))" }}>
+        {rows(u)}
+      </div>
+    </div>
+  );
   return (
     <section aria-label={u.aria} className="relative pt-10 pb-8 md:pt-12 md:pb-10" style={{ background: "#FFFFFF" }}>
       <p className="mb-2 text-center text-xs font-bold uppercase tracking-widest" style={{ color: C.gold, fontFamily: "Montserrat, sans-serif" }}>{u.kicker}</p>
@@ -31,7 +41,14 @@ export function ClientsMarquee() {
       {/* Franja blanca (única sección clara del sitio): los logos van
           directamente sobre el fondo, en gris, y recuperan su color al pasar
           el mouse. */}
-      <div className="space-y-6">
+      <div className="space-y-6">{rows(u)}</div>
+    </section>
+  );
+}
+
+function rows(u: { row: (n: number) => string }) {
+  return (
+    <>
         {ROWS.map((row, r) => (
           // Región desplazable (con "reducir movimiento"): debe poder enfocarse con teclado (WCAG).
           // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
@@ -50,7 +67,6 @@ export function ClientsMarquee() {
             ))}
           </div>
         ))}
-      </div>
-    </section>
+    </>
   );
 }

@@ -17,9 +17,10 @@ import { C } from "@/styles/tokens";
 export const HEADER_SPACE = 60 + LANG_BAR_HEIGHT;
 
 // ─── Navbar del sitio ─────────────────────────────────────────────────────────
-// Mismo navbar en todas las páginas (logo, menús desplegables, botón de
-// cotización, búsqueda y soporte), con la franja de idioma encima (se recoge
-// al hacer scroll). "solid": siempre en su versión de barra blanca (páginas
+// Mismo navbar en todas las páginas (logo, menús desplegables, "Solicitar
+// cotización" como entrada del menú, botón azul "Contacto directo" que abre la
+// tarjeta de contacto, y búsqueda; pedido del cliente, 29 oct. 2026), con la
+// franja de idioma encima (se recoge al hacer scroll). "solid": siempre en su versión de barra blanca (páginas
 // internas, sin el hero oscuro de la principal). Los enlaces "#sección"
 // funcionan también fuera de la página principal: se redirigen a "/#sección"
 // (en el idioma actual).
@@ -57,7 +58,7 @@ export function SiteHeader({ solid = false, onChat }: { solid?: boolean; onChat:
   const pillRef = useRef<HTMLDivElement>(null);
   const toolsRef = useRef<HTMLDivElement>(null);
 
-  // Tarjeta de soporte (audífonos): guarda la posición del botón al abrir.
+  // Tarjeta de contacto directo (botón azul del pill): guarda la posición del botón al abrir.
   const supportBtnRef = useRef<HTMLButtonElement>(null);
   const [supportAnchor, setSupportAnchor] = useState<DOMRect | null>(null);
   const openSupport = () => {
@@ -153,21 +154,17 @@ export function SiteHeader({ solid = false, onChat }: { solid?: boolean; onChat:
         }}
       >
         {/* Logo — suelto, alineado con el borde del bloque de texto del hero */}
-        <Link to={home} aria-label={u.nav.logo} onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="absolute z-10 left-4 md:left-12 2xl:left-28" style={{ top: scrolled ? 7 : 12, transition: "top 0.3s ease" }}>
-          <HeaderLogo scrolled={scrolled || mobileOpen} size={scrolled || mobileOpen ? 50 : 64} />
+        {/* Logo más grande (pedido del cliente, oct. 2026) */}
+        <Link to={home} aria-label={u.nav.logo} onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="absolute z-10 left-4 md:left-12 2xl:left-28" style={{ top: scrolled ? 5 : 8, transition: "top 0.3s ease" }}>
+          <HeaderLogo scrolled={scrolled || mobileOpen} size={scrolled || mobileOpen ? 58 : 76} />
         </Link>
 
-        {/* Búsqueda y soporte — fuera del pill, a la derecha */}
+        {/* Búsqueda — fuera del pill, a la derecha */}
         <div ref={toolsRef} className="hidden xl:flex absolute z-10 right-4 md:right-12 2xl:right-28 items-center gap-2.5" style={{ top: scrolled ? 12 : 24, transition: "top 0.3s ease" }}>
           <button type="button" onClick={toggleSearch} aria-label={searchOpen ? u.nav.closeSearch : u.nav.search} title={searchOpen ? u.nav.closeSearch : u.nav.search}
             className="flex items-center justify-center rounded-full shrink-0 transition-transform hover:scale-105 active:scale-95"
             style={{ width: 40, height: 40, background: searchOpen ? C.indigo : "#fff", border: `1.5px solid ${searchOpen ? C.indigo : C.border}`, boxShadow: scrolled ? "none" : "0 8px 20px -8px rgba(10,13,61,0.35)" }}>
             <Bi n={searchOpen ? "x-lg" : "search"} size={searchOpen ? 14 : 15} color={searchOpen ? "#fff" : C.indigo} />
-          </button>
-          <button ref={supportBtnRef} type="button" onClick={toggleSupport} onMouseEnter={supportHoverIn} onMouseLeave={supportHoverOut} aria-label={u.nav.support} title={u.nav.support} aria-expanded={!!supportAnchor}
-            className="flex items-center justify-center rounded-full shrink-0 transition-transform hover:scale-105 active:scale-95"
-            style={{ width: 40, height: 40, background: supportAnchor ? C.indigo : "#fff", border: `1.5px solid ${supportAnchor ? C.indigo : C.border}`, boxShadow: scrolled ? "none" : "0 8px 20px -8px rgba(10,13,61,0.35)" }}>
-            <Bi n="headset" size={16} color={supportAnchor ? "#fff" : C.indigo} />
           </button>
         </div>
 
@@ -178,7 +175,7 @@ export function SiteHeader({ solid = false, onChat }: { solid?: boolean; onChat:
           // --pl / --pr: espacio reservado al logo (izquierda) y a los íconos
           // (derecha), cada uno con el mismo aire, así la píldora queda centrada
           // ENTRE el logo y los íconos (pedido del cliente, oct. 2026).
-          className="hidden xl:flex relative flex-col [--pl:272px] [--pr:170px] 2xl:[--pl:332px] 2xl:[--pr:230px]"
+          className="hidden xl:flex relative flex-col [--pl:300px] [--pr:120px] 2xl:[--pl:360px] 2xl:[--pr:180px]"
           style={{
             zIndex: 1,
             left: "calc((var(--pl) - var(--pr)) / 2)",
@@ -210,19 +207,20 @@ export function SiteHeader({ solid = false, onChat }: { solid?: boolean; onChat:
                 <Link to={lp("/videos")} onClick={() => setOpenMenu(null)} className={navLinkCls} style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none" }} {...navHover}>
                   {u.nav.videos}
                 </Link>
-                <a href="#faq" className={navLinkCls} style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }} {...navHover}>
-                  {u.nav.contact}
+                {/* "Solicitar cotización" pasa al menú (pedido del cliente, oct. 2026) */}
+                <a href="#cotizador" className={navLinkCls} style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }} {...navHover}>
+                  <span className="min-[1440px]:hidden">{u.nav.quote}</span><span className="hidden min-[1440px]:inline">{u.nav.quoteLong}</span>
                 </a>
               </nav>
             </div>
 
-            {/* CTA derecha — píldora sólida índigo */}
-            <a href="#cotizador"
-              className="inline-flex items-center gap-1.5 px-3.5 2xl:px-4 py-2 rounded-full text-[13px] 2xl:text-sm font-bold transition-transform hover:scale-105 active:scale-95 shrink-0 whitespace-nowrap"
-              style={{ background: C.indigo, color: "#ffffff", fontFamily: "Montserrat, sans-serif" }}>
-              <span className="min-[1440px]:hidden">{u.nav.quote}</span><span className="hidden min-[1440px]:inline">{u.nav.quoteLong}</span>
-              <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M3 11L11 3M11 3H5M11 3V9" stroke="#ffffff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            </a>
+            {/* Botón azul "Contacto directo" (reemplaza el ícono de audífonos):
+                abre la tarjeta con chat, WhatsApp, teléfonos y formulario. */}
+            <button ref={supportBtnRef} type="button" onClick={toggleSupport} onMouseEnter={supportHoverIn} onMouseLeave={supportHoverOut} aria-expanded={!!supportAnchor}
+              className="inline-flex items-center gap-2 px-4 2xl:px-5 py-2.5 rounded-full text-sm 2xl:text-[15px] font-bold transition-transform hover:scale-105 active:scale-95 shrink-0 whitespace-nowrap"
+              style={{ background: C.indigo, color: "#ffffff", fontFamily: "Montserrat, sans-serif", boxShadow: supportAnchor ? "0 0 0 3px rgba(255,222,89,0.6)" : "none" }}>
+              <Bi n="headset" size={15} color={C.yellow} /> {u.nav.contactDirect}
+            </button>
           </div>
 
           {/* Fila 2: contenido del menú abierto (el pill crece para incluirla) */}

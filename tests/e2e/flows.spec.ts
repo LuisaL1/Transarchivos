@@ -84,7 +84,7 @@ test("formulario de contacto: se abre desde soporte, exige autorización y enví
   let sent: Record<string, unknown> | null = null;
   await page.route("**/api/contact", async r => { sent = r.request().postDataJSON(); await r.fulfill({ json: { ok: true } }); });
   await page.goto("/");
-  await page.getByRole("button", { name: /Soporte/ }).first().click();
+  await page.getByRole("button", { name: /Contacto directo/ }).first().click();
   await page.locator("[data-support-popover]").getByRole("link", { name: /Escríbanos Formulario/ }).click();
   const dlg = page.getByRole("dialog", { name: "Escríbanos" });
   await expect(dlg).toBeVisible();

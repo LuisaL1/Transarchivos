@@ -54,8 +54,8 @@ export const services: { icon: string; title: string; slug: string; tag: string;
     tag: "Copia aislada (air gap) · DRP", accent: C.indigo,
     desc: "Almacenamiento especializado de cintas LTO/DAT/DLT, discos duros, CDs/DVDs y otros medios.",
     card: { title: "Custodia de medios magnéticos y copia aislada", tag: "Air Gap · DRP", cta: "Conocer especificaciones técnicas",
-      desc: "Resguardo de alta seguridad para cintas magnéticas, discos duros y medios de almacenamiento masivo. Protegemos la copia de seguridad crítica de su compañía mediante instalaciones búnker aisladas de la red." },
-    quote: { title: "Custodia de medios magnéticos", desc: "Bóveda de alta seguridad para la conservación de cintas LTO/DAT, discos y medios ópticos." },
+      desc: "Resguardo de alta seguridad para cintas magnéticas, discos duros y medios de almacenamiento masivo. Protegemos la copia de seguridad crítica de su compañía mediante instalaciones de seguridad aisladas de la red." },
+    quote: { title: "Custodia de medios técnicos", desc: "Cuartos de seguridad para la conservación de cintas LTO/DAT, discos y medios ópticos." },
   },
   {
     icon: "archive", title: "Custodia de archivos", slug: "custodia-de-archivos",
@@ -63,7 +63,7 @@ export const services: { icon: string; title: string; slug: string; tag: string;
     desc: "Resguardo y gestión de documentos físicos y digitales con seguridad, integridad y disponibilidad.",
     card: { title: "Custodia y resguardo documental", tag: "CCTV · Monitoreo 24/7", cta: "Conocer condiciones de custodia",
       desc: "Almacenamiento y administración de archivos físicos en instalaciones de alta seguridad, equipadas con vigilancia CCTV ininterrumpida, control biométrico de acceso y sistemas de prevención de incendios." },
-    quote: { title: "Custodia de archivos", desc: "Almacenamiento seguro de archivos físicos. Monitoreo continuo, custodia búnker y servicio de préstamo/recuperación garantizada." },
+    quote: { title: "Custodia de archivos", desc: "Almacenamiento seguro de archivos físicos. Monitoreo continuo, custodia en centros documentales y servicio de préstamo/recuperación garantizada." },
   },
   {
     icon: "upc-scan", title: "Digitalización de documentos", slug: "digitalizacion-de-documentos",
@@ -71,7 +71,7 @@ export const services: { icon: string; title: string; slug: string; tag: string;
     desc: "Conversión de documentos físicos a archivos digitales con captura, indexación y OCR opcional.",
     card: { title: "Digitalización de documentos y captura OCR", tag: "Valor legal · Indexación estructurada", cta: "Conocer el proceso de digitalización",
       desc: "Transformamos sus archivos físicos en documentos digitales de alta resolución con pleno respaldo jurídico, con reconocimiento óptico de texto (OCR) y metadatos de búsqueda." },
-    quote: { title: "Digitalización de documentos", desc: "Conversión de archivos físicos a formatos digitales de alta fidelidad. Incluye indexación de metadatos y reconocimiento óptico de caracteres (OCR)." },
+    quote: { title: "Digitalización de documentos", desc: "Conversión de archivos a formatos digitales de alta fidelidad." },
   },
   {
     icon: "file-earmark-x", title: "Destrucción de documentos", slug: "destruccion-de-documentos",
@@ -79,7 +79,7 @@ export const services: { icon: string; title: string; slug: string; tag: string;
     desc: "Destrucción segura y trazable, con acta de eliminación y certificado, alineada con la Ley 594 de 2000.",
     card: { title: "Destrucción certificada de documentos", tag: "Conforme a la Ley Habeas Data", cta: "Conocer el protocolo de destrucción",
       desc: "Eliminación definitiva, segura y trazable de archivos físicos que han cumplido su tiempo de retención legal, entregando un acta oficial y Certificado de Destrucción con plena validez jurídica." },
-    quote: { title: "Destrucción certificada de documentos", desc: "Trituración confidencial de archivos para evitar filtraciones de información sensible y sanciones de Habeas Data. Trazabilidad completa garantizada con soporte probatorio." },
+    quote: { title: "Destrucción certificada de documentos", desc: "Trituración confidencial de archivos para evitar filtraciones de información sensible y sanciones; entregamos los soportes del proceso." },
   },
   {
     icon: "film", title: "Digitalización de microfilms", slug: "microfilmacion-de-archivos",
@@ -87,7 +87,7 @@ export const services: { icon: string; title: string; slug: string; tag: string;
     desc: "Transformación de microfilms históricos en archivos digitales indexados para rápida consulta.",
     card: { title: "De microfilms a formatos digitales PDF", tag: "De 16 / 35 mm a PDF", cta: "Ver proceso de conversión a PDF",
       desc: "Transformamos sus soportes análogos de microfilmación (16 y 35 mm) en documentos digitales PDF totalmente legibles y organizados. Eliminamos la dependencia de visores tradicionales, permitiendo la consulta remota, el procesamiento masivo y el respaldo seguro de su fondo histórico en la nube o en sus servidores." },
-    quote: { title: "Digitalización de microfilms", desc: "Conversión de rollos (16/35 mm) a formatos digitales de alta definición. Recuperación de archivos históricos con indexación y OCR para consulta instantánea." },
+    quote: { title: "Conversión de microfilms", desc: "Digitalización de rollos (15/35mm) a formatos digitales de alta definición y recuperación de archivos históricos." },
   },
   {
     icon: "person-badge", title: "Servicio in house", slug: "servicio-inhouse",
@@ -95,7 +95,7 @@ export const services: { icon: string; title: string; slug: string; tag: string;
     desc: "Personal técnico de archivo en su sede, capacitado y supervisado por Transarchivos.",
     card: { title: "Gestión documental in-house", tag: "Personal técnico en sus instalaciones", cta: "Conocer el modelo de operación in-house",
       desc: "Personal archivístico profesional operando directamente en la sede de su compañía. Nos encargamos de la ejecución diaria y la supervisión técnica con la metodología y calidad garantizada por Transarchivos." },
-    quote: { title: "Gestión documental in-house", desc: "Técnicos archivistas en sus instalaciones, respaldados y supervisados por Transarchivos para garantizar la correcta organización y custodia de su archivo." },
+    quote: { title: "Gestión documental in-house", desc: "Técnicos archivistas en sus instalaciones, respaldados y supervisados por Transarchivos para garantizar la correcta organización." },
   },
   {
     icon: "lightning-charge", title: "Servicio inmediato", slug: "servicio-inmediato",
@@ -107,13 +107,15 @@ export const services: { icon: string; title: string; slug: string; tag: string;
   },
 ];
 
+// Marco normativo (página Nosotros). "detail": reseña breve que se despliega
+// al tocar la tarjeta (pedido del cliente, oct. 2026).
 export const norms = [
-  { code: "Ley 594 / 2000", name: "Ley General de Archivos (AGN)" },
-  { code: "Decreto 1080 / 2015", name: "PGD y ciclo de vida del documento electrónico" },
-  { code: "Res. 8934 / 2014", name: "Superintendencia de Industria y Comercio" },
-  { code: "Ley 962 de 2005 · art. 28", name: "Ley Antitrámites: conservación de documentos en medios técnicos" },
-  { code: "Ley 1581 / 2012", name: "Protección de datos personales" },
-  { code: "Ley 527 / 1999", name: "Comercio electrónico: validez legal de la digitalización" },
-  { code: "Decreto 2527 / 1950", name: "Validez jurídica de la microfilmación" },
-  { code: "Norma Icontec 2001", name: "Estantería de carga pesada del Centro Documental" },
+  { code: "Ley 594 / 2000", name: "Ley General de Archivos (AGN)", detail: "Establece las reglas y principios de la función archivística en Colombia: las entidades deben organizar, conservar y disponer sus documentos según sus Tablas de Retención Documental, bajo la rectoría del Archivo General de la Nación." },
+  { code: "Decreto 1080 / 2015", name: "PGD y ciclo de vida del documento electrónico", detail: "Decreto Único Reglamentario del Sector Cultura: reglamenta el Programa de Gestión Documental (PGD), los instrumentos archivísticos y la gestión del documento electrónico durante todo su ciclo de vida." },
+  { code: "Res. 8934 / 2014", name: "Superintendencia de Industria y Comercio", detail: "Directrices de la Superintendencia de Industria y Comercio en materia de gestión documental y organización de archivos para las sociedades que vigila." },
+  { code: "Ley Antitrámites 962 de 2005 · art. 28", name: "Conservación de documentos en medios técnicos", detail: "Artículo 28: los libros y papeles de comercio pueden conservarse en cualquier medio técnico (como la digitalización o la microfilmación) que garantice su reproducción exacta, durante diez años." },
+  { code: "Ley 1581 / 2012", name: "Protección de datos personales", detail: "Régimen general de protección de datos personales: regula cómo se recogen, tratan y protegen los datos de las personas, incluidos los que reposan en los archivos custodiados." },
+  { code: "Ley 527 / 1999", name: "Comercio electrónico: validez legal de la digitalización", detail: "Reconoce la validez jurídica y probatoria de los mensajes de datos y los documentos electrónicos: es la base legal de la digitalización con valor legal." },
+  { code: "Decreto 2527 / 1950", name: "Validez jurídica de la microfilmación", detail: "Autoriza la microfilmación de archivos y otorga valor probatorio a las copias obtenidas de microfilmes certificados, con el mismo valor del documento original." },
+  { code: "Norma Icontec 2001", name: "Estantería de carga pesada del Centro Documental", detail: "Especificaciones técnicas de la estantería metálica de carga pesada con la que está dotado nuestro centro documental para almacenar las cajas de archivo con seguridad." },
 ];

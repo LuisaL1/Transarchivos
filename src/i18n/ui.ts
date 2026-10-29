@@ -7,7 +7,7 @@ import { useLang, type Lang } from "@/i18n";
 const es = {
   nav: {
     services: "Servicios", solutions: "Soluciones", about: "Nosotros", blog: "Blog", videos: "Da play al conocimiento", contact: "Contacto",
-    quote: "Cotizar", quoteLong: "Solicitar cotización", search: "Buscar", closeSearch: "Cerrar búsqueda", support: "Soporte",
+    quote: "Cotizar", quoteLong: "Solicitar cotización", contactDirect: "Contacto directo", search: "Buscar", closeSearch: "Cerrar búsqueda", support: "Soporte",
     openMenu: "Abrir menú", closeMenu: "Cerrar menú", logo: "Transarchivos, ir al inicio", chatJoel: "Chat con Joel", whatsapp: "WhatsApp",
     blogAndFaq: "Contacto y preguntas frecuentes", address: "Cl. 21 # 39A-40, Bogotá", chooseLang: "Elegir idioma", langs: "Idiomas disponibles",
   },
@@ -70,7 +70,7 @@ const es = {
     kicker: "Cotización a la medida", title: "Defina su necesidad y prepare su solicitud comercial",
     text: "4 pasos simples. Visualice la composición técnica de su requerimiento en tiempo real antes de conectarse con nuestro equipo comercial.",
     steps: ["Servicio", "Detalles", "Contacto", "Resumen"],
-    diagnostic: { title: "Diagnóstico documental", desc: "Identifique brechas normativas, físicas y operativas en su archivo. Diseñamos la ruta técnica adecuada antes de iniciar cualquier intervención." },
+    diagnostic: { title: "Diagnóstico documental", desc: "Identificamos la condición actual del archivo y su volumen. Diseñamos la ruta técnica adecuada antes de iniciar cualquier intervención." },
     s0Title: "¿Qué servicio necesita?", s0Text: "¿No tiene certeza sobre el alcance técnico? Inicie con un Diagnóstico Documental para evaluar el estado actual de su archivo.", next: "Continuar", back: "Atrás",
     solution: "Solución", multi: "Esta solución combina varios servicios. Está cotizando el principal; puede cambiar:", single: "Está cotizando el servicio que compone esta solución.",
     s1Title: "Cuéntenos sobre su archivo", s1Text: "Si no conoce algún dato, elija \"No lo sé\": un asesor le ayudará a completarlo.", select: "Seleccione…",
@@ -108,7 +108,7 @@ export type Ui = typeof es;
 const en: Ui = {
   nav: {
     services: "Services", solutions: "Solutions", about: "About us", blog: "Blog", videos: "Press play on knowledge", contact: "Contact",
-    quote: "Get a quote", quoteLong: "Request a quote", search: "Search", closeSearch: "Close search", support: "Support",
+    quote: "Get a quote", quoteLong: "Request a quote", contactDirect: "Direct contact", search: "Search", closeSearch: "Close search", support: "Support",
     openMenu: "Open menu", closeMenu: "Close menu", logo: "Transarchivos, go to home", chatJoel: "Chat with Joel", whatsapp: "WhatsApp",
     blogAndFaq: "Contact and FAQs", address: "Cl. 21 # 39A-40, Bogotá", chooseLang: "Choose language", langs: "Available languages",
   },
@@ -171,7 +171,7 @@ const en: Ui = {
     kicker: "Tailored quote", title: "Define your need and prepare your commercial request",
     text: "4 simple steps. See the technical composition of your requirement in real time before connecting with our sales team.",
     steps: ["Service", "Details", "Contact", "Summary"],
-    diagnostic: { title: "Document assessment", desc: "Identify regulatory, physical and operational gaps in your archive. We design the right technical route before starting any intervention." },
+    diagnostic: { title: "Document assessment", desc: "We identify the current condition of the archive and its volume. We design the right technical route before starting any intervention." },
     s0Title: "Which service do you need?", s0Text: "Not sure about the technical scope? Start with a Document Assessment to evaluate the current state of your archive.", next: "Continue", back: "Back",
     solution: "Solution", multi: "This solution combines several services. You are quoting the main one; you can change it:", single: "You are quoting the service that makes up this solution.",
     s1Title: "Tell us about your archive", s1Text: "If you don't know a detail, choose \"I don't know\": an advisor will help you complete it.", select: "Select…",

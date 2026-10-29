@@ -164,6 +164,9 @@ RecursosTransarchivos/    Documentos fuente del cliente (contexto, no se publica
   el detalle de esquina del chat y el menú: cuadrado amarillo translúcido girado
   45° con puntas redondeadas, radio ≈ 17 % del lado), tarjetas blancas con borde fino, motivo gráfico de carpeta. Única
   excepción: la sombra negra superior del hero de inicio.
+- Header (oct. 2026): logo grande, menú con "Solicitar cotización" como entrada
+  y botón azul "Contacto directo" (abre la tarjeta de contacto: Joel, WhatsApp,
+  teléfonos y formulario); fuera del pill solo queda la lupa.
 - Hero de inicio: secuencia de fotos de la operación de fondo (`public/hero-fotos/`,
   fundido lento cada 12 s, sin otro movimiento, velo índigo); el video del centro documental va en la sección del mapa.
   En computador, dos columnas: a la izquierda el título animado (tres frases que

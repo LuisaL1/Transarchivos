@@ -1,16 +1,15 @@
 // ─── Página "Nosotros" ──────────────────────────────────────────────────────
-// Contenido tomado del Documento maestro y de "Misión y visión" (carpeta
-// RecursosTransarchivos), con un anclaje real por cada ítem del menú
-// desplegable "Nosotros". "Nuestro equipo", "Cultura" y "Aliados tecnológicos"
-// no tienen nombres, fotos ni logos reales en los documentos fuente, así que
-// se muestran con los hechos reales más cercanos; "Aliados" se presenta como
-// "Tecnología y seguridad" (el ancla se conserva por compatibilidad). Textos en
-// src/i18n/pages.ts.
+// Contenido tomado del Documento maestro, de "Misión y visión" y de la reseña
+// histórica entregada por el cliente (documento del 29 de octubre de 2026),
+// con un anclaje real por cada ítem del menú desplegable "Nosotros". Textos en
+// src/i18n/pages.ts. La sección "Tecnología y seguridad" se retiró a pedido
+// del cliente; el marco normativo se despliega al tocar cada norma.
 
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Bi, BiTile } from "@/components/ui/Icons";
+import { Bi } from "@/components/ui/Icons";
 import { ChatBot } from "@/components/chat/LazyChatBot";
+import { ClientsMarquee } from "@/components/home/ClientsMarquee";
 import { HEADER_SPACE, SiteHeader } from "@/components/layout/SiteHeader";
 import { JoelFigure } from "@/components/ui/JoelBridge";
 import { SectionDecor } from "@/components/ui/SectionDecor";
@@ -32,6 +31,9 @@ export function NosotrosPage() {
   const pageRef = useRef<HTMLDivElement>(null);
   useScrollReveal(pageRef);
   const [chatOpen, setChatOpen] = useState(false);
+  // Normas desplegadas (varias a la vez)
+  const [openNorms, setOpenNorms] = useState<Set<string>>(() => new Set());
+  const toggleNorm = (code: string) => setOpenNorms(s => { const n = new Set(s); if (n.has(code)) n.delete(code); else n.add(code); return n; });
 
   useEffect(() => {
     if (hash) {
@@ -43,6 +45,7 @@ export function NosotrosPage() {
   }, [hash]);
 
   const card = { background: "#fff", border: "1px solid #E4E6F7", boxShadow: "0 14px 30px -26px rgba(24,0,173,0.45)" } as const;
+  const para = { color: C.muted, lineHeight: 1.75 } as const;
 
   return (
     <div ref={pageRef} className="min-h-full" style={{ background: C.cream, fontFamily: "Inter, sans-serif", color: "#37352F" }}>
@@ -101,23 +104,48 @@ export function NosotrosPage() {
         </div>
       </PageHero>
 
-      {/* Historia */}
+      {/* Historia: reseña completa del cliente, con Joel leyendo la historia de
+          Transarchivos y los logos de clientes centrados en el ancho del texto. */}
       <section id="historia" className="relative isolate overflow-hidden py-16" style={{ scrollMarginTop: 80 }}>
         <SectionDecor variant="light" />
-        <div className="max-w-6xl mx-auto px-6 grid lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] gap-10 items-start">
-          <div>
-            {kicker(u.historyKicker)}
-            {h2(<>{u.historyA}{mark(u.historyMark)}</>)}
-            <p className="text-sm mt-4" style={{ color: C.muted, lineHeight: 1.7 }}>{u.historyText}</p>
-            <div className="mt-10 pl-6"><JoelFigure src={JOEL.levantandoCajas} height={260} /></div>
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="grid lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] gap-10 lg:gap-14 items-start">
+            <div>
+              {kicker(u.historyKicker)}
+              {h2(<>{u.historyA}{mark(u.historyMark)}</>)}
+              <div className="mt-8 pl-4"><JoelFigure src={JOEL.historia} height={300} /></div>
+            </div>
+            <div className="space-y-4 text-[15px]">
+              {u.history.map(p => <p key={p} style={para}>{p}</p>)}
+              <h3 className="text-xl font-bold pt-4" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif", lineHeight: 1.3 }}>{u.backedTitle}</h3>
+              {u.backed.map(p => <p key={p} style={para}>{p}</p>)}
+            </div>
           </div>
-          <div className="grid sm:grid-cols-2 gap-3">
-            {u.history.map(x => (
-              <div key={x.t} className="flex items-start gap-3 rounded-2xl p-4" style={card}>
-                <BiTile n={x.ic} size={34} accent={C.indigo} />
-                <span className="text-sm" style={{ color: C.indigo, lineHeight: 1.5 }}>{x.t}</span>
-              </div>
-            ))}
+
+          {/* Logos de clientes, dentro del mismo ancho de la reseña */}
+          <div className="mt-12 rounded-3xl py-6" style={{ background: "#fff", border: "1px solid #E4E6F7" }}>
+            <p className="mb-2 text-center text-xs font-bold uppercase tracking-widest" style={{ color: C.gold, fontFamily: "Montserrat, sans-serif" }}>{u.logos}</p>
+            <ClientsMarquee contained />
+          </div>
+
+          <div className="mt-12 grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] gap-6 items-stretch">
+            <div className="rounded-3xl p-6 md:p-7" style={card}>
+              <p className="text-[15px]" style={para}>{u.closing}</p>
+              <p className="text-[15px] mt-4 font-semibold" style={{ color: C.indigo, lineHeight: 1.6 }}>{u.principles}</p>
+            </div>
+            <div className="relative overflow-hidden rounded-3xl p-6 md:p-7" style={{ background: C.indigo }}>
+              <span aria-hidden="true" className="absolute pointer-events-none" style={{ right: -40, top: -40, width: 120, height: 120, transform: "rotate(45deg)", borderRadius: 20, background: "rgba(255,222,89,0.22)" }} />
+              <p className="relative text-sm font-semibold mb-4" style={{ color: C.yellow, fontFamily: "Montserrat, sans-serif" }}>{u.commitmentsIntro}</p>
+              <ul className="relative grid grid-cols-2 gap-2.5 mb-5">
+                {u.commitments.map(c => (
+                  <li key={c.l} className="flex items-center gap-2.5 rounded-xl px-3 py-2.5" style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.18)" }}>
+                    <Bi n={c.ic} size={16} color={C.yellow} />
+                    <span className="text-sm font-bold" style={{ color: "#fff", fontFamily: "Poppins, sans-serif" }}>{c.l}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="relative text-sm" style={{ color: "rgba(255,255,255,0.8)", lineHeight: 1.7 }}>{u.commitmentsText}</p>
+            </div>
           </div>
         </div>
       </section>
@@ -172,7 +200,10 @@ export function NosotrosPage() {
       <section id="cultura" className="relative isolate overflow-hidden py-16" style={{ scrollMarginTop: 80 }}>
         <SectionDecor variant="dark" flip folder={false} />
         <div className="max-w-6xl mx-auto px-6">
-          <div className="max-w-2xl mb-10">{kicker(u.cultureKicker, true)}{h2(u.cultureTitle, true)}</div>
+          <div className="max-w-3xl mb-10">
+            {kicker(u.cultureKicker, true)}{h2(u.cultureTitle, true)}
+            <p className="text-sm mt-4" style={{ color: "rgba(255,255,255,0.78)", lineHeight: 1.7 }}>{u.cultureText}</p>
+          </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {u.values.map((v, i) => (
               <div key={v.t} className="group relative rounded-3xl p-6 overflow-hidden card-lift" style={{ background: "#fff", border: "1.5px solid #E4E6F7" }}>
@@ -180,7 +211,8 @@ export function NosotrosPage() {
                 <span className="grid place-items-center rounded-2xl mb-4 transition-colors bg-indigo/[0.08] group-hover:bg-indigo" style={{ width: 48, height: 48 }}>
                   <i className={`bi bi-${v.ic} text-indigo group-hover:text-amarillo transition-colors`} aria-hidden="true" style={{ fontSize: 21, lineHeight: 1 }} />
                 </span>
-                <p className="text-base font-bold mb-2" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>{v.t}</p>
+                <p className="text-base font-bold mb-1" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>{v.t}</p>
+                <p className="text-[13px] font-semibold mb-2.5 pl-3" style={{ color: C.indigo, borderLeft: "3px solid #FFDE59", lineHeight: 1.4 }}>{v.s}</p>
                 <p className="text-sm" style={{ color: C.muted, lineHeight: 1.6 }}>{v.x}</p>
               </div>
             ))}
@@ -188,7 +220,7 @@ export function NosotrosPage() {
         </div>
       </section>
 
-      {/* Clientes */}
+      {/* Clientes: sectores atendidos */}
       <section id="clientes" className="relative isolate overflow-hidden py-16" style={{ scrollMarginTop: 80 }}>
         <SectionDecor variant="light" />
         <div className="max-w-6xl mx-auto px-6">
@@ -209,45 +241,39 @@ export function NosotrosPage() {
         </div>
       </section>
 
-      {/* Tecnología y seguridad */}
-      <section id="aliados" className="relative isolate overflow-hidden py-16" style={{ scrollMarginTop: 80 }}>
-        <SectionDecor variant="dark" flip folder={false} />
-        <div className="max-w-6xl mx-auto px-6 grid lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] gap-10 items-start">
-          <div>
-            {kicker(u.techKicker, true)}
-            {h2(<>{u.techA}{mark(u.techMark, true)}{u.techB}</>, true)}
-            <p className="text-sm mt-4" style={{ color: "rgba(255,255,255,0.78)", lineHeight: 1.7 }}>{u.techText}</p>
-            <div className="mt-10 pl-6"><JoelFigure src={JOEL.digitalizando} height={230} /></div>
-          </div>
-          <div className="grid sm:grid-cols-2 gap-3">
-            {u.tech.map(c => (
-              <div key={c.t} className="flex items-start gap-3 rounded-2xl p-4" style={card}>
-                <BiTile n={c.ic} size={34} accent={C.indigo} />
-                <div>
-                  <p className="text-sm font-bold" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>{c.t}</p>
-                  <p className="text-xs mt-0.5" style={{ color: C.muted, lineHeight: 1.5 }}>{c.x}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Cumplimiento normativo */}
+      {/* Cumplimiento normativo: cada norma se despliega con una reseña breve */}
       <section id="certificados" className="relative isolate overflow-hidden py-16" style={{ scrollMarginTop: 80 }}>
-        <SectionDecor variant="light" flip />
+        <SectionDecor variant="dark" flip folder={false} />
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex items-end justify-between gap-6 mb-8">
-            <div className="max-w-2xl">{kicker(u.normsKicker)}{h2(u.normsTitle)}</div>
+            <div className="max-w-2xl">
+              {kicker(u.normsKicker, true)}{h2(u.normsTitle, true)}
+              <p className="text-sm mt-3" style={{ color: "rgba(255,255,255,0.7)" }}>{u.normsHint}</p>
+            </div>
             <JoelFigure src={JOEL.legal} height={200} className="shrink-0 mr-6" />
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {norms.map(n => (
-              <div key={n.code} className="rounded-2xl p-4 card-lift" style={{ background: "#fff", border: "1.5px solid #E4E6F7" }}>
-                <p className="text-sm font-bold" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>{n.code}</p>
-                <p className="text-[11px] leading-snug mt-1" style={{ color: C.muted }}>{n.name}</p>
-              </div>
-            ))}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 items-start">
+            {norms.map(n => {
+              const on = openNorms.has(n.code);
+              return (
+                <div key={n.code} className="rounded-2xl overflow-hidden card-lift" style={{ background: "#fff", border: `1.5px solid ${on ? "#C9CDEE" : "#E4E6F7"}` }}>
+                  <button type="button" onClick={() => toggleNorm(n.code)} aria-expanded={on} className="w-full flex items-start justify-between gap-3 p-4 text-left">
+                    <span className="min-w-0">
+                      <span className="block text-sm font-bold" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif", lineHeight: 1.3 }}>{n.code}</span>
+                      <span className="block text-[11px] leading-snug mt-1" style={{ color: C.muted }}>{n.name}</span>
+                    </span>
+                    <span className="grid place-items-center rounded-full shrink-0 transition-transform" style={{ width: 26, height: 26, background: on ? C.indigo : "#F2F3FA", transform: on ? "rotate(45deg)" : "none" }}>
+                      <Bi n="plus-lg" size={12} color={on ? "#fff" : C.indigo} />
+                    </span>
+                  </button>
+                  <div className="grid transition-all duration-300" style={{ gridTemplateRows: on ? "1fr" : "0fr" }}>
+                    <div className="overflow-hidden">
+                      <p className="px-4 pb-4 text-[12.5px]" style={{ color: C.muted, lineHeight: 1.6, borderTop: "1px solid #F0F1FA", paddingTop: 10 }}>{n.detail}</p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>

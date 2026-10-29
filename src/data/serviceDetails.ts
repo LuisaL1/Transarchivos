@@ -58,7 +58,7 @@ export const SERVICE_DETAILS: Record<string, SvcDetail> = {
     reasonsKicker: "¿Por qué elegir a Transarchivos?",
     reasons: [
       { ic: "bank", t: "Validez jurídica", d: "Garantizamos la conformidad legal de su archivo bajo la Ley 594 de 2000, la Ley 527 y los lineamientos del AGN. Cada intervención, desde la custodia hasta la eliminación, cuenta con trazabilidad auditable y soporte legal para proteger a su organización ante cualquier requerimiento regulatorio." },
-      { ic: "shield-lock", t: "Infraestructura búnker y recuperación crítica", d: "Protegemos sus documentos en bóvedas especializadas con monitoreo 24/7. Aseguramos la continuidad de su operación con la entrega urgente de expedientes bajo estrictos Acuerdos de Nivel de Servicio (SLA)." },
+      { ic: "shield-lock", t: "Infraestructura segura y recuperación crítica", d: "Protegemos sus documentos en instalaciones especializadas con monitoreo 24/7. Aseguramos la continuidad de su operación con la entrega urgente de expedientes bajo estrictos Acuerdos de Nivel de Servicio (SLA)." },
       { ic: "clipboard2-pulse", t: "Consultoría diagnóstica", d: "Realizamos una evaluación técnica y operativa de su archivo. Estructuramos el ciclo de vida documental mediante Tablas de Retención (TRD/TVD) e implementamos el Programa de Gestión Documental (PGD) para ordenar su información con criterio." },
       { ic: "cpu", t: "Innovación e integración tecnológica", d: "Convertimos archivos físicos en activos digitales mediante escaneo de alta velocidad y reconocimiento óptico (OCR)." },
     ],
@@ -66,7 +66,7 @@ export const SERVICE_DETAILS: Record<string, SvcDetail> = {
   },
 
   "programa-de-gestion-documental": {
-    tagline: "Gobierno de información, cumplimiento normativo y eficiencia operativa para su empresa.",
+    tagline: "Control de la información, cumplimiento normativo y eficiencia operativa para su empresa.",
     intro: "El Programa de Gestión Documental (PGD) de Transarchivos es un servicio de consultoría e intervención integral diseñado para estructurar y administrar todo el ciclo de vida de la información de su compañía.",
     about: "A través de este modelo, definimos y ejecutamos las políticas, procesos e instrumentos archivísticos (Tablas de Retención Documental, TRD) que regulan la creación, organización, custodia, consulta y disposición final de los documentos físicos de un archivo, garantizando un control total del patrimonio documental bajo los estándares exigidos por el Archivo General de la Nación (AGN) y la Ley 594 de 2000.",
     stats: [{ v: "Obligatorio", l: "para entidades públicas y privadas con funciones públicas" }, { v: "Decreto 1080", l: "de 2015 como respaldo" }, { v: "Cero papel", l: "jurídicamente válido" }],
@@ -127,16 +127,17 @@ export const SERVICE_DETAILS: Record<string, SvcDetail> = {
     stepsKicker: "Nuestra fórmula del éxito",
     stepsTitle: "Un método simple y transparente para llevarlo al siguiente nivel",
     steps: [
-      { t: "Identificación y diagnóstico", d: "Analizamos y clasificamos su fondo documental según su tipología y naturaleza jurídica (contratos, facturas, expedientes de personal, correspondencia). Definimos la estructura lógica antes de cualquier movimiento físico." },
-      { t: "Indexación y clasificación", d: "Registramos cada documento en bases de datos estructuradas asociando metadatos clave (nombres, fechas, folios, códigos de expediente). Esto garantiza una búsqueda ágil y un control documental preciso." },
-      { t: "Embalaje y rotulado técnico", d: "Guardamos la información en cajas documentales X300 de alta resistencia, debidamente codificadas y rotuladas bajo estándares del Archivo General de la Nación (AGN) para asegurar su preservación." },
-      { t: "Almacenamiento e infraestructura búnker", d: "Resguardamos su archivo en instalaciones especializadas con control riguroso y sistemas automatizados de protección con acceso biométrico." },
-      { t: "Consulta, despacho y trazabilidad", d: "Suministramos sus expedientes en formato físico o digitalizado bajo estrictos Acuerdos de Nivel de Servicio (SLA). Mantenemos registro de auditoría y trazabilidad total sobre cada solicitud." },
+      // Textos del documento de correcciones del 29 de octubre de 2026.
+      { t: "Identificación y diagnóstico", d: "Analizamos y clasificamos su fondo documental según su tipología y naturaleza jurídica." },
+      { t: "Indexación y clasificación", d: "Registramos cada documento en bases de datos estructuradas asociando campos de búsqueda clave." },
+      { t: "Embalaje y rotulado técnico", d: "Guardamos la información en cajas documentales X300, debidamente codificadas y rotuladas para asegurar su preservación." },
+      { t: "Almacenamiento en centros documentales", d: "Resguardamos su archivo en instalaciones adaptadas con control de CCTV y protección." },
+      { t: "Consulta, despacho y trazabilidad", d: "Suministramos sus expedientes en formato físico o digitalizado bajo los acuerdos realizados en el contrato. Mantenemos registro y trazabilidad total sobre cada solicitud." },
     ],
     reasons: [
-      { ic: "building-lock", t: "Bóvedas búnker con control ambiental y protección activa", d: "Ofrecemos instalaciones de almacenamiento industrial diseñadas bajo estándares internacionales de seguridad física y control de acceso para preservar sus archivos por años." },
+      { ic: "building-lock", t: "Centros documentales con control y protección activa", d: "Ofrecemos instalaciones de almacenamiento industrial diseñadas bajo estándares internacionales de seguridad física y control de acceso para preservar sus archivos por años." },
       { ic: "link-45deg", t: "Trazabilidad total y cadena de custodia ininterrumpida", d: "Cada caja, carpeta y documento cuenta con codificación y seguimiento en tiempo real desde el momento de la recolección hasta su consulta final. Mantenemos una bitácora de auditoría digital que garantiza la máxima confidencialidad, el cumplimiento de Hábeas Data y la seguridad jurídica de su patrimonio documental." },
-      { ic: "lightning-charge", t: "Recuperación y consulta", d: "Eliminamos los tiempos muertos en la gestión de su información. Atendemos sus solicitudes de préstamo de documentos en tiempo récord (Servicio inmediato), respaldados por Acuerdos de Nivel de Servicio (SLA) rigurosos que garantizan la continuidad operativa de su empresa ante emergencias o auditorías." },
+      { ic: "lightning-charge", t: "Recuperación y consulta", d: "Eliminamos los tiempos muertos en la gestión de su información. Atendemos sus solicitudes de préstamo de documentos en los tiempos establecidos por la empresa (Servicio inmediato)." },
       { ic: "rulers", t: "Optimización eficiente de metros cuadrados", d: "Liberamos áreas costosas en sus instalaciones al trasladar sus documentos a nuestras instalaciones de alta densidad. Le ayudamos a reducir costos fijos de infraestructura y a eliminar riesgos por almacenamiento inadecuado." },
     ],
     norms: ["Ley 594 de 2000", "Ley 2106 de 2019 (Ley Antitrámites)", "Norma Icontec (estantería)", "Tablas de Retención Documental"],
