@@ -7,7 +7,7 @@ import { useLang, type Lang } from "@/i18n";
 const es = {
   nav: {
     services: "Servicios", solutions: "Soluciones", about: "Nosotros", blog: "Blog", videos: "Da play al conocimiento", contact: "Contacto",
-    quote: "Cotizar", quoteLong: "Solicitar cotización", contactDirect: "Contacto directo", search: "Buscar", closeSearch: "Cerrar búsqueda", support: "Soporte",
+    quote: "Cotización", quoteLong: "Solicitar cotización", contactDirect: "Contacto directo", search: "Buscar", closeSearch: "Cerrar búsqueda", support: "Soporte",
     openMenu: "Abrir menú", closeMenu: "Cerrar menú", logo: "Transarchivos, ir al inicio", chatJoel: "Chat con Joel", whatsapp: "WhatsApp",
     blogAndFaq: "Contacto y preguntas frecuentes", address: "Cl. 21 # 39A-40, Bogotá", chooseLang: "Elegir idioma", langs: "Idiomas disponibles",
   },
@@ -108,7 +108,7 @@ export type Ui = typeof es;
 const en: Ui = {
   nav: {
     services: "Services", solutions: "Solutions", about: "About us", blog: "Blog", videos: "Press play on knowledge", contact: "Contact",
-    quote: "Get a quote", quoteLong: "Request a quote", contactDirect: "Direct contact", search: "Search", closeSearch: "Close search", support: "Support",
+    quote: "Quote", quoteLong: "Request a quote", contactDirect: "Direct contact", search: "Search", closeSearch: "Close search", support: "Support",
     openMenu: "Open menu", closeMenu: "Close menu", logo: "Transarchivos, go to home", chatJoel: "Chat with Joel", whatsapp: "WhatsApp",
     blogAndFaq: "Contact and FAQs", address: "Cl. 21 # 39A-40, Bogotá", chooseLang: "Choose language", langs: "Available languages",
   },

@@ -67,10 +67,11 @@ const es = {
     allVideos: "Da play al conocimiento: ver todos los videos", channel: "Ir al canal de YouTube", follow: "Síganos en nuestras redes",
   },
   why: [
-    { ic: "shield-check", t: "Cumplimiento normativo", d: "Operamos bajo la Ley 594 de 2000 y la normativa del AGN." },
-    { ic: "camera-video-fill", t: "Custodia con vigilancia 24/7", d: "Centro documental con CCTV, control de acceso y monitoreo ambiental permanente." },
-    { ic: "graph-up-arrow", t: "Costo variable y escalable", d: "Pague solo por el volumen exacto que custodia, sin costos fijos de espacio o personal." },
-    { ic: "lightning-charge-fill", t: "Ágil, en su sede e inmediato", d: "Del diagnóstico al despacho exprés, adaptados al ritmo de su operación." },
+    // Textos enviados por el cliente por WhatsApp (30 oct. 2026)
+    { ic: "shield-check", t: "Cumplimiento normativo", d: "Operamos bajo la Ley 594 de 2000 y la Ley Antitrámites 962, artículo 28." },
+    { ic: "camera-video-fill", t: "Custodia con vigilancia 24/7", d: "Centro documental con CCTV, control de acceso y monitoreo." },
+    { ic: "tag-fill", t: "Precios competitivos", d: "Soluciones documentales a precios competitivos, con el respaldo y la calidad que su empresa necesita." },
+    { ic: "lightning-charge-fill", t: "Rapidez y oportunidad", d: "Respondemos a sus necesidades con agilidad y oportunidad, brindando soluciones cuando su empresa las necesita." },
     { ic: "award-fill", t: "Trayectoria desde 1983", d: "Pioneros de la gestión documental en Colombia, con más de 40 años de experiencia." },
   ],
   footer: {
@@ -146,10 +147,10 @@ const en: HomeUi = {
     allVideos: "Press play on knowledge: see all videos", channel: "Go to the YouTube channel", follow: "Follow us on social media",
   },
   why: [
-    { ic: "shield-check", t: "Regulatory compliance", d: "We operate under Law 594 of 2000 and the AGN regulations." },
-    { ic: "camera-video-fill", t: "Storage with 24/7 surveillance", d: "Document centre with CCTV, access control and permanent environmental monitoring." },
-    { ic: "graph-up-arrow", t: "Variable, scalable cost", d: "Pay only for the exact volume you store, with no fixed costs for space or staff." },
-    { ic: "lightning-charge-fill", t: "Agile, on site and immediate", d: "From the assessment to express dispatch, adapted to the pace of your operation." },
+    { ic: "shield-check", t: "Regulatory compliance", d: "We operate under Law 594 of 2000 and the Anti-red-tape Law 962, article 28." },
+    { ic: "camera-video-fill", t: "Storage with 24/7 surveillance", d: "Document centre with CCTV, access control and monitoring." },
+    { ic: "tag-fill", t: "Competitive prices", d: "Document solutions at competitive prices, with the backing and quality your company needs." },
+    { ic: "lightning-charge-fill", t: "Speed and timeliness", d: "We respond to your needs with agility and timeliness, delivering solutions when your company needs them." },
     { ic: "award-fill", t: "Track record since 1983", d: "Pioneers of records management in Colombia, with more than 40 years of experience." },
   ],
   footer: {

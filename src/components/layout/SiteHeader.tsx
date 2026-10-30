@@ -207,9 +207,9 @@ export function SiteHeader({ solid = false, onChat }: { solid?: boolean; onChat:
                 <Link to={lp("/videos")} onClick={() => setOpenMenu(null)} className={navLinkCls} style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none" }} {...navHover}>
                   {u.nav.videos}
                 </Link>
-                {/* "Solicitar cotización" pasa al menú (pedido del cliente, oct. 2026) */}
+                {/* "Cotización" como entrada del menú, solo la palabra para no saturar (pedido del cliente, oct. 2026) */}
                 <a href="#cotizador" className={navLinkCls} style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }} {...navHover}>
-                  <span className="min-[1440px]:hidden">{u.nav.quote}</span><span className="hidden min-[1440px]:inline">{u.nav.quoteLong}</span>
+                  {u.nav.quote}
                 </a>
               </nav>
             </div>
