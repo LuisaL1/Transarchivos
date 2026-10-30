@@ -8,7 +8,8 @@ import { C } from "@/styles/tokens";
 // Una opción por idioma del sitio, nombrada por la región que lo usa (como en
 // Transpack): "Latinoamérica y España (Español)" e "International (English)".
 // Va fija arriba del header; al hacer scroll se recoge para ganar espacio. En
-// índigo corporativo (el único azul del sitio), con el globo en amarillo.
+// blanca con texto índigo (30 oct. 2026): contrasta con el hero índigo y se
+// funde con el header blanco de las páginas internas, separada por una línea fina.
 export const LANG_BAR_HEIGHT = 36;
 
 export function LangBar({ hidden }: { hidden: boolean }) {
@@ -32,15 +33,15 @@ export function LangBar({ hidden }: { hidden: boolean }) {
 
   return (
     <div aria-hidden={hidden} className="fixed top-0 left-0 right-0 z-[55] overflow-visible"
-      style={{ height: LANG_BAR_HEIGHT, background: C.indigo, borderBottom: "1px solid rgba(255,255,255,0.14)", boxSizing: "border-box", transform: hidden ? `translateY(-${LANG_BAR_HEIGHT}px)` : "none", opacity: hidden ? 0 : 1, transition: "transform 0.3s ease, opacity 0.3s ease", pointerEvents: hidden ? "none" : "auto" }}>
+      style={{ height: LANG_BAR_HEIGHT, background: "#fff", borderBottom: "1px solid #E4E6F7", boxSizing: "border-box", transform: hidden ? `translateY(-${LANG_BAR_HEIGHT}px)` : "none", opacity: hidden ? 0 : 1, transition: "transform 0.3s ease, opacity 0.3s ease", pointerEvents: hidden ? "none" : "auto" }}>
       <div className="h-full max-w-[1320px] mx-auto px-4 md:px-12 2xl:px-28 flex items-center justify-end">
         <div ref={ref} className="relative">
           <button type="button" onClick={() => setOpen(v => !v)} aria-expanded={open} aria-haspopup="listbox" aria-label={tr("Elegir idioma", "Choose language")} tabIndex={hidden ? -1 : 0}
-            className="inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-[12.5px] transition-colors hover:bg-white/10"
-            style={{ color: "rgba(255,255,255,0.9)", fontFamily: "Montserrat, sans-serif" }}>
-            <Bi n="globe2" size={13} color={C.yellow} />
-            <span>{LANG_INFO[lang].region} <span style={{ color: "rgba(255,255,255,0.6)" }}>({LANG_INFO[lang].name})</span></span>
-            <Bi n="chevron-down" size={10} color="#fff" style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform 0.2s" }} />
+            className="inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-[12.5px] font-semibold transition-colors hover:bg-hielo"
+            style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>
+            <Bi n="globe2" size={13} color={C.indigo} />
+            <span>{LANG_INFO[lang].region} <span style={{ color: C.muted }}>({LANG_INFO[lang].name})</span></span>
+            <Bi n="chevron-down" size={10} color={C.indigo} style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform 0.2s" }} />
           </button>
           {open && (
             <div role="listbox" aria-label={tr("Idiomas disponibles", "Available languages")}

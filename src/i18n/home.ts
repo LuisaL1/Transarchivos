@@ -10,7 +10,7 @@ type ModelStep = { n: number; t: string; k: string; d: string; items: ModelItem[
 const es = {
   hero: {
     titles: [["Protegemos la ", "memoria", " de su empresa."], ["Gestión documental ", "inteligente", "."], ["La memoria física de su empresa en nuestro ", "centro documental", "."]] as [string, string, string][],
-    text: "Clasificamos, digitalizamos, custodiamos y destruimos sus documentos bajo la norma del Archivo General de la Nación (AGN) y la Ley 594. Cero riesgos, total acceso.",
+    text: "Clasificamos, organizamos y custodiamos sus documentos, facilitamos su consulta y lo acompañamos en cada etapa de su gestión, conforme a la normativa aplicable.",
     joel: "Hablar con Joel",
     quickTitle: "¿Qué necesita hoy?", seeService: "Ver servicio", quoteThis: "Cotizar este servicio",
     quick: [
@@ -90,7 +90,7 @@ export type HomeUi = typeof es;
 const en: HomeUi = {
   hero: {
     titles: [["We protect your company's ", "memory", "."], ["Intelligent ", "records management", "."], ["Your company's physical memory in our ", "document centre", "."]],
-    text: "We classify, scan, store and destroy your documents under the standards of the General Archive of the Nation (AGN) and Law 594. Zero risk, full access.",
+    text: "We classify, organise and store your documents, make them easy to consult and support you at every stage of their management, in line with the applicable regulations.",
     joel: "Talk to Joel",
     quickTitle: "What do you need today?", seeService: "See service", quoteThis: "Get a quote for this service",
     quick: [

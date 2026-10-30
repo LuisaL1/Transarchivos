@@ -157,12 +157,13 @@ export function NosotrosPage() {
           <div className="text-center mb-10">{kicker(u.missionKicker, true)}{h2(u.missionTitle, true)}</div>
           <div className="grid md:grid-cols-2 gap-5">
             {u.mission.map((m, i) => (
-              <div key={m.t} className="relative rounded-3xl p-7 overflow-hidden" style={{ background: i === 0 ? "rgba(255,255,255,0.08)" : "#fff", border: i === 0 ? "1.5px solid rgba(255,255,255,0.22)" : "1.5px solid #E4E6F7", boxShadow: "0 24px 50px -32px rgba(0,0,0,0.55)" }}>
-                <span className="grid place-items-center rounded-2xl mb-4" style={{ width: 52, height: 52, background: i === 0 ? C.yellow : C.indigo }}>
-                  <Bi n={m.ic} size={22} color={i === 0 ? C.indigo : C.yellow} />
+              // Misión en amarillo: la tarjeta translúcida se perdía con el fondo índigo (pedido del cliente, 30 oct. 2026)
+              <div key={m.t} className="relative rounded-3xl p-7 overflow-hidden" style={{ background: i === 0 ? C.yellow : "#fff", border: i === 0 ? "none" : "1.5px solid #E4E6F7", boxShadow: "0 24px 50px -32px rgba(0,0,0,0.55)" }}>
+                <span className="grid place-items-center rounded-2xl mb-4" style={{ width: 52, height: 52, background: C.indigo }}>
+                  <Bi n={m.ic} size={22} color={C.yellow} />
                 </span>
-                <p className="text-lg font-bold mb-2" style={{ color: i === 0 ? "#fff" : C.indigo, fontFamily: "Poppins, sans-serif" }}>{m.t}</p>
-                <p className="text-sm" style={{ color: i === 0 ? "rgba(255,255,255,0.78)" : C.muted, lineHeight: 1.7 }}>{m.x}</p>
+                <p className="text-lg font-bold mb-2" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>{m.t}</p>
+                <p className="text-sm" style={{ color: i === 0 ? "rgba(24,0,173,0.85)" : C.muted, lineHeight: 1.7 }}>{m.x}</p>
               </div>
             ))}
           </div>

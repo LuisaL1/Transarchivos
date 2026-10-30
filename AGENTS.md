@@ -129,8 +129,9 @@ RecursosTransarchivos/    Documentos fuente del cliente (contexto, no se publica
   enlaces se escriben siempre con la ruta en español y se pasan por `lp()`.
 - La franja superior de idioma (`LangBar`, como en Transpack) ofrece
   "Latinoamérica y España (Español)" e "International (English)" y lleva a la
-  misma página en el otro idioma; se recoge al hacer scroll. Las páginas
-  internas reservan `HEADER_SPACE` (barra + franja) arriba.
+  misma página en el otro idioma; se recoge al hacer scroll. Va en blanco con
+  texto índigo y una línea fina de separación (30 oct. 2026). Las páginas internas reservan
+  `HEADER_SPACE` (barra + franja) arriba.
 - Lo que no se traduce: las políticas institucionales (`/en/policies` las muestra
   en español con un aviso), los títulos de los videos de YouTube y los correos
   al equipo de Transarchivos (siempre en español; la confirmación al visitante sí
