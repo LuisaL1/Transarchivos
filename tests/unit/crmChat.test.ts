@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { existsSync, readFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { CHAT_EVENT } from "@/lib/chatWidget";
 import { HOST_ID, SALESIQ_SRC, closeCrmChat, loadCrmChat, openCrmChat, resetCrmChatForTests, setZohoHostForTests, styleChatWindow } from "@/lib/crmChat";
 
@@ -102,6 +102,34 @@ describe("chat de Zoho SalesIQ · diseño del sitio", () => {
     expect(frame.contentDocument!.querySelectorAll("#ta-chat-style")).toHaveLength(1);
   });
 
+  it("pone 'Reiniciar' en la cabecera: se ve solo si Zoho lo ofrece y pulsa el de Zoho", async () => {
+    const frame = document.createElement("iframe");
+    frame.id = "siq_chatwindow";
+    document.body.appendChild(frame);
+    const doc = frame.contentDocument!;
+    doc.body.innerHTML = '<header class="siqcw-header"><div></div><em class="chat-win-close"></em></header><div id="scroll-container"></div>';
+    styleChatWindow();
+    const btn = doc.getElementById("ta-restart") as HTMLButtonElement;
+    expect(btn.nextElementSibling?.className).toBe("chat-win-close");
+    expect(btn.getAttribute("aria-label")).toBe("Reiniciar conversación");
+    expect(btn.hidden).toBe(true);
+    // Zoho ofrece reiniciar al pie del último mensaje del bot
+    const zoho = doc.createElement("div");
+    zoho.className = "bot-action";
+    zoho.dataset.zsqa = "restart";
+    const restart = vi.fn();
+    zoho.addEventListener("click", restart);
+    doc.getElementById("scroll-container")!.appendChild(zoho);
+    await new Promise(r => setTimeout(r));
+    expect(btn.hidden).toBe(false);
+    btn.click();
+    expect(restart).toHaveBeenCalledOnce();
+    // Si Zoho redibuja la cabecera, el botón vuelve
+    doc.querySelector("header")!.replaceWith(Object.assign(doc.createElement("header"), { className: "siqcw-header" }));
+    await new Promise(r => setTimeout(r));
+    expect(doc.querySelector(".siqcw-header #ta-restart")).not.toBeNull();
+  });
+
   it("la hoja de estilos usa la marca: índigo, cuadrado amarillo girado, sin degradados y la foto de Joel", () => {
     // Vitest no procesa CSS (css: false): se revisa el archivo directamente
     const css = readFileSync("src/styles/zoho-chat.css", "utf8");
@@ -110,8 +138,11 @@ describe("chat de Zoho SalesIQ · diseño del sitio", () => {
     expect(css).toContain("rotate(45deg)");
     expect(css).not.toMatch(/#356b58|#272b7c|#ff7619/i);
     expect(css).not.toMatch(/linear-gradient/);
-    expect(css).toMatch(/\.siqcw-bot-logo,\s*\.embed-prof-cont \{[^}]*url\("\/brand\/joel\.webp"\)/);
-    expect(existsSync("public/brand/joel.webp")).toBe(true);
+    expect(css).toMatch(/--ta-joel: url\("data:image\/webp;base64,/);
+    expect(css).toMatch(/\.siqcw-bot-logo,\s*\.embed-prof-cont \{[^}]*var\(--ta-joel\)/);
+    // El CSS del portal de Zoho es la misma hoja (con la foto incrustada)
+    const portal = readFileSync("docs/zoho-salesiq-portal.css", "utf8");
+    expect(portal.slice(portal.indexOf("@import"))).toBe(css.slice(css.indexOf("@import")));
     expect(readFileSync("public/chat-asesor.html", "utf8")).toMatch(/noindex/);
   });
 });

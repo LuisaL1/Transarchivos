@@ -13,7 +13,8 @@
 //   ventana abierta, con el tamaño y la posición de la ventana de Joel (clase
 //   ta-zoho-open, src/styles/index.css).
 // · Diseño: src/styles/zoho-chat.css (adentro de la ventana, como el chat de
-//   Joel) y src/styles/zoho-host.css (la ventana llena el iframe).
+//   Joel) y src/styles/zoho-host.css (la ventana llena el iframe). Como en el
+//   chat de Joel, "Reiniciar" es un botón de la cabecera (addRestartButton).
 // · Solo en español. El código del widget no es secreto.
 // Documentación: docs/08-chat-asesor.md.
 import chatCss from "@/styles/zoho-chat.css?raw";
@@ -79,6 +80,40 @@ function zohoHost(): Promise<Window> {
 }
 
 const STYLE_ID = "ta-chat-style";
+const RESTART_ID = "ta-restart";
+/** "Reiniciar" que Zoho pone al pie del último mensaje del bot (zoho-chat.css lo esconde) */
+const ZOHO_RESTART = '.bot-action[data-zsqa="restart"]';
+/** Bootstrap Icons: arrow-counterclockwise */
+const RESTART_ICON = '<svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2z"/><path d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466"/></svg>';
+
+/** Pone (o repone, si Zoho redibuja la cabecera) el botón "Reiniciar" y lo
+ *  muestra solo cuando Zoho ofrece reiniciar. Al pulsarlo, pulsa el de Zoho:
+ *  el funcionamiento es el mismo. */
+function syncRestartButton(doc: Document) {
+  const header = doc.querySelector(".siqcw-header");
+  let btn = doc.getElementById(RESTART_ID) as HTMLButtonElement | null;
+  if (header && btn?.parentElement !== header) {
+    btn?.remove();
+    btn = doc.createElement("button");
+    btn.id = RESTART_ID;
+    btn.type = "button";
+    btn.title = "Reiniciar conversación";
+    btn.setAttribute("aria-label", btn.title);
+    btn.innerHTML = RESTART_ICON;
+    btn.addEventListener("click", () => {
+      const zoho = doc.querySelectorAll<HTMLElement>(ZOHO_RESTART);
+      zoho[zoho.length - 1]?.click();
+    });
+    header.insertBefore(btn, header.querySelector(":scope > .chat-win-close"));
+  }
+  const hidden = !doc.querySelector(ZOHO_RESTART);
+  if (btn && btn.hidden !== hidden) btn.hidden = hidden;
+}
+
+function addRestartButton(doc: Document) {
+  syncRestartButton(doc);
+  new MutationObserver(() => syncRestartButton(doc)).observe(doc.documentElement, { childList: true, subtree: true });
+}
 
 /** Aplica el diseño del sitio dentro de la ventana de Zoho (iframe del mismo origen). */
 export function styleChatWindow(): boolean {
@@ -95,6 +130,7 @@ export function styleChatWindow(): boolean {
     style.id = STYLE_ID;
     style.textContent = chatCss;
     doc.head.appendChild(style);
+    addRestartButton(doc);
   }
   return true;
 }

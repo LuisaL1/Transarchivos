@@ -28,6 +28,9 @@ html,
   --siqcw-dynamic-text-color: #1800ad !important;
   --siqcw-custom-secondary-bg: #1800ad;
   --siqcw-minimise-button-bg-color: #1800ad;
+  /* Cara de Joel (120 px, recortada como en el botón de Joel: ChatAvatarFace).
+     Va incrustada para que cargue también desde el CSS del portal de Zoho. */
+  --ta-joel: url("data:image/webp;base64,UklGRuIVAABXRUJQVlA4WAoAAAAwAAAAdwAAdwAASUNDUMgBAAAAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADZBTFBIAgYAAAGghW17IUlLdfesbdv2/rZt27Zt27Zt27bNWc3MatCd7/mOuqY7SWXPI2ICTIYLPaYffOUJiVnR1qx0wkv1xaYVTjL5xt+arNjXO5kVa5t9ai0gi9ZKEmOSQoehK607Z3CnQvQGXrpcpOzpPkn7kevue+E7i4ql5oXvXrp1/7hNerDJCoC9pOeOd374X2PJioi1trTg1V375uO13nwrgKry+U8iQsVil7y+W7c4dThkuQigZVWqUi72x1MmtIlPst0/AqBpqqDptC7S9OnZg6PT+XMroNWjVCpiix+Mjc3BAuqSCrUc5Ne1a6LS9kfUIaqaoqDpiP1lh0IkOo6ZtfKkqUV1pYBWCiJ/rROB3LAd7/i5uVhsXiCuAK0cQP5ZKclat8PfXlosWSl3oi5UFbGfTs9Y33uWWWuteFEnSOmJfpnqdEtRaFXDRppPLmSo3ZXNAqAZBFm4cyE7+zZJCg7wpojU7p3PyrAPBFVHIYL8tXFWdlpMmnrEgyLyzZpJJmquFzRLisjvq2eiwxNLQVX9+Ia3Bmchv95nmVOarmqfAbPBvAhIw0mF8JL9SmjmkeLG4eVPlyjY1wYFV7gYjQCy9Nx2wV3UGhlSkCXrhZYcWYKUjCM/DQ7MbFUPCmQOubVDWG2ubEkjc9RuGNaU+QKq2VNVe1W7kAa+VhI0Enw0KKDkPCuURZGlcwIa/JGARkP2CmiDfwVVIBKnJMHkjmomKgebYNteLTGRlnXC6f1+Siz5fEg4qzVGpfnUmnDOKUWFFwYGk7wsoBGRBwaEkv9T0JhSur9jIDW1saHxqCSQf6IjP64WRq8l8ZGnkyDGl6IDLasGsUZsVEGeLYSwdoyoHx/CjGJ0VGnaOYQhTa0RkdLZIbSfb1NIj4PKjbkAcm+nEBXkjkIAyQ0pWgVkB0Cars75S5IjStEReWwt47WwzpV37N8nt2azVqKRONb4zE37o2jF1u42ta6MKjINYrfzsuEPVgQR+72NjCJLB/jo9a0V0rU1jSTyVs7HfSKkanpcLjAe55Q8ANmBsob1fFwkpGqFFWnWnuvrofPzAFp5BZkGVBsPNR5HfZoCRIPWRN7p42POzwpaRnxqZxifa/2j5TESe2UuBFU0aFIdtYr8N8V4Xe3PVgIPQeX2zn5m/pgBVBXUGagqULej8TvsozRC8g0KiHzYy1OHZ1KIT2lX4/tcYqNK2QvtvM1pEcpjokDtBOM9/2KEVIuXtPdnJi6XNIhI6ccHJ/ozVxTFAWQL4P8tEm8jXrUplUdA+W6at2TWF1YEYlKO3O7NmLYH/m+B1iAKSnNffybpfqegFUUR2TUAk381SueH0OP3imKJ3FjRX9d1cjO1NkLKFRXZliPdbFpHfOCAikR+KTjZb2mMShMqgmI/J6e0oCFCSPBVvgoZnzhIzi9FyB5hqplhHOYvt6GUBwLfjKpqtpMrrYYZELScUahqoovcxaFoMMCX40xVUxIH5vQijoAqQgVZtklS3UwnhyyPAZACSN02plqQWU62qM8e5a3VHdXGxWwnY/4HNyGnoApI8zGdjQNWcpL/MHM0laQMpPjzqsYhiBtzatZYutfdf1sBGr+6fLRxNMfNyEbIlDxY6LraoVfec/s5O01sZxzZGW7Mo5Kt5lnGN5RcbdAA2UEe7+JNKa1k3PZ8QrK0aJckALuRI7NbQ5be6GFC2C1x1O35DDVuZkKQizs7MrPnkxHkmkIISsMReUfJPiWyIR/2MkEoP3d3ZDo/YDMA1G6dhGJXd2VW+g4yUDqjkwlEOdhZfqNGCc9e1cmEAsc6M2afJQQF0vJA3oQC7Oqh5swlEA5I851DTaAALZM8mB6X25Ck+fw+JiD5spMPU3NHC2EAtnY/Ey7Qcm7Bi6m5tAH8AdLw8NqFsH5ayXjuccIS8QbS8uluPU3Iilyb92XMFvV4Alt/Ug8TNnwzwvjP7VsH4Apk6SeXjzah8+cs47/9/p8UPWDnP7T76DYmvN86+Ot5/TLBR90q7RKTQWRvbyPubxFB3SMfrZfLxsczvSRdNvjcigj4sL/vk2QAVlA4IOoNAAAQNgCdASp4AHgAPlEgjUSjoiEVio54OAUEsQBpGQCt7yT/C+b5YP8/wMRvO1LIT6lv0L7A/61ecl6sPMB+4PrD/7L9t/dZ/ZPUA/vXnLexT6C/7AdaR/Z/+l6WeYV9rn+C8IfKl8Gk902f7DzS78/jn/e+oR67/13BnZf/4fH1pcfnXsB/nT0Lfq30B/U3/n/0fwF/zT+u/9rsN/un7G37LOIPv3xcIY0OP2xrqw1AXnvxKxD+dtYxPeKH7yGcwx00irpf6rmSxzb8webS1rzm/Y1J688XLuwUJsTMivPueYrjNg78lwhLIfr+rBC2jlK4UILbZqa4rdAcDrCDEG6WqttK0Fk99bXKQC08iybokOjiFw0WpOcILbd+uWvVc8H753uyIXH1vRDje4IOvXzJm3ezBpQWk1z7tQpp7iXftgVqqFX8qjwz0NoMoVmqk+dM/pbD8JEHFftYb4unuTnUEKt7rZUF127+HZae0GmxFmD1KlOBSzILTIdcBL8tsJJ7KULlvogwVO9umP338Folqjle8V49flbbu8r0sna6ihK40FuM61Twh+AeN/OoAOkIBdwz5ezT0AAA/v7uqj94/hAdO8w28Z6AC/vMP8nc/1GYBMlO42PYRPAeaHPiwaakV+oX76+X6sueEU+tM6r8Y4HmLOVz1Qp+eh07fzz1ApLyWy3OMdaPiNlyWgBNzaDnXTdrvrAQDjPemuoCh4TKtPzPrv20F7HNO9phZAma9hUUngyKizdNl9cOHLNrxxkQh2XQBc65w9DzXDrXEP/MZyYlQegCQG6fZ41/XKsi+rL6KnI6oSKJBGMTWLtvfdB6Hb8ikRcBWAQH4wuaMu4CnAKS/KeZ2bd8UQaP8JOp8PxAE8CJ2zP/hK5w+5N8ApOE+qMUfbDA5Nba5NsBtu0SqIURGpH2OTKtGpe5Rg7s6K/rB626zhS7L3nCPiHcGOdl23yzxOGcViBwYsYG2izt3Om/EhGZnnc3tdhyGxppH+E3LuWqiyNZ899IH5Lr0mbuX9DH14PZ72VBzZqBMMz1qCZ9E4P4nv+C8uSetrRynnRb6+RO2IjHb51A3UZSUpgwSNITacQPI2unsus0cWAjse8mMn2IXGqR0bfDwJKEszNkhvsWITpE5UrnXE0nm1lyLvPlSaO4XrJ3d9LSLEif2lWgCFM5aQOAnBYMPjCqfpfykcwHsW4U1P3CqH4mlUTUGrrBUhTDm1A8C7OsrWzFXLuqAqoe8ZCG8maELlnz/d3Qa0gJNdqZRFC9Co1K0sjvOeyRizJ0C2LGa77p1eu6/pSbVrXlFWLX9V58mSL7hyZL+JQcDExc2V7FblQwLVD9CI191YJvIcfy+ex+zrRpQkt28p4I7po4c+4QzfgICNaY+09CWjmS2Db9VHWquPg6FHMQygIhfA68xZnc3V95IFb4kt+U5WDQmrajLAsyR3MHBbikenDBPwNgTayoaJLxOGLT7XQbCW6uTX3WSB18RAk3Y63DQLCkfyy2TbXlSQJb88xxnuiiUr18HfoI8C+7ZzFTN/QAneS0sm+xNnquSXZ2vKQ2pL28EdjITRNdgaiEPfNhPAdyX1D9wJgefppZJJdiwwCaaPWnAIZrXuno+Hcr29SIT+8qCgiRZ1+kE2woiMu4OwRFrPjdX6ElrRWTWZqrNJorRfYGQrb+5K4eq/V1dfvEUs/8Zqalk+3uLbYsd/0VQ8Kl8EuN+Ss3NdAG2UgGK0XUk6V9ZKglddiHs//ac/bI9606H3RBOUsBQT56AMqu3K+LX3OJ898zPK6MOiWW31H1CTyWIsoArFnWhqhlDY+zrCXfvb/4aMiL056fPfqD9SCIcmnoknqtApOKRx+Gn4PVIs941L1vv13gBN+KgrvBXrrgtvLa/I/MnV3mythss5tHgQb4VRJxmcQnai7R3KNb+88xodGTB/xoe8lYfGENfDWPncMJ633ac1bJmAutFCrW20soJ5YvxIFwgl3RddtPv817YMS/MuOHgkxjpyKLYZw4haC64uGEwHnRvlwwqTg+Wy4QQMqam82ao5U6fnY5V3vnxhDxBOSJjam4AYCZxvR7iZ3a5eTTd0h6l4+96eL8r6eMjOEcuzVACKMiVVEym8MjH58MgYEblRRY2EMTBCFMlCLqQ7MziKo1t8qzKaQK19IzOKMjRp/kbbvgMBwpOc9v+Ag9syxTfHmvge0KFHm/yQPAGZO0pKk5/+1yUA5UzUcfwdd/0v4mOY7Bq4cRRNnTagFqaEeSCWVl7Tu7T3/HU+td+H/whFpQMEoz1Iy9avcLHMrJoGrYJncaK1/n+DAxAb9UjohfbskSoMIgpwACoUM5mIrzjC4CBoYniwclLoSRLl0XcCCUyLhj5lJI1qtphyKQUA7kEBm12WfePipZUNpCXlSqX95u6dAfQHTwRhK5DkFWG3VVxfEqtVoJyIaVc6i98TfF90faSSVqRmxYsmuv0U1Wk8zNf7aTiu/GF2fib4cLgokbyR2w6dfNnBr9LeZDBLGK1wiu7ppKCNWlMBrI8o2a7VT3W8cqMCkoSyq7UyXA0QomoycoQ572FP+gwXnwZenX8d6aJ2YLulLDRf9wn5P66yJGJ/h3fc96tcYTMwJ/a29EuR58fu2H4K1iAaicNO3evRmAHtpFjjLg3B2mVh7BL/ebfCeaTZTJu95kvB6h49PKVvVCXBEHrvkd4nGVds8LbBsoc34Qp+ynlo3wclbf/oTw/vipphOlk3s869qe8KPhl7t5vRKTm9lnwLxGpH2mTLznhkz/l1hoeQ26QXcYPpEN4Sj/ddlLw2sCVRJlwmF//OKlbmnc5feqSnG41RiX8OvuPmLaxavqvMarNjXb2bskoiu32bmfAf2k/wIjyi1mJpJLYY7xHbCFmmL7bNdSKl0NAgbbfKqgHrpe/VaAJKX6tKgn/Yl/lUpgU8RM+DLTF9/V+p1d6rdLaNv9WyerpU6xVAOBeqoHEFJrYmKJHWOv76sdWoZzVGVKLerkvbR8Fi9HRpKM9gyqChEKQgHwQ+OpIeC6yX3ekkW5LeSXk40sV4q398e1cips4fhIPr6M3vpOwaf7zxWtjnaKB+UTvpBNjBBPRo/nVY0iJ7nd9YqmMkLZlCP2kfKgxElmbrF+UEyhVkb1hjGX8HaJ+ai97OLiXNM+7qqkX9eVc8EudaWRQKyyT25ZW7vd8HHcSoueSZWumtCCxKWAjLfVC5MafXdf60si1V0OyQUJLkgAN/5VGn+JqTixkOjFVJIADE+3kWKm67sWWbeXWPif5Z5F8+kH9mPpvyK9VN/IB5PrPh5Y9W/qUdOiv7bJ665QwaQh5bFEV+BU6Le3ex4/Ze+nNxHDo3eMUd65WAbhlXayyLZqtVAZK169EfhwAgeyPWP6svll6ImVPrgq/+mNH9fyYwtvLsPjxOqh/L55emTvZMWdeacwLUh9xUNWoq0jxBDpkdD+oTcC9Aqk6HL6PHizf0p8xkYZox8az8bq95ho9nnRg09G4KhHhC92xQyEpQdvxjtXIKzB8+kBhwAzDQ7JpZ3SlnAFY4si+WGE+nqOej+wxoQtggCVbWMSmgRULkYbNky5oELPsvTlMETK7HJO8muF35mlnpCu8fNMYsti0scYKj3cLVn2eZWvBO8+BXgfGMOdfDzM26S9A5VMM0dsZPNUcyJYXcdwQQRqj9PMqZ8MVEGWkMsWiiS3YjCR9Ma3V0LbD0H08cd6K0Yw6e+qFsX9U38hDCbg2Z+Lu4GAHNHOQyqXcbbcGGDxKvzqYcqoOpFmGkxYHaD5pbogsarh0GTbmxYuTwMsLVe13eXcNQt1aLqoZ8Wf+AnPBzBp7inDVft5NHdV1bPhVLUcR3zPv1Ri5i/Hup2pJKy4RsX6ReeUOZL3rsbnJgiAvTscMEanMzEHAHXq/2LQ2u8l5Mnkz+Ay1DVPLhamp98SlXr3FBUJbIIqUSXx6eSroM6RVmDwq5hihbAejew3XI07eczA5IJ4HjJ65Rz3fx/xAfxvrBvVn/RJ+ypPQ982vrKR2jB5mudwjQY4ZfE9g3Cf0bF2dnDckHnvQMjd32sEcwAXiLqqQKPajli6Tv7wbuRoeuOjJkytwsiTOQ94ReWb1W9MkeYFTzFvslogmMniJMmUHfoGivi3mgX9mANU7AwQCml9nbPkzThEK0VNFbyFzUtpfwZCSB4DuCRmt9i43zXHanOMaz9WKv4S4y15Gb3saKxBbDr/zL+e4cv0NTVq6x1TbLtzqdjklIKeIQYFasVKpEXgdmtY8Y0KknKdnCPaeX9nvXx/yyqgv8QTlik1bOG/v028tBnqNwz4foH/wwrsL/1MSBHYNyjig2JB3UX/Di7pA3xSXgKYLKOgaQKlUVc8yocm9zZgT5J8P9iUV1n0FAl+CSQ5A96vL12QlCqv13YY3Sufxh1hGMtTXe3VDbUQZKrNHoNP/vEJIZ2si6eIPldoRvjeJu5u1sxvabrawXymRtG8kLKA/4hQHIJBzd3SvYFrZE2REjSjPJFRUEWLAOfGnu7ZFwg3sUBo4Q6PrPsJ+fq0/1NkhJHq8vtvQZ/oX0iCvDvjRqg3pzOddeIJO0Gi374Wl4EL9GNmSe3XeNyWgWEdwrjisUfF8Vr9lV/Z5N5YfCPluxdi/B1COxcILQH8SlaUlCTXGvX0PJFt3x2Cgfveuhv2uBA2OU78dI3zTw+fLPtN6TbE7cbTph24JmvhEGpnnQqLzDKXLcYf+1QB/cvJTAAAAAAA");
   --siqcw-newchat-btn-bg: #ffde59;
   --siqcw-dialog-hdr-bg-color: #1800ad;
   --siqcw-button-bg-color: #1800ad;
@@ -113,7 +116,7 @@ button,
 }
 /* Foto de Joel (46 px, redonda, fondo amarillo) con el punto verde de "en línea".
    Si un asesor con foto toma la conversación, su foto (img) va encima. La
-   imagen se sirve desde el sitio: public/brand/joel.webp. */
+   imagen es --ta-joel (arriba). */
 .embed-prof-cont {
   position: relative;
   width: 46px !important;
@@ -126,7 +129,7 @@ button,
 }
 .siqcw-bot-logo,
 .embed-prof-cont {
-  background-image: url("/brand/joel.webp") !important;
+  background-image: var(--ta-joel) !important;
   background-size: cover !important;
   background-position: center !important;
   background-repeat: no-repeat !important;
@@ -214,6 +217,36 @@ button,
 .siqcw-header em[role="button"]:not(.hide):hover {
   background: rgba(255, 255, 255, 0.2) !important;
 }
+/* Reiniciar: botón de la cabecera, como en el chat de Joel (lo pone
+   src/lib/crmChat.ts y solo se ve cuando el bot permite reiniciar). Pulsa el
+   "Reiniciar" de Zoho, que se esconde del pie del último mensaje. */
+#ta-restart {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+  width: 36px;
+  height: 36px;
+  margin-left: 10px;
+  padding: 0;
+  border: 0;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+#ta-restart:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+#ta-restart[hidden] {
+  display: none;
+}
+#scroll-container div:has(> .bot-action[data-zsqa="restart"]):not(:has(> .bot-action[data-zsqa="rollback"])),
+#scroll-container .bot-action[data-zsqa="restart"] {
+  display: none !important;
+}
 
 /* ── Cuerpo y mensajes ────────────────────────────────────────────────────── */
 .siqcw-section-cont,
@@ -294,7 +327,7 @@ button,
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: #ffde59 url("/brand/joel.webp") center / cover no-repeat;
+  background: #ffde59 var(--ta-joel) center / cover no-repeat;
   box-shadow: 0 4px 10px -3px rgba(10, 13, 61, 0.35);
 }
 #scroll-container .siqcw-agentmsg-grp .chat-bubble {
@@ -416,6 +449,77 @@ button,
 }
 #scroll-container .tag-div:hover::after {
   transform: translateX(2px);
+}
+
+/* ── Tarjetas del bot (Zobot): opciones de una selección y campos de datos ──
+   Zoho les pone un ancho mínimo fijo y 30 px de espacio abajo para las
+   opciones o el botón, aunque la tarjeta ya se respondió; aquí miden lo que
+   su contenido, como cualquier mensaje. */
+#scroll-container .chat-bubble.widget-card {
+  min-width: 0 !important;
+  margin-bottom: 0 !important;
+  padding: 0 !important;
+}
+#scroll-container .widget-card .widget-layout {
+  height: auto !important;
+}
+#scroll-container .widget-card .widget-container {
+  width: auto !important;
+  padding: 10px 14px !important;
+  box-sizing: border-box;
+}
+#scroll-container .widget-card .widget-card-title,
+#scroll-container .widget-card .optn-wid-div,
+#scroll-container .widget-card .submit-btn {
+  padding: 0 !important;
+}
+/* Tarjeta con campos (nombre, correo…): ancho fijo para que los campos quepan */
+#scroll-container .chat-bubble.input-widget {
+  width: 82% !important;
+}
+#scroll-container .input-widget .siqcw-input-cont {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 40px !important;
+  margin: 8px 0 0 !important;
+  padding: 0 14px !important;
+  border: 1px solid #e4e6f7 !important;
+  border-radius: 12px !important;
+  background: #f6f7fd !important;
+  transition:
+    border-color 0.2s,
+    background-color 0.2s;
+}
+#scroll-container .input-widget .siqcw-input-cont:focus-within {
+  border-color: #1800ad !important;
+  background: #ffffff !important;
+}
+#scroll-container .input-widget .siqcw-input {
+  min-width: 0;
+  font:
+    400 14px/1.4 "Inter",
+    sans-serif !important;
+  color: #1800ad !important;
+}
+#scroll-container .input-widget .siqcw-input::placeholder {
+  color: #9b9b9b !important;
+}
+/* Botón "Enviar" de la tarjeta: amarillo con texto índigo, como los botones del sitio */
+#scroll-container .widget-card [siqplayground="button"] {
+  display: inline-flex !important;
+  align-items: center;
+  margin-top: 10px;
+  padding: 8px 16px !important;
+  border-radius: 999px !important;
+  background: #ffde59 !important;
+  color: #1800ad !important;
+  font:
+    700 13px/1 "Montserrat",
+    sans-serif !important;
+}
+#scroll-container .widget-card [siqplayground="button"] * {
+  color: #1800ad !important;
 }
 
 /* ── Barra de escritura: píldora gris + botón redondo amarillo ────────────── */

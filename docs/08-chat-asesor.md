@@ -80,7 +80,10 @@ Lo que se copia del chat de Joel: cabecera índigo con el cuadrado amarillo
 girado, foto de Joel con punto verde, rótulo "ASESOR VIRTUAL" y "En línea ·
 Responde al instante"; cuerpo gris; mensajes del bot en tarjeta blanca con la
 foto de Joel al lado, del visitante en índigo; sin hora; opciones en una
-tarjeta con una fila por opción; campo en píldora y botón de enviar amarillo.
+tarjeta con una fila por opción; campo en píldora y botón de enviar amarillo;
+botón "Reiniciar conversación" en la cabecera: lo pone `src/lib/crmChat.ts`,
+solo se ve cuando el bot ofrece reiniciar y pulsa el "Reiniciar" de Zoho, que
+se esconde del pie del último mensaje.
 
 Lo que se configura en Zoho: el **nombre** que se ve en la cabecera y sobre
 los mensajes (hoy "Transarchivos"; para que diga "Joel", cambie el nombre del
@@ -88,7 +91,8 @@ bot o de la marca en Zoho) y el texto de los mensajes y opciones. "Con
 tecnología Zoho SalesIQ" es de Zoho y se deja.
 
 **CSS personalizado del portal:** `docs/zoho-salesiq-portal.css` es una copia
-de `zoho-chat.css` (con la foto de Joel en dirección completa) para subir en
+idéntica de `zoho-chat.css` (la foto de Joel va incrustada en `--ta-joel`, así
+que no depende de ningún dominio) para subir en
 Zoho → Configuración → Marcas → Personalización. Si el que está subido es
 distinto, se mezcla con el del sitio: las reglas de los mensajes del sitio van
 con `#scroll-container` delante para ganar, pero conviene que sean iguales.
