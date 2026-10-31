@@ -130,7 +130,7 @@ RecursosTransarchivos/    Documentos fuente del cliente (contexto, no se publica
 - Lo que no se traduce: las políticas institucionales (`/en/policies` las muestra
   en español con un aviso), los títulos de los videos de YouTube y los correos
   al equipo de Transarchivos (siempre en español; la confirmación al visitante sí
-  va en su idioma, `api/contact.mjs`). Joel en inglés usa `src/lib/joel.en.ts`.
+  va en su idioma, `api/contact.mjs`). El chat (widget de Zoho) va solo en español.
 - Cada página lleva `hreflang` a su versión en el otro idioma (`x-default` en
   español), `og:locale` y el `lang` del `<html>`; el sitemap incluye las dos.
 - Las traducciones las escribió el equipo de desarrollo (oct. 2026) y están
