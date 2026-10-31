@@ -358,9 +358,9 @@ export function readMinutes(p: Post) {
 // sección tenga más vida: cada eyebrow, subrayado y acento hereda el color
 // de su propia categoría.
 const BLOG_CAT_COLOR: Record<string, string> = {
-  "Tecnología": C.indigo,
-  "Sostenibilidad": "#15803d",
-  "Inteligencia documental": C.gold,
+  "Tecnología": C.indigo, "Technology": C.indigo,
+  "Sostenibilidad": "#15803d", "Sustainability": "#15803d",
+  "Inteligencia documental": C.gold, "Document intelligence": C.gold,
 };
 
 export const blogCatColor = (c: string) => BLOG_CAT_COLOR[c] ?? C.indigo;

@@ -8,15 +8,16 @@ React "hidrata" ese HTML y el sitio funciona igual que siempre.
 
 | Elemento | Estado |
 | --- | --- |
-| HTML pre-generado por ruta (15 rutas + 404) | ✅ `scripts/prerender.mjs` |
+| HTML pre-generado por ruta (18 rutas en español + 18 en inglés + 404) | ✅ `scripts/prerender.mjs` |
 | Título y meta descripción únicos por página | ✅ `src/seo/meta.ts` |
 | URL canónica absoluta (`https://www.transarchivos.com/...`) | ✅ |
+| Dos idiomas: `/…` (español) y `/en/…` (inglés, rutas traducidas), `hreflang` es/en/x-default en cada página y en el sitemap, `og:locale`, `<html lang>` por idioma | ✅ `src/i18n/`, `src/seo/meta.ts` |
 | Open Graph + Twitter Cards (imagen 1200×630) | ✅ `public/brand/og-image.jpg`; los artículos usan su portada |
 | Datos estructurados JSON-LD | ✅ ProfessionalService (LocalBusiness), WebSite, FAQPage, ItemList, Service, BlogPosting, AboutPage, BreadcrumbList |
 | `sitemap.xml` y `robots.txt` generados | ✅ desde `src/data/` en cada build |
 | 404 real (estado HTTP 404 + `noindex`) | ✅ `dist/404.html` + `NotFoundPage` |
 | URLs limpias sin `.html` ni barra final | ✅ `cleanUrls` + `trailingSlash: false` en `vercel.json` |
-| Un solo `<h1>` por página, `lang="es-CO"` | ✅ verificado por pruebas |
+| Un solo `<h1>` por página, `lang="es-CO"` o `lang="en-US"` según la ruta | ✅ verificado por pruebas |
 | Rendimiento | ✅ tipografías con `preconnect` (antes `@import` encadenado), logo de 378 KB → 72 KB, imágenes bajo el pliegue con `loading="lazy"` |
 | Verificación de Search Console | ✅ opcional por variable (`VITE_GOOGLE_SITE_VERIFICATION`) |
 | Indexación | ⏸️ **Desactivada** hasta la publicación (un solo interruptor, ver abajo) |
@@ -51,10 +52,13 @@ pnpm build
 
 ### Reglas para no romper el SEO
 - **Página nueva:**
-  1. agréguela a `PUBLIC_ROUTES` y a `getPageMeta`;
-  2. cree su ruta en `App.tsx`;
-  3. agréguela a `tests/e2e/seo.spec.ts` si es clave.
-  El sitemap y el HTML se generan solos.
+  1. agréguela a `ES_ROUTES` y a `getPageMeta` (con título y descripción en los
+     dos idiomas) en `src/seo/meta.ts`;
+  2. dele nombre en inglés en `SECTIONS` de `src/i18n/index.ts` (y a sus slugs
+     en `SLUGS`, si los tiene);
+  3. cree su ruta en `App.tsx` (la lista `PAGES` la genera en los dos idiomas);
+  4. agréguela a `tests/e2e/seo.spec.ts` si es clave.
+  El sitemap, los `hreflang` y el HTML en los dos idiomas se generan solos.
 - **Servicio o artículo nuevo** en `src/data/`: se pre-genera, entra al sitemap
   y recibe sus datos estructurados de forma automática.
 - **No acceder a `window`, `document` ni `localStorage` durante el render:** solo

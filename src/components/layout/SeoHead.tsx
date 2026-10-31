@@ -1,16 +1,19 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { LANG_INFO, LANGS } from "@/i18n";
 import { BRAND } from "@/seo/site";
 import { getPageMeta } from "@/seo/meta";
 
-// Actualiza título, descripción, canónica, Open Graph y JSON-LD al navegar
-// dentro del sitio. En la primera carga el HTML ya viene con estas etiquetas
-// (pre-generadas en el build); aquí se reemplazan por las de la nueva ruta.
+// Actualiza idioma del <html>, título, descripción, canónica, hreflang, Open
+// Graph y JSON-LD al navegar dentro del sitio. En la primera carga el HTML ya
+// viene con estas etiquetas (pre-generadas en el build); aquí se reemplazan
+// por las de la nueva ruta.
 // Debe montarse antes de AnalyticsTracker para que page_view lleve el título correcto.
 export function SeoHead() {
   const { pathname } = useLocation();
   useEffect(() => {
     const m = getPageMeta(pathname);
+    document.documentElement.lang = LANG_INFO[m.lang].locale;
     document.head.querySelectorAll("[data-seo]").forEach(el => el.remove());
     const add = <K extends keyof HTMLElementTagNameMap>(tag: K, attrs: Record<string, string>, text?: string) => {
       const el = document.createElement(tag);
@@ -23,8 +26,11 @@ export function SeoHead() {
     add("meta", { name: "description", content: m.description });
     add("meta", { name: "robots", content: m.robots });
     add("link", { rel: "canonical", href: m.canonical });
+    m.alternates.forEach(a => add("link", { rel: "alternate", hreflang: a.hreflang, href: a.href }));
     const og: [string, string][] = [
-      ["og:site_name", BRAND.name], ["og:locale", BRAND.locale], ["og:type", m.ogType], ["og:title", m.title],
+      ["og:site_name", BRAND.name], ["og:locale", LANG_INFO[m.lang].ogLocale],
+      ...LANGS.filter(l => l !== m.lang).map(l => ["og:locale:alternate", LANG_INFO[l].ogLocale] as [string, string]),
+      ["og:type", m.ogType], ["og:title", m.title],
       ["og:description", m.description], ["og:url", m.canonical], ["og:image", m.image], ["og:image:alt", m.imageAlt],
     ];
     og.forEach(([property, content]) => add("meta", { property, content }));

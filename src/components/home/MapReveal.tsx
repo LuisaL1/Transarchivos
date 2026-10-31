@@ -4,6 +4,8 @@ import { Bi } from "@/components/ui/Icons";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import cundinamarcaMap from "@/assets/images/cundinamarca.svg";
 import joelImg from "@/assets/images/joel.webp"; // silueta en súper zoom
+import { useLang } from "@/i18n";
+import { useUi } from "@/i18n/ui";
 import { C } from "@/styles/tokens";
 
 // ─── Central de operaciones en Bogotá (efecto al hacer scroll) ─────────────
@@ -59,6 +61,8 @@ const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
 export function MapReveal() {
+  const u = useUi().map;
+  const { lp } = useLang();
   const sectionRef = useRef<HTMLElement>(null);
   const mapRef = useRef<HTMLDivElement>(null);
   const [p, setP] = useState(0);
@@ -104,7 +108,7 @@ export function MapReveal() {
   const mapScale = 1 + reveal * 0.35;
 
   return (
-    <section ref={sectionRef} aria-label="Central de operaciones en Bogotá" className="relative" style={{ height: reduced ? "auto" : "260vh", background: C.indigo }}>
+    <section ref={sectionRef} aria-label={u.aria} className="relative" style={{ height: reduced ? "auto" : "260vh", background: C.indigo }}>
       <div className={reduced ? "relative" : "sticky top-0 h-screen overflow-hidden"}>
         {/* Cuadrícula de fondo */}
         <svg aria-hidden="true" className="absolute inset-0 w-full h-full">
@@ -127,20 +131,20 @@ export function MapReveal() {
         <div className="relative h-full max-w-6xl mx-auto px-6 grid md:grid-cols-2 content-center md:items-center gap-4 md:gap-8 pt-20 [@media(max-height:720px)]:pt-16 pb-6 md:py-0">
           {/* Texto del mapa */}
           <div style={{ opacity: mapText, transform: `translateY(${(1 - mapText) * -20}px)` }} className="text-center md:text-left order-2 md:order-1">
-            <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: C.yellow, fontFamily: "Montserrat, sans-serif" }}>Centro de operaciones · Bogotá</p>
+            <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: C.yellow, fontFamily: "Montserrat, sans-serif" }}>{u.kicker}</p>
             <h2 className="text-[26px] [@media(max-height:720px)]:text-[22px] md:text-[40px] md:[@media(max-height:720px)]:text-[40px] font-bold mb-3 md:mb-4" style={{ color: "#fff", fontFamily: "Poppins, sans-serif", lineHeight: 1.15 }}>
-              La Central de Operaciones Documentales de Transarchivos (respaldos multi-sede)
+              {u.title}
             </h2>
             <p className="text-[13px] [@media(max-height:720px)]:text-[12px] md:text-[15px] md:[@media(max-height:720px)]:text-[15px] max-w-md mx-auto md:mx-0" style={{ color: "rgba(255,255,255,0.75)", lineHeight: 1.6 }}>
-              Desde Bogotá lideramos soluciones de custodia, digitalización y destrucción documental. Disponemos de múltiples centros documentales estratégicamente distribuidos en la ciudad para prevenir la pérdida masiva de información ante desastres o contingencias.
-              <br /><br />Nuestras sedes cuentan con laboratorios y sistemas de seguridad para proteger, procesar y administrar activos de información sensible. Garantizamos la ejecución de procesos críticos y la destrucción segura de archivos bajo estricto cumplimiento legal, ambiental y de Hábeas Data.
+              {u.text1}
+              <br /><br />{u.text2}
             </p>
           </div>
 
           {/* Mapa con Bogotá */}
           <div className="relative order-1 md:order-2 flex justify-center">
             <div ref={mapRef} className="relative h-[30vh] [@media(max-height:720px)]:h-[20vh] md:h-[78vh] md:[@media(max-height:720px)]:h-[70vh]" style={{ aspectRatio: "1000 / 1160", transform: `scale(${mapScale})`, transformOrigin: `${BOGOTA.left * 100}% ${BOGOTA.top * 100}%` }}>
-              <img loading="lazy" decoding="async" src={cundinamarcaMap} alt="Mapa de Cundinamarca con Bogotá resaltada y los municipios vecinos" draggable={false} className="w-full h-full select-none" style={{ objectFit: "contain", filter: "drop-shadow(0 18px 30px rgba(0,0,0,0.4))" }} />
+              <img loading="lazy" decoding="async" src={cundinamarcaMap} alt={u.alt} draggable={false} className="w-full h-full select-none" style={{ objectFit: "contain", filter: "drop-shadow(0 18px 30px rgba(0,0,0,0.4))" }} />
               {/* Rutas: de cada ciudad hacia Bogotá (los trazos y puntos viajan hacia el centro) */}
               <svg aria-hidden="true" viewBox={`0 0 ${MW} ${MH}`} className="absolute inset-0 w-full h-full overflow-visible">
                 {CITIES.map((c, i) => {
@@ -178,7 +182,7 @@ export function MapReveal() {
                 <span className="absolute inset-0 rounded-full" style={{ background: C.yellow, animation: "mapPulse 1.8s cubic-bezier(0,0,0.2,1) infinite" }} />
                 <span className="relative block rounded-full" style={{ width: 16, height: 16, background: C.yellow, border: "3px solid #fff", boxShadow: "0 0 18px 4px rgba(255,222,89,0.7)" }} />
                 <span className="absolute whitespace-nowrap text-[11px] md:text-xs font-bold px-2.5 py-1 rounded-full left-1/2 -translate-x-1/2 top-6 md:left-6 md:translate-x-0 md:top-1/2 md:-translate-y-1/2" style={{ background: "#fff", color: C.indigo, fontFamily: "Montserrat, sans-serif", opacity: mapText }}>
-                  Bogotá · Centro de operaciones
+                  {u.bogota}
                 </span>
               </span>
             </div>
@@ -198,16 +202,16 @@ export function MapReveal() {
             <div className="absolute inset-0" style={{ background: "rgba(24,0,173,0.55)" }} />
             <div className="relative h-full max-w-6xl mx-auto px-6 flex flex-col justify-center items-center text-center"
               style={{ opacity: endText, transform: `translateY(${(1 - endText) * 24}px)` }}>
-              <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: C.yellow, fontFamily: "Montserrat, sans-serif" }}>Gestión documental integral</p>
+              <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: C.yellow, fontFamily: "Montserrat, sans-serif" }}>{u.endKicker}</p>
               <h2 className="text-3xl md:text-5xl font-bold mb-4 max-w-3xl" style={{ color: "#fff", fontFamily: "Poppins, sans-serif", lineHeight: 1.12 }}>
-                Más de cuatro décadas liderando la protección de la información empresarial de Colombia
+                {u.endTitle}
               </h2>
               <p className="text-sm md:text-base max-w-2xl mb-7" style={{ color: "rgba(255,255,255,0.8)", lineHeight: 1.7 }}>
-                Gestionando el ciclo total de sus archivos bajo los estándares de la normativa colombiana. Nos encargamos de la clasificación, digitalización con OCR, custodia de alta seguridad y destrucción trazable, brindando respaldo legal a su empresa.
+                {u.endText}
               </p>
-              <Link to="/?servicio=diagnostico#cotizador" className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full text-sm font-bold transition-transform hover:scale-[1.03]"
+              <Link to={lp("/?servicio=diagnostico#cotizador")} className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full text-sm font-bold transition-transform hover:scale-[1.03]"
                 style={{ background: C.yellow, color: C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
-                Solicitar cotización <Bi n="arrow-right" size={14} color={C.indigo} />
+                {u.cta} <Bi n="arrow-right" size={14} color={C.indigo} />
               </Link>
             </div>
           </div>
@@ -216,7 +220,7 @@ export function MapReveal() {
         {/* Indicador de scroll */}
         {!reduced && (
           <div aria-hidden="true" className="absolute bottom-6 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-1" style={{ opacity: 1 - clamp(p / 0.15) }}>
-            <span className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.6)", fontFamily: "Montserrat, sans-serif" }}>Desplácese</span>
+            <span className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.6)", fontFamily: "Montserrat, sans-serif" }}>{u.scroll}</span>
             <Bi n="chevron-down" size={14} color="rgba(255,255,255,0.6)" className="hero-word-in" />
           </div>
         )}

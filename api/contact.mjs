@@ -46,9 +46,11 @@ function layout(base, title, inner) {
 <tr><td bgcolor="#F7F8FF" style="background:#F7F8FF;padding:14px 28px;font-family:Arial,sans-serif;font-size:12px;color:#6B6B6B;border-top:1px solid #E4E6F7">Transarchivos Ltda. · Cl. 21 # 39A-40, Bogotá · (601) 316-4530</td></tr>
 </table></td></tr></table></body></html>`;
 }
-// Correo de confirmación para el visitante ("recibimos su solicitud")
-function confirmation(base, kind, name, fields) {
+// Correo de confirmación para el visitante ("recibimos su solicitud"), en el
+// idioma de la página desde la que escribió (lang: "es" | "en").
+function confirmation(base, kind, name, fields, lang = "es") {
     const first = esc(name.split(" ")[0] || "");
+    if (lang === "en") return confirmationEn(base, kind, name, fields, first);
     if (kind === "suscripcion") {
         const subject = "Suscripción confirmada · Transarchivos";
         // Anular: las suscripciones viven en el buzón de marketing (no hay base de
@@ -82,6 +84,38 @@ function confirmation(base, kind, name, fields) {
 <p style="margin:0;color:#6B6B6B;font-size:12px">Este es un mensaje automático de confirmación. Tratamos sus datos según nuestra <a href="https://www.transarchivos.com/privacidad" style="color:#1800AD">política de privacidad</a>.</p>`);
     const text = `Hola${name ? ` ${name.split(" ")[0]}` : ""},\n\nGracias por escribirnos. Recibimos ${aboutText} y un asesor le responderá a este correo a la mayor brevedad.\n\nAtención inmediata: WhatsApp 324 358 6973 · Teléfonos (601) 316-4530 · 324 358 6973\n\nMensaje automático de Transarchivos Ltda.`;
     return { subject, html, text };
+}
+// Versión en inglés de la confirmación (mismo diseño; el correo al equipo de
+// Transarchivos sigue en español).
+function confirmationEn(base, kind, name, fields, first) {
+    const privacy = `<p style="margin:0;color:#6B6B6B;font-size:12px">This is an automatic confirmation. We process your data according to our <a href="https://www.transarchivos.com/en/privacy" style="color:#1800AD">privacy policy</a>.</p>`;
+    if (kind === "suscripcion") {
+        const newsletterTo = process.env.LEADS_TO_NEWSLETTER || "marketing@transarchivos.com";
+        const subscriber = fields["Correo"] ?? "";
+        const unsubscribe = `mailto:${newsletterTo}?subject=${encodeURIComponent("Anular suscripción al blog")}&body=${encodeURIComponent(`Por favor anulen la suscripción al blog de Transarchivos del correo ${subscriber}.`)}`;
+        const html = layout(base, "Thank you for subscribing!", `
+<p style="margin:0 0 12px">Hello,</p>
+<p style="margin:0 0 12px">Your email has been registered to receive Transarchivos' news and guides on records management (our content is published in Spanish).</p>
+<p style="margin:0 0 16px">If you did not request this subscription or no longer wish to receive our emails, you can unsubscribe at any time:</p>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td bgcolor="#1800AD" style="background:#1800AD;border-radius:10px"><a href="${esc(unsubscribe)}" style="display:inline-block;padding:11px 20px;color:#ffffff;font-weight:bold;text-decoration:none;font-family:Arial,sans-serif;font-size:14px">Unsubscribe</a></td></tr></table>
+<p style="margin:14px 0 18px;color:#6B6B6B;font-size:12px">The button opens an email to ${esc(newsletterTo)} with the request ready to send.</p>
+${privacy}`);
+        const text = `Your email has been registered to receive Transarchivos' news and guides.\n\nTo unsubscribe, write to ${newsletterTo} with the subject «Anular suscripción al blog».`;
+        return { subject: "Subscription confirmed · Transarchivos", html, text };
+    }
+    const short = (v, fallback) => (v ?? "").replace(/\s+/g, " ").trim().slice(0, 60) || fallback;
+    const what = kind === "cotizacion" ? short(fields["Servicio"], "our services") : short(fields["Motivo"], "contact");
+    const about = kind === "cotizacion" ? `your quote request for <strong>${esc(what)}</strong>` : `your message (${esc(what)})`;
+    const aboutText = kind === "cotizacion" ? `your quote request for ${what}` : `your message (${what})`;
+    const html = layout(base, "We received your request!", `
+<p style="margin:0 0 12px">Hello${first ? ` ${first}` : ""},</p>
+<p style="margin:0 0 12px">Thank you for writing to us. We received ${about} and an advisor from our team will reply to this email as soon as possible.</p>
+<p style="margin:0 0 16px">If you need immediate assistance, write to us on WhatsApp or call us:</p>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td bgcolor="#1800AD" style="background:#1800AD;border-radius:10px"><a href="https://wa.me/573243586973" style="display:inline-block;padding:11px 20px;color:#ffffff;font-weight:bold;text-decoration:none;font-family:Arial,sans-serif;font-size:14px">WhatsApp +57 324 358 6973</a></td></tr></table>
+<p style="margin:14px 0 18px;color:#6B6B6B">Phones: +57 (601) 316-4530 · +57 324 358 6973</p>
+${privacy}`);
+    const text = `Hello${name ? ` ${name.split(" ")[0]}` : ""},\n\nThank you for writing to us. We received ${aboutText} and an advisor will reply to this email as soon as possible.\n\nImmediate assistance: WhatsApp +57 324 358 6973 · Phones +57 (601) 316-4530 · +57 324 358 6973\n\nAutomatic message from Transarchivos Ltda.`;
+    return { subject: "We received your request · Transarchivos", html, text };
 }
 export async function GET() {
     const key = process.env.BREVO_API_KEY;
@@ -133,7 +167,8 @@ export async function POST(req) {
     const text = `${subject}\n\n` + Object.entries(fields).map(([k, v]) => `${k}: ${v}`).join("\n");
     const sender = { email: process.env.LEADS_FROM || "no-reply@transarchivos.com", name: process.env.LEADS_FROM_NAME || "Transarchivos" };
     // Destino según el motivo: lo comercial a mercadeo, lo demás al correo general.
-    const COMMERCIAL = ["Solicitar una cotización", "Información sobre un servicio"];
+    const lang = body.lang === "en" ? "en" : "es";
+    const COMMERCIAL = ["Solicitar una cotización", "Información sobre un servicio", "Request a quote", "Information about a service"];
     const commercial = kind === "cotizacion" || COMMERCIAL.includes(fields["Motivo"] ?? "");
     const leadsTo = kind === "suscripcion" ? (process.env.LEADS_TO_NEWSLETTER || "marketing@transarchivos.com")
         : commercial ? (process.env.LEADS_TO || "mercadeo@transarchivos.com") : (process.env.LEADS_TO_GENERAL || "info@transarchivos.com");
@@ -160,7 +195,7 @@ export async function POST(req) {
     // la respuesta ("confirmation") para poder diagnosticarlo.
     let confirmationStatus = "sent";
     try {
-        const c = confirmation(base, kind, name, fields);
+        const c = confirmation(base, kind, name, fields, lang);
         const rc = await send({ to: [{ email: replyEmail, name: name || replyEmail }], replyTo: { email: leadsTo, name: "Transarchivos" }, subject: c.subject, htmlContent: c.html, textContent: c.text, tags: [`sitio-${kind}-confirmacion`] });
         if (!rc.ok) {
             const d = await rc.json().catch(() => ({}));

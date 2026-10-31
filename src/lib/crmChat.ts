@@ -84,7 +84,24 @@ const RESTART_ID = "ta-restart";
 /** "Reiniciar" que Zoho pone al pie del último mensaje del bot (zoho-chat.css lo esconde) */
 const ZOHO_RESTART = '.bot-action[data-zsqa="restart"]';
 /** Bootstrap Icons: arrow-counterclockwise */
-const RESTART_ICON = '<svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2z"/><path d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466"/></svg>';
+const RESTART_ICON = ["M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2z", "M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466"];
+const SVG_NS = "http://www.w3.org/2000/svg";
+
+function restartIcon(doc: Document) {
+  const svg = doc.createElementNS(SVG_NS, "svg");
+  svg.setAttribute("width", "15");
+  svg.setAttribute("height", "15");
+  svg.setAttribute("viewBox", "0 0 16 16");
+  svg.setAttribute("fill", "currentColor");
+  svg.setAttribute("aria-hidden", "true");
+  for (const d of RESTART_ICON) {
+    const path = doc.createElementNS(SVG_NS, "path");
+    path.setAttribute("fill-rule", "evenodd");
+    path.setAttribute("d", d);
+    svg.appendChild(path);
+  }
+  return svg;
+}
 
 /** Tiempo máximo para esperar el "Reiniciar" de Zoho si se pulsa mientras el bot responde */
 const RESTART_WAIT_MS = 10_000;
@@ -128,7 +145,7 @@ function addRestartButton(doc: Document) {
       btn.type = "button";
       btn.title = "Reiniciar conversación";
       btn.setAttribute("aria-label", btn.title);
-      btn.innerHTML = RESTART_ICON;
+      btn.appendChild(restartIcon(doc));
       btn.addEventListener("click", press);
       header.appendChild(btn);
     }

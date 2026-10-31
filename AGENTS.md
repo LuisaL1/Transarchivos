@@ -1,7 +1,8 @@
 # Transarchivos · Sitio web
 
 Sitio corporativo de Transarchivos Ltda. (gestión documental, Bogotá) hecho con
-React 19 + Vite 8 + Tailwind CSS v4 + TypeScript. Se publica en Vercel.
+React 19 + Vite 8 + Tailwind CSS v4 + TypeScript. Se publica en Vercel. Está en
+español (raíz) e inglés (`/en`, ver "Idiomas").
 
 ## Comandos
 
@@ -19,19 +20,22 @@ React 19 + Vite 8 + Tailwind CSS v4 + TypeScript. Se publica en Vercel.
 ```
 src/
 ├── main.tsx              Punto de entrada (router + estilos globales)
-├── App.tsx               Rutas: el inicio va en el paquete principal; las demás páginas
-│                         se cargan aparte (React.lazy); el pre-render las espera. Arranca el chat
-├── pages/                Una página por ruta
-│   ├── HomePage.tsx          "/"  (estado del chat, hero, secciones)
-│   ├── ServiceDetailPage.tsx "/servicios/:slug"
-│   ├── NosotrosPage.tsx      "/nosotros"
-│   ├── ArticlePage.tsx       "/blog/:slug"
-│   ├── PoliciesPage.tsx      "/politicas" (7 políticas oficiales)
-│   ├── VideosPage.tsx        "/videos" ("Da play al conocimiento": los videos del canal de YouTube)
-│   └── PrivacyPage.tsx       "/privacidad" (aviso del sitio y cookies)
+├── App.tsx               Rutas en los dos idiomas: el inicio va en el paquete principal; las demás
+│                         páginas se cargan aparte (React.lazy); el pre-render las espera. Arranca el chat
+├── i18n/                 Idiomas: index.ts (rutas /en, slugs traducidos, useLang), content.ts
+│                         (contenido por idioma: useContent), ui.ts / home.ts / pages.ts (textos de
+│                         la interfaz en español e inglés)
+├── pages/                Una página por ruta (cada una existe en "/…" y en "/en/…")
+│   ├── HomePage.tsx          "/" y "/en"  (estado del chat, hero, secciones)
+│   ├── ServiceDetailPage.tsx "/servicios/:slug" y "/en/services/:slug"
+│   ├── NosotrosPage.tsx      "/nosotros" y "/en/about"
+│   ├── ArticlePage.tsx       "/blog/:slug" y "/en/blog/:slug"
+│   ├── PoliciesPage.tsx      "/politicas" y "/en/policies" (7 políticas oficiales, solo en español)
+│   ├── VideosPage.tsx        "/videos" y "/en/videos" ("Da play al conocimiento": los videos del canal)
+│   └── PrivacyPage.tsx       "/privacidad" y "/en/privacy" (aviso del sitio y cookies)
 ├── components/
-│   ├── layout/           Navbar compartido (SiteHeader), menús desplegables,
-│   │                     búsqueda (SearchOverlay) y tarjeta de soporte
+│   ├── layout/           Navbar compartido (SiteHeader), franja de idioma (LangBar), menús
+│   │                     desplegables, búsqueda (SearchOverlay) y tarjeta de soporte
 │   ├── sections/         Secciones reutilizables: tarjeta de servicio, soluciones,
 │   │                     cotizador, blog, preguntas frecuentes; y las compartidas por
 │   │                     las páginas internas: PageHero (encabezado) y CtaBand (llamado final)
@@ -39,7 +43,9 @@ src/
 │   ├── chat/             Botón flotante de Joel (ChatLauncher): abre el widget de Zoho
 │   └── ui/               Primitivas: íconos, marca (logo/Joel), fondos y pestaña de carpeta
 │                         (SectionDecor), rótulo/título de sección (SectionHead)
-├── data/                 CONTENIDO del sitio (fuente única de verdad)
+├── data/                 CONTENIDO del sitio (fuente única de verdad, en español; los *.en.ts
+│   │                     traducen solo los textos: services.en, serviceDetails.en, serviceFaqs.en,
+│   │                     blog.en y quote.en)
 │   ├── services.ts           Los 9 servicios
 │   ├── serviceDetails.ts     Contenido de la página de cada servicio (fotos: assets/images/servicios)
 │   ├── solutions.ts          Soluciones por necesidad del cliente
@@ -81,9 +87,11 @@ RecursosTransarchivos/    Documentos fuente del cliente (contexto, no se publica
 
 ### Reglas
 
-- El texto del sitio vive en `src/data/`. Para cambiar un servicio, una pregunta
-  frecuente o una solución, edite el archivo de datos: el sitio y el buscador
-  se actualizan solos (el chat se configura en Zoho SalesIQ).
+- El texto del sitio vive en `src/data/` (español) y en los archivos `*.en.ts`
+  junto a cada uno (inglés). Para cambiar un servicio, una pregunta frecuente o
+  una solución, edite el archivo de datos en los dos idiomas: el sitio y el
+  buscador se actualizan solos (el chat se configura en Zoho SalesIQ). Los textos de la interfaz (menús, botones,
+  títulos de sección) están en `src/i18n/ui.ts`, `home.ts` y `pages.ts`.
 - Todo el contenido debe salir de los documentos de `RecursosTransarchivos/`.
   No inventar cifras, precios, horarios ni certificaciones (la empresa NO tiene
   ISO 9001). Operan principalmente en Bogotá.
@@ -99,9 +107,34 @@ RecursosTransarchivos/    Documentos fuente del cliente (contexto, no se publica
   y parámetros sin uso.
 - Componentes: un archivo por componente o por grupo pequeño relacionado;
   exportaciones con nombre (`export function X`).
-- SEO: cada ruta se pre-genera en el servidor. No usar `window`/`document`/
-  `localStorage` durante el render (solo en efectos). Rutas nuevas → `src/seo/meta.ts`
+- SEO: cada ruta se pre-genera en el servidor, en los dos idiomas. No usar
+  `window`/`document`/`localStorage` durante el render (solo en efectos). Rutas
+  nuevas → `src/seo/meta.ts` y `src/i18n/index.ts` (sección o slug traducido)
   (ver `docs/06-seo.md`).
+
+## Idiomas
+
+- Español en la raíz (`/servicios/custodia-de-archivos`) e inglés con prefijo y
+  rutas traducidas (`/en/services/records-storage`). Las secciones y slugs en
+  inglés están en `src/i18n/index.ts` (`SECTIONS`, `SLUGS`); el contenido se
+  busca siempre por el slug en español (`slugEs`).
+- En los componentes: `useLang()` da `lang`, `lp(rutaEnEspañol)` (la misma ruta
+  en el idioma actual) y `tr(es, en)`; `useContent()` da los datos del idioma;
+  `useUi()`, `useHomeUi()` y `usePagesUi()`, los textos de la interfaz. Los
+  enlaces se escriben siempre con la ruta en español y se pasan por `lp()`.
+- La franja superior de idioma (`LangBar`, como en Transpack) ofrece
+  "Latinoamérica y España (Español)" e "International (English)" y lleva a la
+  misma página en el otro idioma; se recoge al hacer scroll. Va en blanco con
+  texto índigo y una línea fina de separación (30 oct. 2026). Las páginas internas reservan
+  `HEADER_SPACE` (barra + franja) arriba.
+- Lo que no se traduce: las políticas institucionales (`/en/policies` las muestra
+  en español con un aviso), los títulos de los videos de YouTube y los correos
+  al equipo de Transarchivos (siempre en español; la confirmación al visitante sí
+  va en su idioma, `api/contact.mjs`). Joel en inglés usa `src/lib/joel.en.ts`.
+- Cada página lleva `hreflang` a su versión en el otro idioma (`x-default` en
+  español), `og:locale` y el `lang` del `<html>`; el sitemap incluye las dos.
+- Las traducciones las escribió el equipo de desarrollo (oct. 2026) y están
+  pendientes de revisión por Transarchivos.
 
 ## Diseño
 
@@ -127,6 +160,9 @@ RecursosTransarchivos/    Documentos fuente del cliente (contexto, no se publica
   el detalle de esquina del chat y el menú: cuadrado amarillo translúcido girado
   45° con puntas redondeadas, radio ≈ 17 % del lado), tarjetas blancas con borde fino, motivo gráfico de carpeta. Única
   excepción: la sombra negra superior del hero de inicio.
+- Header (oct. 2026): logo grande, menú con "Solicitar cotización" como entrada
+  y botón azul "Contacto directo" (abre la tarjeta de contacto: Joel, WhatsApp,
+  teléfonos y formulario); fuera del pill solo queda la lupa.
 - Hero de inicio: secuencia de fotos de la operación de fondo (`public/hero-fotos/`,
   fundido lento cada 12 s, sin otro movimiento, velo índigo); el video del centro documental va en la sección del mapa.
   En computador, dos columnas: a la izquierda el título animado (tres frases que

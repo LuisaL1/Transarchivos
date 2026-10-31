@@ -1,15 +1,17 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Bi } from "@/components/ui/Icons";
-import { services } from "@/data/services";
+import type { services } from "@/data/services";
+import { useLang } from "@/i18n";
 import { C } from "@/styles/tokens";
 
 export function ServiceCard({ service }: { service: typeof services[0] }) {
   const [hovered, setHovered] = useState(false);
+  const { lp } = useLang();
 
   return (
     <Link
-      to={`/servicios/${service.slug}`}
+      to={lp(`/servicios/${service.slug}`)}
       className="flex flex-col gap-4 p-6 rounded-2xl cursor-pointer"
       style={{
         textDecoration: "none",

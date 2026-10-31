@@ -7,6 +7,7 @@ import App, { ArticlePage, NosotrosPage, NotFoundPage, PoliciesPage, PrivacyPage
 
 export { getPageMeta, renderHeadTags, PUBLIC_ROUTES } from "@/seo/meta";
 export { INDEXABLE, SITE_URL } from "@/seo/site";
+export { LANG_INFO } from "@/i18n";
 
 /** Carga las páginas (perezosas en el navegador) para que la
  *  pre-generación no deje nada en suspenso ni agregue <script> en línea. */

@@ -14,4 +14,8 @@ describe("Buscador del header", () => {
   it("cada resultado tiene un destino", () => {
     for (const r of searchContent("archivo")) expect(r.to ?? r.href).toBeTruthy();
   });
+  it("busca en inglés y lleva a las rutas en inglés", () => {
+    const r = searchContent("scanning", "en");
+    expect(r.some(x => x.title.includes("Document scanning") && x.to === "/en/services/document-scanning")).toBe(true);
+  });
 });

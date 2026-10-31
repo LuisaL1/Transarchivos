@@ -24,6 +24,8 @@ describe("HTML pre-generado", () => {
       for (const block of head.match(/<script data-seo type="application\/ld\+json">([\s\S]*?)<\/script>/g) ?? []) {
         expect(() => JSON.parse(block.replace(/^<script[^>]*>/, "").replace(/<\/script>$/, ""))).not.toThrow();
       }
+      expect(html).toContain(`<html lang="${r.startsWith("/en") ? "en-US" : "es-CO"}">`);
+      expect(head).toContain('hreflang="x-default"');
       const body = html.slice(html.indexOf("<body"));
       expect(body.match(/<h1[\s>]/g), "un solo h1").toHaveLength(1);
       expect(body).toContain(`data-path="${r}"`);
@@ -36,6 +38,7 @@ describe("HTML pre-generado", () => {
   it("sitemap.xml lista todas las rutas con su canónica", () => {
     const xml = read("dist/sitemap.xml");
     for (const r of PUBLIC_ROUTES) expect(xml).toContain(`<loc>${getPageMeta(r).canonical}</loc>`);
+    expect(xml).toContain('<xhtml:link rel="alternate" hreflang="en"');
   });
   it("robots.txt coherente con la indexación", () => {
     const txt = read("dist/robots.txt");

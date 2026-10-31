@@ -1,7 +1,7 @@
 // ─── Búsqueda (ventana propia) ──────────────────────────────────────────────
 // Al tocar la lupa se abre una ventana centrada que baja desde arriba sobre
-// un fondo oscurecido (estilo "command palette"), en vez de reemplazar el nav
-// dentro de la barra. Se cierra con Esc, con la × o haciendo clic afuera.
+// un fondo oscurecido (estilo "command palette"). Se cierra con Esc, con la ×
+// o haciendo clic afuera. Textos en src/i18n/ui.ts.
 
 import { useEffect, useRef } from "react";
 import { trackEvent } from "@/lib/analytics";
@@ -9,21 +9,17 @@ import { Link } from "react-router-dom";
 import { trackSearch } from "@/lib/visitor";
 import { Bi, MenuIcon } from "@/components/ui/Icons";
 import { type SearchResult } from "@/data/search";
+import { useUi } from "@/i18n/ui";
 import { C } from "@/styles/tokens";
 
-const SEARCH_SHORTCUTS = [
-  { ic: "grid", label: "Servicios", href: "#servicios" },
-  { ic: "lightbulb", label: "Soluciones", href: "#soluciones" },
-  { ic: "ui-checks", label: "Solicitar cotización", href: "#cotizador" },
-  { ic: "question-circle", label: "Preguntas frecuentes", href: "#faq" },
-];
-
+const SHORTCUTS = [{ ic: "grid", href: "#servicios" }, { ic: "lightbulb", href: "#soluciones" }, { ic: "ui-checks", href: "#cotizador" }, { ic: "question-circle", href: "#faq" }];
 const KIND_ICON: Record<SearchResult["kind"], string> = { "Servicio": "briefcase", "Artículo": "journal-text", "Sección": "signpost-2", "Pregunta": "question-circle" };
 
 export function SearchOverlay({ query, setQuery, results, hasQuery, inputRef, onClose }: {
   query: string; setQuery: (v: string) => void; results: SearchResult[]; hasQuery: boolean;
   inputRef: React.RefObject<HTMLInputElement | null>; onClose: () => void;
 }) {
+  const u = useUi().search;
   // Solo al abrir/cerrar (no en cada tecla): bloquea el scroll de la página,
   // enfoca el campo y escucha Esc.
   const closeRef = useRef(onClose);
@@ -43,15 +39,15 @@ export function SearchOverlay({ query, setQuery, results, hasQuery, inputRef, on
     <div data-search-overlay className="fixed inset-0 z-[70] flex justify-center px-4" style={{ paddingTop: "12vh" }}>
       <div role="presentation" className="absolute inset-0" onClick={onClose}
         style={{ background: "rgba(24,0,173,0.55)", backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)", animation: "searchFade 0.25s ease both" }} />
-      <div role="dialog" aria-label="Buscar en el sitio" className="relative w-full max-w-[640px] self-start rounded-3xl overflow-hidden"
+      <div role="dialog" aria-label={u.dialog} className="relative w-full max-w-[640px] self-start rounded-3xl overflow-hidden"
         style={{ background: "#fff", boxShadow: "0 40px 90px -30px rgba(10,13,61,0.6)", animation: "searchDrop 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.1) both" }}>
         <div className="flex items-center gap-3 px-5 py-4" style={{ borderBottom: "1px solid #ECEEF6" }}>
           <Bi n="search" size={18} color={C.indigo} />
           <input ref={inputRef} type="text" value={query} onChange={e => setQuery(e.target.value)}
-            placeholder="Buscar servicios, soluciones, artículos…" aria-label="Buscar"
+            placeholder={u.placeholder} aria-label={u.aria}
             className="flex-1 min-w-0 bg-transparent outline-none text-base" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }} />
           <span className="hidden sm:inline text-[10px] font-semibold px-2 py-1 rounded-md" style={{ background: "#F2F3FA", color: "#8A8A8A" }}>Esc</span>
-          <button type="button" onClick={onClose} aria-label="Cerrar búsqueda" className="grid place-items-center rounded-full transition-colors hover:bg-niebla" style={{ width: 32, height: 32 }}>
+          <button type="button" onClick={onClose} aria-label={u.close} className="grid place-items-center rounded-full transition-colors hover:bg-niebla" style={{ width: 32, height: 32 }}>
             <Bi n="x-lg" size={14} color={C.indigo} />
           </button>
         </div>
@@ -59,12 +55,12 @@ export function SearchOverlay({ query, setQuery, results, hasQuery, inputRef, on
         <div className="max-h-[56vh] overflow-y-auto p-3">
           {!hasQuery ? (
             <>
-              <p className="px-3 pt-1 pb-2 text-[10.5px] font-bold uppercase" style={{ letterSpacing: "0.12em", color: C.faint, fontFamily: "Montserrat, sans-serif" }}>Accesos rápidos</p>
+              <p className="px-3 pt-1 pb-2 text-[10.5px] font-bold uppercase" style={{ letterSpacing: "0.12em", color: C.faint, fontFamily: "Montserrat, sans-serif" }}>{u.quick}</p>
               <div className="grid sm:grid-cols-2 gap-1">
-                {SEARCH_SHORTCUTS.map(sc => (
-                  <a key={sc.label} href={sc.href} onClick={onClose} className={itemCls} style={{ textDecoration: "none" }}>
+                {SHORTCUTS.map((sc, i) => (
+                  <a key={sc.href} href={sc.href} onClick={onClose} className={itemCls} style={{ textDecoration: "none" }}>
                     <MenuIcon n={sc.ic} size={34} />
-                    <span className="text-sm font-semibold" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>{sc.label}</span>
+                    <span className="text-sm font-semibold" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>{u.shortcuts[i]}</span>
                   </a>
                 ))}
               </div>
@@ -72,8 +68,8 @@ export function SearchOverlay({ query, setQuery, results, hasQuery, inputRef, on
           ) : results.length === 0 ? (
             <div className="py-10 text-center">
               <Bi n="search" size={22} color="#C3C7E8" />
-              <p className="text-sm mt-3" style={{ color: C.muted }}>Sin resultados para "{query}".</p>
-              <p className="text-xs mt-1" style={{ color: C.faint }}>Pruebe con otra palabra, o pregúntele a Joel en el chat.</p>
+              <p className="text-sm mt-3" style={{ color: C.muted }}>{u.none(query)}</p>
+              <p className="text-xs mt-1" style={{ color: C.faint }}>{u.hint}</p>
             </div>
           ) : (
             <div className="flex flex-col gap-0.5">
@@ -85,7 +81,7 @@ export function SearchOverlay({ query, setQuery, results, hasQuery, inputRef, on
                       <span className="block text-sm font-semibold truncate" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>{r.title}</span>
                       <span className="block text-xs truncate" style={{ color: "#8A8A8A" }}>{r.desc}</span>
                     </span>
-                    <span className="text-[10px] font-bold uppercase shrink-0" style={{ letterSpacing: "0.08em", color: C.gold, fontFamily: "Montserrat, sans-serif" }}>{r.kind}</span>
+                    <span className="text-[10px] font-bold uppercase shrink-0" style={{ letterSpacing: "0.08em", color: C.gold, fontFamily: "Montserrat, sans-serif" }}>{u.kinds[r.kind]}</span>
                   </>
                 );
                 return r.to

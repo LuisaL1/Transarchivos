@@ -14,7 +14,7 @@ test.beforeEach(({ page }) => page.route("https://salesiq.zohopublic.com/**", r 
 //   A11Y_STRICT=1 pnpm test:e2e  (y luego déjelo fijo aquí).
 const STRICT = process.env.A11Y_STRICT === "1";
 
-for (const route of ["/", "/nosotros", "/politicas", "/videos", "/servicios/custodia-de-archivos", "/blog/mido-software-gestion-documental"]) {
+for (const route of ["/", "/nosotros", "/politicas", "/videos", "/servicios/custodia-de-archivos", "/blog/mido-software-gestion-documental", "/en", "/en/services/records-storage"]) {
   test(`accesibilidad ${route}`, async ({ page }, info) => {
     // Sin animaciones: así axe revisa todo el contenido, ya visible.
     await page.emulateMedia({ reducedMotion: "reduce" });
