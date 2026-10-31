@@ -81,14 +81,18 @@ girado, foto de Joel con punto verde, rótulo "ASESOR VIRTUAL" y "En línea ·
 Responde al instante"; cuerpo gris; mensajes del bot en tarjeta blanca con la
 foto de Joel al lado, del visitante en índigo; sin hora; opciones en una
 tarjeta con una fila por opción; campo en píldora y botón de enviar amarillo;
-botón "Reiniciar conversación" en la cabecera: lo pone `src/lib/crmChat.ts`,
-solo se ve cuando el bot ofrece reiniciar y pulsa el "Reiniciar" de Zoho, que
-se esconde del pie del último mensaje.
+botón "Reiniciar conversación" en la cabecera, a la izquierda de la X: lo pone
+`src/lib/crmChat.ts`, pulsa el "Reiniciar" de Zoho (que se esconde del pie del
+último mensaje) y sigue a la vista desde que Zoho lo ofrece hasta que termina
+la conversación con el bot. Si se pulsa mientras el bot responde, espera a que
+Zoho vuelva a ofrecerlo.
+
+El menú de opciones de Zoho (tres puntos de la cabecera: silenciar, enviar la
+conversación por correo, terminar el chat) se esconde.
 
 Lo que se configura en Zoho: el **nombre** que se ve en la cabecera y sobre
-los mensajes (hoy "Transarchivos"; para que diga "Joel", cambie el nombre del
-bot o de la marca en Zoho) y el texto de los mensajes y opciones. "Con
-tecnología Zoho SalesIQ" es de Zoho y se deja.
+los mensajes (el de la marca, hoy "Transarchivos") y el texto de los mensajes y
+opciones. "Con tecnología Zoho SalesIQ" es de Zoho y se deja.
 
 **CSS personalizado del portal:** `docs/zoho-salesiq-portal.css` es una copia
 idéntica de `zoho-chat.css` (la foto de Joel va incrustada en `--ta-joel`, así

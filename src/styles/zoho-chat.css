@@ -217,11 +217,39 @@ button,
 .siqcw-header em[role="button"]:not(.hide):hover {
   background: rgba(255, 255, 255, 0.2) !important;
 }
+/* Sin el menú de opciones de Zoho (tres puntos). Orden fijo a la derecha, sin
+   importar cuándo los agregue Zoho: Reiniciar y la X */
+.siqcw-header-detail {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.siqcw-header .conv-more-opts {
+  display: none !important;
+}
+.siqcw-header .chat-win-close {
+  order: 3;
+  position: relative !important;
+  inset: auto !important;
+  z-index: 1;
+  flex-shrink: 0;
+  align-items: center;
+  width: 36px !important;
+  height: 36px !important;
+  margin: 0 0 0 10px !important;
+  border-radius: 12px !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: rgba(255, 255, 255, 0.85) !important;
+  font-size: 15px !important;
+}
+.siqcw-header .chat-win-close:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
 /* Reiniciar: botón de la cabecera, como en el chat de Joel (lo pone
-   src/lib/crmChat.ts y solo se ve cuando el bot permite reiniciar). Pulsa el
-   "Reiniciar" de Zoho, que se esconde del pie del último mensaje. */
+   src/lib/crmChat.ts y sigue a la vista durante la conversación con el bot).
+   Pulsa el "Reiniciar" de Zoho, que se esconde del pie del último mensaje. */
 #ta-restart {
   display: grid;
+  order: 2;
   place-items: center;
   flex-shrink: 0;
   position: relative;
@@ -242,6 +270,9 @@ button,
 }
 #ta-restart[hidden] {
   display: none;
+}
+#ta-restart[aria-busy] {
+  opacity: 0.5;
 }
 #scroll-container div:has(> .bot-action[data-zsqa="restart"]):not(:has(> .bot-action[data-zsqa="rollback"])),
 #scroll-container .bot-action[data-zsqa="restart"] {

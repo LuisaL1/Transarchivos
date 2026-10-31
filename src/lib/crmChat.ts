@@ -86,33 +86,56 @@ const ZOHO_RESTART = '.bot-action[data-zsqa="restart"]';
 /** Bootstrap Icons: arrow-counterclockwise */
 const RESTART_ICON = '<svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2z"/><path d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466"/></svg>';
 
-/** Pone (o repone, si Zoho redibuja la cabecera) el botón "Reiniciar" y lo
- *  muestra solo cuando Zoho ofrece reiniciar. Al pulsarlo, pulsa el de Zoho:
- *  el funcionamiento es el mismo. */
-function syncRestartButton(doc: Document) {
-  const header = doc.querySelector(".siqcw-header");
-  let btn = doc.getElementById(RESTART_ID) as HTMLButtonElement | null;
-  if (header && btn?.parentElement !== header) {
-    btn?.remove();
-    btn = doc.createElement("button");
-    btn.id = RESTART_ID;
-    btn.type = "button";
-    btn.title = "Reiniciar conversación";
-    btn.setAttribute("aria-label", btn.title);
-    btn.innerHTML = RESTART_ICON;
-    btn.addEventListener("click", () => {
-      const zoho = doc.querySelectorAll<HTMLElement>(ZOHO_RESTART);
-      zoho[zoho.length - 1]?.click();
-    });
-    header.insertBefore(btn, header.querySelector(":scope > .chat-win-close"));
-  }
-  const hidden = !doc.querySelector(ZOHO_RESTART);
-  if (btn && btn.hidden !== hidden) btn.hidden = hidden;
-}
+/** Tiempo máximo para esperar el "Reiniciar" de Zoho si se pulsa mientras el bot responde */
+const RESTART_WAIT_MS = 10_000;
 
+/** Botón "Reiniciar" de la cabecera; pulsa el de Zoho: el funcionamiento es el
+ *  mismo. Zoho solo tiene el suyo mientras el último mensaje es del bot y este
+ *  no está escribiendo; para no parpadear, el botón sigue a la vista desde que
+ *  Zoho lo ofrece hasta que termina la conversación con el bot (un asesor la
+ *  toma o se cierra). Si se pulsa mientras el bot responde, espera al de Zoho. */
 function addRestartButton(doc: Document) {
-  syncRestartButton(doc);
-  new MutationObserver(() => syncRestartButton(doc)).observe(doc.documentElement, { childList: true, subtree: true });
+  let offered = false;
+  let waiting = 0;
+  const lastZohoRestart = () => {
+    const all = doc.querySelectorAll<HTMLElement>(ZOHO_RESTART);
+    return all[all.length - 1];
+  };
+  const setWaiting = (timer: number) => {
+    window.clearTimeout(waiting);
+    waiting = timer;
+    doc.getElementById(RESTART_ID)?.toggleAttribute("aria-busy", timer > 0);
+  };
+  const press = () => {
+    const zoho = lastZohoRestart();
+    if (zoho) zoho.click();
+    else setWaiting(window.setTimeout(() => setWaiting(0), RESTART_WAIT_MS));
+  };
+  const sync = () => {
+    const zoho = lastZohoRestart();
+    if (zoho && waiting) {
+      setWaiting(0);
+      zoho.click();
+    }
+    offered = !!doc.querySelector(".bot-chat") && (offered || !!zoho);
+    // Se repone si Zoho redibuja la cabecera
+    const header = doc.querySelector(".siqcw-header");
+    let btn = doc.getElementById(RESTART_ID) as HTMLButtonElement | null;
+    if (header && btn?.parentElement !== header) {
+      btn?.remove();
+      btn = doc.createElement("button");
+      btn.id = RESTART_ID;
+      btn.type = "button";
+      btn.title = "Reiniciar conversación";
+      btn.setAttribute("aria-label", btn.title);
+      btn.innerHTML = RESTART_ICON;
+      btn.addEventListener("click", press);
+      header.appendChild(btn);
+    }
+    if (btn && btn.hidden === offered) btn.hidden = !offered;
+  };
+  sync();
+  new MutationObserver(sync).observe(doc.documentElement, { childList: true, subtree: true });
 }
 
 /** Aplica el diseño del sitio dentro de la ventana de Zoho (iframe del mismo origen). */

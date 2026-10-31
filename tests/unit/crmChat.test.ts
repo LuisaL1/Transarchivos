@@ -102,32 +102,52 @@ describe("chat de Zoho SalesIQ · diseño del sitio", () => {
     expect(frame.contentDocument!.querySelectorAll("#ta-chat-style")).toHaveLength(1);
   });
 
-  it("pone 'Reiniciar' en la cabecera: se ve solo si Zoho lo ofrece y pulsa el de Zoho", async () => {
+  it("'Reiniciar' de la cabecera: pulsa el de Zoho y no parpadea mientras el bot responde", async () => {
     const frame = document.createElement("iframe");
     frame.id = "siq_chatwindow";
     document.body.appendChild(frame);
     const doc = frame.contentDocument!;
-    doc.body.innerHTML = '<header class="siqcw-header"><div></div><em class="chat-win-close"></em></header><div id="scroll-container"></div>';
+    doc.body.innerHTML = '<div class="bot-chat"><header class="siqcw-header"><div></div><em class="chat-win-close"></em></header><div id="scroll-container"></div></div>';
+    const tick = () => new Promise(r => setTimeout(r));
+    const restart = vi.fn();
+    const offer = () => {
+      const zoho = doc.createElement("div");
+      zoho.className = "bot-action";
+      zoho.dataset.zsqa = "restart";
+      zoho.addEventListener("click", restart);
+      doc.getElementById("scroll-container")!.appendChild(zoho);
+      return zoho;
+    };
     styleChatWindow();
     const btn = doc.getElementById("ta-restart") as HTMLButtonElement;
-    expect(btn.nextElementSibling?.className).toBe("chat-win-close");
     expect(btn.getAttribute("aria-label")).toBe("Reiniciar conversación");
     expect(btn.hidden).toBe(true);
-    // Zoho ofrece reiniciar al pie del último mensaje del bot
-    const zoho = doc.createElement("div");
-    zoho.className = "bot-action";
-    zoho.dataset.zsqa = "restart";
-    const restart = vi.fn();
-    zoho.addEventListener("click", restart);
-    doc.getElementById("scroll-container")!.appendChild(zoho);
-    await new Promise(r => setTimeout(r));
+    // Zoho lo ofrece: se ve y lo pulsa
+    let zoho = offer();
+    await tick();
     expect(btn.hidden).toBe(false);
     btn.click();
     expect(restart).toHaveBeenCalledOnce();
+    // El bot está respondiendo (Zoho lo quita): sigue a la vista y espera al de Zoho
+    zoho.remove();
+    await tick();
+    expect(btn.hidden).toBe(false);
+    btn.click();
+    expect(btn.hasAttribute("aria-busy")).toBe(true);
+    expect(restart).toHaveBeenCalledOnce();
+    zoho = offer();
+    await tick();
+    expect(restart).toHaveBeenCalledTimes(2);
+    expect(btn.hasAttribute("aria-busy")).toBe(false);
     // Si Zoho redibuja la cabecera, el botón vuelve
     doc.querySelector("header")!.replaceWith(Object.assign(doc.createElement("header"), { className: "siqcw-header" }));
-    await new Promise(r => setTimeout(r));
+    await tick();
     expect(doc.querySelector(".siqcw-header #ta-restart")).not.toBeNull();
+    // Un asesor toma la conversación o termina: se esconde
+    zoho.remove();
+    doc.querySelector(".bot-chat")!.className = "";
+    await tick();
+    expect((doc.getElementById("ta-restart") as HTMLButtonElement).hidden).toBe(true);
   });
 
   it("la hoja de estilos usa la marca: índigo, cuadrado amarillo girado, sin degradados y la foto de Joel", () => {
