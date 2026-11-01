@@ -16,7 +16,7 @@ const SVC: Record<string, SvcText> = {
     menu: "Assessment and classification of your archive under the standards of Colombia's General Archive (AGN).",
     card: { title: "Document survey and inventory", tag: "Law 594 of 2000 · AGN guidelines", cta: "Learn more",
       desc: "We identify, register and methodically classify your document holdings to establish their exact volume, state of conservation and physical location, in line with the requirements of the Records Retention Schedules (TRD)." },
-    quote: { title: "Document inventory", desc: "Identification, foliation and systematic registration of your archive. A precise census of volume (linear metres/boxes), physical location and state of conservation." },
+    quote: { title: "Document inventory", desc: "Identification and systematic registration of your archive. A precise census of volume (linear metres/boxes), physical location and state of conservation." },
   },
   "programa-de-gestion-documental": {
     title: "Records management program", tag: "PGD · Law 594",

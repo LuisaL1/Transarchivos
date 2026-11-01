@@ -39,7 +39,7 @@ export const services: { icon: string; title: string; slug: string; tag: string;
     desc: "Identificación, registro y clasificación de los documentos de un archivo para conocer su volumen, estado y ubicación.",
     card: { title: "Levantamiento e inventario documental", tag: "Ley 594 de 2000 · Lineamientos AGN", cta: "Más información",
       desc: "Ejecutamos la identificación, registro y clasificación metodológica de su fondo documental para establecer su volumen exacto, estado de conservación y ubicación física alineado con las exigencias de las Tablas de Retención Documental (TRD)." },
-    quote: { title: "Inventario documental", desc: "Identificación, foliaje y registro sistemático de su archivo. Censo preciso del volumen (metros lineales/cajas), ubicación física y estado de conservación." },
+    quote: { title: "Inventario documental", desc: "Identificación y registro sistemático de su archivo. Censo preciso del volumen (metros lineales/cajas), ubicación física y estado de conservación." },
   },
   {
     icon: "folder2-open", title: "Programa de gestión documental", slug: "programa-de-gestion-documental",
