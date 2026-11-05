@@ -42,9 +42,8 @@ export function HeroPhotos() {
             style={{ objectFit: "cover", opacity: on ? 1 : 0, transition: `opacity ${FADE_MS}ms ease-in-out` }} />
         );
       })}
-      {/* Velo índigo: el texto va encima de la foto. Más cerrado (0,8) para que
-          las fotos apenas se insinúen y el contraste sea mejor (pedido del cliente, oct. 2026). */}
-      <div className="absolute inset-0" style={{ background: "rgba(24,0,173,0.8)" }} />
+      {/* Velo índigo ligero: contraste mínimo para que las fotos se vean con claridad (pedido nov. 2026). */}
+      <div className="absolute inset-0" style={{ background: "rgba(24,0,173,0.3)" }} />
     </div>
   );
 }

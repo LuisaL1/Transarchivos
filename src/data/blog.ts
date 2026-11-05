@@ -4,7 +4,7 @@ import imgInteligencia from "@/assets/images/blog/inteligencia-documental.jpg";
 import imgMido from "@/assets/images/blog/mido.jpg";
 import imgCiclo1 from "@/assets/images/blog/ciclo-vida-1.jpg";
 import imgCiclo2 from "@/assets/images/blog/ciclo-vida-2.jpg";
-import imgEco1 from "@/assets/images/blog/economia-circular-1.jpg";
+import imgEcoDestruccion from "@/assets/images/blog/economia-circular-destruccion.webp";
 import imgEco2 from "@/assets/images/blog/economia-circular-2.jpg";
 import { C } from "@/styles/tokens";
 
@@ -74,7 +74,7 @@ export const blogPosts: Post[] = [
     title: "El ciclo de papel que no termina: ¿puede la gestión documental impulsar la economía circular en Colombia?",
     cat: "Sostenibilidad",
     date: "18 de agosto de 2026",
-    cover: imgEco1,
+    cover: imgEcoDestruccion,
     excerpt:
       "La masa de documentos que genera el sector empresarial suele verse como un residuo inevitable. Bajo un modelo sostenible, los archivos se transforman en un activo para reducir la huella de carbono.",
     blocks: [
