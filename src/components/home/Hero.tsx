@@ -88,7 +88,7 @@ export function HeroQuickStart() {
     <div className="mt-9 max-w-[560px] lg:max-w-[600px] mx-auto lg:mx-0">
     <p className="text-center lg:text-left text-base font-semibold mb-3" style={{ color: "#fff", fontFamily: "Montserrat, sans-serif" }}>{u.quickTitle}</p>
     <div className="text-left rounded-3xl p-2"
-      style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.14)", backdropFilter: "blur(10px)", boxShadow: "0 30px 60px -30px rgba(0,0,0,0.55)" }}>
+      style={{ background: "rgba(24,0,173,0.72)", border: "1px solid rgba(255,255,255,0.18)", backdropFilter: "blur(10px)", boxShadow: "0 30px 60px -30px rgba(0,0,0,0.55)" }}>
       {/* Pestañas: indicador amarillo que se desliza; foco de teclado interno. */}
       <div role="tablist" aria-label={u.quickTitle} className="relative grid grid-cols-4">
         <span aria-hidden="true" className="absolute top-0 bottom-0 rounded-2xl"
