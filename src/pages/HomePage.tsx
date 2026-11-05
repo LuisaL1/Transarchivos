@@ -137,7 +137,7 @@ export function HomePage() {
                 desvanece para que los papeles se diluyan al acercarse al
                 texto. Solo Joel y la caja reciben el clic (abre el chat). */}
             <div className="hidden lg:flex justify-end self-end relative lg:-mr-10 xl:-mr-20">
-              <img src={heroJoelImg} alt="" draggable={false} className="select-none h-[520px] xl:h-[600px] max-w-none pointer-events-none"
+              <img src={heroJoelImg} alt="" draggable={false} className="select-none h-[420px] xl:h-[490px] max-w-none pointer-events-none"
                 style={{ maskImage: "linear-gradient(90deg, transparent 4%, #000 42%)", WebkitMaskImage: "linear-gradient(90deg, transparent 4%, #000 42%)" }} />
               <button type="button" onClick={() => setChatOpen(true)} aria-label={h.hero.joel}
                 className="absolute right-[3%] bottom-0 top-[14%] w-[26%] cursor-pointer rounded-3xl focus:outline-none focus-visible:ring-4 focus-visible:ring-amarillo/70" />
