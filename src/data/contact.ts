@@ -13,6 +13,9 @@ export const PHONES = [
   { label: "324 358 6973", tel: "+573243586973" },
 ];
 
+// Celular de oficina que se lista en la política de privacidad (en lugar del comercial; pedido del cliente, nov. 2026).
+export const OFFICE_PHONE_LABEL = "321 811 5946";
+
 // ─── Formulario de contacto ────────────────────────────────────────────────
 // Las solicitudes (formulario de contacto y cotizador) se envían a la función
 // del sitio /api/contact, que las manda por Brevo al correo de la empresa
