@@ -7,7 +7,7 @@ import clasificando from "@/assets/images/joel/joel-clasificando.webp";
 import microfilmando from "@/assets/images/joel/joel-microfilmando.webp";
 import digitalizando from "@/assets/images/joel/joel-digitalizando.webp";
 import triturando from "@/assets/images/joel/joel-triturando.webp";
-import telefono from "@/assets/images/joel/joel-telefono.webp";
+import telefono from "@/assets/images/joel/joel-llamame.webp";
 import estanteria from "@/assets/images/joel/joel-estanteria.webp";
 import levantandoCajas from "@/assets/images/joel/joel-levantando-cajas.webp";
 import bata from "@/assets/images/joel/joel-bata.webp";
