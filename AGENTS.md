@@ -169,7 +169,7 @@ RecursosTransarchivos/    Documentos fuente del cliente (contexto, no se publica
   y botón azul "Contacto directo" (abre la tarjeta de contacto: Joel, WhatsApp,
   teléfonos y formulario); fuera del pill solo queda la lupa.
 - Hero de inicio: secuencia de fotos de la operación de fondo (`public/hero-fotos/`,
-  fundido lento cada 12 s, sin otro movimiento ni velo de color); el video del centro documental va en la sección del mapa.
+  fundido lento cada 12 s, sin otro movimiento, velo índigo ligero al 22 %); el video del centro documental va en la sección del mapa.
   En computador, dos columnas: a la izquierda el título animado (tres frases que
   se alternan), la frase fija y el selector "¿Qué necesita hoy?"; a la derecha,
   Joel con la caja y el flujo de documentos (`assets/images/joel-flujo.webp`,

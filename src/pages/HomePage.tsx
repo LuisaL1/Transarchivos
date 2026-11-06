@@ -110,7 +110,7 @@ export function HomePage() {
       <SiteHeader onChat={() => setChatOpen(true)} />
 
       {/* ── HERO ────────────────────────────────────────────────────────────
-          Secuencia de fotos de la operación de fondo (sin velo). En
+          Secuencia de fotos de la operación de fondo (con velo índigo ligero). En
           computador, dos columnas: a la izquierda el título animado, la frase
           fija y el selector "¿Qué necesita hoy?"; a la derecha, Joel en grande
           (pedido del cliente, oct. 2026). En celular todo centrado y sin Joel. */}
