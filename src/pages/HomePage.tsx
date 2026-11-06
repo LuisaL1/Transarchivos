@@ -36,11 +36,12 @@ const SOCIAL = [
   { n: "TikTok", ic: "tiktok", u: "https://tiktok.com/@transarchivos" },
   { n: "YouTube", ic: "youtube", u: "https://youtube.com/@Transarchivosltda" },
 ];
-// 3 videos reales del canal elegidos por el cliente (en español).
+// 4 videos reales del canal (los tres elegidos por el cliente y el más reciente; en español).
 const FEATURED_VIDEOS = [
   { id: "a_t-MWf08k8", title: "¡Evite sanciones en auditorías 2026! Cómo preparar su archivo empresarial HOY · #JoelTeLoCuenta" },
   { id: "V39D_X_ip34", title: "Ley 594 de 2000 en Colombia: qué es, cómo se aplica y por qué cumplirla · #JoelTeLoCuenta" },
   { id: "7eK4K0Smbt0", title: "¿Qué es un diagnóstico documental y para qué sirve? · Servicio Transarchivos" },
+  { id: "RZjwswCqP8E", title: "Guía completa: ¿Cómo organizar el archivo desde cero? (Bajo la Ley 594) · Transarchivos" },
 ];
 // Colores de las 4 tarjetas del modelo (dorado, marino, índigo y marino
 // oscuro; pedido del cliente, oct. 2026).
@@ -370,7 +371,7 @@ export function HomePage() {
           <h2 className="text-2xl md:text-3xl font-bold" style={{ fontFamily: "Poppins, sans-serif", color: C.indigo }}>{h.connect.title}</h2>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {FEATURED_VIDEOS.map(v => (
             <div key={v.id} className="rounded-2xl overflow-hidden bg-white" style={{ border: "1px solid #E9E9E7", boxShadow: "0 20px 40px -24px rgba(24,0,173,0.25)" }}>
               <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
