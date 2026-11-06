@@ -29,7 +29,7 @@ export const SOLUTIONS: { id: string; icon: string; tag: string; title: string; 
   },
   {
     id: "digital", icon: "upc-scan", tag: "Transformación digital",
-    title: "Oficina cero papel",
+    title: "Oficina minimizando el flujo de papel físico",
     problem: "",
     desc: "Convertimos su archivo físico en un ecosistema digital inteligente, estructurado y de consulta inmediata. Implementamos procesos de digitalización con validez probatoria (Ley 527 de 1999), tecnología OCR y la definición técnica del ciclo de vida del documento electrónico para eliminar tiempos muertos en la gestión de su información.",
     points: ["Búsqueda inteligente (OCR): localización instantánea de documentos e información clave mediante indexación avanzada", "Resguardo con valor legal: procesos alineados con la Ley 527 de 1999 para garantizar la autenticidad e integridad jurídica"],

@@ -28,7 +28,7 @@ const es = {
     kinds: { Servicio: "Servicio", Artículo: "Artículo", Sección: "Sección", Pregunta: "Pregunta" } as Record<string, string>,
     index: {
       diagnostic: ["Diagnóstico documental", "Empiece por saber qué está pasando con su archivo, antes de mover un solo papel"],
-      solutions: ["Soluciones", "Cumplimiento normativo, respaldo ante desastres, oficina cero papel, espacio y auditorías"],
+      solutions: ["Soluciones", "Cumplimiento normativo, respaldo ante desastres, oficina con menos papel físico, espacio y auditorías"],
       model: ["Cómo trabajamos", "Nuestro modelo de 4 pasos: diagnóstico, solución, protección y expansión"],
       faq: ["Preguntas frecuentes", "Cotización, costos, cobertura, normativa, custodia y más"],
       blog: ["Blog", "Artículos y guías sobre gestión documental, tecnología y sostenibilidad"],
@@ -129,7 +129,7 @@ const en: Ui = {
     kinds: { Servicio: "Service", Artículo: "Article", Sección: "Section", Pregunta: "Question" },
     index: {
       diagnostic: ["Document assessment", "Start by finding out what is going on with your archive, before moving a single sheet of paper"],
-      solutions: ["Solutions", "Regulatory compliance, disaster recovery, paperless office, space and audits"],
+      solutions: ["Solutions", "Regulatory compliance, disaster recovery, office with less physical paper, space and audits"],
       model: ["How we work", "Our 4-step model: assessment, solution, protection and expansion"],
       faq: ["Frequently asked questions", "Quotes, costs, coverage, regulations, storage and more"],
       blog: ["Blog", "Articles and guides on records management, technology and sustainability"],

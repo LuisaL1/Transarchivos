@@ -116,7 +116,7 @@ const SOL: Record<string, { tag: string; title: string; problem: string; desc: s
     cta: "Get a quote for a storage and clean-out project",
   },
   digital: {
-    tag: "Digital transformation", title: "Paperless office",
+    tag: "Digital transformation", title: "Office minimizing the flow of physical paper",
     problem: "",
     desc: "We turn your physical archive into an intelligent, structured digital ecosystem available for instant consultation. We implement scanning processes with evidentiary validity (Law 527 of 1999), OCR technology and the technical definition of the electronic document life cycle to eliminate dead time in managing your information.",
     points: ["Smart search (OCR): instant location of documents and key information through advanced indexing", "Legally valid safekeeping: processes aligned with Law 527 of 1999 to guarantee authenticity and legal integrity"],
