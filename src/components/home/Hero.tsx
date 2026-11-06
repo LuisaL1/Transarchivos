@@ -14,7 +14,7 @@ import { C } from "@/styles/tokens";
 // se precarga en index.html para que aparezca de inmediato. Con "reducir
 // movimiento" se queda en la primera foto. Para cambiar las fotos, reemplace
 // los archivos (01.webp…) y ajuste HERO_PHOTO_COUNT.
-const HERO_PHOTO_COUNT = 16;
+const HERO_PHOTO_COUNT = 15;
 const HERO_PHOTOS = Array.from({ length: HERO_PHOTO_COUNT }, (_, i) => `/hero-fotos/${String(i + 1).padStart(2, "0")}.webp`);
 const SLIDE_MS = 12000;
 const FADE_MS = 2500;
