@@ -43,7 +43,7 @@ export function HeroPhotos() {
         );
       })}
       {/* Velo índigo ligero: contraste mínimo para que las fotos se vean con claridad (pedido nov. 2026). */}
-      <div className="absolute inset-0" style={{ background: "rgba(24,0,173,0.3)" }} />
+      <div className="absolute inset-0" style={{ background: "rgba(24,0,173,0.22)" }} />
     </div>
   );
 }
