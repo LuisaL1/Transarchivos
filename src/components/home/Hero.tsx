@@ -42,8 +42,8 @@ export function HeroPhotos() {
             style={{ objectFit: "cover", opacity: on ? 1 : 0, transition: `opacity ${FADE_MS}ms ease-in-out` }} />
         );
       })}
-      {/* Velo índigo ligero (22 %): las fotos se ven con claridad (pedido nov. 2026). */}
-      <div className="absolute inset-0" style={{ background: "rgba(24,0,173,0.22)" }} />
+      {/* Velo índigo ligero (28 %): las fotos se ven con claridad (pedido nov. 2026). */}
+      <div className="absolute inset-0" style={{ background: "rgba(24,0,173,0.28)" }} />
     </div>
   );
 }
