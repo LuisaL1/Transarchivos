@@ -1,5 +1,5 @@
-import { Suspense, useEffect } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Suspense, useEffect, useLayoutEffect } from "react";
+import { Routes, Route, useLocation, useNavigationType } from "react-router-dom";
 import { trackVisit } from "@/lib/visitor";
 import { AnalyticsTracker, CookieBanner } from "@/components/layout/Analytics";
 import { SeoHead } from "@/components/layout/SeoHead";
@@ -30,10 +30,24 @@ const PAGES: [string, () => React.JSX.Element][] = [
   ["/videos", () => <VideosPage />],
 ];
 
+// Al entrar a otra página se abre desde arriba (de golpe, sin el desplazamiento
+// suave del CSS). No actúa con "atrás/adelante" (cada página restaura su
+// posición) ni con enlaces con ancla (#cotizador), que llevan a su sección.
+function ScrollToTop() {
+  const { pathname, hash } = useLocation();
+  const navType = useNavigationType();
+  useLayoutEffect(() => {
+    if (navType === "POP" || hash) return;
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, [pathname]); // eslint-disable-line react-hooks/exhaustive-deps
+  return null;
+}
+
 export default function App() {
   useEffect(() => { trackVisit(); }, []);
   return (
     <>
+    <ScrollToTop />
     <SeoHead />
     <AnalyticsTracker />
     <Suspense fallback={null}>

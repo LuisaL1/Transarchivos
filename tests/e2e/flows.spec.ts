@@ -323,3 +323,12 @@ test("chat con un asesor por la API: se escribe y se responde dentro de Joel, si
   await chat.getByRole("button", { name: "Volver con Joel" }).click();
   await expect(chat.getByText(/Volvió conmigo/)).toBeVisible();
 });
+
+test("al abrir otra página desde el pie, se muestra desde arriba", async ({ page }) => {
+  await page.goto("/");
+  await page.evaluate(() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "instant" }));
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(1500);
+  await page.locator("footer").getByRole("link", { name: /Da play al conocimiento/ }).click();
+  await expect(page).toHaveURL(/\/videos/);
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeLessThan(5);
+});
