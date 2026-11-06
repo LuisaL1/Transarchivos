@@ -181,10 +181,10 @@ body.menu-open [data-chat-launcher] { display: none !important; }
 @keyframes marquee { to { transform: translateX(-100%); } }
 .marquee-track { animation: marquee 360s linear infinite; }
 .marquee-reverse { animation-direction: reverse; }
-.marquee:hover .marquee-track { animation-play-state: paused; }
-/* Logos en gris nítido; al pasar el mouse recuperan su color. */
-.client-logo { filter: grayscale(1); opacity: 0.8; transition: filter 0.3s ease, opacity 0.3s ease; }
-.client-logo:hover { filter: none; opacity: 1; }
+.marquee:has(.client-logo:hover) .marquee-track { animation-play-state: paused; }
+/* Logos siempre a color; al pasar el mouse sobre uno crece un poco y la fila se detiene. */
+.client-logo { transition: transform 0.3s ease; }
+.client-logo:hover { transform: scale(1.15); }
 /* Bordes suaves de las filas (sobre blanco, sin franjas de color) */
 .marquee {
   mask-image: linear-gradient(90deg, transparent 0%, #000 8%, #000 92%, transparent 100%);

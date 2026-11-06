@@ -3,18 +3,18 @@ import { useUi } from "@/i18n/ui";
 import { C } from "@/styles/tokens";
 
 // Carrusel de clientes históricos (mismo recurso de Transpack): dos filas que
-// se desplazan en sentidos opuestos, logos en escala de grises que recuperan su
-// color al pasar el mouse, bordes desvanecidos y pausa al pasar el mouse.
+// se desplazan en sentidos opuestos, logos siempre a color; al pasar el mouse
+// sobre uno, la fila se detiene y ese logo crece un poco. Bordes desvanecidos.
 // Con "reducir movimiento" las filas quedan quietas y se desplazan a mano.
 const LOGOS = import.meta.glob<string>("@/assets/images/clientes/*.webp", { eager: true, import: "default" });
 const src = (file: string) => LOGOS[`/src/assets/images/clientes/${file}.webp`];
 
-// Caja de cada logo: iguala el peso visual
+// Caja de cada logo (20 % más grande, nov. 2026): iguala el peso visual
 // (los logos anchos se ven más bajos) sin salirse de la ficha.
 function logoBox(ratio: number) {
-  let h = Math.min(52, Math.max(26, Math.sqrt(4200 / ratio)));
+  let h = Math.min(62, Math.max(31, Math.sqrt(6050 / ratio)));
   let w = h * ratio;
-  if (w > 136) { w = 136; h = w / ratio; }
+  if (w > 163) { w = 163; h = w / ratio; }
   return { w: Math.round(w), h: Math.round(h) };
 }
 
@@ -39,8 +39,7 @@ export function ClientsMarquee({ contained = false }: { contained?: boolean }) {
         {u.title}
       </p>
       {/* Franja blanca (única sección clara del sitio): los logos van
-          directamente sobre el fondo, en gris, y recuperan su color al pasar
-          el mouse. */}
+          directamente sobre el fondo, siempre a color. */}
       <div className="space-y-6">{rows(u)}</div>
     </section>
   );
@@ -52,7 +51,7 @@ function rows(u: { row: (n: number) => string }) {
         {ROWS.map((row, r) => (
           // Región desplazable (con "reducir movimiento"): debe poder enfocarse con teclado (WCAG).
           // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-          <div key={r} className="marquee flex overflow-hidden py-2" dir="ltr" role="region" tabIndex={0} aria-label={u.row(r + 1)}>
+          <div key={r} className="marquee flex overflow-hidden py-4" dir="ltr" role="region" tabIndex={0} aria-label={u.row(r + 1)}>
             {[0, 1].map(k => (
               <div key={k} aria-hidden={k === 1} className={`marquee-track flex shrink-0 items-center gap-12 pr-12 md:gap-14 md:pr-14 ${r ? "marquee-reverse" : ""}`}
                 style={{ animationDuration: `${row.length * 3.2}s` }}>
