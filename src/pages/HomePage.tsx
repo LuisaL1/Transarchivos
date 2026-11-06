@@ -110,7 +110,7 @@ export function HomePage() {
       <SiteHeader onChat={() => setChatOpen(true)} />
 
       {/* ── HERO ────────────────────────────────────────────────────────────
-          Secuencia de fotos de la operación de fondo (con velo índigo). En
+          Secuencia de fotos de la operación de fondo (sin velo). En
           computador, dos columnas: a la izquierda el título animado, la frase
           fija y el selector "¿Qué necesita hoy?"; a la derecha, Joel en grande
           (pedido del cliente, oct. 2026). En celular todo centrado y sin Joel. */}
@@ -122,10 +122,10 @@ export function HomePage() {
         <div className="relative min-h-[70svh] md:min-h-[88vh] flex items-center" style={{ zIndex: 3 }}>
           <div className="w-full max-w-6xl mx-auto px-6 md:px-8 pt-32 pb-14 md:pt-36 md:pb-24 grid lg:grid-cols-[minmax(0,640px)_minmax(0,1fr)] gap-6 xl:gap-10 items-center">
             <div className="text-center lg:text-left relative z-10 lg:-ml-3 xl:-ml-14">
-            <h1 className="text-[32px] md:text-[42px] xl:text-[48px] font-bold tracking-tight mb-5" style={{ fontFamily: "Poppins, sans-serif", color: C.indigo, lineHeight: 1.18, textShadow: "0 0 24px rgba(255,255,255,0.55)" }}>
+            <h1 className="text-[32px] md:text-[42px] xl:text-[48px] font-bold tracking-tight mb-5" style={{ fontFamily: "Poppins, sans-serif", color: "#fff", lineHeight: 1.18, textShadow: "0 2px 22px rgba(0,0,0,0.35)" }}>
               <HeroRotatingTitle />
             </h1>
-            <p className="text-base lg:text-lg max-w-xl mx-auto lg:mx-0" style={{ color: C.indigo, lineHeight: 1.6, textShadow: "0 0 16px rgba(255,255,255,0.55)" }}>
+            <p className="text-base lg:text-lg max-w-xl mx-auto lg:mx-0" style={{ color: "rgba(255,255,255,0.9)", lineHeight: 1.6, textShadow: "0 1px 12px rgba(0,0,0,0.35)" }}>
               {h.hero.text}
             </p>
             <div className="max-w-[600px] mx-auto lg:mx-0">
