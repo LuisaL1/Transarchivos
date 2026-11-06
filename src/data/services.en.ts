@@ -109,7 +109,7 @@ const SOL: Record<string, { tag: string; title: string; problem: string; desc: s
   },
   espacio: {
     tag: "Costs and space", title: "Free up space at your premises",
-    problem: "Recover key work areas and eliminate storage costs.",
+    problem: "Recover key work areas.",
     desc: "We transfer the custody of your document holdings to our secure logistics centre and carry out the certified disposal of files that have completed their life cycle.",
     points: ["Exact measurement in linear and cubic metres to eliminate idle capacity", "Legally valid destruction record for the definitive write-off of expired files"],
     labels: ["Storage and specialised infrastructure", "Secure, traceable destruction of records"],
@@ -117,7 +117,7 @@ const SOL: Record<string, { tag: string; title: string; problem: string; desc: s
   },
   digital: {
     tag: "Digital transformation", title: "Paperless office",
-    problem: "Speed up decision-making by eliminating paper flows and fragmented archives.",
+    problem: "",
     desc: "We turn your physical archive into an intelligent, structured digital ecosystem available for instant consultation. We implement scanning processes with evidentiary validity (Law 527 of 1999), OCR technology and the technical definition of the electronic document life cycle to eliminate dead time in managing your information.",
     points: ["Smart search (OCR): instant location of documents and key information through advanced indexing", "Legally valid safekeeping: processes aligned with Law 527 of 1999 to guarantee authenticity and legal integrity"],
     labels: ["Document scanning (legal validity · OCR)", "Records Management Program (PGD)", "Microfilm scanning and conversion (16 / 35 mm)"],
@@ -125,7 +125,7 @@ const SOL: Record<string, { tag: string; title: string; problem: string; desc: s
   },
   operacion: {
     tag: "Document operations", title: "Archive administration and management at your premises",
-    problem: "Remove the bottlenecks in the physical handling of files inside your company.",
+    problem: "",
     desc: "We deploy a trained technical team at your own premises to take over the administration, organisation and processing of your document flow. Transarchivos handles hiring, ongoing training and methodological supervision of the staff, guaranteeing operational continuity and compliance standards.",
     points: ["On-site specialisation: archival technicians embedded in your daily processes", "Methodology: we adapt to the guidelines set by the client for document organisation, applying archival standards", "Continuity without labour risk: relief for Human Resources, Purchasing and General Services in managing specialised staff"],
     labels: ["On-site records management (specialised technical staff)"],

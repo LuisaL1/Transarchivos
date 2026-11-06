@@ -41,7 +41,7 @@ export function SolucionesSection() {
                 <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full" style={{ background: "#FFF6D6", color: "#8a6d00", fontFamily: "Montserrat, sans-serif" }}>{sol.tag}</span>
               </div>
               <h3 className="text-lg font-bold mb-2" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif", lineHeight: 1.25 }}>{sol.title}</h3>
-              <p className="text-[13px] font-semibold mb-3 pl-3" style={{ color: C.indigo, borderLeft: "3px solid #FFDE59" }}>{sol.problem}</p>
+              {sol.problem && <p className="text-[13px] font-semibold mb-3 pl-3" style={{ color: C.indigo, borderLeft: "3px solid #FFDE59" }}>{sol.problem}</p>}
               <p className="text-sm mb-4" style={{ color: C.muted, lineHeight: 1.6 }}>{sol.desc}</p>
               <ul className="space-y-1.5 mb-5">
                 {sol.points.map(pt => (
