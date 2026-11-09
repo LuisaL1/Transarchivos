@@ -13,7 +13,7 @@ const es = {
   },
   menus: {
     services: { kicker: "Diagnóstico documental", title: "¿No sabe por dónde empezar?", text: "Le mostramos el diagnóstico técnico y normativo de su información antes de mover un solo folio. ¿Dudas inmediatas? Pregúntele a Joel, nuestro consultor virtual disponible 24/7.", cta: "Agendar diagnóstico inicial", foot: "9 servicios bajo la Ley 594 de 2000 y la normativa del AGN", all: "Ver todos" },
-    solutions: { kicker: "Soluciones", title: "Parta de su necesidad, no del servicio", text: "Combinamos nuestros servicios según el reto de su empresa: cumplimiento legal, espacio, oficina cero papel o gestión del archivo en su sede.", cta: "Ver todas las soluciones" },
+    solutions: { kicker: "Soluciones", title: "Parta de su necesidad, no del servicio", text: "Organizamos su archivo y recuperamos espacio: cumplimiento legal y custodia especializada.", cta: "Ver todas las soluciones" },
     about: { kicker: "Desde 1983", title: "Pioneros de la gestión documental en Colombia", text: "Más de 40 años ayudando a las empresas a organizar, proteger y transformar su información.", cta: "Conozca nuestra historia" },
     blog: { kicker: "Blog y novedades", title: "Conocimiento especializado que protege la memoria de su empresa", text: "Guías sobre gestión documental, normativa, tecnología y sostenibilidad.", cta: "Ver todos los artículos", videos: "Da play al conocimiento: todos los videos del canal" },
   },
@@ -28,7 +28,7 @@ const es = {
     kinds: { Servicio: "Servicio", Artículo: "Artículo", Sección: "Sección", Pregunta: "Pregunta" } as Record<string, string>,
     index: {
       diagnostic: ["Diagnóstico documental", "Empiece por saber qué está pasando con su archivo, antes de mover un solo papel"],
-      solutions: ["Soluciones", "Cumplimiento normativo, respaldo ante desastres, oficina cero papel, espacio y auditorías"],
+      solutions: ["Soluciones", "Cumplimiento normativo, respaldo ante desastres, oficina con menos papel físico, espacio y auditorías"],
       model: ["Cómo trabajamos", "Nuestro modelo de 4 pasos: diagnóstico, solución, protección y expansión"],
       faq: ["Preguntas frecuentes", "Cotización, costos, cobertura, normativa, custodia y más"],
       blog: ["Blog", "Artículos y guías sobre gestión documental, tecnología y sostenibilidad"],
@@ -51,8 +51,8 @@ const es = {
   },
   cta: { quote: "Solicitar cotización", whatsapp: "Escribir por WhatsApp", text: "Arme su solicitud en minutos o hable con un asesor. Sin compromiso." },
   solutions: {
-    kicker: "Soluciones", titleA: "Soluciones de acuerdo con la ", titleMark: "necesidad de su empresa",
-    text: "Combinamos infraestructura, tecnología OCR e instrumentos archivísticos para resolver problemáticas complejas de espacio, cumplimiento, digitalización y seguridad.",
+    kicker: "Soluciones", titleA: "Soluciones ", titleMark: "según la necesidad de su empresa",
+    text: "",
     integrated: "Servicios integrados",
   },
   faq: {
@@ -67,8 +67,8 @@ const es = {
     subject: "Nueva suscripción al blog", origin: "Sección Blog del sitio web",
   },
   quote: {
-    kicker: "Cotización a la medida", title: "Defina su necesidad y prepare su solicitud comercial",
-    text: "4 pasos simples. Visualice la composición técnica de su requerimiento en tiempo real antes de conectarse con nuestro equipo comercial.",
+    kicker: "Cotización a la medida según su necesidad", title: "",
+    text: "",
     steps: ["Servicio", "Detalles", "Contacto", "Resumen"],
     diagnostic: { title: "Diagnóstico documental", desc: "Identificamos la condición actual del archivo y su volumen. Diseñamos la ruta técnica adecuada antes de iniciar cualquier intervención." },
     s0Title: "¿Qué servicio necesita?", s0Text: "¿No tiene certeza sobre el alcance técnico? Inicie con un Diagnóstico Documental para evaluar el estado actual de su archivo.", next: "Continuar", back: "Atrás",
@@ -114,7 +114,7 @@ const en: Ui = {
   },
   menus: {
     services: { kicker: "Document assessment", title: "Not sure where to start?", text: "We show you the technical and regulatory assessment of your information before moving a single folio. Immediate questions? Ask Joel, our virtual consultant available 24/7.", cta: "Schedule an initial assessment", foot: "9 services under Law 594 of 2000 and the AGN regulations", all: "See all" },
-    solutions: { kicker: "Solutions", title: "Start from your need, not from the service", text: "We combine our services according to your company's challenge: legal compliance, space, paperless office or archive management at your premises.", cta: "See all solutions" },
+    solutions: { kicker: "Solutions", title: "Start from your need, not from the service", text: "We organise your archive and free up space: legal compliance and specialised storage.", cta: "See all solutions" },
     about: { kicker: "Since 1983", title: "Pioneers of records management in Colombia", text: "More than 40 years helping companies organise, protect and transform their information.", cta: "Discover our history" },
     blog: { kicker: "Blog and news", title: "Specialised knowledge that protects your company's memory", text: "Guides on records management, regulations, technology and sustainability.", cta: "See all articles", videos: "Press play on knowledge: all the channel's videos" },
   },
@@ -129,7 +129,7 @@ const en: Ui = {
     kinds: { Servicio: "Service", Artículo: "Article", Sección: "Section", Pregunta: "Question" },
     index: {
       diagnostic: ["Document assessment", "Start by finding out what is going on with your archive, before moving a single sheet of paper"],
-      solutions: ["Solutions", "Regulatory compliance, disaster recovery, paperless office, space and audits"],
+      solutions: ["Solutions", "Regulatory compliance, disaster recovery, office with less physical paper, space and audits"],
       model: ["How we work", "Our 4-step model: assessment, solution, protection and expansion"],
       faq: ["Frequently asked questions", "Quotes, costs, coverage, regulations, storage and more"],
       blog: ["Blog", "Articles and guides on records management, technology and sustainability"],
@@ -152,8 +152,8 @@ const en: Ui = {
   },
   cta: { quote: "Request a quote", whatsapp: "Message us on WhatsApp", text: "Build your request in minutes or talk to an advisor. No commitment." },
   solutions: {
-    kicker: "Solutions", titleA: "Solutions built around ", titleMark: "your company's needs",
-    text: "We combine infrastructure, OCR technology and archival instruments to solve complex problems of space, compliance, digitisation and security.",
+    kicker: "Solutions", titleA: "Solutions ", titleMark: "according to your company's needs",
+    text: "",
     integrated: "Integrated services",
   },
   faq: {
@@ -168,8 +168,8 @@ const en: Ui = {
     subject: "Nueva suscripción al blog (EN)", origin: "Sección Blog del sitio web (inglés)",
   },
   quote: {
-    kicker: "Tailored quote", title: "Define your need and prepare your commercial request",
-    text: "4 simple steps. See the technical composition of your requirement in real time before connecting with our sales team.",
+    kicker: "Quote tailored to your needs", title: "",
+    text: "",
     steps: ["Service", "Details", "Contact", "Summary"],
     diagnostic: { title: "Document assessment", desc: "We identify the current condition of the archive and its volume. We design the right technical route before starting any intervention." },
     s0Title: "Which service do you need?", s0Text: "Not sure about the technical scope? Start with a Document Assessment to evaluate the current state of your archive.", next: "Continue", back: "Back",

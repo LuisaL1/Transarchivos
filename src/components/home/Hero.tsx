@@ -14,7 +14,7 @@ import { C } from "@/styles/tokens";
 // se precarga en index.html para que aparezca de inmediato. Con "reducir
 // movimiento" se queda en la primera foto. Para cambiar las fotos, reemplace
 // los archivos (01.webp…) y ajuste HERO_PHOTO_COUNT.
-const HERO_PHOTO_COUNT = 16;
+const HERO_PHOTO_COUNT = 15;
 const HERO_PHOTOS = Array.from({ length: HERO_PHOTO_COUNT }, (_, i) => `/hero-fotos/${String(i + 1).padStart(2, "0")}.webp`);
 const SLIDE_MS = 12000;
 const FADE_MS = 2500;
@@ -42,9 +42,8 @@ export function HeroPhotos() {
             style={{ objectFit: "cover", opacity: on ? 1 : 0, transition: `opacity ${FADE_MS}ms ease-in-out` }} />
         );
       })}
-      {/* Velo índigo: el texto va encima de la foto. Más cerrado (0,8) para que
-          las fotos apenas se insinúen y el contraste sea mejor (pedido del cliente, oct. 2026). */}
-      <div className="absolute inset-0" style={{ background: "rgba(24,0,173,0.8)" }} />
+      {/* Velo índigo ligero (28 %): las fotos se ven con claridad (pedido nov. 2026). */}
+      <div className="absolute inset-0" style={{ background: "rgba(24,0,173,0.28)" }} />
     </div>
   );
 }
@@ -89,7 +88,7 @@ export function HeroQuickStart() {
     <div className="mt-9 max-w-[560px] lg:max-w-[600px] mx-auto lg:mx-0">
     <p className="text-center lg:text-left text-base font-semibold mb-3" style={{ color: "#fff", fontFamily: "Montserrat, sans-serif" }}>{u.quickTitle}</p>
     <div className="text-left rounded-3xl p-2"
-      style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.14)", backdropFilter: "blur(10px)", boxShadow: "0 30px 60px -30px rgba(0,0,0,0.55)" }}>
+      style={{ background: "rgba(24,0,173,0.72)", border: "1px solid rgba(255,255,255,0.18)", backdropFilter: "blur(10px)", boxShadow: "0 30px 60px -30px rgba(0,0,0,0.55)" }}>
       {/* Pestañas: indicador amarillo que se desliza; foco de teclado interno. */}
       <div role="tablist" aria-label={u.quickTitle} className="relative grid grid-cols-4">
         <span aria-hidden="true" className="absolute top-0 bottom-0 rounded-2xl"

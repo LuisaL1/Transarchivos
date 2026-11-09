@@ -20,7 +20,7 @@ export const SOLUTIONS: { id: string; icon: string; tag: string; title: string; 
   {
     id: "espacio", icon: "box-seam", tag: "Costos y espacio",
     title: "Libere espacio en sus instalaciones",
-    problem: "Recupere áreas de trabajo clave y elimine los gastos de almacenamiento.",
+    problem: "Recupere áreas de trabajo clave.",
     desc: "Transferimos la custodia de su fondo documental a nuestro centro logístico de seguridad y ejecutamos la depuración certificada de los expedientes que ya cumplieron su ciclo de vida.",
     points: ["Medición exacta en metros lineales y cúbicos para eliminar la capacidad ociosa", "Acta de destrucción con validez legal para dar de baja definitiva expedientes caducos"],
     slugs: ["custodia-de-archivos", "destruccion-de-documentos"],
@@ -29,8 +29,8 @@ export const SOLUTIONS: { id: string; icon: string; tag: string; title: string; 
   },
   {
     id: "digital", icon: "upc-scan", tag: "Transformación digital",
-    title: "Oficina cero papel",
-    problem: "Acelere la toma de decisiones eliminando el flujo de papel físico y la fragmentación de archivos.",
+    title: "Oficina minimizando el flujo de papel físico",
+    problem: "",
     desc: "Convertimos su archivo físico en un ecosistema digital inteligente, estructurado y de consulta inmediata. Implementamos procesos de digitalización con validez probatoria (Ley 527 de 1999), tecnología OCR y la definición técnica del ciclo de vida del documento electrónico para eliminar tiempos muertos en la gestión de su información.",
     points: ["Búsqueda inteligente (OCR): localización instantánea de documentos e información clave mediante indexación avanzada", "Resguardo con valor legal: procesos alineados con la Ley 527 de 1999 para garantizar la autenticidad e integridad jurídica"],
     slugs: ["digitalizacion-de-documentos", "programa-de-gestion-documental", "microfilmacion-de-archivos"],
@@ -40,7 +40,7 @@ export const SOLUTIONS: { id: string; icon: string; tag: string; title: string; 
   {
     id: "operacion", icon: "people", tag: "Operación documental",
     title: "Administración y gestión del archivo en sus instalaciones",
-    problem: "Elimine los cuellos de botella en la administración física de expedientes dentro de su empresa.",
+    problem: "",
     desc: "Desplegamos un equipo técnico capacitado en sus propias instalaciones para asumir la administración, organización y trámite del flujo documental. Transarchivos asume la contratación, capacitación continua y supervisión metodológica del personal, garantizando continuidad operativa y estándares de cumplimiento.",
     points: ["Especialización in situ: técnicos en archivística integrados directamente a sus procesos diarios", "Metodología: nos adaptamos a los lineamientos dispuestos por el cliente para la organización documental aplicando las normas archivísticas", "Continuidad sin riesgo laboral: alivio de carga para Gestión Humana, Compras y Servicios Generales en la administración de personal especializado"],
     slugs: ["servicio-inhouse"],

@@ -55,7 +55,7 @@ const es = {
       { t: "Responsabilidad", ic: "patch-check", s: "Hacer lo correcto, incluso cuando nadie nos observa.", x: "Somos conscientes de que cada decisión tiene consecuencias. Por eso, actuamos con honestidad, asumimos nuestros deberes y respondemos por nuestras acciones, procurando que cada proceso refleje nuestro compromiso con el bien común." },
       { t: "Sensibilidad humana", ic: "heart", s: "Tratar a los demás con la dignidad que merecen.", x: "Reconocemos el valor de cada persona y procuramos comprender sus necesidades antes de actuar. Construimos relaciones basadas en el respeto, la empatía y la justicia, porque la calidad de nuestro trabajo también se refleja en la manera en que tratamos a los demás." },
     ],
-    clientsKicker: "Nuestros clientes", clientsA: "Experiencia en ", clientsMark: "múltiples sectores", clientsText: "Atendemos multinacionales, pymes y microempresas, y también compañías en liquidación o reestructuración.",
+    clientsKicker: "Nuestros clientes", clientsA: "Experiencia en ", clientsMark: "múltiples sectores", clientsText: "Atendemos multinacionales, pymes y microempresas, también compañías en liquidación o reestructuración.",
     sectors: [
       { ic: "bank", l: "Financiero y aseguradoras" }, { ic: "heart-pulse", l: "Salud" }, { ic: "eyedropper", l: "Laboratorios" }, { ic: "fuel-pump", l: "Petróleo" },
       { ic: "minecart-loaded", l: "Minería" }, { ic: "rulers", l: "Ingeniería e infraestructura" }, { ic: "bricks", l: "Construcción" }, { ic: "airplane", l: "Líneas aéreas" },

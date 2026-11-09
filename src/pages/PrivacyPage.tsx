@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { openChat } from "@/lib/chatWidget";
 import { HEADER_SPACE, SiteHeader } from "@/components/layout/SiteHeader";
 import { Bi } from "@/components/ui/Icons";
-import { PHONES, WHATSAPP_LABEL } from "@/data/contact";
+import { OFFICE_PHONE_LABEL, PHONES, WHATSAPP_LABEL } from "@/data/contact";
 import { useLang } from "@/i18n";
 import { usePagesUi } from "@/i18n/pages";
 import { BRAND, LEGAL } from "@/seo/site";
@@ -45,7 +45,7 @@ export function PrivacyPage() {
           <li><strong>{u.legalName}:</strong> {BRAND.legalName}{LEGAL.nit ? ` · NIT ${LEGAL.nit}` : ""}</li>
           <li><strong>{u.address}:</strong> {addr}</li>
           <li><strong>{u.email}:</strong> {LEGAL.privacyEmail} · <a href="#contacto" style={link}>{u.form}</a></li>
-          <li><strong>{u.phones}:</strong> {PHONES.map(p => p.label).join(" · ")} · WhatsApp {WHATSAPP_LABEL}</li>
+          <li><strong>{u.phones}:</strong> {PHONES[0].label} · {OFFICE_PHONE_LABEL} · WhatsApp {WHATSAPP_LABEL}</li>
         </ul>
 
         {h2(u.h2)}

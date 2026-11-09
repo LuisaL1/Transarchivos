@@ -191,3 +191,12 @@ test("el botón de Joel abre y cierra la ventana del widget de Zoho", async ({ p
   await expect.poll(async () => (await zohoLog(page))?.calls ?? []).toContain("window:hide");
   await expect(page.locator("html")).not.toHaveClass(/ta-zoho-open/);
 });
+
+test("al abrir otra página desde el pie, se muestra desde arriba", async ({ page }) => {
+  await page.goto("/");
+  await page.evaluate(() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "instant" }));
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(1500);
+  await page.locator("footer").getByRole("link", { name: /Da play al conocimiento/ }).click();
+  await expect(page).toHaveURL(/\/videos/);
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeLessThan(5);
+});

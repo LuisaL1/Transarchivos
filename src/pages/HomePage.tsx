@@ -36,11 +36,12 @@ const SOCIAL = [
   { n: "TikTok", ic: "tiktok", u: "https://tiktok.com/@transarchivos" },
   { n: "YouTube", ic: "youtube", u: "https://youtube.com/@Transarchivosltda" },
 ];
-// 3 videos reales del canal elegidos por el cliente (en español).
+// 4 videos reales del canal (los tres elegidos por el cliente y el más reciente; en español).
 const FEATURED_VIDEOS = [
   { id: "a_t-MWf08k8", title: "¡Evite sanciones en auditorías 2026! Cómo preparar su archivo empresarial HOY · #JoelTeLoCuenta" },
   { id: "V39D_X_ip34", title: "Ley 594 de 2000 en Colombia: qué es, cómo se aplica y por qué cumplirla · #JoelTeLoCuenta" },
   { id: "7eK4K0Smbt0", title: "¿Qué es un diagnóstico documental y para qué sirve? · Servicio Transarchivos" },
+  { id: "RZjwswCqP8E", title: "Guía completa: ¿Cómo organizar el archivo desde cero? (Bajo la Ley 594) · Transarchivos" },
 ];
 // Colores de las 4 tarjetas del modelo (dorado, marino, índigo y marino
 // oscuro; pedido del cliente, oct. 2026).
@@ -106,7 +107,7 @@ export function HomePage() {
       <SiteHeader onChat={openChat} />
 
       {/* ── HERO ────────────────────────────────────────────────────────────
-          Secuencia de fotos de la operación de fondo (con velo índigo). En
+          Secuencia de fotos de la operación de fondo (con velo índigo ligero). En
           computador, dos columnas: a la izquierda el título animado, la frase
           fija y el selector "¿Qué necesita hoy?"; a la derecha, Joel en grande
           (pedido del cliente, oct. 2026). En celular todo centrado y sin Joel. */}
@@ -134,7 +135,7 @@ export function HomePage() {
                 desvanece para que los papeles se diluyan al acercarse al
                 texto. Solo Joel y la caja reciben el clic (abre el chat). */}
             <div className="hidden lg:flex justify-end self-end relative lg:-mr-10 xl:-mr-20">
-              <img src={heroJoelImg} alt="" draggable={false} className="select-none h-[520px] xl:h-[600px] max-w-none pointer-events-none"
+              <img src={heroJoelImg} alt="" draggable={false} className="select-none h-[420px] xl:h-[490px] max-w-none pointer-events-none"
                 style={{ maskImage: "linear-gradient(90deg, transparent 4%, #000 42%)", WebkitMaskImage: "linear-gradient(90deg, transparent 4%, #000 42%)" }} />
               <button type="button" onClick={openChat} aria-label={h.hero.joel}
                 className="absolute right-[3%] bottom-0 top-[14%] w-[26%] cursor-pointer rounded-3xl focus:outline-none focus-visible:ring-4 focus-visible:ring-amarillo/70" />
@@ -367,7 +368,7 @@ export function HomePage() {
           <h2 className="text-2xl md:text-3xl font-bold" style={{ fontFamily: "Poppins, sans-serif", color: C.indigo }}>{h.connect.title}</h2>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {FEATURED_VIDEOS.map(v => (
             <div key={v.id} className="rounded-2xl overflow-hidden bg-white" style={{ border: "1px solid #E9E9E7", boxShadow: "0 20px 40px -24px rgba(24,0,173,0.25)" }}>
               <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
