@@ -59,13 +59,10 @@ El reporte HTML queda en `playwright-report/` (`pnpm exec playwright show-report
   - **sin degradados de color**.
 - `components.test.tsx`: el selector "¿Qué necesita hoy?" cambia de servicio
   y apunta a la cotización correcta.
-- Chat con un asesor (nunca se conecta con Zoho): `zohoBridge.test.ts` (puente
-  sobre una ventana de Zoho falsa: envíos confirmados uno a uno, reintentos,
-  omitir preguntas de datos), `crmChat.test.ts` (carga una sola vez, en español,
-  sin el botón de Zoho; diseño del sitio), `advisor-api.test.ts`
-  (`api/advisor.mjs` con `fetch` simulado: pases firmados, 403/422/502),
-  `chatQuote.test.ts` (celular, resumen y mensaje al equipo) y en
-  `joel.test.ts` las reglas «asesor» y «contacto».
+- Chat (nunca se conecta con Zoho): `crmChat.test.ts` (widget de Zoho: carga
+  una sola vez, en español y con su botón; el iframe crece al abrir la ventana;
+  diseño del sitio) y `advisor-api.test.ts` (`api/advisor.mjs` con `fetch`
+  simulado: pases firmados, 403/422/502).
 
 ### 3. Seguridad
 - **Estática** (`tests/security/static.test.ts`):
@@ -111,11 +108,9 @@ El reporte HTML queda en `playwright-report/` (`pnpm exec playwright show-report
   - pestañas del hero;
   - menú Servicios → página del servicio;
   - buscador sin tildes;
-  - chat de Joel con texto libre;
-  - chat con un asesor (Zoho SalesIQ simulado con `mockZoho`, nunca el real): el
-    puente dentro de Joel, pedirlo por escrito, la cotización enviada al equipo
-    (una sola vez), la falla (WhatsApp y formulario) y el modo API con
-    `/api/advisor` simulado;
+  - chat: widget de Zoho SalesIQ (simulado con `mockZoho`, nunca el real; las
+    demás pruebas reciben un script vacío): se carga al entrar y «Chatee con
+    Joel» abre su ventana;
   - índice del artículo y preguntas frecuentes.
 
 ### 5. Accesibilidad (`tests/e2e/a11y.spec.ts`)

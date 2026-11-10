@@ -1,6 +1,11 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
+// El widget de Zoho SalesIQ se carga en cada página: en las pruebas nunca el
+// real: un script vacío (las que lo necesitan registran después su Zoho
+// simulado, que tiene prioridad).
+test.beforeEach(({ page }) => page.route("https://salesiq.zohopublic.com/**", r => r.fulfill({ contentType: "text/javascript", body: "" })));
+
 // Accesibilidad automática (WCAG 2.1 A/AA) con axe.
 // - Bloquean: todos los problemas críticos o graves, excepto contraste.
 // - Contraste de color: hoy se reporta como pendiente (depende de colores del

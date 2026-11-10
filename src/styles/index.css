@@ -202,19 +202,22 @@ body.menu-open [data-chat-launcher] { display: none !important; }
 @keyframes mapFlow { to { stroke-dashoffset: -48; } }
 @media (prefers-reduced-motion: reduce) { .map-flow { animation: none; } }
 
-/* ─── Chat con un asesor (Zoho SalesIQ) ──────────────────────────────────────
+/* ─── Chat (widget de Zoho SalesIQ) ─────────────────────────────────────────
    Zoho vive en una página aislada (public/chat-asesor.html) dentro de este
-   iframe. Escondido fuera de la pantalla mientras trabaja como puente; visible
-   en la esquina solo cuando se abre su ventana (clase ta-zoho-open). El marco
-   de la ventana de Zoho está en src/styles/zoho-host.css. */
+   iframe. Con la ventana cerrada, el iframe espera fuera de la pantalla (el
+   chat se abre con el botón de Joel, src/components/chat/ChatLauncher.tsx).
+   Abierta (clase ta-zoho-open), el iframe ES la ventana del chat de Joel:
+   misma posición (sobre el botón), tamaño, esquinas de 24 px, borde y sombra;
+   en celular, pantalla completa. Adentro, la ventana de Zoho llena el iframe
+   (src/styles/zoho-host.css) y lleva el diseño de Joel (src/styles/zoho-chat.css). */
 #ta-zoho-frame {
   position: fixed;
   left: -10000px;
   bottom: 0;
-  width: 440px;
-  height: min(800px, 100vh);
+  width: 400px;
+  height: min(620px, calc(100vh - 130px));
   border: 0;
-  background: transparent;
+  background: #fff;
   color-scheme: normal;
   opacity: 0;
   pointer-events: none;
@@ -222,14 +225,21 @@ body.menu-open [data-chat-launcher] { display: none !important; }
 }
 html.ta-zoho-open #ta-zoho-frame {
   left: auto;
-  right: 0;
+  right: 24px;
+  bottom: 92px;
+  border: 1px solid rgba(24, 0, 173, 0.1);
+  border-radius: 24px;
+  box-shadow: 0 40px 80px -30px rgba(24, 0, 173, 0.5);
   opacity: 1;
   pointer-events: auto;
+  animation: fadeInUp 0.3s ease both;
 }
 @media (max-width: 639px) {
   html.ta-zoho-open #ta-zoho-frame {
     inset: 0;
     width: 100%;
-    height: 100%;
+    height: 100dvh;
+    border: 0;
+    border-radius: 0;
   }
 }

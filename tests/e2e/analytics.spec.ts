@@ -1,5 +1,10 @@
 import { expect, test } from "@playwright/test";
 
+// El widget de Zoho SalesIQ se carga en cada página: en las pruebas nunca el
+// real: un script vacío (las que lo necesitan registran después su Zoho
+// simulado, que tiene prioridad).
+test.beforeEach(({ page }) => page.route("https://salesiq.zohopublic.com/**", r => r.fulfill({ contentType: "text/javascript", body: "" })));
+
 // Google Analytics 4 con Consent Mode v2. Se ejecuta con `pnpm test:ga`
 // (compila con VITE_GA_MEASUREMENT_ID); en `pnpm test:e2e` se omite.
 test("GA4: respeta el consentimiento y envía datos al aceptar", async ({ page }) => {

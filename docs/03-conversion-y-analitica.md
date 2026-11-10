@@ -52,9 +52,8 @@ Se puede entrar directo al paso 2 con `?servicio=<slug>&solucion=<id>#cotizador`
 - **Inicio:** cotizar · conocer servicios · preguntas frecuentes · hablar con un asesor.
 - **Guion de cotización:** servicio → volumen → urgencia → nombre → empresa →
   resumen con correo prellenado.
-- **Texto libre:** `lib/joel.ts` detecta la intención y ofrece la acción adecuada
-  ("Cotizar este servicio", ver página, asesor). Ante objeciones responde con
-  argumentos de los documentos fuente.
+- **Texto libre:** lo responde Zoho SalesIQ (su bot, con los artículos y
+  preguntas frecuentes configurados en Zoho, o un asesor), dentro de Joel. Ver 08.
 - **Saludo personalizado según el perfil:**
   - comprador: "¿retomamos su cotización de X?";
   - técnico: enfocado en contenido;
@@ -74,7 +73,7 @@ Se puede entrar directo al paso 2 con `?servicio=<slug>&solucion=<id>#cotizador`
 | `contact_click` | Cualquier enlace de WhatsApp, `tel:` o `mailto:` del sitio | `method`: `whatsapp` · `phone` · `email` · `email_quote` (correo con asunto, del chat o del cotizador) |
 | `chat_open` | Se abre el chat | — |
 | `contact_click` | Pide hablar con un asesor humano desde el chat de Joel | `method: "advisor_chat"` |
-| `generate_lead` | Se abre una conversación con un asesor (Zoho SalesIQ) con la pregunta del visitante | `method: "advisor_chat"` |
+| `chat_message` | El visitante escribe en el chat y el mensaje se envía a Zoho SalesIQ | — (nunca el texto) |
 | `generate_lead` | La cotización hecha con Joel se envía al chat de los asesores ("Enviar a un asesor") | `method: "chat_advisor"`, `service` |
 | `search` | Se elige un resultado del buscador | `search_term` |
 
@@ -83,9 +82,6 @@ Se puede entrar directo al paso 2 con `?servicio=<slug>&solucion=<id>#cotizador`
 - crear un embudo: page_view → (chat_open | search) → generate_lead.
 
 **Brechas conocidas (para el backlog):**
-- El comentario de `lib/analytics.ts` menciona "preguntas a Joel", pero ese
-  evento no existe. Propuesta: `chat_message` con la intención detectada (sin
-  el texto del usuario, por privacidad).
 - Faltan eventos de embudo del cotizador (`quote_step` con el paso y el
   servicio) para medir el abandono por paso.
 - La conversión real ocurre en el cliente de correo del visitante. Con un

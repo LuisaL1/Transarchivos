@@ -92,8 +92,7 @@ const es = {
     rows: [
       ["Cotizador del sitio", "Nombre, cargo, empresa, sector económico, correo electrónico, teléfono y la información de su archivo (volumen, ubicación, urgencia, requerimientos)", "Preparar y enviar la cotización, contactarle para aclarar el alcance y hacer seguimiento comercial a su solicitud"],
       ["Formulario de contacto", "Nombre, empresa, correo, teléfono, motivo y mensaje", "Responder su consulta, solicitud, petición, queja o reclamo"],
-      ["Chat con Joel (asesor virtual)", "Nombre, empresa, celular y lo que usted escriba en el chat", "Orientarle y armar la solicitud. Si elige «Enviar a un asesor», el resumen de su cotización (con su nombre y celular) llega al chat del equipo comercial para darle seguimiento"],
-      ["Chat con un asesor (Zoho SalesIQ)", "Lo que usted escriba al asesor y, si Zoho los pide, sus datos de contacto", "Atender su consulta con un asesor humano. Zoho solo se carga si usted elige hablar con un asesor o enviar su cotización a uno"],
+      ["Chat con Joel (Zoho SalesIQ)", "Lo que usted escriba en el chat y, si el chat los pide, su nombre, empresa y datos de contacto", "Responder sus preguntas y orientar su solicitud con el asistente automático de Transarchivos o con un asesor humano. El chat funciona con Zoho SalesIQ (ver más abajo)"],
       ["WhatsApp, llamadas y correo", "Número de teléfono, correo y el contenido de su mensaje", "Atender su consulta o solicitud"],
       ["Suscripción al blog", "Correo electrónico", "Enviarle novedades y contenido sobre gestión documental; puede cancelar cuando quiera"],
       ["Google Analytics (solo si acepta las cookies)", "Datos de navegación: páginas visitadas, tiempo, dispositivo, ciudad aproximada e identificadores de cookies", "Medir y mejorar el sitio. No se usa con fines publicitarios"],
@@ -102,7 +101,7 @@ const es = {
     storage: (legal: string) => [
       `El formulario de contacto y el cotizador envían su solicitud directamente al correo de ${legal} mediante Brevo (proveedor de envío de correos, que actúa como encargado del tratamiento). El sitio no guarda una copia de sus datos.`,
       "Los mensajes por WhatsApp se rigen además por las condiciones de WhatsApp (Meta).",
-      "El chat con un asesor humano funciona con Zoho SalesIQ (Zoho Corporation), que actúa como encargado del tratamiento y puede procesar los datos en servidores fuera de Colombia, con garantías de protección adecuadas. Zoho no se carga ni guarda cookies mientras usted no elija hablar con un asesor.",
+      "Las respuestas del chat (del asistente automático o de un asesor humano) funcionan con Zoho SalesIQ (Zoho Corporation), que actúa como encargado del tratamiento y puede procesar los datos en servidores fuera de Colombia, con garantías de protección adecuadas. El chat de Zoho se carga al entrar al sitio y Zoho puede guardar en su navegador las cookies que necesita para funcionar (por ejemplo, para recordar su conversación).",
       "El asesor virtual Joel guarda en su navegador (almacenamiento local) un perfil de los temas que consultó, para personalizar el saludo. Ese perfil no sale de su equipo y puede borrarlo limpiando los datos del sitio en su navegador.",
       "Conservamos los datos de las solicitudes mientras dure la relación comercial y el tiempo que exijan las normas contables y legales; después se eliminan de forma segura.",
     ],
@@ -212,8 +211,7 @@ const en: PagesUi = {
     rows: [
       ["Site quote tool", "Name, job title, company, industry, email, phone and the information about your archive (volume, location, urgency, requirements)", "Prepare and send the quote, contact you to clarify the scope and follow up commercially on your request"],
       ["Contact form", "Name, company, email, phone, reason and message", "Answer your query, request, petition, complaint or claim"],
-      ["Chat with Joel (virtual advisor)", "Name, company, mobile number and whatever you type in the chat", "Guide you and build the request. If you choose «Send to an advisor», the summary of your quote (with your name and mobile number) reaches the sales team's chat for follow-up"],
-      ["Chat with an advisor (Zoho SalesIQ)", "Whatever you write to the advisor and, if Zoho asks for them, your contact details", "Handle your query with a human advisor. Zoho only loads if you choose to talk to an advisor or send your quote to one"],
+      ["Chat with Joel (Zoho SalesIQ)", "Whatever you type in the chat and, if the chat asks for them, your name, company and contact details", "Answer your questions and guide your request with the Transarchivos automated assistant or with a human advisor. The chat runs on Zoho SalesIQ (see below)"],
       ["WhatsApp, calls and email", "Phone number, email and the content of your message", "Handle your query or request"],
       ["Blog subscription", "Email", "Send you news and content on records management; you can unsubscribe at any time"],
       ["Google Analytics (only if you accept cookies)", "Browsing data: pages visited, time, device, approximate city and cookie identifiers", "Measure and improve the site. Not used for advertising"],
@@ -222,7 +220,7 @@ const en: PagesUi = {
     storage: (legal: string) => [
       `The contact form and the quote tool send your request directly to ${legal}'s email through Brevo (an email delivery provider acting as data processor). The site does not keep a copy of your data.`,
       "WhatsApp messages are also governed by WhatsApp's (Meta) terms.",
-      "The chat with a human advisor runs on Zoho SalesIQ (Zoho Corporation), which acts as data processor and may process the data on servers outside Colombia, with adequate protection guarantees. Zoho does not load or store cookies until you choose to talk to an advisor.",
+      "Chat replies (from the automated assistant or a human advisor) run on Zoho SalesIQ (Zoho Corporation), which acts as data processor and may process the data on servers outside Colombia, with adequate protection guarantees. The Zoho chat loads when you enter the site and Zoho may store in your browser the cookies it needs to work (for example, to remember your conversation).",
       "The virtual advisor Joel stores in your browser (local storage) a profile of the topics you looked at, to personalise the greeting. That profile never leaves your device and you can delete it by clearing the site data in your browser.",
       "We keep the data of requests for as long as the commercial relationship lasts and for the time required by accounting and legal rules; afterwards they are securely deleted.",
     ],
