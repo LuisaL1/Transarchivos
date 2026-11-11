@@ -6,9 +6,9 @@
 // traducido (/en/services/records-storage); el contenido se busca por el slug
 // en español (slugEs).
 
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { ChatBot } from "@/components/chat/LazyChatBot";
+import { openChat } from "@/lib/chatWidget";
 import { HEADER_SPACE, SiteHeader } from "@/components/layout/SiteHeader";
 import { ServiceCard } from "@/components/sections/ServiceCard";
 import { Bi, BiTile } from "@/components/ui/Icons";
@@ -50,7 +50,6 @@ export function ServiceDetailPage() {
   // Volver / "Servicios": siempre a la sección de servicios de la portada
   // (no al punto donde estaba el visitante, que podía ser el hero).
   const goBack = () => navigate(lp("/#servicios"));
-  const [chatOpen, setChatOpen] = useState(false);
 
   useEffect(() => { window.scrollTo(0, 0); }, [slug]);
 
@@ -83,7 +82,7 @@ export function ServiceDetailPage() {
   return (
     <div ref={pageRef} className="min-h-full" style={{ background: C.cream, fontFamily: "Inter, sans-serif", color: "#37352F" }}>
       {/* El mismo navbar del sitio, en su versión de barra blanca. */}
-      <SiteHeader solid onChat={() => setChatOpen(true)} />
+      <SiteHeader solid onChat={openChat} />
       <div aria-hidden="true" style={{ height: HEADER_SPACE }} />
 
       {/* Hero: foto del archivo bajo un velo índigo, con la carpeta como base */}
@@ -348,7 +347,6 @@ export function ServiceDetailPage() {
 
       {/* Llamado final */}
       <CtaBand title={detail.ctaTitle ?? u.cta(pageTitle)} to={quoteTo} />
-      <ChatBot open={chatOpen} setOpen={setChatOpen} />
     </div>
   );
 }

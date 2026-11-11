@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { existsSync, readFileSync } from "node:fs";
-import { HOST_ID, SALESIQ_SRC, loadCrmChat, openCrmChat, resetCrmChatForTests, setZohoHostForTests, styleChatWindow } from "@/lib/crmChat";
-import { CRM_CHAT_EVENT } from "@/lib/advisorEvents";
+import { readFileSync } from "node:fs";
+import { CHAT_EVENT } from "@/lib/chatWidget";
+import { HOST_ID, SALESIQ_SRC, closeCrmChat, loadCrmChat, openCrmChat, resetCrmChatForTests, setZohoHostForTests, styleChatWindow } from "@/lib/crmChat";
 
 // Cargador del chat de Zoho SalesIQ (sin cargar el script real). En el sitio,
 // Zoho vive en una página aislada (iframe); aquí esa página es la ventana de
@@ -17,24 +17,25 @@ afterEach(() => {
 // Simula lo que hace el script de Zoho al cargar: completa la API y llama a ready()
 function zohoLoads() {
   const calls: string[] = [];
+  const on: Record<string, () => void> = {};
   const z = window.$zoho!.salesiq!;
   Object.assign(z, {
     language: (l: string) => calls.push(`language:${l}`),
     floatbutton: { visible: (v: string) => calls.push(`button:${v}`) },
-    floatwindow: { visible: (v: string) => calls.push(`window:${v}`), open: () => {}, close: () => {}, minimize: () => {} },
+    floatwindow: { visible: (v: string) => calls.push(`window:${v}`), open: (cb: () => void) => (on.open = cb), close: (cb: () => void) => (on.close = cb), minimize: () => {} },
   });
   z.ready!();
-  return calls;
+  return { calls, on };
 }
 
 describe("chat de Zoho SalesIQ", () => {
-  it("no hace nada hasta que se pide abrir el chat", () => {
+  it("no carga nada por sí solo (lo arranca src/lib/chatWidget.ts)", () => {
     expect(document.getElementById("zsiqscript")).toBeNull();
     expect(window.$zoho).toBeUndefined();
     expect(document.getElementById(HOST_ID)).toBeNull();
   });
 
-  it("carga el script una sola vez, en español y sin el botón de Zoho", async () => {
+  it("carga el script una sola vez, en español y sin el botón de Zoho (se usa el de Joel)", async () => {
     const p = loadCrmChat();
     expect(loadCrmChat()).toBe(p);
     await Promise.resolve();
@@ -42,25 +43,33 @@ describe("chat de Zoho SalesIQ", () => {
     const s = document.getElementById("zsiqscript") as HTMLScriptElement;
     expect(s.src).toBe(SALESIQ_SRC);
     expect(document.querySelectorAll("#zsiqscript")).toHaveLength(1);
-    const calls = zohoLoads();
+    const { calls, on } = zohoLoads();
     await p;
     expect(calls).toEqual(["language:es", "button:hide"]);
+    expect(document.documentElement.classList.contains("ta-zoho-ready")).toBe(true);
+    // El iframe se muestra mientras la ventana está abierta y el botón de Joel se entera
+    const events: boolean[] = [];
+    const listen = (e: Event) => events.push((e as CustomEvent<{ open: boolean }>).detail.open);
+    window.addEventListener(CHAT_EVENT, listen);
+    on.open();
+    expect(document.documentElement.classList.contains("ta-zoho-open")).toBe(true);
+    on.close();
+    expect(document.documentElement.classList.contains("ta-zoho-open")).toBe(false);
+    window.removeEventListener(CHAT_EVENT, listen);
+    expect(events).toEqual([true, false]);
   });
 
-  it("abre la ventana y avisa al sitio", async () => {
-    const events: boolean[] = [];
-    const on = (e: Event) => events.push((e as CustomEvent<{ open: boolean }>).detail.open);
-    window.addEventListener(CRM_CHAT_EVENT, on);
+  it("los botones del sitio abren la ventana de Zoho", async () => {
     const p = openCrmChat();
     await Promise.resolve();
     await Promise.resolve();
-    const calls = zohoLoads();
+    const { calls } = zohoLoads();
     await p;
     expect(calls).toContain("window:show");
-    expect(events).toEqual([true]);
     expect(document.documentElement.classList.contains("ta-zoho-open")).toBe(true);
-    window.removeEventListener(CRM_CHAT_EVENT, on);
-    document.documentElement.classList.remove("ta-zoho-open");
+    await closeCrmChat();
+    expect(calls).toContain("window:hide");
+    expect(document.documentElement.classList.contains("ta-zoho-open")).toBe(false);
   });
 
   it("si el script no carga, falla y permite reintentar", async () => {
@@ -93,6 +102,54 @@ describe("chat de Zoho SalesIQ · diseño del sitio", () => {
     expect(frame.contentDocument!.querySelectorAll("#ta-chat-style")).toHaveLength(1);
   });
 
+  it("'Reiniciar' de la cabecera: pulsa el de Zoho y no parpadea mientras el bot responde", async () => {
+    const frame = document.createElement("iframe");
+    frame.id = "siq_chatwindow";
+    document.body.appendChild(frame);
+    const doc = frame.contentDocument!;
+    doc.body.innerHTML = '<div class="bot-chat"><header class="siqcw-header"><div></div><em class="chat-win-close"></em></header><div id="scroll-container"></div></div>';
+    const tick = () => new Promise(r => setTimeout(r));
+    const restart = vi.fn();
+    const offer = () => {
+      const zoho = doc.createElement("div");
+      zoho.className = "bot-action";
+      zoho.dataset.zsqa = "restart";
+      zoho.addEventListener("click", restart);
+      doc.getElementById("scroll-container")!.appendChild(zoho);
+      return zoho;
+    };
+    styleChatWindow();
+    const btn = doc.getElementById("ta-restart") as HTMLButtonElement;
+    expect(btn.getAttribute("aria-label")).toBe("Reiniciar conversación");
+    expect(btn.hidden).toBe(true);
+    // Zoho lo ofrece: se ve y lo pulsa
+    let zoho = offer();
+    await tick();
+    expect(btn.hidden).toBe(false);
+    btn.click();
+    expect(restart).toHaveBeenCalledOnce();
+    // El bot está respondiendo (Zoho lo quita): sigue a la vista y espera al de Zoho
+    zoho.remove();
+    await tick();
+    expect(btn.hidden).toBe(false);
+    btn.click();
+    expect(btn.hasAttribute("aria-busy")).toBe(true);
+    expect(restart).toHaveBeenCalledOnce();
+    zoho = offer();
+    await tick();
+    expect(restart).toHaveBeenCalledTimes(2);
+    expect(btn.hasAttribute("aria-busy")).toBe(false);
+    // Si Zoho redibuja la cabecera, el botón vuelve
+    doc.querySelector("header")!.replaceWith(Object.assign(doc.createElement("header"), { className: "siqcw-header" }));
+    await tick();
+    expect(doc.querySelector(".siqcw-header #ta-restart")).not.toBeNull();
+    // Un asesor toma la conversación o termina: se esconde
+    zoho.remove();
+    doc.querySelector(".bot-chat")!.className = "";
+    await tick();
+    expect((doc.getElementById("ta-restart") as HTMLButtonElement).hidden).toBe(true);
+  });
+
   it("la hoja de estilos usa la marca: índigo, cuadrado amarillo girado, sin degradados y la foto de Joel", () => {
     // Vitest no procesa CSS (css: false): se revisa el archivo directamente
     const css = readFileSync("src/styles/zoho-chat.css", "utf8");
@@ -101,8 +158,11 @@ describe("chat de Zoho SalesIQ · diseño del sitio", () => {
     expect(css).toContain("rotate(45deg)");
     expect(css).not.toMatch(/#356b58|#272b7c|#ff7619/i);
     expect(css).not.toMatch(/linear-gradient/);
-    expect(css).toMatch(/\.siqcw-bot-logo \{[^}]*url\("\/brand\/joel\.webp"\)/);
-    expect(existsSync("public/brand/joel.webp")).toBe(true);
+    expect(css).toMatch(/--ta-joel: url\("data:image\/webp;base64,/);
+    expect(css).toMatch(/\.siqcw-bot-logo,\s*\.embed-prof-cont \{[^}]*var\(--ta-joel\)/);
+    // El CSS del portal de Zoho es la misma hoja (con la foto incrustada)
+    const portal = readFileSync("docs/zoho-salesiq-portal.css", "utf8");
+    expect(portal.slice(portal.indexOf("@import"))).toBe(css.slice(css.indexOf("@import")));
     expect(readFileSync("public/chat-asesor.html", "utf8")).toMatch(/noindex/);
   });
 });

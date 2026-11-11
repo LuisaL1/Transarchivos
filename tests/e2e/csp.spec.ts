@@ -1,6 +1,11 @@
 import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 
+// El widget de Zoho SalesIQ se carga en cada página: en las pruebas nunca el
+// real: un script vacío (las que lo necesitan registran después su Zoho
+// simulado, que tiene prioridad).
+test.beforeEach(({ page }) => page.route("https://salesiq.zohopublic.com/**", r => r.fulfill({ contentType: "text/javascript", body: "" })));
+
 // Aplica las cabeceras de vercel.json (que `vite preview` no envía) y verifica
 // que la Política de Seguridad de Contenido no bloquee nada del sitio.
 const cfg = JSON.parse(readFileSync("vercel.json", "utf8"));
@@ -33,7 +38,7 @@ for (const route of ["/", "/servicios/custodia-de-archivos", "/blog/mido-softwar
   });
 }
 
-test("CSP permite cargar el chat con un asesor (Zoho SalesIQ) en su página aislada", async ({ page, isMobile }) => {
+test("CSP permite cargar el widget de Zoho SalesIQ en su página aislada", async ({ page, isMobile }) => {
   test.skip(isMobile, "Basta con revisarlo una vez");
   const blocked: string[] = [];
   page.on("console", m => { if (/Content Security Policy|Refused to/i.test(m.text())) blocked.push(m.text()); });
@@ -44,14 +49,8 @@ test("CSP permite cargar el chat con un asesor (Zoho SalesIQ) en su página aisl
     return r.fulfill({ contentType: "text/javascript", body: "window.$zoho.salesiq.floatwindow={visible(){}};window.$zoho.salesiq.ready();" });
   });
   await withHeaders(page);
-  await page.route("**/api/advisor", r => r.fulfill({ json: { configured: false } }));
   await page.goto("/");
-  await page.locator("[data-chat-launcher]").first().click();
-  const chat = page.getByRole("region", { name: "Chat con Joel" });
-  await chat.getByRole("button", { name: "Hablar con un asesor" }).click({ timeout: 10_000 });
-  const input = chat.getByRole("textbox", { name: "Mensaje" });
-  await input.fill("Hola");
-  await input.press("Enter");
+  // El widget se carga al entrar al sitio
   await expect.poll(() => loaded, { timeout: 15_000 }).toBe(true);
   await page.waitForTimeout(500);
   expect(blocked).toEqual([]);

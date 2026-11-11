@@ -22,8 +22,3 @@ export const OFFICE_PHONE_LABEL = "321 811 5946";
 // (variables de entorno en Vercel; ver docs/07-formularios.md).
 export const CONTACT_REASONS = ["Solicitar una cotización", "Información sobre un servicio", "Soporte a un servicio contratado", "Peticiones, quejas o reclamos", "Datos personales (Ley 1581)", "Trabajar con nosotros", "Otro"];
 
-/** Enlace que abre el formulario de contacto (lo intercepta ContactModal). */
-export const contactHref = (prefill: { motivo?: string; mensaje?: string; nombre?: string; empresa?: string } = {}) => {
-  const q = new URLSearchParams(Object.entries(prefill).filter(([, v]) => v) as [string, string][]).toString();
-  return q ? `#contacto?${q}` : "#contacto";
-};

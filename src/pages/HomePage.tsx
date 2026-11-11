@@ -8,7 +8,7 @@ import { JOEL } from "@/data/joelPoses";
 import heroJoelImg from "@/assets/images/joel-flujo.webp";
 import { Link, useLocation, useNavigate, useNavigationType } from "react-router-dom";
 import { track } from "@/lib/visitor";
-import { ChatBot } from "@/components/chat/LazyChatBot";
+import { openChat } from "@/lib/chatWidget";
 import { HeroQuickStart, HeroRotatingTitle, HeroPhotos } from "@/components/home/Hero";
 import { MapReveal } from "@/components/home/MapReveal";
 import { Stats } from "@/components/home/Stats";
@@ -52,9 +52,6 @@ export function HomePage() {
   const { lp } = useLang();
   const h = useHomeUi();
   const { services } = useContent();
-  // Estado del chat en la página (no dentro de ChatBot): así el avatar del
-  // hero también puede abrirlo con un clic, no solo el botón flotante.
-  const [chatOpen, setChatOpen] = useState(false);
   const pageRef = useRef<HTMLDivElement>(null);
   useScrollReveal(pageRef);
   // Comportamiento del visitante (para Joel): qué secciones mira con calma.
@@ -107,7 +104,7 @@ export function HomePage() {
   return (
     <div ref={pageRef} className="min-h-full" style={{ background: "#ffffff", fontFamily: "Inter, sans-serif", color: "#37352F" }}>
 
-      <SiteHeader onChat={() => setChatOpen(true)} />
+      <SiteHeader onChat={openChat} />
 
       {/* ── HERO ────────────────────────────────────────────────────────────
           Secuencia de fotos de la operación de fondo (con velo índigo ligero). En
@@ -140,7 +137,7 @@ export function HomePage() {
             <div className="hidden lg:flex justify-end self-end relative lg:-mr-10 xl:-mr-20">
               <img src={heroJoelImg} alt="" draggable={false} className="select-none h-[420px] xl:h-[490px] max-w-none pointer-events-none"
                 style={{ maskImage: "linear-gradient(90deg, transparent 4%, #000 42%)", WebkitMaskImage: "linear-gradient(90deg, transparent 4%, #000 42%)" }} />
-              <button type="button" onClick={() => setChatOpen(true)} aria-label={h.hero.joel}
+              <button type="button" onClick={openChat} aria-label={h.hero.joel}
                 className="absolute right-[3%] bottom-0 top-[14%] w-[26%] cursor-pointer rounded-3xl focus:outline-none focus-visible:ring-4 focus-visible:ring-amarillo/70" />
             </div>
           </div>
@@ -420,7 +417,7 @@ export function HomePage() {
 
       <FolderDivider color={C.indigo} />
 
-      <FaqSection onChat={() => setChatOpen(true)} />
+      <FaqSection onChat={openChat} />
 
       <FolderDivider color="#F7F8FF" />
 
@@ -516,7 +513,6 @@ export function HomePage() {
         </div>
       </footer>
 
-      <ChatBot open={chatOpen} setOpen={setChatOpen} heroJoel />
     </div>
   );
 }

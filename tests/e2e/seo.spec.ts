@@ -1,5 +1,10 @@
 import { expect, test } from "@playwright/test";
 
+// El widget de Zoho SalesIQ se carga en cada página: en las pruebas nunca el
+// real: un script vacío (las que lo necesitan registran después su Zoho
+// simulado, que tiene prioridad).
+test.beforeEach(({ page }) => page.route("https://salesiq.zohopublic.com/**", r => r.fulfill({ contentType: "text/javascript", body: "" })));
+
 // SEO en el navegador: contenido sin JavaScript (lo que ve un rastreador
 // simple o una red social) y etiquetas que se actualizan al navegar.
 test.describe("sin JavaScript", () => {

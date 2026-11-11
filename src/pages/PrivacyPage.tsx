@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ChatBot } from "@/components/chat/LazyChatBot";
+import { openChat } from "@/lib/chatWidget";
 import { HEADER_SPACE, SiteHeader } from "@/components/layout/SiteHeader";
 import { Bi } from "@/components/ui/Icons";
 import { OFFICE_PHONE_LABEL, PHONES, WHATSAPP_LABEL } from "@/data/contact";
@@ -16,7 +16,6 @@ import { C } from "@/styles/tokens";
 // (clientes, empleados, documentos en custodia) es un documento aparte. Textos
 // en src/i18n/pages.ts; la versión en inglés es una traducción de cortesía.
 export function PrivacyPage() {
-  const [chatOpen, setChatOpen] = useState(false);
   const { privacy: u, common } = usePagesUi();
   const { lang, lp } = useLang();
   // Respuesta visible al botón de cookies (si no hay analítica configurada,
@@ -29,7 +28,7 @@ export function PrivacyPage() {
   const policies = lp("/politicas#proteccion-de-datos");
   return (
     <div className="min-h-full" style={{ background: C.cream, fontFamily: "Inter, sans-serif", color: "#37352F" }}>
-      <SiteHeader solid onChat={() => setChatOpen(true)} />
+      <SiteHeader solid onChat={openChat} />
       <div aria-hidden="true" style={{ height: HEADER_SPACE }} />
       <div className="px-4 py-10 md:py-14">
       {/* Documento sobre tarjeta blanca */}
@@ -93,7 +92,6 @@ export function PrivacyPage() {
         <div className="mt-12"><Link to={lp("/")} className="inline-flex items-center gap-2 text-sm font-bold" style={{ color: C.indigo, fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}><Bi n="arrow-left" size={14} color={C.indigo} /> {common.back}</Link></div>
       </main>
       </div>
-      <ChatBot open={chatOpen} setOpen={setChatOpen} />
     </div>
   );
 }

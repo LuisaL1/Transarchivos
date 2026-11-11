@@ -8,7 +8,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Bi } from "@/components/ui/Icons";
-import { ChatBot } from "@/components/chat/LazyChatBot";
+import { openChat } from "@/lib/chatWidget";
 import { ClientsMarquee } from "@/components/home/ClientsMarquee";
 import { HEADER_SPACE, SiteHeader } from "@/components/layout/SiteHeader";
 import { JoelFigure } from "@/components/ui/JoelBridge";
@@ -30,7 +30,6 @@ export function NosotrosPage() {
   const { norms } = useContent();
   const pageRef = useRef<HTMLDivElement>(null);
   useScrollReveal(pageRef);
-  const [chatOpen, setChatOpen] = useState(false);
   // Normas desplegadas (varias a la vez)
   const [openNorms, setOpenNorms] = useState<Set<string>>(() => new Set());
   const toggleNorm = (code: string) => setOpenNorms(s => { const n = new Set(s); if (n.has(code)) n.delete(code); else n.add(code); return n; });
@@ -49,7 +48,7 @@ export function NosotrosPage() {
 
   return (
     <div ref={pageRef} className="min-h-full" style={{ background: C.cream, fontFamily: "Inter, sans-serif", color: "#37352F" }}>
-      <SiteHeader solid onChat={() => setChatOpen(true)} />
+      <SiteHeader solid onChat={openChat} />
       <div aria-hidden="true" style={{ height: HEADER_SPACE }} />
 
       {/* Hero: mismo formato de las páginas de servicio */}
@@ -282,7 +281,6 @@ export function NosotrosPage() {
       {/* Llamado final (mismo de las páginas de servicio) */}
       <CtaBand title={u.cta} />
 
-      <ChatBot open={chatOpen} setOpen={setChatOpen} />
     </div>
   );
 }

@@ -1,9 +1,11 @@
 import { Suspense, useEffect, useLayoutEffect } from "react";
 import { Routes, Route, useLocation, useNavigationType } from "react-router-dom";
 import { trackVisit } from "@/lib/visitor";
+import { startChatWidget } from "@/lib/chatWidget";
 import { AnalyticsTracker, CookieBanner } from "@/components/layout/Analytics";
 import { SeoHead } from "@/components/layout/SeoHead";
 import { ContactModal } from "@/components/layout/ContactModal";
+import { ChatLauncher } from "@/components/chat/ChatLauncher";
 import { HomePage } from "@/pages/HomePage";
 import { lazyNamed } from "@/lib/lazyPage";
 import { LANGS, localize } from "@/i18n";
@@ -44,7 +46,7 @@ function ScrollToTop() {
 }
 
 export default function App() {
-  useEffect(() => { trackVisit(); }, []);
+  useEffect(() => { trackVisit(); startChatWidget(); }, []);
   return (
     <>
     <ScrollToTop />
@@ -60,6 +62,7 @@ export default function App() {
     </Suspense>
     <CookieBanner />
     <ContactModal />
+    <ChatLauncher />
     </>
   );
 }

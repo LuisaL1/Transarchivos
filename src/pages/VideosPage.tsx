@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ChatBot } from "@/components/chat/LazyChatBot";
+import { openChat } from "@/lib/chatWidget";
 import { HEADER_SPACE, SiteHeader } from "@/components/layout/SiteHeader";
 import { Bi } from "@/components/ui/Icons";
 import { SectionDecor } from "@/components/ui/SectionDecor";
@@ -58,13 +58,12 @@ function VideoCard({ v, watch, play }: { v: Video; watch: string; play: (t: stri
 }
 
 export function VideosPage() {
-  const [chatOpen, setChatOpen] = useState(false);
   const u = usePagesUi();
   const v = u.videos;
   const { lp } = useLang();
   return (
     <div className="min-h-full" style={{ background: C.cream, fontFamily: "Inter, sans-serif", color: "#37352F" }}>
-      <SiteHeader solid onChat={() => setChatOpen(true)} />
+      <SiteHeader solid onChat={openChat} />
       <div aria-hidden="true" style={{ height: HEADER_SPACE }} />
 
       <PageHero>
@@ -98,7 +97,6 @@ export function VideosPage() {
       </section>
 
       <CtaBand title={v.cta} />
-      <ChatBot open={chatOpen} setOpen={setChatOpen} />
     </div>
   );
 }

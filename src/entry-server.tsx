@@ -4,16 +4,15 @@ import { StrictMode } from "react";
 import { prerender } from "react-dom/static";
 import { StaticRouter } from "react-router-dom";
 import App, { ArticlePage, NosotrosPage, NotFoundPage, PoliciesPage, PrivacyPage, ServiceDetailPage, VideosPage } from "./App";
-import { preloadChat } from "@/components/chat/LazyChatBot";
 
 export { getPageMeta, renderHeadTags, PUBLIC_ROUTES } from "@/seo/meta";
 export { INDEXABLE, SITE_URL } from "@/seo/site";
 export { LANG_INFO } from "@/i18n";
 
-/** Carga las páginas y el chat (perezosos en el navegador) para que la
+/** Carga las páginas (perezosas en el navegador) para que la
  *  pre-generación no deje nada en suspenso ni agregue <script> en línea. */
 export async function preload() {
-  await Promise.all([NosotrosPage, ServiceDetailPage, ArticlePage, PrivacyPage, PoliciesPage, VideosPage, NotFoundPage].map(p => p.preload()).concat(preloadChat()));
+  await Promise.all([NosotrosPage, ServiceDetailPage, ArticlePage, PrivacyPage, PoliciesPage, VideosPage, NotFoundPage].map(p => p.preload()));
 }
 
 // prerender() espera cualquier resto en suspenso antes de devolver el HTML.

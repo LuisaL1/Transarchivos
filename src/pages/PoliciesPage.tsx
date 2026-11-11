@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { ChatBot } from "@/components/chat/LazyChatBot";
+import { openChat } from "@/lib/chatWidget";
 import { HEADER_SPACE, SiteHeader } from "@/components/layout/SiteHeader";
 import { Bi } from "@/components/ui/Icons";
 import { SectionDecor } from "@/components/ui/SectionDecor";
@@ -79,7 +79,6 @@ function PolicyCard({ p, open, onToggle, pdfLabel }: { p: Policy; open: boolean;
 }
 
 export function PoliciesPage() {
-  const [chatOpen, setChatOpen] = useState(false);
   const u = usePagesUi();
   const { lp } = useLang();
   const { hash } = useLocation();
@@ -93,7 +92,7 @@ export function PoliciesPage() {
 
   return (
     <div className="min-h-full" style={{ background: C.cream, fontFamily: "Inter, sans-serif", color: "#37352F" }}>
-      <SiteHeader solid onChat={() => setChatOpen(true)} />
+      <SiteHeader solid onChat={openChat} />
       <div aria-hidden="true" style={{ height: HEADER_SPACE }} />
 
       <PageHero>
@@ -143,7 +142,6 @@ export function PoliciesPage() {
           </div>
         </div>
       </section>
-      <ChatBot open={chatOpen} setOpen={setChatOpen} />
     </div>
   );
 }
