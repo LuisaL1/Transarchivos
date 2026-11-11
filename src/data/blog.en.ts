@@ -2,12 +2,12 @@
 // slugs, covers and order). The dates in English are only for display; the
 // publication date for search engines comes from the Spanish article.
 // Pending review by Transarchivos.
-import imgInteligencia from "@/assets/images/blog/inteligencia-documental.jpg";
-import imgMido from "@/assets/images/blog/mido.jpg";
-import imgCiclo1 from "@/assets/images/blog/ciclo-vida-1.jpg";
-import imgCiclo2 from "@/assets/images/blog/ciclo-vida-2.jpg";
-import imgEco1 from "@/assets/images/blog/economia-circular-1.jpg";
-import imgEco2 from "@/assets/images/blog/economia-circular-2.jpg";
+import imgInteligencia from "@/assets/images/blog/inteligencia-documental.webp";
+import imgMido from "@/assets/images/blog/mido.webp";
+import imgCiclo1 from "@/assets/images/blog/ciclo-vida-1.webp";
+import imgCiclo2 from "@/assets/images/blog/ciclo-vida-2.webp";
+import imgEco1 from "@/assets/images/blog/economia-circular-1.webp";
+import imgEco2 from "@/assets/images/blog/economia-circular-2.webp";
 import type { Post } from "@/data/blog";
 
 export const blogPostsEn: Post[] = [

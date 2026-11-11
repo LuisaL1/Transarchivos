@@ -1,11 +1,11 @@
 // Artículos del blog. Texto tomado de los archivos de la carpeta
 // RecursosTransarchivos (Blog Junio 24, Agosto 3, Agosto 6 y Agosto 18).
-import imgInteligencia from "@/assets/images/blog/inteligencia-documental.jpg";
-import imgMido from "@/assets/images/blog/mido.jpg";
-import imgCiclo1 from "@/assets/images/blog/ciclo-vida-1.jpg";
-import imgCiclo2 from "@/assets/images/blog/ciclo-vida-2.jpg";
+import imgInteligencia from "@/assets/images/blog/inteligencia-documental.webp";
+import imgMido from "@/assets/images/blog/mido.webp";
+import imgCiclo1 from "@/assets/images/blog/ciclo-vida-1.webp";
+import imgCiclo2 from "@/assets/images/blog/ciclo-vida-2.webp";
 import imgEcoDestruccion from "@/assets/images/blog/economia-circular-destruccion.webp";
-import imgEco2 from "@/assets/images/blog/economia-circular-2.jpg";
+import imgEco2 from "@/assets/images/blog/economia-circular-2.webp";
 import { C } from "@/styles/tokens";
 
 export type Item = string | { b: string; t: string };
