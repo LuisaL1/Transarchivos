@@ -22,7 +22,6 @@ explica la **estrategia**.
 | --- | --- | --- |
 | Tipos | Contratos entre datos y componentes | `tsconfig.json` (estricto) |
 | Lint | Calidad, hooks de React, accesibilidad en JSX (jsx-a11y), patrones inseguros (eslint-plugin-security); prohíbe `dangerouslySetInnerHTML` y `eval` | `eslint.config.js` |
-| Joel | Entiende texto libre y errores de tipeo; no inventa precios ni ISO 9001; responde Bogotá; rechaza inyección y temas ajenos; no repite HTML | `tests/unit/joel.test.ts` |
 | Buscador | Sin tildes, mínimo 2 caracteres, máximo 7 resultados, todos con destino | `tests/unit/search.test.ts` |
 | Contenido | Integridad de `src/data` y reglas de negocio y de marca (ver abajo) | `tests/unit/content.test.ts` |
 | Componentes | El selector del hero cambia de servicio y apunta a la cotización correcta | `tests/unit/components.test.tsx` |

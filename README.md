@@ -22,8 +22,11 @@ Pruebas de calidad, accesibilidad y seguridad: ver `TESTING.md`.
 
 ## Despliegue
 
-Vercel (framework: Vite, salida: `dist`). `vercel.json` redirige todas las
-rutas a `index.html` para que funcionen las páginas internas al recargar.
+Dos opciones, con el mismo código: **Vercel** (framework: Vite, salida: `dist`;
+`vercel.json` fija las cabeceras de seguridad y las direcciones limpias) o un
+**hosting con Node.js** como GoDaddy, que arranca `npm start` (`server.mjs`, ver
+`docs/09-hosting-nodejs.md`). En ambos las funciones de `api/` envían los
+formularios (Brevo) y el cotizador (Zoho Desk).
 
 `pnpm build` pre-genera el HTML de cada ruta, el sitemap y el robots.txt (SEO).
 La indexación se activa con `VITE_SITE_INDEXABLE=true` (ver `docs/06-seo.md`).

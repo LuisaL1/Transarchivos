@@ -15,7 +15,7 @@ abre el programa de correo del visitante.
 ## Cómo viaja la información
 
 ```
-Navegador ──POST /api/contact──► Función de Vercel (api/contact.ts) ──API Brevo──► mercadeo@ (comercial) / info@ (general)
+Navegador ──POST /api/contact──► Función de servidor (api/contact.mjs) ──API Brevo──► mercadeo@ (comercial) / info@ (general)
 ```
 
 - La función valida los datos, aplica el **campo trampa** contra bots (`website`), rechaza envíos desde otros dominios y **limita los envíos por IP** (5 cada 10 minutos; responde 429). El límite se cuenta en memoria de la instancia de Vercel, así que es un freno, no una cuota exacta. Lo que se repite al visitante en su confirmación (servicio o motivo) se acota a 60 caracteres, para que el formulario no sirva para enviar textos a terceros.

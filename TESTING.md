@@ -43,10 +43,6 @@ El reporte HTML queda en `playwright-report/` (`pnpm exec playwright show-report
 - **Build** sin errores. En CI falla si un bundle JS pasa de 600 KB.
 
 ### 2. Lógica y contenido (`tests/unit/`)
-- `joel.test.ts`: el asesor virtual entiende texto libre y errores de tipeo, no
-  inventa precios ni certificaciones, responde que operan en Bogotá, rechaza
-  intentos de manipulación (*prompt injection*), redirige temas ajenos y no
-  repite HTML/scripts del visitante.
 - `search.test.ts`: buscador del header (sin tildes, mínimo 2 letras, máximo 7
   resultados, todos con destino).
 - `content.test.ts`: integridad de `src/data/` (slugs únicos; cada servicio con
