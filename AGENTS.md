@@ -7,6 +7,7 @@ español (raíz) e inglés (`/en`, ver "Idiomas").
 ## Comandos
 
 - `pnpm dev` — servidor local en http://localhost:8443
+- `pnpm start` — servidor de producción (`server.mjs`) para hosting con Node.js; ver `docs/09-hosting-nodejs.md`
 - `pnpm build` — build de producción en `dist/`
 - `pnpm typecheck` — verificación de tipos
 - `pnpm lint` — ESLint (calidad, accesibilidad, seguridad)
@@ -74,6 +75,7 @@ src/
 └── styles/index.css      Estilos globales, tokens de color de Tailwind (@theme), animaciones
 public/                   Archivos servidos tal cual (videos, favicon, robots, documentos/ PDF oficiales)
 api/contact.mjs           Función de Vercel: formularios → correo por Brevo (docs/07-formularios.md)
+server.mjs                Servidor Node.js de producción (GoDaddy u otro hosting): páginas de dist/, cabeceras de vercel.json y api/ (docs/09-hosting-nodejs.md)
 api/advisor.mjs           Función de Vercel: chat por la API de Zoho SalesIQ (sin uso en esta variante; docs/08-chat-asesor.md)
 public/chat-asesor.html   Página aislada donde vive el widget de Zoho (CSP propia en vercel.json)
 src/styles/zoho-*.css     Diseño del sitio dentro del widget de Zoho

@@ -16,6 +16,7 @@ reemplaza) a los documentos de la raíz del repositorio:
 | `docs/07-formularios.md` | Formulario de contacto, cotizador y envío por Brevo (configuración en Vercel) |
 | `docs/06-seo.md` | SEO técnico: pre-generación de HTML, metadatos, datos estructurados, sitemap y checklist de publicación |
 | `docs/08-chat-asesor.md` | Chat con un asesor humano (Zoho SalesIQ): modos, cotización al equipo, página aislada y CSP, configuración y pruebas |
+| `docs/09-hosting-nodejs.md` | Publicación en un hosting con Node.js (GoDaddy) con `server.mjs`: pasos con GitHub, variables de entorno y cómo comprobar |
 
 **Fuente de verdad del contenido:** `RecursosTransarchivos/` (documentos del
 cliente). Todo texto del sitio sale de ahí y vive en `src/data/`.
