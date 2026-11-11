@@ -70,6 +70,13 @@ describe("server.mjs", () => {
     expect(res.headers.get("cache-control")).toContain("immutable");
   });
 
+  it("fotos, videos y marca se guardan un día (no cambian de nombre al reemplazarse)", async () => {
+    for (const p of ["/hero-fotos/01.webp", "/videos/page-hero.webp", "/brand/email-header.png"]) {
+      expect((await get(p)).headers.get("cache-control"), p).toBe("public, max-age=86400, stale-while-revalidate=604800");
+    }
+    expect((await get("/")).headers.get("cache-control")).toContain("must-revalidate");
+  });
+
   it("comprime el texto y atiende rangos (video en Safari)", async () => {
     const res = await get("/", { headers: { "accept-encoding": "gzip" } });
     expect(res.headers.get("content-encoding")).toBe("gzip");

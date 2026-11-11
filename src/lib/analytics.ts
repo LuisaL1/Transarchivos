@@ -48,10 +48,22 @@ export function initAnalytics() {
   });
   gtag("js", new Date());
   gtag("config", GA_ID, { send_page_view: false });
-  const s = document.createElement("script");
-  s.async = true;
-  s.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
-  document.head.appendChild(s);
+  // El script de Google (unos 180 KB) se descarga cuando la página ya cargó y el
+  // navegador está libre, para no competir con lo que ve el visitante. Los
+  // comandos de arriba y las páginas vistas quedan en dataLayer y GA los procesa
+  // al llegar, así que no se pierde ningún evento.
+  const inject = () => {
+    const s = document.createElement("script");
+    s.async = true;
+    s.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
+    document.head.appendChild(s);
+  };
+  const whenIdle = () => {
+    if (typeof window.requestIdleCallback === "function") window.requestIdleCallback(inject, { timeout: 3000 });
+    else setTimeout(inject, 2000);
+  };
+  if (document.readyState === "complete") whenIdle();
+  else window.addEventListener("load", whenIdle, { once: true });
 }
 
 /** Guarda la decisión del aviso de cookies y la comunica a GA. */

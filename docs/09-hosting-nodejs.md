@@ -9,6 +9,7 @@ un servidor sin dependencias que hace lo mismo que Vercel.
 | Entrega las páginas pre-generadas de `dist/` | Direcciones limpias (`/nosotros`, `/en/about`); `/x.html`, la barra final e `/index` redirigen (308) |
 | Página de error | Responde 404 con `dist/404.html` |
 | Cabeceras de seguridad y de caché | Las lee de `vercel.json` (una sola fuente de verdad): CSP, HSTS, `X-Frame-Options`… y un año de caché para `/assets/` |
+| Caché de fotos y video | Un día (con revalidación en segundo plano) para `hero-fotos/`, `videos/` y `brand/`, que conservan su nombre al reemplazarse; un año para `assets/` (nombre con huella); las páginas siempre se revalidan |
 | Compresión y video | Brotli o gzip para texto; rangos de bytes (Safari los exige para reproducir video) |
 | Formularios y cotizador | Ejecuta `api/<nombre>.mjs` en `/api/<nombre>` (hoy `api/contact.mjs` → Brevo y `api/ticket.mjs` → Zoho Desk), con el mismo código que en Vercel |
 
