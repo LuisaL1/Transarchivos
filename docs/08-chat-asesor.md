@@ -13,7 +13,7 @@ a un asesor) **se configura en Zoho SalesIQ**, no en el código.
 
 | Qué hace el visitante | Qué pasa |
 | --- | --- |
-| Entra a cualquier página | Ve el botón flotante de Joel (foto, "Joelito · IA · En línea") en la esquina inferior derecha. Cuando el navegador queda libre, se carga el widget de Zoho, escondido (su botón propio no se muestra). |
+| Entra a cualquier página | Ve el botón flotante de Joel (foto, "Joel · IA · En línea") en la esquina inferior derecha. Cuando el navegador queda libre, se carga el widget de Zoho, escondido (su botón propio no se muestra). |
 | Pulsa el botón de Joel | Se abre la ventana de Zoho sobre el botón; el botón pasa a "Cerrar" (en celular la ventana ocupa la pantalla y el botón se esconde). Otro clic la cierra. |
 | Cierra o minimiza desde la ventana de Zoho | La ventana se esconde y el botón vuelve a "Joel". |
 | Pulsa "Chat con Joel" / "Chatee con Joel" (menú, soporte, preguntas frecuentes) o la imagen de Joel del hero | Se abre la misma ventana de Zoho (`openChat`, `src/lib/chatWidget.ts`). Si Zoho no carga, se abre WhatsApp. |
