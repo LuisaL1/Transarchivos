@@ -44,6 +44,14 @@ describe("Funciones de Vercel (api/)", () => {
     expect(api).toContain('env("ZOHO_REFRESH_TOKEN")');
     expect(api).not.toMatch(/VITE_ZOHO/);
   });
+  it("las credenciales de Zoho Desk (cotizador) solo existen en el servidor y como variables de entorno", () => {
+    for (const [f, s] of code) expect(s, f).not.toMatch(/ZOHO_DESK_|desk\.zoho\.com/);
+    const api = readFileSync("api/ticket.mjs", "utf8");
+    for (const v of ["CLIENT_ID", "CLIENT_SECRET", "REFRESH_TOKEN", "ORG_ID", "DEPARTMENT_ID"]) expect(api).toContain(`process.env.ZOHO_DESK_${v}`);
+    expect(api).not.toMatch(/VITE_ZOHO/);
+    // Ningún token de Zoho (1000.<hex>.<hex>) ni secreto de cliente escrito en el código
+    for (const [f, s] of [...code, ...files("api").map(f => [f, readFileSync(f, "utf8")] as const)]) expect(s, f).not.toMatch(/1000\.[0-9a-f]{32}\.[0-9a-f]{32}|\b[0-9a-f]{42}\b/);
+  });
   it("el chat de Joel no ejecuta ni interpreta HTML del visitante", () => {
     for (const [f, s] of code.filter(([f]) => /chat|joel/i.test(f))) expect(s, f).not.toMatch(/innerHTML|dangerouslySetInnerHTML|DOMParser/);
   });
