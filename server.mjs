@@ -123,7 +123,13 @@ async function serveStatic(req, res, url, rules) {
   pathname = path.posix.normalize(pathname);
 
   // Direcciones limpias (cleanUrls y trailingSlash: false de vercel.json).
-  let clean = pathname.length > 1 ? pathname.replace(/\.html$/, "").replace(/\/+$/, "") : pathname;
+  let clean = pathname;
+  if (clean.length > 1) {
+    if (clean.endsWith(".html")) clean = clean.slice(0, -5);
+    let end = clean.length;
+    while (end > 0 && clean.charCodeAt(end - 1) === 47) end--;
+    clean = clean.slice(0, end);
+  }
   if (clean === "/index" || clean === "") clean = "/";
   if (clean !== pathname) {
     res.writeHead(308, { Location: clean + url.search });
@@ -154,8 +160,8 @@ async function serveStatic(req, res, url, rules) {
   const range = req.headers.range;
   if (range) {
     const m = /^bytes=(\d*)-(\d*)$/.exec(range);
-    let start = m && m[1] !== "" ? Number(m[1]) : NaN;
-    let end = m && m[2] !== "" ? Number(m[2]) : NaN;
+    let start = m && m[1] !== "" ? Number(m[1]) : Number.NaN;
+    let end = m && m[2] !== "" ? Number(m[2]) : Number.NaN;
     if (m && Number.isNaN(start) && !Number.isNaN(end)) { start = Math.max(found.size - end, 0); end = found.size - 1; }
     if (m && !Number.isNaN(start) && Number.isNaN(end)) end = found.size - 1;
     if (!m || Number.isNaN(start) || start > end || start >= found.size) {

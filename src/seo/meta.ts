@@ -1,7 +1,7 @@
 import { blogPosts, type Post } from "@/data/blog";
 import { VIDEOS } from "@/data/videos";
 import { getContent } from "@/i18n/content";
-import { LANG_INFO, LANGS, langOf, localize, toSpanish, type Lang } from "@/i18n";
+import { LANG_INFO, LANGS, langOf, localize, toSpanish, trimTrailingSlashes, type Lang } from "@/i18n";
 import { BRAND, GOOGLE_VERIFICATION, INDEXABLE, SITE_URL, abs } from "@/seo/site";
 
 // ─── Metadatos por ruta ─────────────────────────────────────────────────────
@@ -39,7 +39,9 @@ export function clip(text: string, max = 158) {
   const t = text.replace(/\s+/g, " ").trim();
   if (t.length <= max) return t;
   const cut = t.slice(0, max - 1);
-  return cut.slice(0, cut.lastIndexOf(" ")).replace(/[,;:.\s]+$/, "") + "…";
+  let end = cut.lastIndexOf(" ");
+  while (end > 0 && ",;:. \t\n\r".includes(cut[end - 1])) end--;
+  return cut.slice(0, end) + "…";
 }
 
 const MONTHS: Record<string, string> = { enero: "01", febrero: "02", marzo: "03", abril: "04", mayo: "05", junio: "06", julio: "07", agosto: "08", septiembre: "09", octubre: "10", noviembre: "11", diciembre: "12" };
@@ -229,7 +231,7 @@ function notFoundMeta(path: string, lang: Lang): PageMeta {
 
 /** Metadatos de cualquier ruta, en su idioma (las desconocidas devuelven la página 404). */
 export function getPageMeta(pathname: string): PageMeta {
-  const path = pathname.replace(/\/+$/, "") || "/";
+  const path = trimTrailingSlashes(pathname) || "/";
   const lang = langOf(path);
   const es = toSpanish(path);
   if (es === "/") return homeMeta(lang);

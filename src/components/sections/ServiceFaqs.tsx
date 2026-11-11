@@ -12,10 +12,10 @@ import type { ServiceFaq } from "@/data/serviceFaqs";
 
 type Block = { t: "p"; s: string } | { t: "ol"; items: string[] };
 
-function blocks(a: string[]): Block[] {
+export function blocks(a: string[]): Block[] {
   const out: Block[] = [];
   for (const s of a) {
-    const m = /^\d+\.\s+(.*)$/.exec(s);
+    const m = /^\d+\.\s+(\S.*)$/.exec(s);
     const last = out[out.length - 1];
     if (m && last?.t === "ol") last.items.push(m[1]);
     else if (m) out.push({ t: "ol", items: [m[1]] });

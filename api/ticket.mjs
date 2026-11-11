@@ -27,7 +27,7 @@ function limited(ip) {
     return recent.length > RATE.max;
 }
 const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-const EMAIL = /^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]{2,}$/;
+const EMAIL = /^[^\s@<>"]+@(?:[^\s@<>".]+\.)+[^\s@<>".]{2,}$/;
 const env = () => ({
     clientId: process.env.ZOHO_DESK_CLIENT_ID,
     clientSecret: process.env.ZOHO_DESK_CLIENT_SECRET,

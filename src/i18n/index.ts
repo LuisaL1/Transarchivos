@@ -60,9 +60,17 @@ export const langOf = (pathname: string): Lang => {
   return PREFIXED.includes(first) ? first : "es";
 };
 
+/** Quita las barras finales de una ruta (sin expresión regular: evita retrocesos largos). */
+export function trimTrailingSlashes(path: string) {
+  let end = path.length;
+  while (end > 0 && path.charCodeAt(end - 1) === 47) end--;
+  return path.slice(0, end);
+}
+
 const splitPath = (path: string) => {
-  const m = path.match(/^([^?#]*)(.*)$/);
-  return { pathname: m?.[1] || "/", rest: m?.[2] ?? "" };
+  const cut = path.search(/[?#]/);
+  const pathname = cut < 0 ? path : path.slice(0, cut);
+  return { pathname: pathname || "/", rest: cut < 0 ? "" : path.slice(cut) };
 };
 
 const toLocal = (part: string, lang: L) => SECTIONS[part]?.[lang] ?? SLUGS[part]?.[lang] ?? part;

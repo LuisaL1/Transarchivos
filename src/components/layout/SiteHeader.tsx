@@ -50,7 +50,7 @@ export function SiteHeader({ solid = false, onChat }: { solid?: boolean; onChat:
     let alive = true;
     const minWait = new Promise(r => window.setTimeout(r, 1500));
     const fonts = document.fonts?.ready ?? Promise.resolve();
-    Promise.all([minWait, fonts]).then(() => { if (alive) setNavReady(true); });
+    void Promise.all([minWait, fonts]).then(() => { if (alive) setNavReady(true); });
     return () => { alive = false; };
   }, []);
   // Un solo dropdown abierto a la vez en el pill.

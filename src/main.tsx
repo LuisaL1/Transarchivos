@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import App from './App'
+import { trimTrailingSlashes } from './i18n'
 import 'bootstrap-icons/font/bootstrap-icons.css'
 import './styles/index.css'
 
@@ -19,6 +20,6 @@ const app = (
 // En producción cada ruta llega con su HTML pre-generado (SEO) y se hidrata.
 // Si el HTML es de otra ruta (404.html en una URL desconocida, vista previa
 // local) o no hay HTML (pnpm dev), se renderiza desde cero.
-const here = window.location.pathname.replace(/\/+$/, '') || '/'
+const here = trimTrailingSlashes(window.location.pathname) || '/'
 if (root.firstElementChild && root.dataset.path === here) ReactDOM.hydrateRoot(root, app)
 else { root.textContent = ''; ReactDOM.createRoot(root).render(app) }

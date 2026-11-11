@@ -32,7 +32,7 @@ function limited(ip) {
     return recent.length > RATE.max;
 }
 const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-const EMAIL = /^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]{2,}$/;
+const EMAIL = /^[^\s@<>"]+@(?:[^\s@<>".]+\.)+[^\s@<>".]{2,}$/;
 // Plantilla de correo: banner en imagen (índigo #1800AD + logo + detalle de esquina; las
 // imágenes no se alteran en el modo oscuro de Gmail), cuerpo en tabla.
 function layout(base, title, inner) {
