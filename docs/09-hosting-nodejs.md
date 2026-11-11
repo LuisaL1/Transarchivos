@@ -30,7 +30,7 @@ Vercel sigue funcionando igual: `server.mjs` no lo toca.
    | --- | --- | --- |
    | `BREVO_API_KEY` | Al ejecutar (servidor) | La clave de envío de Brevo |
    | `LEADS_TO`, `LEADS_TO_GENERAL`, `LEADS_TO_NEWSLETTER`, `LEADS_FROM`, `LEADS_FROM_NAME` | Al ejecutar | Buzones (ver `docs/07-formularios.md`) |
-   | `EMAIL_ASSETS_URL` | Al ejecutar | `https://www.transarchivos.com` (el banner de los correos se descarga de ahí) |
+   | `EMAIL_ASSETS_URL` | Al ejecutar | Opcional: por defecto `https://www.transarchivos.com` (de ahí se descarga el banner de los correos) |
    | `VITE_GA_MEASUREMENT_ID` | **Al compilar** | Identificador de Google Analytics (G-…) |
    | `VITE_SITE_INDEXABLE` | **Al compilar** | `true` para que Google indexe el sitio; sin ella lleva `noindex` |
    | `VITE_GOOGLE_SITE_VERIFICATION` | **Al compilar** | Código de Search Console (opcional) |

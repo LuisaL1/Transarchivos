@@ -61,8 +61,7 @@ El reporte HTML queda en `playwright-report/` (`pnpm exec playwright show-report
   y apunta a la cotización correcta.
 - Chat (nunca se conecta con Zoho): `crmChat.test.ts` (widget de Zoho: carga
   una sola vez, en español y con su botón; el iframe crece al abrir la ventana;
-  diseño del sitio) y `advisor-api.test.ts` (`api/advisor.mjs` con `fetch`
-  simulado: pases firmados, 403/422/502).
+  diseño del sitio).
 
 ### 3. Seguridad
 - **Estática** (`tests/security/static.test.ts`):

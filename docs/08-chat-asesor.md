@@ -119,13 +119,6 @@ actualización grande de Zoho.
 - Zoho actúa como encargado del tratamiento y puede procesar los datos en
   servidores fuera de Colombia.
 
-## Modo "API" (sin uso en esta variante)
-
-`api/advisor.mjs` (y `scripts/zoho-token.mjs`, `scripts/zoho-advisor-check.mjs`)
-siguen en el proyecto, pero ningún código del navegador los llama: eran el
-canal de Joel por la API de Zoho. Si esta variante se adopta, se pueden borrar
-junto con `tests/unit/advisor-api.test.ts`.
-
 ## Pruebas
 
 Las pruebas **nunca se conectan con Zoho**: cada archivo de

@@ -161,7 +161,7 @@ export async function POST(req) {
     const subject = (body.subject ?? (kind === "cotizacion" ? "Solicitud de cotización" : "Nuevo mensaje de contacto")).slice(0, 150);
     // Imágenes del correo: siempre desde producción (no desde una vista previa
     // o un despliegue antiguo, que tendría otro banner). Ver docs/07-formularios.md
-    const base = (process.env.EMAIL_ASSETS_URL || "https://transarchivos.vercel.app").replace(/\/$/, "");
+    const base = (process.env.EMAIL_ASSETS_URL || "https://www.transarchivos.com").replace(/\/$/, "");
     const rows = Object.entries(fields).map(([k, v]) => `<tr><td style="padding:9px 12px;border:1px solid #E4E6F7;background:#F7F8FF;font-weight:bold;color:#1800AD;vertical-align:top;width:38%">${esc(k)}</td><td style="padding:9px 12px;border:1px solid #E4E6F7;white-space:pre-wrap">${esc(v)}</td></tr>`).join("");
     const html = layout(base, esc(subject), `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;font-size:14px">${rows}</table><p style="color:#6B6B6B;font-size:12px;margin:16px 0 0">Enviado desde el formulario del sitio web. Responda este correo para contestarle directamente a la persona.</p>`);
     const text = `${subject}\n\n` + Object.entries(fields).map(([k, v]) => `${k}: ${v}`).join("\n");
