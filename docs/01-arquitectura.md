@@ -77,7 +77,7 @@ el selector del hero, las tarjetas de solución, las páginas de servicio y Joel
 ## Flujo de datos
 
 ```
-RecursosTransarchivos/ (documentos del cliente)
+../RecursosTransarchivos/ (documentos del cliente; fuera del repositorio)
         │  (redacción manual)
         ▼
 src/data/*.ts ──► páginas y secciones (render)

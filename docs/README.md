@@ -18,8 +18,8 @@ reemplaza) a los documentos de la raíz del repositorio:
 | `docs/08-chat-asesor.md` | Chat con un asesor humano (Zoho SalesIQ): modos, cotización al equipo, página aislada y CSP, configuración y pruebas |
 | `docs/09-hosting-nodejs.md` | Publicación en un hosting con Node.js (GoDaddy) con `server.mjs`: pasos con GitHub, variables de entorno y cómo comprobar |
 
-**Fuente de verdad del contenido:** `RecursosTransarchivos/` (documentos del
-cliente). Todo texto del sitio sale de ahí y vive en `src/data/`.
+**Fuente de verdad del contenido:** `../RecursosTransarchivos/` (documentos del
+cliente, fuera del repositorio). Todo texto del sitio sale de ahí y vive en `src/data/`.
 
 **Estado (octubre de 2026):** prototipo funcional completo, sin backend, con SEO
 técnico listo. La indexación está desactivada hasta la publicación oficial

@@ -29,3 +29,6 @@ playwright-report/
 test-results/
 blob-report/
 dist-ssr/
+
+# Documentos fuente del cliente: viven fuera del repositorio (carpeta ../RecursosTransarchivos)
+/RecursosTransarchivos/

@@ -27,7 +27,7 @@
 | Artículos | "Más del blog" y preguntas frecuentes en la columna lateral, no abajo, para evitar espacio muerto. |
 | Contenido | Sin ISO 9001. Bogotá como sede, abiertos al resto del país. Sin precios: no existen tarifas oficiales. |
 | Favicon | La "t" manuscrita del logo sobre azul: versión gruesa para la pestaña, con flecha para los íconos grandes. |
-| Documentos fuente | `RecursosTransarchivos/` no se borra ni se publica. |
+| Documentos fuente | `RecursosTransarchivos/` vive fuera del repositorio (carpeta hermana `../RecursosTransarchivos/`; `.gitignore` la excluye). No se borra ni se publica. Sigue en el historial de git hasta el commit que la sacó. |
 
 ## Pendientes priorizados
 

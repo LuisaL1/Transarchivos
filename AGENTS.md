@@ -83,7 +83,7 @@ scripts/generate-email-header.mjs  Banner de los correos (pnpm email:header)
 knip.json                 Detección de archivos, exportaciones y dependencias sin uso (pnpm lint:unused)
 tests/                    unit/, security/, seo/ (HTML generado), e2e/ (Playwright + axe)
 docs/                     Documentación técnica (arquitectura, UX/UI, conversión, pruebas, decisiones)
-RecursosTransarchivos/    Documentos fuente del cliente (contexto, no se publican)
+../RecursosTransarchivos/ Documentos fuente del cliente: viven FUERA del repositorio (carpeta hermana; no se publican)
 ```
 
 ### Reglas
@@ -93,7 +93,7 @@ RecursosTransarchivos/    Documentos fuente del cliente (contexto, no se publica
   una solución, edite el archivo de datos en los dos idiomas: el sitio y el
   buscador se actualizan solos (el chat se configura en Zoho SalesIQ). Los textos de la interfaz (menús, botones,
   títulos de sección) están en `src/i18n/ui.ts`, `home.ts` y `pages.ts`.
-- Todo el contenido debe salir de los documentos de `RecursosTransarchivos/`.
+- Todo el contenido debe salir de los documentos de `../RecursosTransarchivos/` (fuera del repositorio).
   No inventar cifras, precios, horarios ni certificaciones (la empresa NO tiene
   ISO 9001). Operan principalmente en Bogotá.
 - Importar con el alias `@/` (apunta a `src/`).
