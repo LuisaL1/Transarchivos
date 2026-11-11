@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import './fonts.css';
 
 /* Paleta (manual de marca). Misma lista que styles/tokens.ts (C.x) para los
    estilos en línea: cambiar un color aquí y allá. */

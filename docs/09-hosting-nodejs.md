@@ -31,6 +31,7 @@ Vercel sigue funcionando igual: `server.mjs` no lo toca.
    | `BREVO_API_KEY` | Al ejecutar (servidor) | La clave de envío de Brevo |
    | `LEADS_TO`, `LEADS_TO_GENERAL`, `LEADS_TO_NEWSLETTER`, `LEADS_FROM`, `LEADS_FROM_NAME` | Al ejecutar | Buzones (ver `docs/07-formularios.md`) |
    | `ZOHO_DESK_CLIENT_ID`, `ZOHO_DESK_CLIENT_SECRET`, `ZOHO_DESK_REFRESH_TOKEN`, `ZOHO_DESK_ORG_ID`, `ZOHO_DESK_DEPARTMENT_ID` | Al ejecutar (servidor) | Credenciales de Zoho Desk con las que el cotizador crea el ticket (`docs/07-formularios.md`). Sin ellas el cotizador avisa y ofrece WhatsApp |
+   | `TRUSTED_PROXY_HOPS` | Al ejecutar | Opcional (por defecto 1): cuántos proxies de confianza hay delante del sitio (el del hosting, más una CDN si la hay). Sirve para identificar al visitante en el límite de envíos por IP a partir de `X-Forwarded-For` |
    | `EMAIL_ASSETS_URL` | Al ejecutar | Opcional: por defecto `https://www.transarchivos.com` (de ahí se descarga el banner de los correos) |
    | `VITE_GA_MEASUREMENT_ID` | **Al compilar** | Identificador de Google Analytics (G-…) |
    | `VITE_SITE_INDEXABLE` | **Al compilar** | `true` para que Google indexe el sitio; sin ella lleva `noindex` |

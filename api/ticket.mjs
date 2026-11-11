@@ -71,14 +71,32 @@ export async function GET() {
         return json({ configured: true, token: String(e.message).slice(0, 120) });
     }
 }
-export async function POST(req) {
-    // Solo desde el propio sitio
+// IP del visitante para el límite de envíos: la que añade el proxy de la plataforma
+// al final de X-Forwarded-For (las que escribe el cliente van a la izquierda y
+// se ignoran). TRUSTED_PROXY_HOPS = cuántos proxies de confianza hay delante.
+const clientIp = (req) => {
+    const hops = Math.max(1, Number(process.env.TRUSTED_PROXY_HOPS) || 1);
+    const parts = (req.headers.get("x-forwarded-for") ?? "").split(",").map((p) => p.trim()).filter(Boolean);
+    return parts.at(-hops) ?? parts[0] ?? "desconocida";
+};
+// Un Origin ilegible (p. ej. "null" de un iframe aislado) también es ajeno.
+const foreignOrigin = (req) => {
     const origin = req.headers.get("origin");
     const host = req.headers.get("host");
-    if (origin && host && new URL(origin).host !== host)
+    if (!origin || !host)
+        return false;
+    try {
+        return new URL(origin).host !== host;
+    }
+    catch {
+        return true;
+    }
+};
+export async function POST(req) {
+    // Solo desde el propio sitio
+    if (foreignOrigin(req))
         return json({ ok: false, error: "origin" }, 403);
-    const ip = (req.headers.get("x-forwarded-for") ?? "").split(",")[0].trim() || "desconocida";
-    if (limited(ip))
+    if (limited(clientIp(req)))
         return json({ ok: false, error: "rate" }, 429);
     let body;
     try {
@@ -87,6 +105,8 @@ export async function POST(req) {
     catch {
         return json({ ok: false, error: "json" }, 400);
     }
+    if (body === null || typeof body !== "object" || Array.isArray(body))
+        return json({ ok: false, error: "json" }, 400);
     // Campo trampa para bots: si viene lleno, se responde OK sin crear nada.
     if (body.website)
         return json({ ok: true });

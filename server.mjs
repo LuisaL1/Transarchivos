@@ -69,6 +69,8 @@ async function runApi(req, res, url, rules) {
   }
   const headers = new Headers();
   for (const [k, v] of Object.entries(req.headers)) if (v !== undefined) headers.set(k, Array.isArray(v) ? v.join(", ") : v);
+  // Sin proxy delante no hay X-Forwarded-For de confianza: se usa la conexión real.
+  if (!headers.has("x-forwarded-for") && req.socket.remoteAddress) headers.set("x-forwarded-for", req.socket.remoteAddress);
   const proto = req.headers["x-forwarded-proto"] ?? "http";
   const request = new Request(`${proto}://${req.headers.host ?? "localhost"}${req.url}`, { method: req.method, headers, body });
   let response;

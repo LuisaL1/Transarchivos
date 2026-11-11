@@ -76,6 +76,15 @@ describe("Cabeceras de seguridad (vercel.json)", () => {
     expect(headers["Content-Security-Policy"]).toMatch(/frame-ancestors 'none'/);
     expect(headers["Content-Security-Policy"]).toMatch(/object-src 'none'/);
   });
+  it("la CSP no admite hojas de estilo en línea (solo atributos style) ni fuentes de terceros", () => {
+    const csp = headers["Content-Security-Policy"];
+    expect(csp.match(/style-src ([^;]+)/)[1]).toBe("'self'");
+    expect(csp).toMatch(/style-src-attr 'unsafe-inline'/);
+    expect(csp).not.toMatch(/fonts\.(googleapis|gstatic)\.com/);
+  });
+  it("el HTML de entrada no carga fuentes ni estilos de terceros", () => {
+    expect(readFileSync("index.html", "utf8")).not.toMatch(/fonts\.(googleapis|gstatic)\.com/);
+  });
   it("la página no puede embeberse en otros sitios", () => expect(headers["X-Frame-Options"]).toBe("DENY"));
   it("el sitio nunca autoriza los scripts de Zoho: solo la página aislada del chat con un asesor", () => {
     expect(headers["Content-Security-Policy"]).not.toMatch(/zoho/i);
