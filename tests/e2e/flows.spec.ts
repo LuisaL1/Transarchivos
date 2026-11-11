@@ -162,7 +162,7 @@ test("el widget de Zoho SalesIQ se carga al entrar, en español y sin su botón 
   const box = await page.locator("#ta-zoho-frame").boundingBox();
   expect(box!.x + box!.width).toBeLessThan(0);
   await expect(page.locator("html")).not.toHaveClass(/ta-zoho-open/);
-  await expect(page.getByRole("button", { name: "Hablar con Joel, asesor virtual" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Hablar con Joelito, asesor virtual" })).toBeVisible();
 });
 
 test("«Chatee con Joel» abre la ventana del widget de Zoho", async ({ page }) => {
@@ -182,7 +182,7 @@ test("el botón de Joel abre y cierra la ventana del widget de Zoho", async ({ p
   const banner = page.getByRole("dialog", { name: "Aviso de cookies" });
   if (await banner.isVisible()) await banner.getByRole("button", { name: "Rechazar" }).click();
   await expect(page.locator("html")).toHaveClass(/ta-zoho-ready/, { timeout: 15_000 });
-  await page.getByRole("button", { name: "Hablar con Joel, asesor virtual" }).click();
+  await page.getByRole("button", { name: "Hablar con Joelito, asesor virtual" }).click();
   await expect(page.locator("html")).toHaveClass(/ta-zoho-open/);
   await expect(page.locator("#ta-zoho-frame")).toBeInViewport();
   // En celular la ventana ocupa la pantalla y se cierra desde la de Zoho

@@ -1,5 +1,5 @@
 // ─── Botón flotante del chat (Joel) ─────────────────────────────────────────
-// El mismo botón del chat de Joel: foto de Joel, "Joel · IA · En línea" y,
+// El mismo botón del chat de Joel: foto de Joel, "Joelito · IA · En línea" y,
 // con la ventana abierta, "Cerrar". Abre y cierra la ventana del widget de
 // Zoho SalesIQ (src/lib/chatWidget.ts); el botón propio de Zoho se esconde.
 import { useEffect, useState } from "react";
@@ -8,7 +8,7 @@ import { ChatAvatarFace } from "@/components/ui/Brand";
 import { Bi } from "@/components/ui/Icons";
 import { C } from "@/styles/tokens";
 
-const NAME = "Joel";
+const NAME = "Joelito";
 
 export function ChatLauncher() {
   const [open, setOpen] = useState(false);

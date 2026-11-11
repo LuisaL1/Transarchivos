@@ -13,7 +13,7 @@ a un asesor) **se configura en Zoho SalesIQ**, no en el código.
 
 | Qué hace el visitante | Qué pasa |
 | --- | --- |
-| Entra a cualquier página | Ve el botón flotante de Joel (foto, "Joel · IA · En línea") en la esquina inferior derecha. Cuando el navegador queda libre, se carga el widget de Zoho, escondido (su botón propio no se muestra). |
+| Entra a cualquier página | Ve el botón flotante de Joel (foto, "Joelito · IA · En línea") en la esquina inferior derecha. Cuando el navegador queda libre, se carga el widget de Zoho, escondido (su botón propio no se muestra). |
 | Pulsa el botón de Joel | Se abre la ventana de Zoho sobre el botón; el botón pasa a "Cerrar" (en celular la ventana ocupa la pantalla y el botón se esconde). Otro clic la cierra. |
 | Cierra o minimiza desde la ventana de Zoho | La ventana se esconde y el botón vuelve a "Joel". |
 | Pulsa "Chat con Joel" / "Chatee con Joel" (menú, soporte, preguntas frecuentes) o la imagen de Joel del hero | Se abre la misma ventana de Zoho (`openChat`, `src/lib/chatWidget.ts`). Si Zoho no carga, se abre WhatsApp. |
@@ -77,8 +77,10 @@ El sitio inyecta dos hojas de estilo (iframes del mismo origen):
 | La ventana llena el iframe; sin el botón de Zoho | `src/styles/zoho-host.css` (se inyecta en la página aislada) |
 
 Lo que se copia del chat de Joel: cabecera índigo con el cuadrado amarillo
-girado, foto de Joel con punto verde, rótulo "ASESOR VIRTUAL" y "En línea ·
-Responde al instante"; cuerpo gris; mensajes del bot en tarjeta blanca con la
+girado; de izquierda a derecha, la flecha de volver (cuando Zoho la muestra),
+la foto de Joel (38 px) con punto verde, el rótulo "ASESOR VIRTUAL" y el
+nombre, y los botones de 32 px: menú de opciones (tres puntos), Reiniciar y la
+X; cuerpo gris; mensajes del bot en tarjeta blanca con la
 foto de Joel al lado, del visitante en índigo; sin hora; opciones en una
 tarjeta con una fila por opción; campo en píldora y botón de enviar amarillo;
 botón "Reiniciar conversación" en la cabecera, a la izquierda de la X: lo pone
@@ -87,8 +89,10 @@ botón "Reiniciar conversación" en la cabecera, a la izquierda de la X: lo pone
 la conversación con el bot. Si se pulsa mientras el bot responde, espera a que
 Zoho vuelva a ofrecerlo.
 
-El menú de opciones de Zoho (tres puntos de la cabecera: silenciar, enviar la
-conversación por correo, terminar el chat) se esconde.
+El menú de opciones de Zoho (tres puntos: silenciar, enviar la conversación
+por correo, finalizar el chat) se abre bajo la cabecera, en una tarjeta blanca
+con texto índigo. Para que no quede recortado, la cabecera no recorta lo que
+sobresale y el cuadrado amarillo se dibuja dentro de ella.
 
 Lo que se configura en Zoho: el **nombre** que se ve en la cabecera y sobre
 los mensajes (el de la marca, hoy "Transarchivos") y el texto de los mensajes y
