@@ -2,10 +2,10 @@
    Se inyecta dentro de la ventana de Zoho desde src/lib/crmChat.ts. Copia el
    chat de Joel (rama chat-joel-salesiq, ChatBot.tsx):
 
-   · cabecera índigo con el cuadrado amarillo translúcido girado 45°, foto de
-     Joel redonda con punto verde, rótulo "ASESOR VIRTUAL" en amarillo, nombre
-     en Poppins y "En línea · Responde al instante"; botones en cuadros
-     translúcidos;
+   · cabecera índigo con el cuadrado amarillo translúcido girado 45°; flecha
+     de volver, foto de Joel redonda con punto verde, rótulo "ASESOR VIRTUAL"
+     en amarillo y nombre en Poppins; a la derecha, menú, Reiniciar y la X en
+     cuadros translúcidos;
    · cuerpo gris #F6F7FD; mensajes del bot o del asesor en tarjeta blanca con
      la foto de Joel al lado; del visitante, en índigo a la derecha; sin hora;
    · opciones en una tarjeta blanca, una fila por opción con flecha;
@@ -83,8 +83,27 @@ button,
 .seasonal-msg-bgimg {
   display: none !important;
 }
-/* Cuadrado amarillo translúcido girado 45° en la esquina */
-.siqcw-header::after,
+/* La cabecera de la conversación no recorta: el menú de 3 puntos se abre
+   por debajo de ella */
+.siqcw-header {
+  overflow: visible !important;
+}
+/* Cuadrado amarillo translúcido girado 45° en la esquina. En la conversación
+   se dibuja dentro de la cabecera (sin sobresalir) para no tener que recortar */
+.siqcw-header::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  left: 0 !important;
+  width: auto;
+  height: auto;
+  border-radius: 0;
+  box-shadow: none;
+  transform: none;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72'%3E%3Crect x='30' y='-48' width='90' height='90' rx='15' transform='rotate(45 75 -3)' fill='rgba(255, 222, 89, 0.22)'/%3E%3C/svg%3E")
+    top right / 72px 72px no-repeat;
+  pointer-events: none;
+}
 .home-header-wrap::after {
   content: "";
   position: absolute;
@@ -114,14 +133,14 @@ button,
   z-index: 1;
   overflow: visible !important;
 }
-/* Foto de Joel (46 px, redonda, fondo amarillo) con el punto verde de "en línea".
+/* Foto de Joel (38 px, redonda, fondo amarillo) con el punto verde de "en línea".
    Si un asesor con foto toma la conversación, su foto (img) va encima. La
    imagen es --ta-joel (arriba). */
 .embed-prof-cont {
   position: relative;
-  width: 46px !important;
-  height: 46px !important;
-  margin-right: 14px !important;
+  width: 38px !important;
+  height: 38px !important;
+  margin-right: 12px !important;
   border-radius: 50% !important;
   overflow: visible !important;
   background: #ffde59 !important;
@@ -134,11 +153,15 @@ button,
   background-position: center !important;
   background-repeat: no-repeat !important;
 }
-.embed-prof-cont img {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
+.embed-prof-cont img,
+.embed-prof-cont .siqcw-bot-logo {
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 50% !important;
   object-fit: cover;
+}
+.embed-prof-cont .siqcw-bot-logo {
+  background-color: transparent !important;
 }
 .embed-prof-cont .siqico-clogo {
   display: none !important;
@@ -148,14 +171,21 @@ button,
   position: absolute;
   right: 0;
   bottom: 0;
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   box-sizing: border-box;
   border-radius: 50%;
   border: 2px solid #1800ad;
   background: #22c55e;
 }
-/* Rótulo, nombre y estado */
+/* Rótulo y nombre (el punto verde de la foto ya dice "en línea"; sin la línea
+   "En línea · Responde al instante" ni su punto, aunque el CSS del portal
+   sea una versión anterior) */
+.header-title::after,
+.header-title [data-zsqa="header_title"]::after {
+  content: none !important;
+  display: none !important;
+}
 .header-title {
   position: relative;
   overflow: visible !important;
@@ -163,9 +193,9 @@ button,
 .header-title::before {
   content: "Asesor virtual";
   display: block;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
   font:
-    700 10px/1 "Montserrat",
+    700 9px/1 "Montserrat",
     sans-serif;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -173,58 +203,82 @@ button,
 }
 .header-title [data-zsqa="header_title"] {
   font:
-    600 17px/1.25 "Poppins",
+    600 15px/1.25 "Poppins",
     sans-serif !important;
 }
-.header-title [data-zsqa="header_title"]::after {
-  content: "En línea · Responde al instante";
-  display: block;
-  margin-top: 2px;
-  padding-left: 12px;
-  font:
-    400 12px/1.4 "Inter",
-    sans-serif;
-  color: rgba(255, 255, 255, 0.7) !important;
-}
-/* Punto verde del estado */
-.header-title::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: 6px;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #22c55e;
-}
-/* Botones de la cabecera: cuadros translúcidos de 36 px a la derecha */
+/* Botones de la cabecera: cuadros translúcidos de 32 px. Atrás va a la
+   izquierda de la foto y solo cuando Zoho lo muestra */
 .siqcw-header .left-arrow-icon {
-  order: 3;
-  margin-left: 10px;
+  order: 0 !important;
+  margin: 0 !important;
+}
+.siqcw-header .left-arrow-icon:not(.show-larrow) {
+  display: none !important;
 }
 .siqcw-header em[role="button"]:not(.hide) {
   display: grid !important;
   place-items: center;
   flex-shrink: 0;
-  width: 36px !important;
-  height: 36px !important;
-  border-radius: 12px !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 10px !important;
   background: rgba(255, 255, 255, 0.1) !important;
   color: rgba(255, 255, 255, 0.85) !important;
-  font-size: 15px !important;
+  font-size: 14px !important;
   transition: background-color 0.2s;
 }
 .siqcw-header em[role="button"]:not(.hide):hover {
   background: rgba(255, 255, 255, 0.2) !important;
 }
-/* Sin el menú de opciones de Zoho (tres puntos). Orden fijo a la derecha, sin
-   importar cuándo los agregue Zoho: Reiniciar y la X */
+/* Orden fijo a la derecha, sin importar cuándo los agregue Zoho: menú de
+   opciones (tres puntos), Reiniciar y la X */
 .siqcw-header-detail {
   flex: 1 1 auto;
   min-width: 0;
 }
 .siqcw-header .conv-more-opts {
-  display: none !important;
+  order: 1;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+/* Lista del menú (silenciar, enviar por correo, finalizar el chat): tarjeta
+   blanca con texto índigo, abierta bajo la cabecera a la derecha */
+.siqcw-header .siqcw-dropdown-cont {
+  position: absolute !important;
+  top: calc(100% - 6px) !important;
+  right: 12px !important;
+  bottom: auto !important;
+  left: auto !important;
+  z-index: 20 !important;
+}
+.siqcw-header .siqcw-dropdown-elem {
+  padding: 6px !important;
+  border: 1px solid #e4e6f7 !important;
+  border-radius: 12px !important;
+  background: #ffffff !important;
+  box-shadow: 0 20px 40px -16px rgba(10, 13, 61, 0.35) !important;
+}
+.siqcw-header .siqcw-dropdown-cont,
+.siqcw-header .siqcw-dropdown-cont * {
+  color: #1800ad !important;
+}
+.siqcw-header .siqcw-dropdown-list-div {
+  display: flex !important;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px !important;
+  border-radius: 8px !important;
+  background: transparent !important;
+  font:
+    500 13.5px/1.3 "Inter",
+    sans-serif !important;
+}
+.siqcw-header .siqcw-dropdown-list-div > div {
+  margin-left: 0 !important;
+}
+.siqcw-header .siqcw-dropdown-list-div:hover,
+.siqcw-header .siqcw-dropdown-list-div.sel {
+  background: #f6f7fd !important;
 }
 .siqcw-header .chat-win-close {
   order: 3;
@@ -233,13 +287,13 @@ button,
   z-index: 1;
   flex-shrink: 0;
   align-items: center;
-  width: 36px !important;
-  height: 36px !important;
-  margin: 0 0 0 10px !important;
-  border-radius: 12px !important;
+  width: 32px !important;
+  height: 32px !important;
+  margin: 0 0 0 6px !important;
+  border-radius: 10px !important;
   background: rgba(255, 255, 255, 0.1) !important;
   color: rgba(255, 255, 255, 0.85) !important;
-  font-size: 15px !important;
+  font-size: 14px !important;
 }
 .siqcw-header .chat-win-close:hover {
   background: rgba(255, 255, 255, 0.2) !important;
@@ -254,12 +308,12 @@ button,
   flex-shrink: 0;
   position: relative;
   z-index: 1;
-  width: 36px;
-  height: 36px;
-  margin-left: 10px;
+  width: 32px;
+  height: 32px;
+  margin-left: 6px;
   padding: 0;
   border: 0;
-  border-radius: 12px;
+  border-radius: 10px;
   background: rgba(255, 255, 255, 0.1);
   color: rgba(255, 255, 255, 0.85);
   cursor: pointer;
