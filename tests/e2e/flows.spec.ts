@@ -59,16 +59,17 @@ test("la flecha de volver de un servicio lleva a la sección de servicios", asyn
 });
 
 test("el cotizador exige la autorización de tratamiento de datos", async ({ page }) => {
+  await page.route("**/api/ticket", r => r.fulfill({ json: { ok: true } }));
   await page.goto("/?servicio=diagnostico#cotizador");
   await page.locator("#cot-volume").fill("100 cajas");
   await page.getByRole("button", { name: /Continuar|Siguiente/ }).first().click();
   for (const [id, v] of [["cot-empresa", "Empresa"], ["cot-nombre", "Ana"], ["cot-cargo", "Gerente"], ["cot-email", "ana@empresa.com"], ["cot-telefono", "3000000000"]]) await page.locator(`#${id}`).fill(v);
   await page.locator("#cot-sector").selectOption({ index: 1 });
-  await page.getByRole("button", { name: /Ver resumen/ }).click();
+  await page.getByRole("button", { name: /^Enviar/ }).click();
   await expect(page.locator("#cot-autorizacion")).toBeVisible();
   expect(await page.locator("#cot-autorizacion").evaluate(el => (el as HTMLInputElement).validity.valueMissing)).toBe(true);
   await page.locator("#cot-autorizacion").check();
-  await page.getByRole("button", { name: /Ver resumen/ }).click();
+  await page.getByRole("button", { name: /^Enviar/ }).click();
   await expect(page.locator("#cot-autorizacion")).toHaveCount(0);
 });
 
@@ -92,21 +93,45 @@ test("formulario de contacto: se abre desde soporte, exige autorización y enví
   expect(sent).toMatchObject({ kind: "contacto", replyTo: { email: "ana@empresa.com" } });
 });
 
-test("cotizador: envía la solicitud directamente", async ({ page }) => {
-  let sent: { kind?: string; fields?: Record<string, string> } | null = null;
-  await page.route("**/api/contact", async r => { sent = r.request().postDataJSON(); await r.fulfill({ json: { ok: true } }); });
+test("cotizador: «Enviar» crea el ticket en Zoho Desk y el resumen pasa de «Enviando…» a «Enviado»", async ({ page }) => {
+  let sent: { subject?: string; contact?: { email?: string }; fields?: Record<string, string> } | null = null;
+  let release!: () => void;
+  const answered = new Promise<void>(r => { release = r; });
+  // El ticket responde solo cuando la prueba ya vio «Enviando…»
+  await page.route("**/api/ticket", async r => { sent = r.request().postDataJSON(); await answered; await r.fulfill({ json: { ok: true } }); });
   await page.goto("/?servicio=diagnostico#cotizador");
   await page.locator("#cot-volume").fill("100 cajas");
   await page.getByRole("button", { name: /Continuar/ }).first().click();
   for (const [id, v] of [["cot-empresa", "Empresa"], ["cot-nombre", "Ana"], ["cot-cargo", "Gerente"], ["cot-email", "ana@empresa.com"], ["cot-telefono", "3000000000"]]) await page.locator(`#${id}`).fill(v);
   await page.locator("#cot-sector").selectOption({ index: 1 });
   await page.locator("#cot-autorizacion").check();
-  await page.getByRole("button", { name: /Ver resumen/ }).click();
-  await expect(page.getByRole("link", { name: /Enviar por WhatsApp/ })).toHaveAttribute("href", /wa.me\/573243586973\?text=.*Programa|wa.me\/573243586973\?text=/);
-  await page.getByRole("button", { name: /Enviar por correo/ }).click();
+  await page.getByRole("button", { name: /^Enviar/ }).click();
+  await expect(page.getByText("Resumen de su solicitud")).toBeVisible();
+  await expect(page.getByText("Enviando…")).toBeVisible();
+  release();
+  await expect(page.getByText("Enviado", { exact: true })).toBeVisible();
   await expect(page.getByText(/Recibimos su solicitud/)).toBeVisible();
-  expect(sent!.kind).toBe("cotizacion");
+  // Ya no se ofrece enviar por correo ni por WhatsApp
+  await expect(page.getByRole("link", { name: /Enviar por WhatsApp/ })).toHaveCount(0);
+  expect(sent!.subject).toMatch(/^Solicitud de cotización/);
+  expect(sent!.contact!.email).toBe("ana@empresa.com");
   expect(sent!.fields!["Autorización de datos"]).toBe("Sí");
+});
+
+test("cotizador: si el ticket falla, avisa y permite reintentar", async ({ page }) => {
+  let calls = 0;
+  await page.route("**/api/ticket", r => { calls++; return r.fulfill(calls === 1 ? { status: 502, json: { ok: false, error: "provider" } } : { json: { ok: true } }); });
+  await page.goto("/?servicio=diagnostico#cotizador");
+  await page.locator("#cot-volume").fill("100 cajas");
+  await page.getByRole("button", { name: /Continuar/ }).first().click();
+  for (const [id, v] of [["cot-empresa", "Empresa"], ["cot-nombre", "Ana"], ["cot-cargo", "Gerente"], ["cot-email", "ana@empresa.com"], ["cot-telefono", "3000000000"]]) await page.locator(`#${id}`).fill(v);
+  await page.locator("#cot-sector").selectOption({ index: 1 });
+  await page.locator("#cot-autorizacion").check();
+  await page.getByRole("button", { name: /^Enviar/ }).click();
+  await expect(page.getByRole("alert")).toContainText("No pudimos enviar la solicitud");
+  await page.getByRole("button", { name: /Reintentar/ }).click();
+  await expect(page.getByText("Enviado", { exact: true })).toBeVisible();
+  expect(calls).toBe(2);
 });
 
 test("suscripción al blog: exige autorización y envía", async ({ page }) => {

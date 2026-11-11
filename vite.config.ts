@@ -6,18 +6,21 @@ import path from 'node:path'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss(), {
-    // En desarrollo (pnpm dev) /api/contact se simula: no envía correos.
+    // En desarrollo (pnpm dev) /api/contact y /api/ticket se simulan: no
+    // envían correos ni crean tickets en Zoho Desk.
     name: 'dev-contact-mock',
     configureServer(server) {
-      server.middlewares.use('/api/contact', (req, res) => {
-        let body = ''
-        req.on('data', c => { body += c })
-        req.on('end', () => {
-          console.log('[dev] /api/contact (simulado):', body.slice(0, 400))
-          res.setHeader('Content-Type', 'application/json')
-          res.end(JSON.stringify({ ok: true, simulated: true }))
+      for (const path of ['/api/contact', '/api/ticket']) {
+        server.middlewares.use(path, (req, res) => {
+          let body = ''
+          req.on('data', c => { body += c })
+          req.on('end', () => {
+            console.log(`[dev] ${path} (simulado):`, body.slice(0, 400))
+            res.setHeader('Content-Type', 'application/json')
+            res.end(JSON.stringify({ ok: true, simulated: true }))
+          })
         })
-      })
+      }
     },
   }],
   resolve: {

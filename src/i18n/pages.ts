@@ -99,7 +99,7 @@ const es = {
     ] as [string, string, string][],
     h3: "3. Cómo se transmiten y guardan",
     storage: (legal: string) => [
-      `El formulario de contacto y el cotizador envían su solicitud directamente al correo de ${legal} mediante Brevo (proveedor de envío de correos, que actúa como encargado del tratamiento). El sitio no guarda una copia de sus datos.`,
+      `El formulario de contacto envía su solicitud directamente al correo de ${legal} mediante Brevo (proveedor de envío de correos, que actúa como encargado del tratamiento). El cotizador registra su solicitud en Zoho Desk (Zoho Corporation), la herramienta de atención al cliente de ${legal}, que actúa como encargado del tratamiento y puede procesar los datos en servidores fuera de Colombia, con garantías de protección adecuadas. El sitio no guarda una copia de sus datos.`,
       "Los mensajes por WhatsApp se rigen además por las condiciones de WhatsApp (Meta).",
       "Las respuestas del chat (del asistente automático o de un asesor humano) funcionan con Zoho SalesIQ (Zoho Corporation), que actúa como encargado del tratamiento y puede procesar los datos en servidores fuera de Colombia, con garantías de protección adecuadas. El chat de Zoho se carga al entrar al sitio y Zoho puede guardar en su navegador las cookies que necesita para funcionar (por ejemplo, para recordar su conversación).",
       "El asesor virtual Joel guarda en su navegador (almacenamiento local) un perfil de los temas que consultó, para personalizar el saludo. Ese perfil no sale de su equipo y puede borrarlo limpiando los datos del sitio en su navegador.",
@@ -218,7 +218,7 @@ const en: PagesUi = {
     ],
     h3: "3. How they are transmitted and stored",
     storage: (legal: string) => [
-      `The contact form and the quote tool send your request directly to ${legal}'s email through Brevo (an email delivery provider acting as data processor). The site does not keep a copy of your data.`,
+      `The contact form sends your request directly to ${legal}'s email through Brevo (an email delivery provider acting as data processor). The quote tool records your request in Zoho Desk (Zoho Corporation), ${legal}'s customer service tool, which acts as data processor and may process the data on servers outside Colombia, with adequate protection guarantees. The site does not keep a copy of your data.`,
       "WhatsApp messages are also governed by WhatsApp's (Meta) terms.",
       "Chat replies (from the automated assistant or a human advisor) run on Zoho SalesIQ (Zoho Corporation), which acts as data processor and may process the data on servers outside Colombia, with adequate protection guarantees. The Zoho chat loads when you enter the site and Zoho may store in your browser the cookies it needs to work (for example, to remember your conversation).",
       "The virtual advisor Joel stores in your browser (local storage) a profile of the topics you looked at, to personalise the greeting. That profile never leaves your device and you can delete it by clearing the site data in your browser.",

@@ -5,14 +5,15 @@
 // solicitud en el modelo (Entrada → Solución → Protección → Expansión), sugiere
 // servicios complementarios y decide el siguiente paso (completar información,
 // validación de Operaciones o cotización estándar). Textos en src/i18n/ui.ts y
-// preguntas en src/data/quote.ts (y quote.en.ts); el correo al equipo va con
-// los rótulos en español.
+// preguntas en src/data/quote.ts (y quote.en.ts). Al pulsar "Enviar" se crea
+// un ticket en Zoho Desk (api/ticket.mjs) con los rótulos en español y el
+// paso "Resumen" muestra "Enviando…" / "Enviado".
 
 import { useState, useEffect } from "react";
 import { trackEvent } from "@/lib/analytics";
 import { Link, useLocation } from "react-router-dom";
 import { track } from "@/lib/visitor";
-import { sendLead } from "@/lib/leads";
+import { sendTicket } from "@/lib/leads";
 import { whatsappUrl } from "@/data/contact";
 import { Bi, MenuIcon } from "@/components/ui/Icons";
 import { SOLUTIONS_ICON } from "@/data/solutions";
@@ -88,12 +89,7 @@ export function QuoteSimulator() {
   ];
   const summary = rows(u, cfg);
   const contactRows = contactRowsOf(u);
-  // Misma solicitud como mensaje de WhatsApp (chat con el texto ya escrito)
-  const whatsappQuote = () => whatsappUrl(
-    `${u.waIntro}\n\n*${u.labels.service}:* ${title}` + (solutionInfo ? `\n*${u.solution}:* ${solutionInfo.title}` : "") +
-    `\n\n*${u.waData}*\n` + summary.map(([k, v]) => `- ${k}: ${v}`).join("\n") +
-    `\n\n*${u.waContact}*\n` + contactRows.map(([k, v]) => `- ${k}: ${v}`).join("\n"));
-  // Envío directo de la solicitud (función del sitio → Brevo → correo de la empresa)
+  // Envío de la solicitud: ticket en Zoho Desk (función del sitio → API de Zoho Desk)
   const [sendState, setSendState] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const sendQuote = async () => {
     setSendState("sending");
@@ -104,7 +100,7 @@ export function QuoteSimulator() {
     contactRowsOf(es).forEach(([k, v]) => { fields[k] = v; });
     fields[es.labels.nextStep] = nextStep.t;
     fields["Autorización de datos"] = "Sí";
-    const r = await sendLead("cotizacion", u.subject(title), fields, { email: contact.email ?? "", name: contact.nombre }, "", lang);
+    const r = await sendTicket(u.subject(title), fields, { email: contact.email ?? "", name: contact.nombre, phone: contact.telefono }, "", lang);
     setSendState(r.ok ? "sent" : "error");
     if (r.ok) trackEvent("generate_lead", { method: "cotizador", service: selected, solution: solution ?? undefined });
   };
@@ -250,7 +246,7 @@ export function QuoteSimulator() {
             )}
 
             {step === 2 && (
-              <form onSubmit={e => { e.preventDefault(); setStep(3); }}>
+              <form onSubmit={e => { e.preventDefault(); setStep(3); void sendQuote(); }}>
                 <p className="text-lg font-bold mb-1" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>{u.s2Title}</p>
                 <p className="text-sm mb-5" style={{ color: C.muted }}>{u.s2Text}</p>
                 <div className="grid sm:grid-cols-2 gap-x-4 gap-y-4">
@@ -292,7 +288,7 @@ export function QuoteSimulator() {
                     <Bi n="arrow-left" size={14} color={C.indigo} /> {u.back}
                   </button>
                   <button type="submit" className={primaryBtn} style={{ background: C.yellow, color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>
-                    {u.summary} <Bi n="arrow-right" size={15} color={C.indigo} />
+                    {u.submit} <Bi n="send" size={14} color={C.indigo} />
                   </button>
                 </div>
               </form>
@@ -300,7 +296,22 @@ export function QuoteSimulator() {
 
             {step === 3 && (
               <div>
-                <p className="text-lg font-bold mb-1" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>{u.s3Title}</p>
+                <div className="flex items-start justify-between gap-3 mb-1">
+                  <p className="text-lg font-bold" style={{ color: C.indigo, fontFamily: "Poppins, sans-serif" }}>{u.s3Title}</p>
+                  {/* Estado del envío del ticket */}
+                  <span aria-live="polite" className="shrink-0">
+                    {sendState === "sending" && (
+                      <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold" style={{ background: "#F7F8FF", color: C.indigo, border: "1px solid #E4E6F7", fontFamily: "Montserrat, sans-serif" }}>
+                        <Bi n="hourglass-split" size={12} color={C.indigo} /> {u.sending}
+                      </span>
+                    )}
+                    {sendState === "sent" && (
+                      <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold" style={{ background: "#EAF7EE", color: "#15803d", fontFamily: "Montserrat, sans-serif" }}>
+                        <Bi n="check-circle-fill" size={12} color="#15803d" /> {u.sent}
+                      </span>
+                    )}
+                  </span>
+                </div>
                 <p className="text-sm mb-5" style={{ color: C.muted }}>{u.s3Text}</p>
                 <div className="flex items-start gap-3 rounded-2xl p-4 mb-5" style={{ background: `${nextStep.c}10`, border: `1px solid ${nextStep.c}33` }}>
                   <Bi n={nextStep.ic} size={20} color={nextStep.c} style={{ marginTop: 2, flexShrink: 0 }} />
@@ -333,29 +344,26 @@ export function QuoteSimulator() {
                     </div>
                   </div>
                 )}
-                <div className="flex flex-col-reverse sm:flex-row justify-between gap-3">
-                  <button type="button" onClick={() => setStep(2)} className={secondaryBtn} style={{ background: "#fff", color: C.indigo, border: "1.5px solid #DDE0F2", fontFamily: "Montserrat, sans-serif" }}>
-                    <Bi n="arrow-left" size={14} color={C.indigo} /> {u.modify}
-                  </button>
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <a href={whatsappQuote()} target="_blank" rel="noopener noreferrer" onClick={() => trackEvent("generate_lead", { method: "whatsapp", service: selected, solution: solution ?? undefined })}
-                      className={primaryBtn} style={{ background: "#fff", color: C.indigo, border: "1.5px solid #1800AD", fontFamily: "Montserrat, sans-serif", textDecoration: "none" }}>
-                      <Bi n="whatsapp" size={16} color="#16a34a" /> {u.sendWa}
-                    </a>
-                    <button type="button" onClick={sendQuote} disabled={sendState === "sending" || sendState === "sent"} className={`${primaryBtn} disabled:opacity-70`} style={{ background: sendState === "sent" ? "#16a34a" : C.yellow, color: sendState === "sent" ? "#fff" : C.indigo, fontFamily: "Montserrat, sans-serif" }}>
-                      {sendState === "sent" ? <><Bi n="check-lg" size={16} color="#fff" /> {u.sent}</> : sendState === "sending" ? u.sending : <><Bi n="envelope-arrow-up" size={15} color={C.indigo} /> {u.sendMail}</>}
-                    </button>
-                  </div>
-                </div>
                 {sendState === "sent" && (
-                  <p role="status" className="mt-4 rounded-xl px-3.5 py-3 text-sm" style={{ background: "#EAF7EE", color: "#15803d" }}>
+                  <p className="rounded-xl px-3.5 py-3 text-sm" style={{ background: "#EAF7EE", color: "#15803d" }}>
                     <Bi n="check-circle-fill" size={14} color="#15803d" className="mr-1.5" />{u.thanks(contact.email ?? "")}
                   </p>
                 )}
+                {/* Si falla: volver a los datos o reintentar (crea el ticket otra vez) */}
                 {sendState === "error" && (
-                  <p role="alert" className="mt-4 rounded-xl px-3.5 py-3 text-xs" style={{ background: "#FFF6D6", color: "#8A6D00", lineHeight: 1.55 }}>
-                    {u.error}<a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" style={{ color: C.indigo, fontWeight: 700 }}>WhatsApp</a>.
-                  </p>
+                  <>
+                    <p role="alert" className="mb-4 rounded-xl px-3.5 py-3 text-xs" style={{ background: "#FFF6D6", color: "#8A6D00", lineHeight: 1.55 }}>
+                      {u.error}<a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" style={{ color: C.indigo, fontWeight: 700 }}>WhatsApp</a>.
+                    </p>
+                    <div className="flex flex-col-reverse sm:flex-row justify-between gap-3">
+                      <button type="button" onClick={() => setStep(2)} className={secondaryBtn} style={{ background: "#fff", color: C.indigo, border: "1.5px solid #DDE0F2", fontFamily: "Montserrat, sans-serif" }}>
+                        <Bi n="arrow-left" size={14} color={C.indigo} /> {u.modify}
+                      </button>
+                      <button type="button" onClick={() => void sendQuote()} className={primaryBtn} style={{ background: C.yellow, color: C.indigo, fontFamily: "Montserrat, sans-serif" }}>
+                        <Bi n="arrow-clockwise" size={15} color={C.indigo} /> {u.retry}
+                      </button>
+                    </div>
+                  </>
                 )}
               </div>
             )}

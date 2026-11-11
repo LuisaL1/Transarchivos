@@ -1,4 +1,4 @@
-# 7 · Formularios y envío de solicitudes (Brevo)
+# 7 · Formularios y envío de solicitudes (Brevo y Zoho Desk)
 
 Todo contacto por correo del sitio pasa por formularios propios. Ningún enlace
 abre el programa de correo del visitante.
@@ -7,7 +7,7 @@ abre el programa de correo del visitante.
 | --- | --- | --- |
 | **Formulario de contacto** (`ContactModal`) | Tarjeta de soporte, pie de página, preguntas frecuentes, menú de celular, chat de Joel, política de privacidad | Nombre, empresa, correo, teléfono, motivo, mensaje y autorización de datos |
 | **Suscripción al blog** (`BlogSection`) | Sección Blog de la portada | Correo del suscriptor y autorización → marketing@; el suscriptor recibe "Suscripción confirmada" |
-| **Cotizador** (`QuoteSimulator`) | Sección `#cotizador` | Servicio, respuestas, datos de contacto, siguiente paso sugerido y autorización |
+| **Cotizador** (`QuoteSimulator`) | Sección `#cotizador` | Servicio, respuestas, datos de contacto, siguiente paso sugerido y autorización → **ticket en Zoho Desk** (ver abajo) |
 
 - Cualquier enlace a `#contacto` abre el formulario.
 - Ambos formularios exigen la **autorización de tratamiento de datos** (Ley 1581 de 2012). El servidor la vuelve a verificar.
@@ -25,6 +25,50 @@ Navegador ──POST /api/contact──► Función de Vercel (api/contact.ts) �
 - **Confirmación automática:** el visitante recibe "Recibimos su solicitud · Transarchivos" (con su nombre, el motivo o servicio, WhatsApp y teléfonos). Si responde, la respuesta llega a mercadeo@transarchivos.com. Si esta confirmación falla, la solicitud igual se da por enviada.
 - La clave de Brevo solo existe en el servidor: nunca llega al navegador.
 - El sitio no guarda copia de los datos.
+
+## Cotizador → ticket en Zoho Desk
+
+```
+Navegador ──POST /api/ticket──► Función de Vercel (api/ticket.mjs) ──API Zoho Desk──► ticket en el departamento
+```
+
+- En el paso "Contacto" el botón dice **"Enviar"**: crea el ticket y pasa al
+  paso "Resumen", que muestra el resumen con "Enviando…" y luego "Enviado". Si
+  falla, avisa (con el enlace a WhatsApp) y ofrece "Modificar datos" o
+  "Reintentar". Ya no se ofrece enviar por correo ni por WhatsApp.
+- El ticket lleva el asunto "Solicitud de cotización — <servicio>", la tabla
+  de datos (rótulos en español, contenido escapado), el correo y el teléfono, y
+  el contacto (Zoho Desk lo busca por el correo o lo crea). Canal: "Web".
+- Mismas protecciones que `/api/contact`: origen, límite por IP (5 cada 10
+  min), campo trampa y autorización de datos verificada en el servidor.
+- La función pide un token de acceso con el refresh token y lo reutiliza
+  mientras no venza (una hora).
+- El aviso de confirmación al cliente, si se quiere, se configura en Zoho Desk
+  (respuesta automática del departamento); el sitio no envía correo.
+
+**Credenciales (secretas):** Self Client de [api-console.zoho.com](https://api-console.zoho.com)
+con el alcance `Desk.tickets.CREATE` (y `Desk.basic.READ` para que el
+diagnóstico vea el departamento). Van **solo** en variables de entorno, nunca
+en el código ni con prefijo `VITE_`:
+
+| Variable | Valor |
+| --- | --- |
+| `ZOHO_DESK_CLIENT_ID` | Client ID del Self Client |
+| `ZOHO_DESK_CLIENT_SECRET` | Client Secret del Self Client |
+| `ZOHO_DESK_REFRESH_TOKEN` | Refresh token |
+| `ZOHO_DESK_ORG_ID` | ID de la organización de Zoho Desk |
+| `ZOHO_DESK_DEPARTMENT_ID` | Departamento que recibe los tickets |
+| `ZOHO_DESK_ACCOUNTS_URL`, `ZOHO_DESK_API_URL` | Opcionales: centro de datos (por defecto `https://accounts.zoho.com` y `https://desk.zoho.com`) |
+
+- **Producción:** Vercel → proyecto → Settings → Environment Variables
+  (entorno Production; también Preview si se quiere probar ahí), y volver a
+  desplegar.
+- **Este equipo:** `.env.local` (Git lo ignora: regla `.env*` de `.gitignore`).
+- **Diagnóstico:** `GET /api/ticket` responde si está configurado, si el
+  token sirve y si ve el departamento, sin mostrar secretos.
+- Sin las variables, la función responde "no configurado" (503) y el cotizador
+  muestra el aviso con WhatsApp. En `pnpm dev`, `/api/ticket` se **simula**
+  (`vite.config.ts`): no crea tickets.
 
 ## Configuración (área encargada de Brevo)
 
@@ -54,4 +98,5 @@ Navegador ──POST /api/contact──► Función de Vercel (api/contact.ts) �
   - campo trampa → OK sin enviar;
   - armado del correo (destino, "responder a", HTML escapado);
   - falla de Brevo → 502.
-- `tests/e2e/flows.spec.ts`: el formulario se abre desde soporte, exige la autorización y envía; el cotizador envía directo. El envío se simula: no llega ningún correo real.
+- `tests/unit/ticket-api.test.ts`: sin credenciales → 503; ticket con departamento, contacto y detalle escapado; token reutilizado; correo o autorización inválidos → 422; otro dominio → 403; campo trampa; límite por IP; Zoho rechaza → 502 sin secretos.
+- `tests/e2e/flows.spec.ts`: el formulario se abre desde soporte, exige la autorización y envía; el cotizador crea el ticket ("Enviando…" → "Enviado") y, si falla, permite reintentar. El envío se simula: no llega ningún correo real.

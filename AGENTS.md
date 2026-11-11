@@ -64,7 +64,7 @@ src/
 ├── lib/chatWidget.ts     Chat = widget de Zoho SalesIQ: lo carga al entrar (startChatWidget) y lo abre (openChat)
 ├── lib/crmChat.ts        Carga del widget en la página aislada, visible en la esquina (SALESIQ_WIDGET)
 ├── lib/visitor.ts        Lo que el sitio recuerda del visitante (localStorage): visitas, eventos, búsquedas
-├── lib/leads.ts          Envío de formularios a /api/contact
+├── lib/leads.ts          Envío de formularios a /api/contact y del cotizador a /api/ticket
 ├── lib/analytics.ts      Google Analytics con consentimiento (Consent Mode v2)
 ├── seo/                  Datos de la empresa (site.ts) y metadatos por ruta (meta.ts)
 ├── entry-server.tsx      Render en servidor para la pre-generación de HTML
@@ -75,6 +75,7 @@ src/
 └── styles/index.css      Estilos globales, tokens de color de Tailwind (@theme), animaciones
 public/                   Archivos servidos tal cual (videos, favicon, robots, documentos/ PDF oficiales)
 api/contact.mjs           Función de Vercel: formularios → correo por Brevo (docs/07-formularios.md)
+api/ticket.mjs            Función de Vercel: cotizador → ticket en Zoho Desk (credenciales en variables de entorno)
 server.mjs                Servidor Node.js de producción (GoDaddy u otro hosting): páginas de dist/, cabeceras de vercel.json y api/ (docs/09-hosting-nodejs.md)
 public/chat-asesor.html   Página aislada donde vive el widget de Zoho (CSP propia en vercel.json)
 src/styles/zoho-*.css     Diseño del sitio dentro del widget de Zoho
