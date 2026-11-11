@@ -9,7 +9,7 @@ const es = {
     services: "Servicios", solutions: "Soluciones", about: "Nosotros", blog: "Blog", videos: "Da play al conocimiento", contact: "Contacto",
     quote: "Cotización", quoteLong: "Solicitar cotización", contactDirect: "Contacto directo", search: "Buscar", closeSearch: "Cerrar búsqueda", support: "Soporte",
     openMenu: "Abrir menú", closeMenu: "Cerrar menú", logo: "Transarchivos, ir al inicio", chatJoel: "Chat con Joel", whatsapp: "WhatsApp",
-    blogAndFaq: "Contacto y preguntas frecuentes", address: "Cl. 21 # 39A-40, Bogotá", chooseLang: "Elegir idioma", langs: "Idiomas disponibles",
+    blogAndFaq: "Contacto y preguntas frecuentes", address: "Cl. 21 # 39A-40, Bogotá",
   },
   menus: {
     services: { kicker: "Diagnóstico documental", title: "¿No sabe por dónde empezar?", text: "Le mostramos el diagnóstico técnico y normativo de su información antes de mover un solo folio. ¿Dudas inmediatas? Pregúntele a Joel, nuestro consultor virtual disponible 24/7.", cta: "Agendar diagnóstico inicial", foot: "9 servicios bajo la Ley 594 de 2000 y la normativa del AGN", all: "Ver todos" },
@@ -110,7 +110,7 @@ const en: Ui = {
     services: "Services", solutions: "Solutions", about: "About us", blog: "Blog", videos: "Press play on knowledge", contact: "Contact",
     quote: "Quote", quoteLong: "Request a quote", contactDirect: "Direct contact", search: "Search", closeSearch: "Close search", support: "Support",
     openMenu: "Open menu", closeMenu: "Close menu", logo: "Transarchivos, go to home", chatJoel: "Chat with Joel", whatsapp: "WhatsApp",
-    blogAndFaq: "Contact and FAQs", address: "Cl. 21 # 39A-40, Bogotá", chooseLang: "Choose language", langs: "Available languages",
+    blogAndFaq: "Contact and FAQs", address: "Cl. 21 # 39A-40, Bogotá",
   },
   menus: {
     services: { kicker: "Document assessment", title: "Not sure where to start?", text: "We show you the technical and regulatory assessment of your information before moving a single folio. Immediate questions? Ask Joel, our virtual consultant available 24/7.", cta: "Schedule an initial assessment", foot: "9 services under Law 594 of 2000 and the AGN regulations", all: "See all" },
