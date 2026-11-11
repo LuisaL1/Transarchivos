@@ -12,8 +12,7 @@
 //   ZOHO_DESK_API_URL        (por defecto https://desk.zoho.com)
 //
 // JavaScript .mjs (no TypeScript), como api/contact.mjs: ver la nota de ese archivo.
-import { clientIp, foreignOrigin } from "./_seguridad.mjs";
-const json = (data, status = 200) => new Response(JSON.stringify(data), { status, headers: { "Content-Type": "application/json", "Cache-Control": "no-store" } });
+import { json, leerEnvio } from "./_seguridad.mjs";
 // Límite de envíos por IP (en memoria de la instancia; frena a un script que
 // repita envíos, como en api/contact.mjs). Máx. 5 cada 10 min.
 const RATE = { max: 5, windowMs: 10 * 60_000 };
@@ -73,20 +72,10 @@ export async function GET() {
     }
 }
 export async function POST(req) {
-    // Solo desde el propio sitio
-    if (foreignOrigin(req))
-        return json({ ok: false, error: "origin" }, 403);
-    if (limited(clientIp(req)))
-        return json({ ok: false, error: "rate" }, 429);
-    let body;
-    try {
-        body = await req.json();
-    }
-    catch {
-        return json({ ok: false, error: "json" }, 400);
-    }
-    if (body === null || typeof body !== "object" || Array.isArray(body))
-        return json({ ok: false, error: "json" }, 400);
+    const envio = await leerEnvio(req, limited);
+    if (envio.rechazo)
+        return envio.rechazo;
+    const body = envio.body;
     // Campo trampa para bots: si viene lleno, se responde OK sin crear nada.
     if (body.website)
         return json({ ok: true });

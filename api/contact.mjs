@@ -13,8 +13,7 @@
 // .ts, Vercel lo compilaba a ES pero lo cargaba como CommonJS y la función se
 // caía al arrancar ("Unexpected token 'export'", error 500); .mts no lo
 // reconoce como función (404). Las pruebas lo verifican (tests/security).
-import { clientIp, foreignOrigin } from "./_seguridad.mjs";
-const json = (data, status = 200) => new Response(JSON.stringify(data), { status, headers: { "Content-Type": "application/json", "Cache-Control": "no-store" } });
+import { json, leerEnvio } from "./_seguridad.mjs";
 // Límite de envíos por IP: el formulario es público y cada envío cuesta dos
 // correos (aviso + confirmación). Se cuenta en memoria de la instancia de
 // Vercel (se reinicia al escalar o dormir): no sustituye a un servicio de
@@ -127,20 +126,10 @@ export async function GET() {
     return json({ configured: true, brevo: r?.ok ? "ok" : `${r?.status ?? "sin respuesta"} ${d.code ?? ""} ${d.message ?? ""}`.trim(), from: process.env.LEADS_FROM || "no-reply@transarchivos.com", to: process.env.LEADS_TO || "mercadeo@transarchivos.com", toNewsletter: process.env.LEADS_TO_NEWSLETTER || "marketing@transarchivos.com", toGeneral: process.env.LEADS_TO_GENERAL || "info@transarchivos.com" });
 }
 export async function POST(req) {
-    // Solo desde el propio sitio
-    if (foreignOrigin(req))
-        return json({ ok: false, error: "origin" }, 403);
-    if (limited(clientIp(req)))
-        return json({ ok: false, error: "rate" }, 429);
-    let body;
-    try {
-        body = await req.json();
-    }
-    catch {
-        return json({ ok: false, error: "json" }, 400);
-    }
-    if (body === null || typeof body !== "object" || Array.isArray(body))
-        return json({ ok: false, error: "json" }, 400);
+    const envio = await leerEnvio(req, limited);
+    if (envio.rechazo)
+        return envio.rechazo;
+    const body = envio.body;
     // Campo trampa para bots: si viene lleno, se responde OK sin enviar nada.
     if (body.website)
         return json({ ok: true });

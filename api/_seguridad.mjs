@@ -23,3 +23,25 @@ export const foreignOrigin = (req) => {
         return true;
     }
 };
+
+// Respuesta JSON sin caché.
+export const json = (data, status = 200) => new Response(JSON.stringify(data), { status, headers: { "Content-Type": "application/json", "Cache-Control": "no-store" } });
+
+// Arranque común de un POST: solo desde el propio sitio, límite de envíos por IP
+// y cuerpo JSON que sea un objeto. Devuelve { body } o { rechazo } (una Response).
+export async function leerEnvio(req, limited) {
+    if (foreignOrigin(req))
+        return { rechazo: json({ ok: false, error: "origin" }, 403) };
+    if (limited(clientIp(req)))
+        return { rechazo: json({ ok: false, error: "rate" }, 429) };
+    let body;
+    try {
+        body = await req.json();
+    }
+    catch {
+        return { rechazo: json({ ok: false, error: "json" }, 400) };
+    }
+    if (body === null || typeof body !== "object" || Array.isArray(body))
+        return { rechazo: json({ ok: false, error: "json" }, 400) };
+    return { body };
+}
