@@ -134,6 +134,12 @@ deben caer**:
 8. Envíe una vez el formulario de contacto y el cotizador reales (mensaje
    marcado «PRUEBA técnica (ignorar)») y confirme que lleguen los correos y el
    ticket de Zoho Desk.
-9. Siga la lista de `docs/06-seo.md` (indexación, Search Console).
-10. Con todo funcionando: borre `vercel.json` y pause o elimine el proyecto de
+9. **Compruebe el límite de envíos** (`docs/11-pentest-zap.md`): el pentesting
+   solo lo validó en local, y depende de que `TRUSTED_PROXY_HOPS` coincida con
+   los proxies reales de GoDaddy. Desde un computador, mande 8 envíos seguidos
+   con un `X-Forwarded-For` distinto cada vez; del sexto en adelante deben
+   responder `429`. Si todos pasan, el valor está mal (pruebe con `0`).
+   Con el formulario real, hágalo con mensajes de prueba y avise al equipo.
+10. Siga la lista de `docs/06-seo.md` (indexación, Search Console).
+11. Con todo funcionando: borre `vercel.json` y pause o elimine el proyecto de
     Vercel.
