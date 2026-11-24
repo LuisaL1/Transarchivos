@@ -11,7 +11,7 @@ export default mergeConfig(viteConfig, defineConfig({
     css: false,
     coverage: {
       provider: "v8",
-      include: ["src/**", "api/**", "server.mjs"],
+      include: ["src/**", "api/**", "server/**"],
       exclude: ["src/assets/**", "src/**/*.d.ts"],
       reporter: ["text", "html", "lcov"],
     },

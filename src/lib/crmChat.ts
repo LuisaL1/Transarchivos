@@ -6,7 +6,7 @@
 //
 // · Zoho vive en una PÁGINA AISLADA del sitio (public/chat-asesor.html) que se
 //   muestra en un iframe en la esquina. Esa página tiene su propia CSP
-//   (vercel.json) con los scripts en línea que Zoho necesita; el resto del
+//   (hosting/headers.json) con los scripts en línea que Zoho necesita; el resto del
 //   sitio conserva su CSP estricta.
 // · El botón propio de Zoho se esconde: el chat se abre con el botón de Joel
 //   (src/components/chat/ChatLauncher.tsx). El iframe solo se ve con la

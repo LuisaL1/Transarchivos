@@ -34,7 +34,7 @@
 | Prioridad | Pendiente | Detalle |
 | --- | --- | --- |
 | Alta | **Chat de Joel con Zoho SalesIQ: puesta en marcha** | Código del widget ya puesto en `SALESIQ_WIDGET`. Falta en Zoho: autorizar el dominio, encender el bot (nombre «Joel») con la base de conocimientos, transferir a un asesor con «Quiero hablar con un asesor» y con las «🆕 NUEVA COTIZACIÓN», y probar con mensajes «PRUEBA técnica (ignorar)»; revisar cómo llegan las respuestas con artículos. Modo API: pendiente del permiso de organización de Zoho (ver `docs/08-chat-asesor.md`). |
-| Alta | **Google Analytics** | ID `G-PNPFD16QSZ` ya integrado y verificado (`pnpm test:ga`). Falta: crear la variable en Vercel (Production), marcar los eventos clave en GA4 y agregar `quote_step` y `chat_message` (ver 03). |
+| Alta | **Google Analytics** | ID `G-PNPFD16QSZ` ya integrado y verificado (`pnpm test:ga`). Falta: crear la variable en GoDaddy (Settings de la app), marcar los eventos clave en GA4 y agregar `quote_step` y `chat_message` (ver 03). |
 | Alta | **Publicación** | SEO técnico listo. Falta seguir el checklist de `docs/06-seo.md`: dominio, `VITE_SITE_INDEXABLE=true`, Search Console, Google Business Profile y redirecciones 301 del sitio anterior. |
 | Media | **Suscripción del blog** | Conectarla a la herramienta de correo que elija la empresa. |
 | Media | **Contraste AA** | Rótulos dorados y grises terciarios (tabla en `TESTING.md`). Requiere aprobación de diseño. Después, activar `A11Y_STRICT`. |

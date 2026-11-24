@@ -9,6 +9,7 @@
   "project": [
     "src/**/*.{ts,tsx}",
     "api/**/*.mjs",
+    "server/**/*.mjs",
     "scripts/**/*.mjs",
     "tests/**/*.{ts,tsx}"
   ],

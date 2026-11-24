@@ -7,7 +7,7 @@ export const SITE_URL = "https://www.transarchivos.com";
 
 /**
  * Indexación: mientras sea false, todas las páginas llevan noindex y robots.txt
- * bloquea a los buscadores. Se activa en Vercel con VITE_SITE_INDEXABLE=true
+ * bloquea a los buscadores. Se activa en GoDaddy con VITE_SITE_INDEXABLE=true
  * el día en que www.transarchivos.com apunte a este sitio (ver docs/06-seo.md).
  */
 export const INDEXABLE = import.meta.env.VITE_SITE_INDEXABLE === "true";

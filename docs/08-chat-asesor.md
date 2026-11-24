@@ -31,7 +31,7 @@ a un asesor) **se configura en Zoho SalesIQ**, no en el código.
    tomado de Zoho → Configuración → Marcas → Transarchivos → Código de
    instalación. Si se cambia de marca en Zoho, actualizarlo ahí. No es secreto.
 2. En Zoho (Configuración → Canales → Sitio web): autorizar
-   `www.transarchivos.com` y el dominio de Vercel; idioma español.
+   `www.transarchivos.com` y la dirección temporal de GoDaddy; idioma español.
 3. El bot, el saludo, los botones, las preguntas frecuentes, la cotización y la
    transferencia a un asesor se arman en Zoho (bot y base de conocimientos).
    El contenido aprobado para redactarlos está en `src/data/` (`faqs.ts`,
@@ -41,7 +41,7 @@ a un asesor) **se configura en Zoho SalesIQ**, no en el código.
 4. Probar con mensajes marcados **"PRUEBA técnica (ignorar)"**. En local
    (`pnpm dev`) se habla con el Zoho real.
 
-## Página aislada y CSP (vercel.json)
+## Página aislada y CSP (hosting/headers.json)
 
 Zoho **no se carga en las páginas del sitio**: vive en `public/chat-asesor.html`,
 que el sitio muestra en un iframe (`#ta-zoho-frame`). El widget
@@ -65,7 +65,7 @@ se muestra el aviso de cookies.
 
 Si algo del chat no funciona en producción, abra la consola del navegador: un
 mensaje "Refused to …" indica el dominio que falta. Agréguelo en las reglas de
-`/chat-asesor` de `vercel.json` y revise `tests/security/static.test.ts`.
+`/chat-asesor` de `hosting/headers.json` (y de `vercel.json` mientras exista) y revise `tests/security/static.test.ts`.
 
 ## Diseño
 
@@ -131,6 +131,6 @@ el widget lo simulan (`mockZoho` en `tests/e2e/flows.spec.ts`).
 - `tests/e2e/flows.spec.ts`: el widget se carga al entrar, con el iframe fuera
   de la pantalla y el botón de Joel a la vista; el botón de Joel y "Chatee con
   Joel" abren la ventana; el botón la cierra.
-- `tests/e2e/csp.spec.ts`: con las cabeceras de `vercel.json`, Zoho carga al
+- `tests/e2e/csp.spec.ts`: con las cabeceras de `hosting/headers.json`, Zoho carga al
   entrar sin bloqueos.
 - `tests/security/static.test.ts`: CSP del sitio sin Zoho.

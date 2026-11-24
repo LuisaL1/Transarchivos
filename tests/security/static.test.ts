@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { execSync } from "node:child_process";
-import { readFileSync, readdirSync, statSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 
 // Revisión estática de seguridad del código y la configuración.
@@ -26,8 +26,8 @@ describe("Código", () => {
   });
 });
 
-describe("Funciones de Vercel (api/)", () => {
-  it("son .mjs: con .ts Vercel las cargaba como CommonJS (500) y .mts no las reconoce (404)", () => {
+describe("Funciones del servidor (api/)", () => {
+  it("son .mjs: Node las carga como módulo ES sin compilar", () => {
     const fns = readdirSync("api");
     expect(fns.length).toBeGreaterThan(0);
     for (const f of fns) expect(f, `api/${f}`).toMatch(/\.mjs$/);
@@ -61,8 +61,8 @@ describe("Repositorio", () => {
   });
 });
 
-describe("Cabeceras de seguridad (vercel.json)", () => {
-  const cfg = JSON.parse(readFileSync("vercel.json", "utf8"));
+describe("Cabeceras de seguridad (hosting/headers.json, las aplica server/server.mjs)", () => {
+  const cfg = JSON.parse(readFileSync("hosting/headers.json", "utf8"));
   // El sitio (todo menos la página aislada del chat con un asesor) y esa página tienen cabeceras distintas
   const pick = (src: string) => Object.fromEntries(cfg.headers.find((h: { source: string }) => h.source === src).headers.map((h: { key: string; value: string }) => [h.key, h.value]));
   const headers = pick("/((?!chat-asesor).*)");
@@ -93,5 +93,11 @@ describe("Cabeceras de seguridad (vercel.json)", () => {
     expect(helper["Content-Security-Policy"]).toMatch(/frame-ancestors 'self'/);
     expect(helper["X-Frame-Options"]).toBe("SAMEORIGIN");
     expect(helper["X-Robots-Tag"]).toMatch(/noindex/);
+  });
+  it("mientras exista vercel.json (hasta el cambio de DNS), tiene las mismas cabeceras y redirecciones", () => {
+    if (!existsSync("vercel.json")) return;
+    const vercel = JSON.parse(readFileSync("vercel.json", "utf8"));
+    expect(vercel.headers).toEqual(cfg.headers);
+    expect(vercel.redirects ?? []).toEqual(cfg.redirects);
   });
 });

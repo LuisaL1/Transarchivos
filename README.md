@@ -22,11 +22,11 @@ Pruebas de calidad, accesibilidad y seguridad: ver `TESTING.md`.
 
 ## Despliegue
 
-Dos opciones, con el mismo código: **Vercel** (framework: Vite, salida: `dist`;
-`vercel.json` fija las cabeceras de seguridad y las direcciones limpias) o un
-**hosting con Node.js** como GoDaddy, que arranca `npm start` (`server.mjs`, ver
-`docs/09-hosting-nodejs.md`). En ambos las funciones de `api/` envían los
-formularios (Brevo) y el cotizador (Zoho Desk).
+**GoDaddy** (hosting Node.js conectado a GitHub): compila con `pnpm build` y
+arranca `pnpm start` (`server/server.mjs`), que entrega las páginas de `dist/`,
+aplica las cabeceras de `hosting/headers.json` y ejecuta las funciones de `api/`:
+formularios (Brevo) y cotizador (Zoho Desk). Pasos, variables y cambio de DNS en
+`docs/09-hosting-nodejs.md`. `vercel.json` se conserva hasta el cambio de DNS.
 
 `pnpm build` pre-genera el HTML de cada ruta, el sitemap y el robots.txt (SEO).
 La indexación se activa con `VITE_SITE_INDEXABLE=true` (ver `docs/06-seo.md`).
@@ -35,13 +35,12 @@ La indexación se activa con `VITE_SITE_INDEXABLE=true` (ver `docs/06-seo.md`).
 
 - **Formularios → correo (Brevo)**: el formulario de contacto y el cotizador ya
   envían a `/api/contact`. Falta que el área encargada configure Brevo y las
-  variables de entorno en Vercel (ver `docs/07-formularios.md`).
+  variables de entorno en GoDaddy (ver `docs/07-formularios.md`).
 - **Suscripción del blog** (`BlogSection`): solo muestra el mensaje de éxito.
   Falta conectarla a la herramienta de correo que elija la empresa.
 - **Google Analytics** (ID `G-PNPFD16QSZ`, ya integrado y verificado con
   `pnpm test:ga`): crear la variable `VITE_GA_MEASUREMENT_ID=G-PNPFD16QSZ` en
-  Vercel → Settings → Environment Variables (entorno Production) y volver a
-  desplegar.
+  GoDaddy → My Apps → Transarchivos → Settings y volver a desplegar.
 - **Contraste de color (accesibilidad AA)**: los rótulos dorados y algunos
   textos grises no alcanzan el contraste mínimo (tabla en `TESTING.md`).
   Requiere aprobación de diseño.
@@ -50,7 +49,7 @@ La indexación se activa con `VITE_SITE_INDEXABLE=true` (ver `docs/06-seo.md`).
   - imágenes pesadas: `joel.png` 1,1 MB, `logo.png` 378 KB y las poses de Joel
     de ~300 KB (convertir a WebP/AVIF).
 - **Publicación oficial**: seguir el checklist de `docs/06-seo.md` (dominio,
-  `VITE_SITE_INDEXABLE=true` en Vercel, Search Console, Google Business Profile
+  `VITE_SITE_INDEXABLE=true` en GoDaddy, Search Console, Google Business Profile
   y redirecciones del sitio anterior).
 
 ## Documentación técnica

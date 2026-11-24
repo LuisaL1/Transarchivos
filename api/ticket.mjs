@@ -1,8 +1,8 @@
-// Función de Vercel: el cotizador del sitio crea un ticket en Zoho Desk. Las
+// Función del servidor (server/server.mjs, GoDaddy): el cotizador del sitio crea un ticket en Zoho Desk. Las
 // credenciales viven solo en el servidor (variables de entorno): nunca llegan
 // al navegador. Ver docs/07-formularios.md.
 //
-// Variables de entorno (Vercel → Settings → Environment Variables; en este
+// Variables de entorno (GoDaddy → My Apps → Transarchivos → Settings; en este
 // equipo, .env.local, que Git ignora):
 //   ZOHO_DESK_CLIENT_ID, ZOHO_DESK_CLIENT_SECRET, ZOHO_DESK_REFRESH_TOKEN
 //                            Self Client de api-console.zoho.com (obligatorias)
@@ -12,8 +12,9 @@
 //   ZOHO_DESK_API_URL        (por defecto https://desk.zoho.com)
 //
 // JavaScript .mjs (no TypeScript), como api/contact.mjs: ver la nota de ese archivo.
-import { json, leerEnvio } from "./_seguridad.mjs";
-// Límite de envíos por IP (en memoria de la instancia; frena a un script que
+import { json, leerEnvio, logger } from "./_seguridad.mjs";
+const log = logger("ticket");
+// Límite de envíos por IP (en memoria del servidor; frena a un script que
 // repita envíos, como en api/contact.mjs). Máx. 5 cada 10 min.
 const RATE = { max: 5, windowMs: 10 * 60_000 };
 const hits = new Map();
@@ -57,41 +58,33 @@ const desk = async (c, path, init = {}) => fetch(`${c.api}/api/v1${path}`, {
     ...init,
     headers: { Authorization: `Zoho-oauthtoken ${await accessToken(c)}`, orgId: c.orgId, "Content-Type": "application/json", ...init.headers },
 });
-// Diagnóstico sin datos secretos: ¿están las variables, sirve el token y se ve el departamento?
-export async function GET() {
-    const c = env();
-    if (!configured(c))
-        return json({ configured: false });
-    try {
-        const r = await desk(c, `/departments/${c.departmentId}`);
-        const d = await r.json().catch(() => ({}));
-        return json({ configured: true, token: "ok", department: r.ok ? d.name ?? "ok" : `${r.status} ${d.errorCode ?? ""}`.trim() });
-    }
-    catch (e) {
-        return json({ configured: true, token: String(e.message).slice(0, 120) });
-    }
-}
 export async function POST(req) {
-    const envio = await leerEnvio(req, limited);
+    const envio = await leerEnvio(req, limited, log);
     if (envio.rechazo)
         return envio.rechazo;
     const body = envio.body;
     // Campo trampa para bots: si viene lleno, se responde OK sin crear nada.
-    if (body.website)
+    if (body.website) {
+        console.warn("[ticket] ✗ Bot detectado (campo trampa lleno): no se creó nada");
         return json({ ok: true });
+    }
     const fields = Object.fromEntries(Object.entries(body.fields ?? {})
         .filter(([k, v]) => typeof v === "string" && k.length <= 60)
         .map(([k, v]) => [k, v.trim().slice(0, 4000)]));
     const email = (body.contact?.email ?? "").trim();
     if (!EMAIL.test(email))
-        return json({ ok: false, error: "email" }, 422);
+        return log.reject("email", 422, "correo del visitante inválido");
     if (Object.keys(fields).length === 0 || Object.keys(fields).length > 40)
-        return json({ ok: false, error: "fields" }, 422);
+        return log.reject("fields", 422, `${Object.keys(fields).length} campos (debe tener entre 1 y 40)`);
     if (fields["Autorización de datos"] !== "Sí")
-        return json({ ok: false, error: "consent" }, 422);
+        return log.reject("consent", 422, "sin autorización de datos");
     const c = env();
-    if (!configured(c))
+    if (!configured(c)) {
+        const missing = [["ZOHO_DESK_CLIENT_ID", c.clientId], ["ZOHO_DESK_CLIENT_SECRET", c.clientSecret], ["ZOHO_DESK_REFRESH_TOKEN", c.refreshToken], ["ZOHO_DESK_ORG_ID", c.orgId], ["ZOHO_DESK_DEPARTMENT_ID", c.departmentId]]
+            .filter(([, v]) => !v).map(([k]) => k);
+        log.fail(`No se creó: faltan las variables ${missing.join(", ")}`);
         return json({ ok: false, error: "not-configured" }, 503);
+    }
     const name = String(body.contact?.name ?? "").trim().slice(0, 120) || email;
     const phone = String(body.contact?.phone ?? "").trim().slice(0, 40);
     const subject = String(body.subject ?? "Solicitud de cotización").trim().slice(0, 250);
@@ -109,13 +102,14 @@ export async function POST(req) {
         });
         const d = await r.json().catch(() => ({}));
         if (!r.ok) {
-            console.error("Zoho Desk rechazó el ticket:", r.status, d);
+            log.fail(`Zoho Desk rechazó el ticket (HTTP ${r.status}):`, d.errorCode ?? "", d.message ?? "");
             return json({ ok: false, error: "provider", status: r.status, detail: `${d.errorCode ?? ""} ${d.message ?? ""}`.trim().slice(0, 200) }, 502);
         }
+        log.ok(`Ticket #${d.ticketNumber ?? "sin número"} creado en Zoho Desk`);
         return json({ ok: true, ticket: d.ticketNumber ?? null });
     }
     catch (e) {
-        console.error("Error al crear el ticket en Zoho Desk:", e);
+        log.fail("No se creó el ticket en Zoho Desk:", e instanceof Error ? e.message : e);
         return json({ ok: false, error: "provider", detail: String(e.message).slice(0, 120) }, 502);
     }
 }

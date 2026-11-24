@@ -35,7 +35,7 @@ mientras se edita, sin servidor.
 
 ## Qué se analiza
 
-- Se analizan `src/`, `api/`, `scripts/` y `server.mjs`; las pruebas van como
+- Se analizan `src/`, `api/`, `scripts/` y `server/`; las pruebas van como
   código de prueba. No entran `dist/`, `public/` ni las imágenes.
 - **Cobertura:** `pnpm test:coverage:all` corre las pruebas unitarias y, sobre
   `dist/`, las del servidor y el HTML generado (`tests/seo/`); SonarQube une los

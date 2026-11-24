@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { POST, resetRateLimit } from "../../api/contact.mjs";
 
-// Función /api/contact (Vercel → Brevo). No envía nada real: fetch se simula.
+// Función /api/contact (servidor → Brevo). No envía nada real: fetch se simula.
 const req = (body: unknown, headers: Record<string, string> = {}) =>
   new Request("https://www.transarchivos.com/api/contact", { method: "POST", headers: { "Content-Type": "application/json", host: "www.transarchivos.com", ...headers }, body: JSON.stringify(body) });
 const valid = { kind: "contacto", subject: "Contacto web — Información", fields: { Motivo: "Información sobre un servicio", Nombre: "Ana", Correo: "ana@empresa.com", Mensaje: "Hola <b>", "Autorización de datos": "Sí" }, replyTo: { email: "ana@empresa.com", name: "Ana" } };
@@ -66,11 +66,10 @@ describe("/api/contact", () => {
   });
 });
 
-describe("/api/contact · diagnóstico (GET)", () => {
-  it("indica si falta la clave", async () => {
-    vi.stubEnv("BREVO_API_KEY", "");
-    const { GET } = await import("../../api/contact");
-    expect(await (await GET()).json()).toEqual({ configured: false });
+describe("/api/contact · solo POST", () => {
+  it("no expone un diagnóstico por GET (configuración y buzones)", async () => {
+    const mod = await import("../../api/contact.mjs");
+    expect(Object.keys(mod)).not.toContain("GET");
   });
 });
 

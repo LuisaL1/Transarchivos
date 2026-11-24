@@ -13,10 +13,10 @@ reemplaza) a los documentos de la raíz del repositorio:
 | `docs/03-conversion-y-analitica.md` | Embudo, puntos de conversión, cotizador, chat, eventos de GA4 y consentimiento |
 | `docs/04-calidad-pruebas-y-seguridad.md` | Estrategia de calidad: qué se prueba, por qué y cómo extenderla |
 | `docs/05-decisiones-y-pendientes.md` | Decisiones tomadas con el cliente (no revertir) y trabajo pendiente priorizado |
-| `docs/07-formularios.md` | Formulario de contacto, cotizador y envío por Brevo (configuración en Vercel) |
+| `docs/07-formularios.md` | Formulario de contacto, cotizador y envío por Brevo (configuración en GoDaddy) |
 | `docs/06-seo.md` | SEO técnico: pre-generación de HTML, metadatos, datos estructurados, sitemap y checklist de publicación |
 | `docs/08-chat-asesor.md` | Chat con un asesor humano (Zoho SalesIQ): modos, cotización al equipo, página aislada y CSP, configuración y pruebas |
-| `docs/09-hosting-nodejs.md` | Publicación en un hosting con Node.js (GoDaddy) con `server.mjs`: pasos con GitHub, variables de entorno y cómo comprobar |
+| `docs/09-hosting-nodejs.md` | Publicación en GoDaddy (hosting Node.js) con `server/server.mjs`: configuración de la app, variables de entorno, registros ✓/✗ y cambio de DNS |
 | `docs/10-sonarqube.md` | Análisis de calidad con SonarQube: cómo correrlo, qué se mide, hallazgos del primer análisis y su corrección |
 | `docs/11-pentest-zap.md` | Pruebas de penetración con OWASP ZAP: cómo repetirlas, pruebas manuales, hallazgos y correcciones |
 

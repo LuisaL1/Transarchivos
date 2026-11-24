@@ -3,8 +3,8 @@
 //  · Escribe dist/<ruta>.html con el contenido ya renderizado, el idioma del
 //    <html> y las etiquetas SEO propias de cada página (título, descripción,
 //    canónica, hreflang, OG, JSON-LD), en español ("/…") y en inglés ("/en/…").
-//  · Escribe dist/404.html (Vercel lo sirve con estado 404), sitemap.xml y robots.txt.
-// Vercel sirve /servicios/x desde dist/servicios/x.html gracias a "cleanUrls".
+//  · Escribe dist/404.html (server/server.mjs lo sirve con estado 404), sitemap.xml y robots.txt.
+// server/server.mjs sirve /servicios/x desde dist/servicios/x.html (direcciones limpias).
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { pathToFileURL } from "node:url";

@@ -30,7 +30,7 @@ pnpm exec playwright install chromium   # navegador para las pruebas de extremo 
 | `pnpm test:ga` | Verifica Google Analytics con el ID real: aviso de cookies, consentimiento denegado por defecto, cookies `_ga` y envío de datos solo al aceptar | ~10 s |
 
 Para probar las pruebas de extremo a extremo contra otro entorno (por ejemplo,
-una URL de Vercel Preview): `BASE_URL=https://su-preview.vercel.app pnpm test:e2e`.
+la dirección temporal de GoDaddy): `BASE_URL=https://su-vista-previa pnpm test:e2e`.
 El reporte HTML queda en `playwright-report/` (`pnpm exec playwright show-report`).
 
 ## Qué cubre cada capa
@@ -67,16 +67,16 @@ El reporte HTML queda en `playwright-report/` (`pnpm exec playwright show-report
   - sin credenciales ni llaves en el código;
   - solo la variable de entorno pública permitida (`VITE_GA_MEASUREMENT_ID`);
   - ningún `.env` real versionado;
-  - cabeceras de seguridad presentes en `vercel.json`.
-- **Cabeceras HTTP** (`vercel.json`): Content-Security-Policy, HSTS,
+  - cabeceras de seguridad presentes en `hosting/headers.json` (y iguales en `vercel.json` mientras exista).
+- **Cabeceras HTTP** (`hosting/headers.json`, las aplica `server/server.mjs`): Content-Security-Policy, HSTS,
   `X-Content-Type-Options`, `X-Frame-Options: DENY`, `Referrer-Policy`,
   `Permissions-Policy` y `Cross-Origin-Opener-Policy`. La CSP no permite
   scripts en línea ni `eval`. Solo autoriza: Google Analytics/Tag Manager,
   Google Fonts, miniaturas de YouTube y el reproductor de youtube-nocookie.
 - **CSP en el navegador** (`tests/e2e/csp.spec.ts`): aplica las cabeceras de
-  `vercel.json` sobre el build y falla si el navegador bloquea algún recurso.
+  `hosting/headers.json` sobre el build y falla si el navegador bloquea algún recurso.
   **Si agrega un servicio externo** (formulario, mapa, chat, CDN), añádalo a la
-  CSP de `vercel.json`, o esta prueba fallará.
+  CSP de `hosting/headers.json` (y de `vercel.json` mientras exista), o esta prueba fallará.
 - **Dependencias**:
   - `pnpm test:deps` en local y en CI;
   - Dependabot (`.github/dependabot.yml`) abre PRs semanales de actualización;
@@ -131,6 +131,6 @@ déjelo fijo en `tests/e2e/a11y.spec.ts`.
 2. Lógica nueva en `src/lib/` → prueba en `tests/unit/`.
 3. Página o recorrido nuevo → agregue la ruta a `smoke.spec.ts` y `a11y.spec.ts`
    y, si tiene interacción, un caso en `flows.spec.ts`.
-4. Servicio externo nuevo → CSP en `vercel.json`.
+4. Servicio externo nuevo → CSP en `hosting/headers.json` (y en `vercel.json` mientras exista).
 5. Borre lo que quede sin uso (`pnpm lint:unused` lo señala).
 6. `pnpm check:all` en verde antes de abrir el PR.

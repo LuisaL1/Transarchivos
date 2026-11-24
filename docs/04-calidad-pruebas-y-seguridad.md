@@ -27,7 +27,7 @@ explica la **estrategia**.
 | Componentes | El selector del hero cambia de servicio y apunta a la cotización correcta | `tests/unit/components.test.tsx` |
 | Seguridad estática | Sin inyección de HTML, enlaces externos seguros, sin `http://`, sin secretos, solo variables `VITE_` permitidas, sin `.env` versionado, cabeceras completas | `tests/security/static.test.ts` |
 | E2E | Rutas sin errores de consola ni recursos rotos; recorridos principales | `tests/e2e/smoke.spec.ts`, `flows.spec.ts` |
-| CSP real | Aplica las cabeceras de `vercel.json` sobre el build y falla si el navegador bloquea algo | `tests/e2e/csp.spec.ts` |
+| CSP real | Aplica las cabeceras de `hosting/headers.json` sobre el build y falla si el navegador bloquea algo | `tests/e2e/csp.spec.ts` |
 | Accesibilidad | WCAG 2.1 A/AA con axe, en escritorio y celular | `tests/e2e/a11y.spec.ts` |
 
 ### Reglas de negocio y marca automatizadas
@@ -51,7 +51,7 @@ explica la **estrategia**.
 | Secretos | Prueba estática + gitleaks sobre todo el historial en CI |
 
 **Al agregar un backend o un servicio de formularios:**
-1. Agregar su dominio a `connect-src` (y `form-action` si aplica) en `vercel.json`.
+1. Agregar su dominio a `connect-src` (y `form-action` si aplica) en `hosting/headers.json` (y en `vercel.json` mientras exista).
 2. Validar y sanear en el servidor. No confiar en las validaciones del navegador.
 3. Agregar protección anti-spam (honeypot o captcha) y límite de solicitudes.
 4. Actualizar el aviso de privacidad (Ley 1581 de 2012).

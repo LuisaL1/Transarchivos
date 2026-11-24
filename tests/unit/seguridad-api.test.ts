@@ -41,4 +41,9 @@ describe.each(funciones)("/api/%s", (_n, post, url) => {
   it("acepta el Origin del propio sitio", async () => {
     expect((await post(req(url, { headers: { origin: "https://www.transarchivos.com" } }))).status).not.toBe(403);
   });
+  it("detrás del proxy del hosting compara el Origin con X-Forwarded-Host (Host es la dirección interna)", async () => {
+    const interno = { host: "127.0.0.1:3000", "x-forwarded-host": "www.transarchivos.com" };
+    expect((await post(req(url, { headers: { ...interno, origin: "https://www.transarchivos.com" } }))).status).not.toBe(403);
+    expect((await post(req(url, { headers: { ...interno, origin: "https://otro-sitio.com" } }))).status).toBe(403);
+  });
 });

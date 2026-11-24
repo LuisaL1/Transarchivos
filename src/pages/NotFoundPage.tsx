@@ -7,7 +7,7 @@ import { useContent } from "@/i18n/content";
 import { usePagesUi } from "@/i18n/pages";
 import { C } from "@/styles/tokens";
 
-// Página 404: Vercel la sirve con estado 404 para cualquier URL que no exista
+// Página 404: server/server.mjs la sirve con estado 404 para cualquier URL que no exista
 // (404.html pre-generado). Ofrece salidas útiles en vez de un callejón sin salida.
 export function NotFoundPage() {
   const u = usePagesUi();

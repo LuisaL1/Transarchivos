@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { GET, POST, resetForTests } from "../../api/ticket.mjs";
+import * as ticketApi from "../../api/ticket.mjs";
+import { POST, resetForTests } from "../../api/ticket.mjs";
 
 // Función /api/ticket (cotizador → Zoho Desk). No crea nada real: fetch se simula.
 const req = (body: unknown, headers: Record<string, string> = {}) =>
@@ -25,10 +26,13 @@ beforeEach(() => resetForTests());
 afterEach(() => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); });
 
 describe("/api/ticket", () => {
-  it("sin credenciales responde 503 (no configurado) y el diagnóstico lo dice", async () => {
+  it("sin credenciales responde 503 (no configurado)", async () => {
     for (const k of Object.keys(ENV)) vi.stubEnv(k, "");
     expect((await POST(req(valid))).status).toBe(503);
-    expect(await (await GET()).json()).toEqual({ configured: false });
+  });
+
+  it("solo crea tickets (POST): no expone un diagnóstico por GET que consulte Zoho", () => {
+    expect(Object.keys(ticketApi)).not.toContain("GET");
   });
 
   it("crea el ticket en el departamento, con el contacto y el detalle escapado", async () => {

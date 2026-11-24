@@ -1,4 +1,4 @@
-// Envía una solicitud del sitio a /api/contact (función de Vercel → Brevo →
+// Envía una solicitud del sitio a /api/contact (función del servidor → Brevo →
 // correo de la empresa). `fields` se muestra como tabla en el correo.
 export type LeadKind = "contacto" | "cotizacion" | "suscripcion";
 export type LeadResult = { ok: true } | { ok: false; error: string; detail?: string };
@@ -19,7 +19,7 @@ export async function sendLead(kind: LeadKind, subject: string, fields: Record<s
   }
 }
 
-// El cotizador crea un ticket en Zoho Desk (/api/ticket, función de Vercel).
+// El cotizador crea un ticket en Zoho Desk (/api/ticket, función del servidor).
 export async function sendTicket(subject: string, fields: Record<string, string>, contact: { email: string; name?: string; phone?: string }, website = "", lang: "es" | "en" = "es"): Promise<LeadResult> {
   try {
     const res = await fetch("/api/ticket", {

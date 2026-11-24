@@ -18,7 +18,7 @@ abre el programa de correo del visitante.
 Navegador ──POST /api/contact──► Función de servidor (api/contact.mjs) ──API Brevo──► mercadeo@ (comercial) / info@ (general)
 ```
 
-- La función valida los datos, aplica el **campo trampa** contra bots (`website`), rechaza envíos desde otros dominios y **limita los envíos por IP** (5 cada 10 minutos; responde 429). El límite se cuenta en memoria de la instancia de Vercel, así que es un freno, no una cuota exacta. Lo que se repite al visitante en su confirmación (servicio o motivo) se acota a 60 caracteres, para que el formulario no sirva para enviar textos a terceros.
+- La función valida los datos, aplica el **campo trampa** contra bots (`website`), rechaza envíos desde otros dominios y **limita los envíos por IP** (5 cada 10 minutos; responde 429). El límite se cuenta en memoria del servidor (se reinicia al desplegar), así que es un freno, no una cuota exacta. Lo que se repite al visitante en su confirmación (servicio o motivo) se acota a 60 caracteres, para que el formulario no sirva para enviar textos a terceros.
 - Escapa el contenido antes de armar el correo y lo envía con **Brevo** (API transaccional).
 - El correo llega con **"Responder a" = el visitante**, así que basta con responderlo.
 - **Diseño de los correos:** banner en imagen (`public/brand/email-header.png`: índigo #1800AD (mismo azul del sitio; al cambiarlo, regenerar la imagen y subir `?v=` en `api/contact.ts` para renovar la caché de Gmail), logo blanco y detalle de esquina) para que el modo oscuro de Gmail no altere los colores; cuerpo en tablas. El banner se carga desde el dominio que recibió la solicitud, con versión en la URL (`?v=3`): al cambiar la imagen hay que subir el número, porque Gmail guarda en caché las imágenes por dirección.
@@ -29,7 +29,7 @@ Navegador ──POST /api/contact──► Función de servidor (api/contact.mjs
 ## Cotizador → ticket en Zoho Desk
 
 ```
-Navegador ──POST /api/ticket──► Función de Vercel (api/ticket.mjs) ──API Zoho Desk──► ticket en el departamento
+Navegador ──POST /api/ticket──► Función de servidor (api/ticket.mjs) ──API Zoho Desk──► ticket en el departamento
 ```
 
 - En el paso "Contacto" el botón dice **"Enviar"**: crea el ticket y pasa al
@@ -60,12 +60,13 @@ en el código ni con prefijo `VITE_`:
 | `ZOHO_DESK_DEPARTMENT_ID` | Departamento que recibe los tickets |
 | `ZOHO_DESK_ACCOUNTS_URL`, `ZOHO_DESK_API_URL` | Opcionales: centro de datos (por defecto `https://accounts.zoho.com` y `https://desk.zoho.com`) |
 
-- **Producción:** Vercel → proyecto → Settings → Environment Variables
-  (entorno Production; también Preview si se quiere probar ahí), y volver a
-  desplegar.
+- **Producción:** GoDaddy → My Apps → Transarchivos → Settings
+  (`docs/09-hosting-nodejs.md`) y reiniciar la app.
 - **Este equipo:** `.env.local` (Git lo ignora: regla `.env*` de `.gitignore`).
-- **Diagnóstico:** `GET /api/ticket` responde si está configurado, si el
-  token sirve y si ve el departamento, sin mostrar secretos.
+- **Diagnóstico:** la función solo acepta POST. Al arrancar, el servidor
+  registra qué variables de Zoho ve (`[server] Variables: …`) y cada envío deja
+  `[ticket] ✓ Ticket #… creado` o `[ticket] ✗ …` con el motivo
+  (`docs/09-hosting-nodejs.md`).
 - Sin las variables, la función responde "no configurado" (503) y el cotizador
   muestra el aviso con WhatsApp. En `pnpm dev`, `/api/ticket` se **simula**
   (`vite.config.ts`): no crea tickets.
@@ -74,7 +75,7 @@ en el código ni con prefijo `VITE_`:
 
 1. En Brevo, **verificar el dominio** transarchivos.com (DNS: SPF, DKIM y DMARC) o, al menos, el remitente que se va a usar.
 2. Crear una **clave de API** (SMTP & API → API Keys).
-3. En Vercel → proyecto `transarchivos` → **Settings → Environment Variables**, entorno **Production** (y Preview si se quiere probar ahí):
+3. En GoDaddy → **My Apps → Transarchivos → Settings** (variables de entorno, `docs/09-hosting-nodejs.md`):
 
    | Variable | Valor | Obligatoria |
    | --- | --- | --- |
@@ -86,7 +87,7 @@ en el código ni con prefijo `VITE_`:
    | `LEADS_FROM_NAME` | Nombre del remitente (por defecto "Transarchivos") | No |
    | `EMAIL_ASSETS_URL` | Dominio de producción del que se cargan las imágenes de los correos (por defecto `https://www.transarchivos.com`) | No |
 
-4. Volver a desplegar. Enviar una prueba desde el formulario y revisar la bandeja (y la carpeta de spam la primera vez).
+4. Reiniciar la app. Enviar una prueba desde el formulario y revisar la bandeja (y la carpeta de spam la primera vez).
 
 **Mientras no esté `BREVO_API_KEY`**, la función responde "no configurado" y el formulario muestra un aviso con el enlace a WhatsApp. En `pnpm dev`, `/api/contact` se **simula** (`vite.config.ts`): no envía correos y muestra el contenido en la terminal.
 

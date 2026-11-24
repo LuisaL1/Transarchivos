@@ -16,7 +16,7 @@ React "hidrata" ese HTML y el sitio funciona igual que siempre.
 | Datos estructurados JSON-LD | ✅ ProfessionalService (LocalBusiness), WebSite, FAQPage, ItemList, Service, BlogPosting, AboutPage, BreadcrumbList |
 | `sitemap.xml` y `robots.txt` generados | ✅ desde `src/data/` en cada build |
 | 404 real (estado HTTP 404 + `noindex`) | ✅ `dist/404.html` + `NotFoundPage` |
-| URLs limpias sin `.html` ni barra final | ✅ `cleanUrls` + `trailingSlash: false` en `vercel.json` |
+| URLs limpias sin `.html` ni barra final | ✅ `server/server.mjs` (equivale a `cleanUrls` + `trailingSlash: false`) |
 | Un solo `<h1>` por página, `lang="es-CO"` o `lang="en-US"` según la ruta | ✅ verificado por pruebas |
 | Rendimiento | ✅ tipografías con `preconnect` (antes `@import` encadenado), logo de 378 KB → 72 KB, imágenes bajo el pliegue con `loading="lazy"` |
 | Verificación de Search Console | ✅ opcional por variable (`VITE_GOOGLE_SITE_VERIFICATION`) |
@@ -69,9 +69,10 @@ pnpm build
   verifica `tests/unit/seo.test.ts`.
 
 ## Día de la publicación (checklist)
-1. Apuntar el dominio **www.transarchivos.com** a Vercel (Settings → Domains),
-   con redirección de `transarchivos.com` → `www.transarchivos.com`.
-2. En Vercel → Settings → Environment Variables (Production):
+1. Apuntar el dominio **www.transarchivos.com** a la app de GoDaddy y poner
+   `SITE_CANONICAL_HOST=www.transarchivos.com` (redirige `transarchivos.com` →
+   `www.transarchivos.com`). Pasos y cuidado del correo: `docs/09-hosting-nodejs.md`.
+2. En GoDaddy → My Apps → Transarchivos → Settings:
    `VITE_SITE_INDEXABLE=true`. Volver a desplegar.
    - Quita el `noindex` de todas las páginas, excepto la 404.
    - `robots.txt` pasa a `Allow: /` y publica la ruta del sitemap.
@@ -83,7 +84,7 @@ pnpm build
    mismos datos de `src/seo/site.ts` (nombre, dirección, teléfono, web). La
    coherencia de estos datos es clave para el SEO local.
 6. **Redirecciones 301 desde el sitio anterior:** si las URLs viejas de
-   transarchivos.com son distintas, agregarlas a `redirects` en `vercel.json`
+   transarchivos.com son distintas, agregarlas a `redirects` en `hosting/headers.json`
    para no perder el posicionamiento ganado. Pida la lista de URLs indexadas
    (Search Console → Páginas) antes del cambio.
 7. Validar:

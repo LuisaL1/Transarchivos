@@ -1,14 +1,14 @@
 # Transarchivos · Sitio web
 
 Sitio corporativo de Transarchivos Ltda. (gestión documental, Bogotá) hecho con
-React 19 + Vite 8 + Tailwind CSS v4 + TypeScript. Se publica en Vercel. Está en
+React 19 + Vite 8 + Tailwind CSS v4 + TypeScript. Se publica en GoDaddy (hosting Node.js, `server/server.mjs`). Está en
 español (raíz) e inglés (`/en`, ver "Idiomas").
 
 ## Comandos
 
 - `pnpm dev` — servidor local en http://localhost:8443
-- `pnpm start` — servidor de producción (`server.mjs`) para hosting con Node.js; ver `docs/09-hosting-nodejs.md`
-- `pnpm build` — build de producción en `dist/`
+- `pnpm start` — servidor de producción (`server/server.mjs`, el que corre en GoDaddy); ver `docs/09-hosting-nodejs.md`
+- `pnpm build` — build de producción en `dist/` (con `.br`/`.gz` de cada archivo de texto)
 - `pnpm typecheck` — verificación de tipos
 - `pnpm lint` — ESLint (calidad, accesibilidad, seguridad)
 - `pnpm test` / `pnpm test:e2e` — pruebas (ver `TESTING.md`)
@@ -74,12 +74,15 @@ src/
 ├── styles/tokens.ts      Paleta en código (C.indigo, C.yellow…) para estilos en línea
 └── styles/index.css      Estilos globales, tokens de color de Tailwind (@theme), animaciones
 public/                   Archivos servidos tal cual (videos, favicon, robots, documentos/ PDF oficiales)
-api/contact.mjs           Función de Vercel: formularios → correo por Brevo (docs/07-formularios.md)
-api/ticket.mjs            Función de Vercel: cotizador → ticket en Zoho Desk (credenciales en variables de entorno)
-server.mjs                Servidor Node.js de producción (GoDaddy u otro hosting): páginas de dist/, cabeceras de vercel.json y api/ (docs/09-hosting-nodejs.md)
-public/chat-asesor.html   Página aislada donde vive el widget de Zoho (CSP propia en vercel.json)
+api/contact.mjs           Función del servidor: formularios → correo por Brevo (docs/07-formularios.md)
+api/ticket.mjs            Función del servidor: cotizador → ticket en Zoho Desk (credenciales en variables de entorno)
+server/server.mjs         Servidor Node.js de producción (GoDaddy): páginas de dist/, cabeceras y redirecciones de
+                          hosting/headers.json, api/, www + https (SITE_CANONICAL_HOST); docs/09-hosting-nodejs.md
+hosting/headers.json      Cabeceras de seguridad y caché (CSP…) y redirecciones. vercel.json las repite hasta el cambio de DNS
+public/chat-asesor.html   Página aislada donde vive el widget de Zoho (CSP propia en hosting/headers.json)
 src/styles/zoho-*.css     Diseño del sitio dentro del widget de Zoho
 scripts/prerender.mjs     Pre-genera dist/<ruta>.html, 404, sitemap y robots (SEO)
+scripts/precompress.mjs   Deja .br y .gz de los archivos de texto de dist/ (los entrega server/server.mjs)
 scripts/generate-email-header.mjs  Banner de los correos (pnpm email:header)
 knip.json                 Detección de archivos, exportaciones y dependencias sin uso (pnpm lint:unused)
 tests/                    unit/, security/, seo/ (HTML generado), e2e/ (Playwright + axe)
@@ -109,6 +112,9 @@ docs/                     Documentación técnica (arquitectura, UX/UI, conversi
   y parámetros sin uso.
 - Componentes: un archivo por componente o por grupo pequeño relacionado;
   exportaciones con nombre (`export function X`).
+- Cabeceras (CSP, caché) y redirecciones: en `hosting/headers.json`; mientras
+  exista `vercel.json` (hasta el cambio de DNS), copiarlas también ahí (una
+  prueba verifica que coincidan). Servicio externo nuevo → su dominio en la CSP.
 - SEO: cada ruta se pre-genera en el servidor, en los dos idiomas. No usar
   `window`/`document`/`localStorage` durante el render (solo en efectos). Rutas
   nuevas → `src/seo/meta.ts` y `src/i18n/index.ts` (sección o slug traducido)

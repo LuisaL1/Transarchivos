@@ -19,6 +19,6 @@ export const OFFICE_PHONE_LABEL = "321 811 5946";
 // ─── Formulario de contacto ────────────────────────────────────────────────
 // Las solicitudes (formulario de contacto y cotizador) se envían a la función
 // del sitio /api/contact, que las manda por Brevo al correo de la empresa
-// (variables de entorno en Vercel; ver docs/07-formularios.md).
+// (variables de entorno del servidor; ver docs/07-formularios.md).
 export const CONTACT_REASONS = ["Solicitar una cotización", "Información sobre un servicio", "Soporte a un servicio contratado", "Peticiones, quejas o reclamos", "Datos personales (Ley 1581)", "Trabajar con nosotros", "Otro"];
 

@@ -1,7 +1,8 @@
-// Función de Vercel: recibe las solicitudes del sitio y las envía por correo
-// con Brevo (API transaccional). La clave nunca llega al navegador.
+// Función del servidor (server/server.mjs, GoDaddy): recibe las solicitudes del
+// sitio y las envía por correo con Brevo (API transaccional). La clave nunca
+// llega al navegador.
 //
-// Variables de entorno (Vercel → Settings → Environment Variables):
+// Variables de entorno (GoDaddy → My Apps → Transarchivos → Settings):
 //   BREVO_API_KEY     clave de API de Brevo (obligatoria)
 //   LEADS_TO          correo comercial: cotizador y motivos comerciales (por defecto mercadeo@transarchivos.com)
 //   LEADS_TO_NEWSLETTER correo que recibe las suscripciones al blog (por defecto marketing@transarchivos.com)
@@ -9,14 +10,13 @@
 //   LEADS_FROM        remitente (por defecto no-reply@transarchivos.com; distinto de los buzones que reciben)
 //   LEADS_FROM_NAME   nombre del remitente (por defecto "Transarchivos")
 //
-// JavaScript .mjs (no TypeScript): Node siempre lo carga como módulo ES. Con
-// .ts, Vercel lo compilaba a ES pero lo cargaba como CommonJS y la función se
-// caía al arrancar ("Unexpected token 'export'", error 500); .mts no lo
-// reconoce como función (404). Las pruebas lo verifican (tests/security).
-import { json, leerEnvio } from "./_seguridad.mjs";
+// JavaScript .mjs (no TypeScript): Node lo carga como módulo ES sin compilar.
+// Las pruebas lo verifican (tests/security).
+import { json, leerEnvio, logger } from "./_seguridad.mjs";
+const log = logger("contact");
 // Límite de envíos por IP: el formulario es público y cada envío cuesta dos
-// correos (aviso + confirmación). Se cuenta en memoria de la instancia de
-// Vercel (se reinicia al escalar o dormir): no sustituye a un servicio de
+// correos (aviso + confirmación). Se cuenta en memoria del servidor (se
+// reinicia al desplegar o reiniciar la app): no sustituye a un servicio de
 // cuotas, pero frena a un script que repita envíos. Máx. 5 cada 10 min.
 const RATE = { max: 5, windowMs: 10 * 60_000 };
 const hits = new Map();
@@ -117,36 +117,32 @@ ${privacy}`);
     const text = `Hello${name ? ` ${name.split(" ")[0]}` : ""},\n\nThank you for writing to us. We received ${aboutText} and an advisor will reply to this email as soon as possible.\n\nImmediate assistance: WhatsApp +57 324 358 6973 · Phones +57 (601) 316-4530 · +57 324 358 6973\n\nAutomatic message from Transarchivos Ltda.`;
     return { subject: "We received your request · Transarchivos", html, text };
 }
-export async function GET() {
-    const key = process.env.BREVO_API_KEY;
-    if (!key)
-        return json({ configured: false });
-    const r = await fetch("https://api.brevo.com/v3/account", { headers: { "api-key": key, Accept: "application/json" } }).catch(() => null);
-    const d = r ? await r.json().catch(() => ({})) : {};
-    return json({ configured: true, brevo: r?.ok ? "ok" : `${r?.status ?? "sin respuesta"} ${d.code ?? ""} ${d.message ?? ""}`.trim(), from: process.env.LEADS_FROM || "no-reply@transarchivos.com", to: process.env.LEADS_TO || "mercadeo@transarchivos.com", toNewsletter: process.env.LEADS_TO_NEWSLETTER || "marketing@transarchivos.com", toGeneral: process.env.LEADS_TO_GENERAL || "info@transarchivos.com" });
-}
 export async function POST(req) {
-    const envio = await leerEnvio(req, limited);
+    const envio = await leerEnvio(req, limited, log);
     if (envio.rechazo)
         return envio.rechazo;
     const body = envio.body;
     // Campo trampa para bots: si viene lleno, se responde OK sin enviar nada.
-    if (body.website)
+    if (body.website) {
+        console.warn("[contact] ✗ Bot detectado (campo trampa lleno): no se envió nada");
         return json({ ok: true });
+    }
     const kind = body.kind === "cotizacion" ? "cotizacion" : body.kind === "suscripcion" ? "suscripcion" : "contacto";
     const fields = Object.fromEntries(Object.entries(body.fields ?? {})
         .filter(([k, v]) => typeof v === "string" && k.length <= 60)
         .map(([k, v]) => [k, v.trim().slice(0, 4000)]));
     const replyEmail = (body.replyTo?.email ?? "").trim();
     if (!EMAIL.test(replyEmail))
-        return json({ ok: false, error: "email" }, 422);
+        return log.reject("email", 422, "correo del visitante inválido");
     if (Object.keys(fields).length === 0 || Object.keys(fields).length > 40)
-        return json({ ok: false, error: "fields" }, 422);
+        return log.reject("fields", 422, `${Object.keys(fields).length} campos (debe tener entre 1 y 40)`);
     if (fields["Autorización de datos"] !== "Sí")
-        return json({ ok: false, error: "consent" }, 422);
+        return log.reject("consent", 422, "sin autorización de datos");
     const key = process.env.BREVO_API_KEY;
-    if (!key)
+    if (!key) {
+        log.fail("No se envió: falta la variable BREVO_API_KEY");
         return json({ ok: false, error: "not-configured" }, 503);
+    }
     const subject = (body.subject ?? (kind === "cotizacion" ? "Solicitud de cotización" : "Nuevo mensaje de contacto")).slice(0, 150);
     // Imágenes del correo: siempre desde producción (no desde una vista previa
     // o un despliegue antiguo, que tendría otro banner). Ver docs/07-formularios.md
@@ -168,32 +164,44 @@ export async function POST(req) {
     });
     // 1) Solicitud al equipo de Transarchivos (responder = el visitante)
     const name = (body.replyTo?.name ?? "").slice(0, 120);
-    const res = await send({
-        to: [{ email: leadsTo, name: kind === "suscripcion" ? "Marketing Transarchivos" : commercial ? "Mercadeo Transarchivos" : "Transarchivos" }],
-        replyTo: { email: replyEmail, name: name || replyEmail },
-        subject, htmlContent: html, textContent: text, tags: [`sitio-${kind}`],
-    });
+    let res;
+    try {
+        res = await send({
+            to: [{ email: leadsTo, name: kind === "suscripcion" ? "Marketing Transarchivos" : commercial ? "Mercadeo Transarchivos" : "Transarchivos" }],
+            replyTo: { email: replyEmail, name: name || replyEmail },
+            subject, htmlContent: html, textContent: text, tags: [`sitio-${kind}`],
+        });
+    }
+    catch (e) {
+        log.fail("Brevo no respondió:", e instanceof Error ? e.message : e);
+        return json({ ok: false, error: "provider", detail: "network" }, 502);
+    }
     if (!res.ok) {
         // Motivo que da Brevo (p. ej. remitente no verificado, clave inválida, IP no autorizada)
         const detail = await res.json().catch(() => ({}));
-        console.error("Brevo rechazó el envío:", res.status, detail);
+        log.fail(`Brevo rechazó la solicitud de ${kind} (HTTP ${res.status}):`, detail.code, detail.message);
         return json({ ok: false, error: "provider", status: res.status, detail: `${detail.code ?? ""} ${detail.message ?? ""}`.trim().slice(0, 200) }, 502);
     }
+    // Registro para rastrear el envío en Brevo (número de mensaje, sin datos del visitante)
+    const sent = await res.json().catch(() => ({}));
+    log.ok(`Solicitud de ${kind} enviada a ${leadsTo} (Brevo ${sent.messageId ?? "sin id"})`);
     // 2) Confirmación automática al visitante. Si falla, la solicitud ya llegó:
-    // el visitante ve "enviado", pero el motivo queda en los logs de Vercel y en
-    // la respuesta ("confirmation") para poder diagnosticarlo.
+    // el visitante ve "enviado", pero el motivo queda en los registros del
+    // servidor y en la respuesta ("confirmation") para poder diagnosticarlo.
     let confirmationStatus = "sent";
     try {
         const c = confirmation(base, kind, name, fields, lang);
         const rc = await send({ to: [{ email: replyEmail, name: name || replyEmail }], replyTo: { email: leadsTo, name: "Transarchivos" }, subject: c.subject, htmlContent: c.html, textContent: c.text, tags: [`sitio-${kind}-confirmacion`] });
-        if (!rc.ok) {
-            const d = await rc.json().catch(() => ({}));
-            console.error("Brevo rechazó la confirmación:", rc.status, d);
+        const d = await rc.json().catch(() => ({}));
+        if (rc.ok)
+            log.ok(`Confirmación enviada al visitante (Brevo ${d.messageId ?? "sin id"})`);
+        else {
+            log.fail(`Brevo no envió la confirmación (HTTP ${rc.status}):`, d.code, d.message);
             confirmationStatus = `failed ${rc.status} ${d.code ?? ""} ${d.message ?? ""}`.trim().slice(0, 200);
         }
     }
     catch (e) {
-        console.error("Error al enviar la confirmación:", e);
+        log.fail("Falló la confirmación:", e instanceof Error ? e.message : e);
         confirmationStatus = "failed network";
     }
     return json({ ok: true, confirmation: confirmationStatus });

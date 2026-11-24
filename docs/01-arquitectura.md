@@ -12,7 +12,7 @@
 | Tipografías | Google Fonts: Poppins, Montserrat, Inter (`@import` en `src/styles/index.css`) |
 | Analítica | Google Analytics 4 con Consent Mode v2 (opcional por variable de entorno) |
 | Pruebas | Vitest + Testing Library, Playwright + axe-core, ESLint |
-| Hosting | Vercel (`vercel.json`: reescritura SPA + cabeceras de seguridad) |
+| Hosting | GoDaddy, hosting Node.js (`server/server.mjs` + `hosting/headers.json`: páginas pre-generadas, cabeceras de seguridad y `api/`) |
 | Gestor de paquetes | pnpm 10, Node 22 (`.mise.toml`) |
 
 No hay backend, base de datos ni servicios externos aparte de GA4, Google
@@ -67,8 +67,8 @@ tests/                  unit/, security/, e2e/  (ver 04)
 | `/blog/:slug` | `ArticlePage` | Artículos de `src/data/blog.ts` |
 
 Las rutas inexistentes de servicio o artículo muestran un aviso con enlace de
-regreso. No hay una página 404 general: `vercel.json` reescribe todo a
-`index.html`.
+regreso. Cualquier otra dirección responde la página 404 (`dist/404.html`)
+con estado 404.
 
 **Parámetros de URL del cotizador:** `/?servicio=<slug|diagnostico>&solucion=<id>#cotizador`
 abre el cotizador con el servicio ya elegido, en el paso "Detalles". Los usan
@@ -116,9 +116,9 @@ preguntas frecuentes, cotización, asesor) se configura en Zoho. Ver
 ## Configuración y despliegue
 
 - **Variables:** `VITE_GA_MEASUREMENT_ID` (opcional). Ver `.env.example`.
-- **Vercel:**
-  - framework Vite, salida `dist/`;
-  - `vercel.json` define la reescritura SPA, las cabeceras de seguridad (CSP y otras) y la caché inmutable de `/assets/*`.
+- **GoDaddy** (`docs/09-hosting-nodejs.md`):
+  - compila con `pnpm build` (salida `dist/`, con `.br`/`.gz`) y arranca `pnpm start` (`server/server.mjs`);
+  - `hosting/headers.json` define las cabeceras de seguridad (CSP y otras), la caché inmutable de `/assets/*` y las redirecciones.
 - **Antes de publicar:** quitar `noindex` de `index.html` y borrar `public/robots.txt`.
 - **Íconos:** `favicon-16/32.png`, `favicon.png` (48), `apple-touch-icon.png`
   (180), `icon-192/512.png`, `site.webmanifest`.

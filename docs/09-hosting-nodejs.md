@@ -1,63 +1,139 @@
-# Publicación en un hosting con Node.js (GoDaddy)
+# Publicación en GoDaddy (hosting Node.js)
 
-El sitio se publica hoy en Vercel (`vercel.json` + carpeta `api/`). Para un
-alojamiento con **Node.js** conectado a GitHub, el proyecto trae `server.mjs`:
-un servidor sin dependencias que hace lo mismo que Vercel.
+El sitio se publica en el hosting Node.js de GoDaddy (host.godaddy.com →
+_My Apps_), conectado a este repositorio de GitHub, como **una sola app
+Node.js**. GoDaddy compila la rama elegida y arranca `server/server.mjs`, que
+hace todo lo que antes hacía Vercel:
 
-| Qué hace | Cómo |
+| Qué | Dónde |
 | --- | --- |
-| Entrega las páginas pre-generadas de `dist/` | Direcciones limpias (`/nosotros`, `/en/about`); `/x.html`, la barra final e `/index` redirigen (308) |
-| Página de error | Responde 404 con `dist/404.html` |
-| Cabeceras de seguridad y de caché | Las lee de `vercel.json` (una sola fuente de verdad): CSP, HSTS, `X-Frame-Options`… y un año de caché para `/assets/` |
-| Caché de fotos y video | Un día (con revalidación en segundo plano) para `hero-fotos/`, `videos/` y `brand/`, que conservan su nombre al reemplazarse; un año para `assets/` (nombre con huella); las páginas siempre se revalidan |
-| Compresión y video | Brotli o gzip para texto; rangos de bytes (Safari los exige para reproducir video) |
-| Formularios y cotizador | Ejecuta `api/<nombre>.mjs` en `/api/<nombre>` (hoy `api/contact.mjs` → Brevo y `api/ticket.mjs` → Zoho Desk), con el mismo código que en Vercel |
+| Páginas pre-generadas | `dist/` (de `pnpm build`), con URLs limpias: `/nosotros` → `nosotros.html`, `/en/about` → `en/about.html` |
+| `/x/`, `/x.html` e `/index` → `/x` | `server/server.mjs` (redirección 308) |
+| 404 real | `dist/404.html` con estado 404 |
+| Cabeceras (CSP, HSTS, caché…) | `hosting/headers.json` (la del chat, aparte para `/chat-asesor`) |
+| Redirecciones | `redirects` de `hosting/headers.json` (hoy vacío; ahí van las del sitio anterior, `docs/06-seo.md`) |
+| Formularios | `/api/contact` → `api/contact.mjs` (Brevo) |
+| Cotizador | `/api/ticket` → `api/ticket.mjs` (Zoho Desk) |
+| Compresión | `.br`/`.gz` que deja `pnpm build` (`scripts/precompress.mjs`) |
+| Video en Safari | Rangos de bytes (206) |
+| `www` y https | `SITE_CANONICAL_HOST` (abajo) |
 
-Vercel sigue funcionando igual: `server.mjs` no lo toca.
+El servidor solo usa módulos de Node; las dependencias del proyecto solo se usan
+para compilar. `vercel.json` se queda hasta el cambio de DNS con las mismas
+cabeceras (lo verifica `tests/security/static.test.ts`); después se borra.
 
-## Pasos (conexión con GitHub)
+En local: `pnpm build && pnpm start` → http://localhost:3000 (igual que en
+producción, sin redirección a `www`).
 
-1. **Conectar el repositorio** (rama `main`) en el panel del hosting.
-2. **Versión de Node:** 22 (mínimo 20.19).
-3. **Comando de compilación:** `npm install && npm run build`. Debe instalar
-   también las dependencias de desarrollo (no usar `--omit=dev` ni
-   `NODE_ENV=production` en este paso). Si el panel lo permite:
-   `corepack enable && pnpm install --frozen-lockfile && pnpm build`.
-4. **Comando de inicio:** `npm start` (es `node server.mjs`). El hosting define
-   el puerto con la variable `PORT`.
-5. **Variables de entorno** (copiar de `.env.example`):
+## 1. Configurar la app (una sola vez)
 
-   | Variable | Cuándo se lee | Valor |
-   | --- | --- | --- |
-   | `BREVO_API_KEY` | Al ejecutar (servidor) | La clave de envío de Brevo |
-   | `LEADS_TO`, `LEADS_TO_GENERAL`, `LEADS_TO_NEWSLETTER`, `LEADS_FROM`, `LEADS_FROM_NAME` | Al ejecutar | Buzones (ver `docs/07-formularios.md`) |
-   | `ZOHO_DESK_CLIENT_ID`, `ZOHO_DESK_CLIENT_SECRET`, `ZOHO_DESK_REFRESH_TOKEN`, `ZOHO_DESK_ORG_ID`, `ZOHO_DESK_DEPARTMENT_ID` | Al ejecutar (servidor) | Credenciales de Zoho Desk con las que el cotizador crea el ticket (`docs/07-formularios.md`). Sin ellas el cotizador avisa y ofrece WhatsApp |
-   | `TRUSTED_PROXY_HOPS` | Al ejecutar | Opcional (por defecto 1): cuántos proxies de confianza hay delante del sitio (el del hosting, más una CDN si la hay). Sirve para identificar al visitante en el límite de envíos por IP a partir de `X-Forwarded-For` |
-   | `EMAIL_ASSETS_URL` | Al ejecutar | Opcional: por defecto `https://www.transarchivos.com` (de ahí se descarga el banner de los correos) |
-   | `VITE_GA_MEASUREMENT_ID` | **Al compilar** | Identificador de Google Analytics (G-…) |
-   | `VITE_SITE_INDEXABLE` | **Al compilar** | `true` para que Google indexe el sitio; sin ella lleva `noindex` |
-   | `VITE_GOOGLE_SITE_VERIFICATION` | **Al compilar** | Código de Search Console (opcional) |
+En host.godaddy.com → _My Apps_ → Transarchivos → _Settings_:
 
-   Las `VITE_*` se incorporan al compilar: deben existir **antes** del paso 3 y
-   un cambio exige volver a desplegar.
-6. **Dominio y HTTPS** en GoDaddy. El servidor atiende HTTP y confía en el proxy
-   del hosting para el HTTPS (usa `X-Forwarded-Proto`); el sitio ya envía HSTS.
-7. En **Zoho SalesIQ** autorizar `www.transarchivos.com` (`docs/08-chat-asesor.md`)
-   y en **Brevo** tener verificado el dominio del remitente.
+- **Fuente:** el repositorio de GitHub y la rama (`main`, o una rama de prueba).
+- **Instalación:** `pnpm install` (o `npm install`). Debe instalar también las
+  dependencias de desarrollo (no usar `--omit=dev` ni `NODE_ENV=production` en
+  este paso): se usan para compilar.
+- **Build:** `pnpm build` (o `npm run build`).
+- **Inicio:** `pnpm start` (o `node server/server.mjs`). **Nunca `dev`**: el
+  servidor de desarrollo de Vite simula los formularios, no pone las cabeceras
+  y el hosting no le deja abrir su puerto.
+- **Node.js:** 22 (mínimo 20.19).
+- El puerto lo asigna GoDaddy en `PORT`; el servidor lo lee y escucha en `0.0.0.0`.
+
+**Variables de entorno** (misma pantalla; nunca en el repositorio). Si el
+hosting no se las entrega a la app, el servidor las lee de un archivo `.env` en
+la carpeta de la app (Git lo ignora); las del panel tienen prioridad.
+
+| Variable | Cuándo se lee | Para qué |
+| --- | --- | --- |
+| `VITE_GA_MEASUREMENT_ID` | **Al compilar** | Google Analytics (G-…) |
+| `VITE_SITE_INDEXABLE` | **Al compilar** | `true` solo cuando el dominio apunte aquí (`docs/06-seo.md`) |
+| `VITE_GOOGLE_SITE_VERIFICATION` | **Al compilar** | Opcional: Search Console |
+| `BREVO_API_KEY` | Al ejecutar | Clave de Brevo (`docs/07-formularios.md`). Secreta |
+| `LEADS_TO`, `LEADS_TO_GENERAL`, `LEADS_TO_NEWSLETTER`, `LEADS_FROM`, `LEADS_FROM_NAME` | Al ejecutar | Opcionales: buzones (`docs/07-formularios.md`) |
+| `EMAIL_ASSETS_URL` | Al ejecutar | Opcional: por defecto `https://www.transarchivos.com` (banner de los correos) |
+| `ZOHO_DESK_CLIENT_ID`, `ZOHO_DESK_CLIENT_SECRET`, `ZOHO_DESK_REFRESH_TOKEN`, `ZOHO_DESK_ORG_ID`, `ZOHO_DESK_DEPARTMENT_ID` | Al ejecutar | Credenciales del cotizador (`docs/07-formularios.md`). Secretas |
+| `TRUSTED_PROXY_HOPS` | Al ejecutar | Opcional (por defecto 1, el proxy de GoDaddy; súmele 1 si hay una CDN delante). `0` si la app recibe las visitas directamente, sin proxy: entonces el límite de envíos usa la IP de la conexión y no `X-Forwarded-For`, que el visitante podría inventar |
+| `SITE_CANONICAL_HOST` | Al ejecutar | `www.transarchivos.com` **solo después del cambio de DNS** (paso 6 de la sección 4) |
+
+Las `VITE_*` se leen al compilar: después de cambiarlas, vuelva a desplegar.
+
+**Brevo:** si la clave tiene restringidas las IP, autorice la IP de salida del
+hosting (o quite la restricción).
+
+## 2. Publicar un cambio
+
+Cada push a la rama configurada se compila y publica en la vista previa
+(dirección temporal de GoDaddy). Cuando esté bien, publíquelo desde el panel de
+la app. La integración continua de GitHub (`.github/workflows/ci.yml`) corre aparte.
 
 Si el plan no permite compilar en el servidor: ejecutar `pnpm build` en un
-computador y subir `dist/`, `api/`, `server.mjs`, `vercel.json` y
-`package.json`; el comando de inicio es el mismo.
+computador y subir `dist/`, `api/`, `server/`, `hosting/` y `package.json`; el
+comando de inicio es el mismo.
 
-## Cómo comprobar
+## 3. Diagnóstico
 
-- `pnpm build && pnpm start` y abrir http://localhost:3000 (`PORT=4000 pnpm start`
-  para otro puerto).
-- `pnpm test:seo` incluye `tests/seo/server.test.ts`: direcciones limpias, 404,
-  cabeceras, rutas con `..`, caché, compresión, rangos y la API.
-- En producción: `GET /api/contact` responde `{"configured":true,…}` cuando la
-  clave de Brevo está bien puesta; enviar el formulario con un mensaje marcado
-  «PRUEBA técnica (ignorar)».
+- **Registros** (_Logs_ en el panel). Cada línea empieza por su área y lleva
+  **✓** si se cumplió o **✗** si falló; busque "✗" para ver solo los
+  problemas. Nunca incluyen datos del visitante ni claves.
+
+  | Línea | Qué significa |
+  | --- | --- |
+  | `[server] ✓ Sitio en http://localhost:… (Node …)` | La app arrancó |
+  | `[server] Variables leídas de .env` | Las tomó del archivo `.env` de la carpeta de la app |
+  | `[server] Variables: BREVO_API_KEY ✓ · …` | Qué variables ve la app (solo el nombre) |
+  | `[server] ✗ No arrancó en el puerto …` | El puerto está ocupado o no permitido |
+  | `[server] ✗ Error no controlado / Promesa rechazada` | Error de código; la línea trae el detalle |
+  | `[server] Deteniendo (SIGTERM)` | El hosting reinició o detuvo la app (normal al desplegar) |
+  | `[api] ✓ POST /api/contact → 200 (523 ms)` | Una llamada a /api: estado y tiempo |
+  | `[contact] ✓ Solicitud de contacto enviada a …` | El correo al equipo salió por Brevo |
+  | `[contact] ✓ Confirmación enviada al visitante` | El correo de confirmación salió |
+  | `[contact] ✗ Rechazada (origin/rate/email/consent…)` | El formulario llegó incompleto, desde otro sitio o repetido demasiadas veces |
+  | `[contact] ✗ No se envió: falta la variable BREVO_API_KEY` | Falta la clave |
+  | `[contact] ✗ Brevo rechazó …` / `Brevo no respondió` | Problema con Brevo (clave, IP autorizada, remitente) |
+  | `[contact] ✗ Bot detectado` | Un bot llenó el campo trampa; no se envió nada |
+  | `[ticket] ✓ Ticket #123 creado en Zoho Desk` | El ticket del cotizador se creó |
+  | `[ticket] ✗ No se creó: faltan las variables …` | Faltan credenciales de Zoho (dice cuáles) |
+  | `[ticket] ✗ Zoho Desk rechazó el ticket (HTTP …)` | Permisos, plan o token de Zoho |
+
+- **Reiniciar:** _Reiniciar la aplicación_ en el panel.
+- **¿Formularios configurados?** `/api/contact` y `/api/ticket` solo aceptan
+  POST (un GET responde 405). Revise la línea `[server] Variables: …` del
+  arranque y, después de un envío de prueba, las líneas `[contact]` y `[ticket]`.
+- **¿Rechaza los formularios con "origin"?** El proxy debe pasar el dominio en
+  `Host` o en `X-Forwarded-Host`; el registro `[contact] ✗ Rechazada (origin…)`
+  muestra el origen y el sitio que vio el servidor.
+- **Probar cabeceras:** `curl -I https://<dominio>/` y
+  `curl -I https://<dominio>/chat-asesor`.
+- **Pruebas:** `pnpm test:seo` incluye `tests/seo/server.test.ts` (URLs limpias,
+  404, cabeceras, rutas con `..`, caché, compresión, rangos, dominio canónico,
+  proxy y la API).
 - En local (HTTP) el navegador avisa de que la página del chat no puede
   incrustarse: es la directiva `upgrade-insecure-requests`; con HTTPS en
   producción no ocurre.
+
+## 4. Cambio de DNS (día de publicación)
+
+Los correos de `@transarchivos.com` (mercadeo@, info@, marketing@) **no se
+deben caer**:
+
+1. Averigüe dónde está el DNS: `dig NS transarchivos.com`.
+2. **Copie todos los registros actuales** (captura o exportación) antes de tocar
+   nada: MX, TXT (SPF, DKIM y DMARC del correo y de Brevo, verificaciones de
+   Google), CNAME.
+3. Pruebe el sitio en la vista previa de GoDaddy con `SITE_CANONICAL_HOST`
+   vacía: páginas, formulario de contacto, cotizador y chat.
+4. Baje el TTL de `@` y `www` a 300 un día antes. Conecte el dominio desde el
+   panel de la app (_Conectar un dominio_) y cambie **solo** los registros `@` y
+   `www` que GoDaddy indique. **No toque MX ni TXT.**
+5. Verifique el candado (https) en `@` y `www`.
+6. Ponga `SITE_CANONICAL_HOST=www.transarchivos.com` en la app y reiníciela: el
+   dominio sin `www` y `http` pasan a `https://www.transarchivos.com` (301).
+7. En **Zoho SalesIQ** autorice `www.transarchivos.com` (`docs/08-chat-asesor.md`)
+   y en **Brevo** confirme el dominio del remitente verificado.
+8. Envíe una vez el formulario de contacto y el cotizador reales (mensaje
+   marcado «PRUEBA técnica (ignorar)») y confirme que lleguen los correos y el
+   ticket de Zoho Desk.
+9. Siga la lista de `docs/06-seo.md` (indexación, Search Console).
+10. Con todo funcionando: borre `vercel.json` y pause o elimine el proyecto de
+    Vercel.

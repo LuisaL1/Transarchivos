@@ -6,9 +6,9 @@ import { expect, test } from "@playwright/test";
 // simulado, que tiene prioridad).
 test.beforeEach(({ page }) => page.route("https://salesiq.zohopublic.com/**", r => r.fulfill({ contentType: "text/javascript", body: "" })));
 
-// Aplica las cabeceras de vercel.json (que `vite preview` no envía) y verifica
+// Aplica las cabeceras de hosting/headers.json (que `vite preview` no envía) y verifica
 // que la Política de Seguridad de Contenido no bloquee nada del sitio.
-const cfg = JSON.parse(readFileSync("vercel.json", "utf8"));
+const cfg = JSON.parse(readFileSync("hosting/headers.json", "utf8"));
 const pick = (src: string): Record<string, string> => Object.fromEntries(
   cfg.headers.find((h: { source: string }) => h.source === src).headers
     .filter((h: { key: string }) => h.key !== "Strict-Transport-Security")
