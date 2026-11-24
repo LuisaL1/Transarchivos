@@ -139,7 +139,8 @@ deben caer**:
    los proxies reales de GoDaddy. Desde un computador, mande 8 envíos seguidos
    con un `X-Forwarded-For` distinto cada vez; del sexto en adelante deben
    responder `429`. Si todos pasan, el valor está mal (pruebe con `0`).
-   Con el formulario real, hágalo con mensajes de prueba y avise al equipo.
+   Use un cuerpo incompleto (`{}`): responde `422` y no envía ningún correo,
+   pero el límite igual lo cuenta.
 10. Siga la lista de `docs/06-seo.md` (indexación, Search Console).
 11. Con todo funcionando: borre `vercel.json` y pause o elimine el proyecto de
     Vercel.
