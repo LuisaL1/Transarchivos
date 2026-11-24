@@ -3,7 +3,7 @@ import { readdirSync } from "node:fs";
 import { createServer, type Server } from "node:http";
 import type { AddressInfo } from "node:net";
 import { PUBLIC_ROUTES } from "@/seo/meta";
-import { createHandler, sourceRegex } from "../../server/server.mjs";
+import { createHandler, sourceRegex, start } from "../../server/server.mjs";
 import { resetRateLimit } from "../../api/contact.mjs";
 
 // Servidor de producción en GoDaddy (server/server.mjs): debe responder como lo
@@ -166,5 +166,29 @@ describe("server/server.mjs", () => {
     expect(sourceRegex("/((?!chat-asesor).*)").test("/chat-asesor")).toBe(false);
     expect(sourceRegex("/:lang(fr|de)").test("/fr")).toBe(true);
     expect(sourceRegex("/blog/:slug").test("/blog/a/b")).toBe(false);
+  });
+});
+
+describe("arranque (start)", () => {
+  it("escucha en el puerto indicado, atiende páginas y deja en el registro qué variables ve", async () => {
+    vi.stubEnv("HOST", "127.0.0.1");
+    vi.stubEnv("BREVO_API_KEY", "");
+    vi.stubEnv("ZOHO_DESK_CLIENT_ID", "valor-que-no-debe-salir-123");
+    const log = vi.spyOn(console, "log").mockImplementation(() => {});
+    const s = start(0);
+    await new Promise<void>(r => s.once("listening", r));
+    const at = `http://127.0.0.1:${(s.address() as AddressInfo).port}`;
+    expect((await get("/", {}, at)).status).toBe(200);
+    // El 404 y las funciones de api/ responden también por el arranque real
+    expect((await get("/no-existe", {}, at)).status).toBe(404);
+    s.closeAllConnections(); // keep-alive de 65 s: sin esto close() espera
+    await new Promise<void>(r => s.close(() => r()));
+    const lines = log.mock.calls.map(c => String(c[0]));
+    log.mockRestore();
+    expect(lines.some(l => l.includes("Sitio en http://localhost:"))).toBe(true);
+    expect(lines.some(l => l.includes("BREVO_API_KEY ✗"))).toBe(true);
+    // Nunca el valor de una variable, solo su nombre y si existe
+    expect(lines.some(l => l.includes("ZOHO_DESK_CLIENT_ID ✓"))).toBe(true);
+    expect(lines.join("\n")).not.toContain("valor-que-no-debe-salir-123");
   });
 });
